@@ -204,9 +204,9 @@ export default function Home() {
 
   return (
     <div className="bg-[#FAF7F2] text-[#111827]">
-      {/* 1. HERO SECTION - AL-TOOBA CINEMATIC AMBIENT VIDEO BACKGROUND & 3D PRODUCT POPUP */}
-      <section className="relative w-full h-screen min-h-[600px] flex flex-col justify-center overflow-hidden bg-[#072117] text-white pt-20 pb-6 px-4 sm:px-8 border-b border-[#D4A24C]/30">
-        {/* Ambient Video Background - Dedicated Enterprise Corporate Office Suite */}
+      {/* 1. HERO SECTION - ULTRA-RESPONSIVE FULL VIEWPORT LAYOUT */}
+      <section className="relative w-full min-h-[100svh] sm:h-screen sm:min-h-[640px] flex flex-col justify-center overflow-hidden bg-[#072117] text-white pt-24 pb-16 sm:py-0 px-5 sm:px-8 border-b border-[#D4A24C]/30">
+        {/* Ambient Video Background - Dedicated Enterprise Corporate Suite */}
         <video
           ref={heroVideoRef}
           autoPlay
@@ -215,34 +215,34 @@ export default function Home() {
           playsInline
           preload="auto"
           poster="/videos/hero-ambient-poster.jpg"
-          className="absolute inset-0 w-full h-full object-cover object-center z-0 opacity-90 filter contrast-105 brightness-100 pointer-events-none"
+          className="absolute inset-0 w-full h-full object-cover object-center z-0 opacity-85 filter contrast-105 brightness-100 pointer-events-none"
         >
           <source src="/videos/hero-ambient.mp4" type="video/mp4" />
         </video>
 
-        {/* Ambient Video Overlay Gradient - Crisp Video Visibility from Top to Bottom */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#072117]/25 to-[#072117]/80 z-[1] pointer-events-none"></div>
-        <div className="absolute inset-0 bg-gradient-to-r from-[#072117]/85 via-[#072117]/35 to-transparent z-[1] pointer-events-none hidden lg:block"></div>
+        {/* Ambient Video Overlay Gradient - Crisp Visibility Across All Screens */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#072117]/40 via-transparent to-[#072117]/85 z-[1] pointer-events-none"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#072117]/90 via-[#072117]/40 to-transparent z-[1] pointer-events-none hidden lg:block"></div>
         <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(#D4A24C_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none z-[1]"></div>
 
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center relative z-10 w-full my-auto">
-          {/* Left Column: Al-Tooba Style Typography & CTAs */}
-          <div className="lg:col-span-6 space-y-4">
-            {/* Majestic Heading - Exactly like Al-Tooba ("Reviving Sunnah, restoring purity") */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-normal tracking-tight text-white font-serif leading-[1.12] drop-shadow-[0_12px_24px_rgba(0,0,0,0.85)] select-none">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10 w-full my-auto">
+          {/* Left Column: Al-Tooba Style Typography & Responsive CTAs */}
+          <div className="lg:col-span-7 space-y-4">
+            {/* Majestic Heading - Responsive across mobile, laptop, desktop */}
+            <h1 className="text-[1.85rem] sm:text-4xl md:text-5xl lg:text-[3.25rem] xl:text-[3.65rem] font-normal tracking-tight text-white font-serif leading-[1.14] sm:leading-[1.12] drop-shadow-[0_12px_24px_rgba(0,0,0,0.85)] select-none">
               Authentic <span className="text-[#F59E0B] italic font-serif font-extrabold drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">IT Fleets,</span> <br />
               proven <span className="text-[#F59E0B] italic font-serif font-extrabold drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">performance.</span>
             </h1>
 
-            <p className="text-xs sm:text-sm text-white/95 leading-relaxed font-sans drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)] font-medium max-w-md">
+            <p className="text-xs sm:text-sm text-white/95 leading-relaxed font-sans drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)] font-medium max-w-lg">
               Equip your enterprise workforce with certified Grade A+ commercial fleets, workstation graphics, and pivot displays. Available for immediate bulk dispatch or flexible monthly leasing with guaranteed 24-48h replacement SLA.
             </p>
 
-            {/* Action Buttons */}
-            <div className="pt-2 flex flex-wrap items-center gap-3">
+            {/* Action Buttons - Clean 2-Row Stack on Mobile, 1-Row Flow on Desktop */}
+            <div className="pt-2 flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2.5 sm:gap-3">
               <button
                 onClick={() => openRFQ('Priority Fleet Requirement')}
-                className="group relative overflow-hidden rounded-full px-7 py-3 text-xs font-sans font-extrabold uppercase tracking-[0.15em] bg-gradient-to-r from-[#eec373] via-[#D4A24C] to-[#eec373] text-[#072117] shadow-[0_8px_25px_rgba(212,162,76,0.45)] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer flex items-center gap-2"
+                className="group relative overflow-hidden rounded-full px-6 sm:px-7 py-3 text-xs font-sans font-extrabold uppercase tracking-[0.12em] sm:tracking-[0.15em] bg-gradient-to-r from-[#eec373] via-[#D4A24C] to-[#eec373] text-[#072117] shadow-[0_8px_25px_rgba(212,162,76,0.45)] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2 text-center"
               >
                 <span className="relative z-10 flex items-center gap-2">
                   <span>EXPLORE INVENTORY</span>
@@ -251,26 +251,53 @@ export default function Home() {
                 <div className="absolute inset-0 bg-white/25 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" />
               </button>
 
-              <a
-                href="#video-reels"
-                className="px-5 py-3 rounded-full bg-black/45 hover:bg-black/75 text-white border border-[#D4A24C]/60 font-bold text-xs uppercase tracking-widest backdrop-blur-md transition-all flex items-center gap-2 shadow-lg"
-              >
-                <span className="w-2 h-2 rounded-full bg-[#F59E0B] animate-ping" />
-                <span>▶ Watch Lab Reels</span>
-              </a>
+              <div className="flex items-center gap-2 sm:gap-2.5">
+                <a
+                  href="#video-reels"
+                  className="flex-1 sm:flex-none px-4 sm:px-5 py-2.5 sm:py-3 rounded-full bg-black/55 hover:bg-black/80 text-white border border-[#D4A24C]/60 font-bold text-[11px] sm:text-xs uppercase tracking-wider backdrop-blur-md transition-all flex items-center justify-center gap-1.5 shadow-lg text-center whitespace-nowrap"
+                >
+                  <span className="w-2 h-2 rounded-full bg-[#F59E0B] animate-ping" />
+                  <span>▶ Watch Reels</span>
+                </a>
 
-              <a
-                href="#rental-calculator"
-                className="px-5 py-3 rounded-full bg-white/10 hover:bg-white/20 border border-white/25 text-white font-bold text-xs uppercase tracking-widest backdrop-blur-md transition flex items-center gap-2 shadow-sm"
-              >
-                <Calculator className="w-3.5 h-3.5 text-[#D4A24C]" />
-                <span>Calculator</span>
-              </a>
+                <a
+                  href="#rental-calculator"
+                  className="flex-1 sm:flex-none px-4 sm:px-5 py-2.5 sm:py-3 rounded-full bg-white/10 hover:bg-white/20 border border-white/25 text-white font-bold text-[11px] sm:text-xs uppercase tracking-wider backdrop-blur-md transition flex items-center justify-center gap-1.5 shadow-sm text-center whitespace-nowrap"
+                >
+                  <Calculator className="w-3.5 h-3.5 text-[#D4A24C]" />
+                  <span>Calculator</span>
+                </a>
+              </div>
             </div>
           </div>
 
-          {/* Right Column: Unobstructed view for ambient video hardware */}
-          <div className="lg:col-span-6 hidden lg:block" />
+          {/* Right Column: Balanced Glassmorphic Fleet Card on Desktop/Laptop */}
+          <div className="lg:col-span-5 hidden lg:flex flex-col items-end justify-center">
+            <div
+              onClick={() => openRFQ('Executive Fleet Hardware Consultation')}
+              className="group max-w-sm rounded-2xl bg-[#072117]/80 backdrop-blur-2xl border border-[#D4A24C]/40 hover:border-[#D4A24C] p-6 shadow-[0_20px_50px_rgba(0,0,0,0.65)] transition-all duration-300 cursor-pointer hover:scale-[1.02]"
+            >
+              <div className="flex items-center justify-between gap-4 mb-3">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#10B981]/20 text-[#10B981] border border-[#10B981]/40 text-[10px] font-mono font-bold uppercase tracking-wider">
+                  <span className="w-2 h-2 rounded-full bg-[#10B981] animate-ping" />
+                  Ready For Dispatch
+                </span>
+                <span className="text-xs font-mono text-[#D4A24C] font-extrabold">
+                  Lease ₹1,450/mo
+                </span>
+              </div>
+              <h3 className="font-serif text-lg font-bold text-white group-hover:text-[#F59E0B] transition-colors leading-snug">
+                Certified ThinkPad & Dell Fleets
+              </h3>
+              <p className="text-xs text-white/75 leading-relaxed mt-1.5">
+                Magnesium roll-cages, 30-point diagnostics, clean OS imaging, and ironclad 24–48h hardware replacement SLA.
+              </p>
+              <div className="mt-4 pt-3.5 border-t border-white/10 flex items-center justify-between text-xs font-bold text-[#D4A24C]">
+                <span>Request Fleet RFQ</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
