@@ -192,27 +192,27 @@ export default function Footer() {
         <div className="py-7 border-t border-[#FAF7F2]/10">
           <ul className="flex flex-wrap items-center justify-center md:justify-between gap-x-6 gap-y-3 text-[10px] md:text-[11px] uppercase tracking-[0.18em] font-semibold text-[#90b09a]">
             <li>
-              <Link to="/about" className="hover:text-[#D4A24C] hover:-translate-y-0.5 inline-block transition-transform duration-300">
+              <Link to="/privacy" className="hover:text-[#D4A24C] hover:-translate-y-0.5 inline-block transition-transform duration-300">
                 Privacy Policy
               </Link>
             </li>
             <li>
-              <Link to="/about" className="hover:text-[#D4A24C] hover:-translate-y-0.5 inline-block transition-transform duration-300">
+              <Link to="/terms" className="hover:text-[#D4A24C] hover:-translate-y-0.5 inline-block transition-transform duration-300">
                 Terms & Conditions
               </Link>
             </li>
             <li>
-              <Link to="/rental" className="hover:text-[#D4A24C] hover:-translate-y-0.5 inline-block transition-transform duration-300">
+              <Link to="/rental-sla" className="hover:text-[#D4A24C] hover:-translate-y-0.5 inline-block transition-transform duration-300">
                 Rental SLA Terms
               </Link>
             </li>
             <li>
-              <Link to="/about" className="hover:text-[#D4A24C] hover:-translate-y-0.5 inline-block transition-transform duration-300">
+              <Link to="/shipping-policy" className="hover:text-[#D4A24C] hover:-translate-y-0.5 inline-block transition-transform duration-300">
                 Pan-India Dispatch Policy
               </Link>
             </li>
             <li>
-              <Link to="/about" className="hover:text-[#D4A24C] hover:-translate-y-0.5 inline-block transition-transform duration-300">
+              <Link to="/warranty-policy" className="hover:text-[#D4A24C] hover:-translate-y-0.5 inline-block transition-transform duration-300">
                 Hardware Replacement Policy
               </Link>
             </li>

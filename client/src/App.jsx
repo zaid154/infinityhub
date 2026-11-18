@@ -22,6 +22,7 @@ import Buyback from './pages/Buyback';
 import AboutUs from './pages/AboutUs';
 import Contact from './pages/Contact';
 import Cart from './pages/Cart';
+import Legal from './pages/Legal';
 
 // Auth Pages
 import Login from './pages/Login';
@@ -77,6 +78,14 @@ export default function App() {
               <Route path="about" element={<AboutUs />} />
               <Route path="contact" element={<Contact />} />
               <Route path="cart" element={<Cart />} />
+              <Route path="legal" element={<Legal defaultTab="terms" />} />
+              <Route path="terms" element={<Legal defaultTab="terms" />} />
+              <Route path="privacy" element={<Legal defaultTab="privacy" />} />
+              <Route path="rental-sla" element={<Legal defaultTab="rental-sla" />} />
+              <Route path="shipping-policy" element={<Legal defaultTab="shipping" />} />
+              <Route path="shipping" element={<Legal defaultTab="shipping" />} />
+              <Route path="warranty-policy" element={<Legal defaultTab="warranty" />} />
+              <Route path="warranty" element={<Legal defaultTab="warranty" />} />
 
               {/* Auth Routes */}
               <Route path="login" element={<Login />} />
