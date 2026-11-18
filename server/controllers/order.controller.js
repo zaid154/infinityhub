@@ -25,7 +25,13 @@ export const createOrder = async (req, res, next) => {
         return res.status(404).json({ success: false, message: `Product ${item.product_id} not found` });
       }
 
-      const qty = Number(item.quantity) || 1;
+      const qty = Number(item.quantity);
+      if (!qty || qty <= 0 || !Number.isInteger(qty)) {
+        return res.status(400).json({
+          success: false,
+          message: `Invalid quantity for "${product.title}". Quantity must be a positive integer.`
+        });
+      }
       const maxSale = product.sale_stock !== undefined ? product.sale_stock : product.stock_quantity;
       if (qty > maxSale) {
         return res.status(400).json({

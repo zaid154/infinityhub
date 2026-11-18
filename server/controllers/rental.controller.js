@@ -8,7 +8,13 @@ export const createRental = async (req, res, next) => {
     const product = await Product.findById(product_id);
     if (!product) return res.status(404).json({ success: false, message: 'Product not found' });
 
-    const reqQty = Number(quantity) || 1;
+    const reqQty = Number(quantity);
+    if (!reqQty || reqQty <= 0 || !Number.isInteger(reqQty)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid lease quantity. Quantity must be a positive integer.'
+      });
+    }
     const maxRental = product.rental_stock !== undefined ? product.rental_stock : 5;
     if (reqQty > maxRental) {
       return res.status(400).json({
@@ -28,12 +34,17 @@ export const createRental = async (req, res, next) => {
     const endDate = new Date(startDate);
     endDate.setMonth(endDate.getMonth() + durationMonths);
 
+    // Secure server-side tenure discount calculation (protecting against client price tampering)
+    const baseMonthlyPrice = product.rental_price_monthly || 1350;
+    const discountRate = tenure === '12_months' ? 0.15 : tenure === '6_months' ? 0.05 : 0;
+    const verifiedMonthlyRate = Math.round(baseMonthlyPrice * (1 - discountRate));
+
     const rental = await Rental.create({
       user: req.user._id,
       product: product._id,
       quantity: reqQty,
       tenure: tenure || '6_months',
-      monthly_rate: Number(monthly_rate) || product.rental_price_monthly,
+      monthly_rate: verifiedMonthlyRate,
       start_date: startDate,
       end_date: endDate,
       status: 'active',

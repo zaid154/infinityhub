@@ -54,7 +54,8 @@ export const register = async (req, res, next) => {
     res.status(201).json({
       success: true,
       message: 'Registration successful! Please check your email to verify your account.',
-      userId: user._id
+      userId: user._id,
+      verificationToken: process.env.NODE_ENV === 'development' ? verificationToken : undefined
     });
   } catch (error) {
     next(error);
