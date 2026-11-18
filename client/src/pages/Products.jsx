@@ -145,7 +145,7 @@ export default function Products() {
 
           <button
             onClick={() => setMobileFilterOpen(!mobileFilterOpen)}
-            className="md:hidden p-2 bg-white border border-slate-300 rounded-xl text-slate-700 hover:text-blue-600"
+            className="md:hidden p-2 bg-white border border-[#D4A24C]/30 rounded-xl text-[#0D3B2A] hover:bg-[#FAF7F2]"
           >
             <SlidersHorizontal className="w-5 h-5" />
           </button>
@@ -157,11 +157,11 @@ export default function Products() {
         <aside
           className={`${
             mobileFilterOpen ? 'block' : 'hidden'
-          } md:block md:col-span-3 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-6 text-xs`}
+          } md:block md:col-span-3 bg-white p-5 rounded-2xl border border-[#D4A24C]/25 shadow-sm space-y-6 text-xs`}
         >
-          <div className="flex items-center justify-between font-bold text-slate-900 border-b border-slate-100 pb-3">
-            <span className="flex items-center gap-1.5">
-              <Filter className="w-4 h-4 text-blue-600" />
+          <div className="flex items-center justify-between font-bold text-[#0D3B2A] border-b border-[#D4A24C]/15 pb-3">
+            <span className="flex items-center gap-1.5 font-serif text-sm">
+              <Filter className="w-4 h-4 text-[#D4A24C]" />
               Filter Inventory
             </span>
             <button
@@ -172,7 +172,7 @@ export default function Products() {
                 setSearch('');
                 setPage(1);
               }}
-              className="text-[11px] text-blue-600 hover:underline font-normal"
+              className="text-[11px] text-[#D4A24C] hover:text-[#0D3B2A] font-medium"
             >
               Reset All
             </button>
@@ -180,7 +180,7 @@ export default function Products() {
 
           {/* Category Filter */}
           <div className="space-y-2">
-            <label className="font-bold text-slate-700 block uppercase font-mono tracking-wider text-[10px]">
+            <label className="font-bold text-[#0D3B2A] block uppercase font-mono tracking-wider text-[10px]">
               Hardware Category
             </label>
             <div className="space-y-1">
@@ -191,10 +191,10 @@ export default function Products() {
                     setCategory(c.id);
                     setPage(1);
                   }}
-                  className={`w-full text-left px-3 py-2 rounded-lg font-semibold transition flex items-center justify-between ${
+                  className={`w-full text-left px-3 py-2 rounded-xl font-semibold transition flex items-center justify-between ${
                     category === c.id
-                      ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                      : 'text-slate-600 hover:bg-slate-50'
+                      ? 'bg-[#0D3B2A] text-white shadow-sm'
+                      : 'text-[#5A6B63] hover:bg-[#FAF7F2] hover:text-[#0D3B2A]'
                   }`}
                 >
                   <span>{c.label}</span>
@@ -204,8 +204,8 @@ export default function Products() {
           </div>
 
           {/* Availability */}
-          <div className="space-y-2 pt-2 border-t border-slate-100">
-            <label className="font-bold text-slate-700 block uppercase font-mono tracking-wider text-[10px]">
+          <div className="space-y-2 pt-2 border-t border-[#D4A24C]/15">
+            <label className="font-bold text-[#0D3B2A] block uppercase font-mono tracking-wider text-[10px]">
               Available For
             </label>
             <div className="grid grid-cols-3 gap-1">
@@ -216,10 +216,10 @@ export default function Products() {
                     setAvailableFor(opt);
                     setPage(1);
                   }}
-                  className={`py-1.5 rounded-lg font-semibold capitalize transition ${
+                  className={`py-1.5 rounded-lg font-semibold capitalize transition text-center ${
                     availableFor === opt
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                      ? 'bg-[#0D3B2A] text-white shadow-sm'
+                      : 'bg-[#FAF7F2] text-[#5A6B63] hover:bg-[#F3E8D2] hover:text-[#0D3B2A] border border-[#D4A24C]/20'
                   }`}
                 >
                   {opt}
@@ -229,8 +229,8 @@ export default function Products() {
           </div>
 
           {/* Condition / Grade */}
-          <div className="space-y-2 pt-2 border-t border-slate-100">
-            <label className="font-bold text-slate-700 block uppercase font-mono tracking-wider text-[10px]">
+          <div className="space-y-2 pt-2 border-t border-[#D4A24C]/15">
+            <label className="font-bold text-[#0D3B2A] block uppercase font-mono tracking-wider text-[10px]">
               Condition Grade
             </label>
             <div className="space-y-1">
@@ -242,7 +242,7 @@ export default function Products() {
               ].map((cond) => (
                 <label
                   key={cond.id}
-                  className="flex items-center gap-2 text-slate-700 cursor-pointer hover:text-blue-600"
+                  className="flex items-center gap-2 text-[#5A6B63] cursor-pointer hover:text-[#0D3B2A] py-1"
                 >
                   <input
                     type="radio"
@@ -252,7 +252,7 @@ export default function Products() {
                       setCondition(cond.id);
                       setPage(1);
                     }}
-                    className="accent-blue-600"
+                    className="accent-[#0D3B2A]"
                   />
                   <span>{cond.label}</span>
                 </label>
@@ -266,13 +266,13 @@ export default function Products() {
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="h-80 bg-white rounded-2xl border border-slate-200 animate-pulse"></div>
+                <div key={i} className="h-80 bg-white rounded-3xl border border-[#D4A24C]/20 animate-pulse"></div>
               ))}
             </div>
           ) : products.length === 0 ? (
-            <div className="text-center py-20 bg-white rounded-2xl border border-slate-200 p-8 space-y-3">
-              <p className="text-sm font-bold text-slate-700">No hardware found matching your criteria.</p>
-              <p className="text-xs text-slate-500">Try clearing filters or search terms.</p>
+            <div className="text-center py-20 bg-white rounded-3xl border border-[#D4A24C]/25 p-8 space-y-3">
+              <p className="text-sm font-bold text-[#0D3B2A] font-serif">No hardware found matching your criteria.</p>
+              <p className="text-xs text-[#5A6B63]">Try clearing filters or search terms.</p>
               <button
                 onClick={() => {
                   setCategory('all');
@@ -280,7 +280,7 @@ export default function Products() {
                   setAvailableFor('all');
                   setSearch('');
                 }}
-                className="px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-bold"
+                className="px-5 py-2.5 rounded-full bg-[#0D3B2A] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#153423] transition"
               >
                 Clear All Filters
               </button>
@@ -302,16 +302,18 @@ export default function Products() {
                       </span>
                     </div>
 
-                    <div className="h-44 rounded-2xl bg-[#FAF7F2] flex items-center justify-center p-3 mb-4 overflow-hidden border border-[#D4A24C]/20">
-                      <img
-                        src={getProductImage(p)}
-                        alt={p.title}
-                        className="h-full object-contain group-hover:scale-105 transition duration-500"
-                      />
-                    </div>
+                    <Link to={`/products/${p.slug}`} className="block">
+                      <div className="h-44 rounded-2xl bg-[#FAF7F2] flex items-center justify-center p-3 mb-4 overflow-hidden border border-[#D4A24C]/20 cursor-pointer">
+                        <img
+                          src={getProductImage(p)}
+                          alt={p.title}
+                          className="h-full object-contain group-hover:scale-105 transition duration-500"
+                        />
+                      </div>
+                    </Link>
 
-                    <Link to={`/products/${p.slug}`} className="hover:text-[#D4A24C] transition">
-                      <h3 className="text-sm font-bold text-[#0D3B2A] line-clamp-1 font-serif">{p.title}</h3>
+                    <Link to={`/products/${p.slug}`} className="hover:text-[#D4A24C] transition block">
+                      <h3 className="text-sm font-bold text-[#0D3B2A] line-clamp-1 font-serif group-hover:text-[#D4A24C] transition">{p.title}</h3>
                     </Link>
 
                     <p className="text-xs text-[#5A6B63] mt-1 line-clamp-2 min-h-[32px] font-mono text-[11px]">
@@ -365,17 +367,17 @@ export default function Products() {
               <button
                 disabled={page <= 1}
                 onClick={() => setPage(page - 1)}
-                className="p-2 rounded-lg border border-slate-300 disabled:opacity-40 hover:bg-slate-50 transition"
+                className="p-2 rounded-lg border border-[#D4A24C]/30 disabled:opacity-40 hover:bg-[#FAF7F2] text-[#0D3B2A] transition"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
-              <span className="text-xs font-bold text-slate-700 px-3">
+              <span className="text-xs font-bold text-[#0D3B2A] px-3 font-serif">
                 Page {page} of {totalPages}
               </span>
               <button
                 disabled={page >= totalPages}
                 onClick={() => setPage(page + 1)}
-                className="p-2 rounded-lg border border-slate-300 disabled:opacity-40 hover:bg-slate-50 transition"
+                className="p-2 rounded-lg border border-[#D4A24C]/30 disabled:opacity-40 hover:bg-[#FAF7F2] text-[#0D3B2A] transition"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>

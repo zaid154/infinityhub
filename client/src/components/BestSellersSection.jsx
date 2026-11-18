@@ -17,7 +17,7 @@ const BEST_SELLER_LAPTOPS = [
     reviews: 48,
     image: '/products/real-thinkpad-t14-transparent.png',
     inStock: true,
-    slug: 'lenovo-thinkpad-t490-enterprise-business-laptop'
+    slug: 'lenovo-thinkpad-t490-enterprise-laptop'
   },
   {
     _id: 'best-2',
@@ -31,7 +31,7 @@ const BEST_SELLER_LAPTOPS = [
     reviews: 36,
     image: '/products/real-dell-latitude-transparent.png',
     inStock: true,
-    slug: 'dell-latitude-7490-ultrabook-corporate-edition'
+    slug: 'dell-latitude-7490-ultrabook-corporate'
   },
   {
     _id: 'best-3',
@@ -45,21 +45,21 @@ const BEST_SELLER_LAPTOPS = [
     reviews: 29,
     image: '/products/real-dell-latitude-transparent.png',
     inStock: true,
-    slug: 'hp-elitebook-840-g6-aluminum-executive-series'
+    slug: 'hp-elitebook-840-g6-aluminum-executive'
   },
   {
     _id: 'best-4',
-    title: 'Precision 5540 Mobile Workstation',
-    brand: 'DELL PRECISION',
-    category: 'laptop',
-    specs: 'Core i7 • 32GB RAM • NVIDIA Quadro T2000',
-    rental_price: 3200,
-    original_rental: 4500,
+    title: 'NVIDIA RTX 3060 12GB AI Workstation',
+    brand: 'NVIDIA WORKSTATION',
+    category: 'gpu',
+    specs: '12GB GDDR6 • Deep Learning • 3D CAD & Video',
+    rental_price: 1200,
+    original_rental: 1800,
     rating: '5.0',
     reviews: 19,
-    image: '/products/real-mobile-workstation-transparent.png',
-    inStock: false, // Out of stock indicator like Kalonji Shampoo on Al-Tooba
-    slug: 'dell-precision-5540-workstation'
+    image: '/products/real-optiplex-pc-transparent.png',
+    inStock: false,
+    slug: 'nvidia-geforce-rtx-3060-12gb-gddr6-workstation-gpu'
   },
   {
     _id: 'best-5',
@@ -73,7 +73,7 @@ const BEST_SELLER_LAPTOPS = [
     reviews: 52,
     image: '/products/real-dell-display-transparent.png',
     inStock: true,
-    slug: 'dell-professional-p2419h-24-inch-ips-frameless-display'
+    slug: 'dell-professional-p2419h-24-inch-ips-display'
   }
 ];
 
@@ -123,7 +123,7 @@ export default function BestSellersSection({ onOpenRFQ }) {
             <div>
               {/* White Product Image Stage Box */}
               <Link
-                to={`/products`}
+                to={`/products/${item.slug}`}
                 className="relative w-full shrink-0 aspect-[1/1] rounded-[12px] sm:rounded-[14px] overflow-hidden bg-white mb-2 md:mb-3 z-10 shadow-inner border border-gray-100 group/img flex items-center justify-center p-3 block"
               >
                 <img
@@ -149,7 +149,7 @@ export default function BestSellersSection({ onOpenRFQ }) {
               </div>
 
               {/* Product Title */}
-              <Link to={`/products`} className="block px-0.5">
+              <Link to={`/products/${item.slug}`} className="block px-0.5">
                 <h3 className="text-[13px] sm:text-[15px] font-sans font-bold text-[#0D3B2A] mb-1 leading-snug group-hover:text-[#8A5E12] transition-colors duration-300 line-clamp-2 min-h-[36px] sm:min-h-[40px]">
                   {item.title}
                 </h3>

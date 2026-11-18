@@ -7,88 +7,88 @@ import toast from 'react-hot-toast';
 const COMPLETE_COLLECTION = [
   {
     _id: 'col-1',
-    title: 'Lenovo ThinkPad T14 Gen 2 Quad Core',
+    title: 'Lenovo ThinkPad T490 Enterprise Fleet',
     brand: 'THINKPAD ENTERPRISE',
     category: 'laptop',
     badge: 'RENTAL FLEET',
     type: 'rent',
-    specs: 'Core i5 11th Gen • 16GB DDR4 • 512GB NVMe SSD',
-    active_price: 1850,
+    specs: 'Core i5 8th Gen • 16GB DDR4 • 512GB NVMe SSD',
+    active_price: 1450,
     price_unit: '/mo',
-    original_price: 2700,
+    original_price: 2200,
     rating: '5.0',
     reviews: 58,
     image: '/products/real-thinkpad-t14-transparent.png',
     inStock: true,
-    slug: 'lenovo-thinkpad-t14-gen-2-enterprise'
+    slug: 'lenovo-thinkpad-t490-enterprise-laptop'
   },
   {
     _id: 'col-2',
-    title: 'Dell Latitude 5420 Corporate Edition',
+    title: 'Dell Latitude 7490 Corporate Ultrabook',
     brand: 'DELL COMMERCIAL',
     category: 'laptop',
     badge: 'CERTIFIED BUY',
     type: 'sale',
-    specs: 'Core i7 11th Gen • 16GB RAM • 512GB NVMe • Win 11 Pro',
-    active_price: 28500,
+    specs: 'Core i7 8th Gen • 16GB RAM • 512GB NVMe • Win 11 Pro',
+    active_price: 24900,
     price_unit: '',
-    original_price: 42000,
+    original_price: 35000,
     rating: '4.9',
     reviews: 44,
     image: '/products/real-dell-latitude-transparent.png',
     inStock: true,
-    slug: 'dell-latitude-5420-corporate-business-laptop'
+    slug: 'dell-latitude-7490-ultrabook-corporate'
   },
   {
     _id: 'col-3',
-    title: 'HP EliteBook 850 G7 Aluminum Workhorse',
+    title: 'HP EliteBook 840 G6 Aluminum Executive',
     brand: 'HP EXECUTIVE',
     category: 'laptop',
     badge: 'RENTAL & LEASE',
     type: 'rent',
-    specs: 'Core i5 10th Gen • 16GB RAM • 256GB SSD • 15.6" IPS',
-    active_price: 1650,
+    specs: 'Core i5 8th Gen • 16GB RAM • 256GB SSD • 14" IPS',
+    active_price: 1500,
     price_unit: '/mo',
-    original_price: 2400,
+    original_price: 2150,
     rating: '4.9',
     reviews: 38,
     image: '/products/real-mobile-workstation-transparent.png',
     inStock: true,
-    slug: 'hp-elitebook-850-g7-aluminum-workhorse'
+    slug: 'hp-elitebook-840-g6-aluminum-executive'
   },
   {
     _id: 'col-4',
-    title: 'Dell OptiPlex 7000 Micro Enterprise PC',
-    brand: 'DELL OPTIPLEX',
-    category: 'desktop',
+    title: 'Samsung / Micron 16GB DDR4 RAM Module',
+    brand: 'SAMSUNG OEM',
+    category: 'ram',
     badge: 'OUTRIGHT SALE',
     type: 'sale',
-    specs: 'Core i7 12th Gen • 32GB RAM • 1TB NVMe • Win 11 Pro',
-    active_price: 36000,
+    specs: '16GB DDR4 3200MHz • MemTest86 Tested • Tier-1 OEM',
+    active_price: 1650,
     price_unit: '',
-    original_price: 54000,
+    original_price: 2400,
     rating: '5.0',
     reviews: 26,
-    image: '/products/real-optiplex-pc-transparent.png',
+    image: '/products/real-enterprise-ram-transparent.png',
     inStock: true,
-    slug: 'dell-optiplex-7000-micro-desktop'
+    slug: 'samsung-micron-16gb-ddr4-3200mhz-memory-stick'
   },
   {
     _id: 'col-5',
-    title: 'Dell UltraSharp 27" 4K UHD Frameless Display',
+    title: 'Dell Professional P2419H 24" IPS Display',
     brand: 'DELL DISPLAYS',
     category: 'monitor',
     badge: 'DISPLAY LEASE',
     type: 'rent',
-    specs: '4K IPS 3840x2160 • 99% sRGB • USB-C 90W Hub • Height Pivot',
-    active_price: 650,
+    specs: 'FHD IPS 1920x1080 • 99% sRGB • Height Pivot Stand',
+    active_price: 450,
     price_unit: '/mo',
-    original_price: 1100,
+    original_price: 750,
     rating: '4.9',
     reviews: 64,
     image: '/products/real-dell-display-transparent.png',
     inStock: true,
-    slug: 'dell-ultrasharp-u2720q-4k-uhd-display'
+    slug: 'dell-professional-p2419h-24-inch-ips-display'
   }
 ];
 
@@ -194,7 +194,7 @@ export default function CompleteCollectionSection({ onOpenRFQ }) {
               <div>
                 {/* White Product Image Stage Box */}
                 <Link
-                  to={`/products`}
+                  to={`/products/${item.slug}`}
                   className="relative w-full shrink-0 aspect-[1/1] rounded-[12px] sm:rounded-[14px] overflow-hidden bg-white mb-2 md:mb-3 z-10 shadow-inner border border-gray-100 group/img flex items-center justify-center p-3 block"
                 >
                   <img
@@ -220,7 +220,7 @@ export default function CompleteCollectionSection({ onOpenRFQ }) {
                 </div>
 
                 {/* Product Title */}
-                <Link to={`/products`} className="block px-0.5">
+                <Link to={`/products/${item.slug}`} className="block px-0.5">
                   <h3 className="text-[13px] sm:text-[15px] font-sans font-bold text-[#0D3B2A] mb-1 leading-snug group-hover:text-[#8A5E12] transition-colors duration-300 line-clamp-2 min-h-[36px] sm:min-h-[40px]">
                     {item.title}
                   </h3>

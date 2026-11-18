@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   Phone,
   FileText,
@@ -21,8 +21,12 @@ export default function Navbar({ onOpenRFQ }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // Scroll detection for seamless transparent-to-frosted glass transition
+  const isHome = location.pathname === '/';
+  const isSolidNav = !isHome || scrolled;
+
+  // Scroll detection for seamless transparent-to-frosted glass transition on Home
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 30);
@@ -34,7 +38,7 @@ export default function Navbar({ onOpenRFQ }) {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
+        isSolidNav
           ? 'bg-[#FAF7F2]/95 backdrop-blur-md border-b border-[#D4A24C]/30 shadow-[0_8px_30px_rgba(0,0,0,0.06)]'
           : 'bg-gradient-to-b from-black/75 via-black/35 to-transparent border-b border-transparent'
       }`}
@@ -58,12 +62,12 @@ export default function Navbar({ onOpenRFQ }) {
           </div>
           <div>
             <div className={`text-xl sm:text-2xl font-bold tracking-tight font-serif flex items-center gap-1.5 transition-colors ${
-              scrolled ? 'text-[#072117]' : 'text-white drop-shadow-md'
+              isSolidNav ? 'text-[#072117]' : 'text-white drop-shadow-md'
             }`}>
-              NOVA <span className={`${scrolled ? 'text-[#D4A24C]' : 'text-[#F59E0B]'} font-normal italic`}>INFOTECH</span>
+              NOVA <span className={`${isSolidNav ? 'text-[#D4A24C]' : 'text-[#F59E0B]'} font-normal italic`}>INFOTECH</span>
             </div>
             <p className={`text-[9px] tracking-[0.2em] uppercase font-semibold transition-colors ${
-              scrolled ? 'text-[#5A6B63]' : 'text-white/70'
+              isSolidNav ? 'text-[#5A6B63]' : 'text-white/70'
             }`}>
               Certified Enterprise Hardware
             </p>
@@ -72,24 +76,24 @@ export default function Navbar({ onOpenRFQ }) {
 
         {/* Desktop Navigation Links - Switches White to Deep Emerald on Scroll */}
         <nav className={`hidden lg:flex items-center space-x-8 text-[12px] uppercase font-bold tracking-[0.16em] transition-colors ${
-          scrolled ? 'text-[#072117]' : 'text-white'
+          isSolidNav ? 'text-[#072117]' : 'text-white'
         }`}>
-          <Link to="/" className={`transition-colors ${scrolled ? 'hover:text-[#D4A24C]' : 'hover:text-[#F59E0B] drop-shadow-sm'}`}>
+          <Link to="/" className={`transition-colors ${isSolidNav ? 'hover:text-[#D4A24C]' : 'hover:text-[#F59E0B] drop-shadow-sm'}`}>
             Home
           </Link>
-          <Link to="/products" className={`transition-colors ${scrolled ? 'hover:text-[#D4A24C]' : 'hover:text-[#F59E0B] drop-shadow-sm'}`}>
+          <Link to="/products" className={`transition-colors ${isSolidNav ? 'hover:text-[#D4A24C]' : 'hover:text-[#F59E0B] drop-shadow-sm'}`}>
             Products
           </Link>
-          <Link to="/rental" className={`transition-colors ${scrolled ? 'hover:text-[#D4A24C]' : 'hover:text-[#F59E0B] drop-shadow-sm'}`}>
+          <Link to="/rental" className={`transition-colors ${isSolidNav ? 'hover:text-[#D4A24C]' : 'hover:text-[#F59E0B] drop-shadow-sm'}`}>
             Rental
           </Link>
-          <Link to="/buyback" className={`transition-colors ${scrolled ? 'hover:text-[#D4A24C]' : 'hover:text-[#F59E0B] drop-shadow-sm'}`}>
+          <Link to="/buyback" className={`transition-colors ${isSolidNav ? 'hover:text-[#D4A24C]' : 'hover:text-[#F59E0B] drop-shadow-sm'}`}>
             Liquidation
           </Link>
-          <Link to="/about" className={`transition-colors ${scrolled ? 'hover:text-[#D4A24C]' : 'hover:text-[#F59E0B] drop-shadow-sm'}`}>
+          <Link to="/about" className={`transition-colors ${isSolidNav ? 'hover:text-[#D4A24C]' : 'hover:text-[#F59E0B] drop-shadow-sm'}`}>
             About
           </Link>
-          <Link to="/contact" className={`transition-colors ${scrolled ? 'hover:text-[#D4A24C]' : 'hover:text-[#F59E0B] drop-shadow-sm'}`}>
+          <Link to="/contact" className={`transition-colors ${isSolidNav ? 'hover:text-[#D4A24C]' : 'hover:text-[#F59E0B] drop-shadow-sm'}`}>
             Contact Us
           </Link>
         </nav>
@@ -111,7 +115,7 @@ export default function Navbar({ onOpenRFQ }) {
                 <Link
                   to="/dashboard"
                   className={`hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full border text-xs font-semibold transition backdrop-blur-sm ${
-                    scrolled
+                    isSolidNav
                       ? 'bg-[#072117]/10 text-[#072117] border-[#072117]/20 hover:bg-[#072117]/20'
                       : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
                   }`}
@@ -123,7 +127,7 @@ export default function Navbar({ onOpenRFQ }) {
               <button
                 onClick={logout}
                 className={`p-2 transition rounded-full ${
-                  scrolled ? 'text-[#072117]/70 hover:text-red-500 hover:bg-black/5' : 'text-white/70 hover:text-red-400 hover:bg-white/10'
+                  isSolidNav ? 'text-[#072117]/70 hover:text-red-500 hover:bg-black/5' : 'text-white/70 hover:text-red-400 hover:bg-white/10'
                 }`}
                 title="Logout"
               >
@@ -134,7 +138,7 @@ export default function Navbar({ onOpenRFQ }) {
             <Link
               to="/login"
               className={`p-2.5 transition rounded-full ${
-                scrolled
+                isSolidNav
                   ? 'text-[#072117] hover:text-[#D4A24C] hover:bg-black/5'
                   : 'text-white hover:text-[#F59E0B] hover:bg-white/10'
               }`}
@@ -148,7 +152,7 @@ export default function Navbar({ onOpenRFQ }) {
           <Link
             to="/cart"
             className={`relative p-2.5 transition rounded-full ${
-              scrolled
+              isSolidNav
                 ? 'text-[#072117] hover:text-[#D4A24C] hover:bg-black/5'
                 : 'text-white hover:text-[#F59E0B] hover:bg-white/10'
             }`}
@@ -175,7 +179,7 @@ export default function Navbar({ onOpenRFQ }) {
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className={`lg:hidden p-2 rounded-full transition ${
-              scrolled
+              isSolidNav
                 ? 'text-[#072117] hover:text-[#D4A24C] hover:bg-black/5'
                 : 'text-white hover:text-[#F59E0B] hover:bg-white/10'
             }`}
