@@ -326,119 +326,162 @@ export default function Products() {
               {products.map((p) => (
                 <div
                   key={p._id}
-                  className="bg-white rounded-3xl p-6 border border-[#0D3B2A]/10 shadow-[0_10px_30px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_40px_rgba(13,59,42,0.08)] transition-all duration-300 flex flex-col justify-between group"
+                  className="bg-white rounded-3xl p-4 sm:p-5 border border-[#0D3B2A]/10 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_30px_rgba(13,59,42,0.08)] transition-all duration-300 flex flex-col justify-between group"
                 >
                   <div>
-                    <div className="flex justify-between items-start mb-3 gap-2">
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#F3E8D2] text-[#0D3B2A] tracking-wider uppercase">
-                          {p.condition.replace(/_/g, ' ')}
+                    {/* Compact Single-Row Top Meta */}
+                    <div className="flex items-center justify-between mb-3 text-[10px]">
+                      <span className="px-2 py-0.5 rounded-full font-bold bg-[#F3E8D2] text-[#0D3B2A] tracking-wider uppercase">
+                        {p.condition.replace(/_/g, ' ')}
+                      </span>
+
+                      {availableFor === 'rent' ? (
+                        <span className="font-mono text-[#8A5E12] font-bold">
+                          Fleet: {p.rental_stock !== undefined ? p.rental_stock : 3} Units
                         </span>
-                        {p.available_for === 'both' ? (
-                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#0D3B2A] text-[#FAF7F2] tracking-wider uppercase flex items-center gap-1 shadow-sm">
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#D4A24C]" />
-                            Buy & Rent
-                          </span>
-                        ) : p.available_for === 'rent' ? (
-                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#D4A24C] text-[#072117] tracking-wider uppercase flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#0D3B2A]" />
-                            Rental Only
-                          </span>
-                        ) : (
-                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 tracking-wider uppercase border border-slate-200">
-                            Buy Only
-                          </span>
-                        )}
-                      </div>
-                      <div className="text-[10px] font-mono text-[#5A6B63] font-semibold text-right shrink-0">
-                        {p.available_for === 'both' ? (
-                          <>
-                            <span className="block text-[#0D3B2A]">Buy Stock: <strong>{p.sale_stock !== undefined ? p.sale_stock : p.stock_quantity}</strong></span>
-                            <span className="block text-[#8A5E12]">Fleet: <strong>{p.rental_stock !== undefined ? p.rental_stock : 0}</strong></span>
-                          </>
-                        ) : (
-                          <span>Stock: <strong>{p.sale_stock !== undefined ? p.sale_stock : p.stock_quantity}</strong></span>
-                        )}
-                      </div>
+                      ) : availableFor === 'sale' ? (
+                        <span className="font-mono text-[#0D3B2A] font-bold">
+                          Stock: {p.sale_stock !== undefined ? p.sale_stock : p.stock_quantity} Units
+                        </span>
+                      ) : (
+                        <span className="font-mono text-[#5A6B63] font-semibold">
+                          {p.available_for === 'both' ? (
+                            <>Buy: <strong className="text-[#0D3B2A]">{p.sale_stock || p.stock_quantity}</strong> · Fleet: <strong className="text-[#8A5E12]">{p.rental_stock || 0}</strong></>
+                          ) : (
+                            <>Stock: <strong className="text-[#0D3B2A]">{p.sale_stock || p.stock_quantity}</strong></>
+                          )}
+                        </span>
+                      )}
                     </div>
 
+                    {/* Image Stage Container */}
                     <Link to={`/products/${p.slug}`} className="block">
-                      <div className="h-44 rounded-2xl bg-[#FAF7F2] flex items-center justify-center p-3 mb-4 overflow-hidden border border-[#D4A24C]/20 cursor-pointer">
+                      <div className="h-40 rounded-2xl bg-[#FAF7F2] flex items-center justify-center p-3 mb-3 overflow-hidden border border-[#D4A24C]/20 cursor-pointer group-hover:bg-[#F3E8D2]/30 transition">
                         <img
                           src={getProductImage(p)}
                           alt={p.title}
-                          className="h-full object-contain group-hover:scale-105 transition duration-500"
+                          className="h-full object-contain group-hover:scale-105 transition duration-500 filter drop-shadow-sm"
                         />
                       </div>
                     </Link>
 
+                    {/* Title & Spec */}
                     <Link to={`/products/${p.slug}`} className="hover:text-[#D4A24C] transition block">
-                      <h3 className="text-sm font-bold text-[#0D3B2A] line-clamp-1 font-serif group-hover:text-[#D4A24C] transition">{p.title}</h3>
+                      <h3 className="text-sm font-bold text-[#0D3B2A] line-clamp-1 font-serif group-hover:text-[#D4A24C] transition">
+                        {p.title}
+                      </h3>
                     </Link>
 
-                    <p className="text-xs text-[#5A6B63] mt-1 line-clamp-2 min-h-[32px] font-mono text-[11px]">
+                    <p className="text-[11px] text-[#5A6B63] mt-0.5 line-clamp-1 font-mono">
                       {getProductSpecSummary(p)}
                     </p>
                   </div>
 
+                  {/* Context-Aware Bottom Section (Different Cards for Rent vs Buy vs All) */}
                   <div className="pt-3 mt-3 border-t border-[#D4A24C]/20 space-y-2.5">
-                    {p.available_for === 'both' ? (
-                      <div className="grid grid-cols-2 gap-2 bg-[#FAF7F2] p-2.5 rounded-xl border border-[#D4A24C]/20">
-                        <div>
-                          <span className="text-[9px] font-bold uppercase tracking-wider text-[#5A6B63] block">Buy Price</span>
-                          <span className="text-sm font-bold text-[#0D3B2A] font-serif block">₹{p.sale_price.toLocaleString('en-IN')}</span>
-                        </div>
-                        <div className="border-l border-[#D4A24C]/30 pl-2">
-                          <span className="text-[9px] font-bold uppercase tracking-wider text-[#D4A24C] block">Rent Monthly</span>
-                          <span className="text-sm font-bold text-[#0D3B2A] font-serif block">
-                            ₹{p.rental_price_monthly.toLocaleString('en-IN')}<span className="text-[10px] font-normal font-sans text-[#5A6B63]">/mo</span>
+                    {availableFor === 'rent' ? (
+                      /* DEDICATED RENTAL CARD */
+                      <>
+                        <div className="flex items-baseline justify-between">
+                          <div>
+                            <span className="text-[9px] font-bold uppercase tracking-wider text-[#8A5E12] block">Monthly Fleet Lease</span>
+                            <span className="text-base font-bold text-[#0D3B2A] font-serif">
+                              ₹{p.rental_price_monthly?.toLocaleString('en-IN') || 1350}<span className="text-xs font-normal text-[#5A6B63] font-sans">/mo</span>
+                            </span>
+                          </div>
+                          <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                            24h Swap SLA
                           </span>
                         </div>
-                      </div>
-                    ) : p.available_for === 'rent' ? (
-                      <div className="bg-[#FAF7F2] p-2.5 rounded-xl border border-[#D4A24C]/20">
-                        <span className="text-[9px] font-bold uppercase tracking-wider text-[#D4A24C] block">Corporate Rental Lease</span>
-                        <span className="text-sm font-bold text-[#0D3B2A] font-serif block">
-                          ₹{p.rental_price_monthly.toLocaleString('en-IN')}<span className="text-[10px] font-normal font-sans text-[#5A6B63]">/mo</span>
-                        </span>
-                      </div>
-                    ) : (
-                      <div className="bg-[#FAF7F2] p-2.5 rounded-xl border border-[#D4A24C]/20">
-                        <span className="text-[9px] font-bold uppercase tracking-wider text-[#5A6B63] block">Direct Purchase Price</span>
-                        <span className="text-sm font-bold text-[#0D3B2A] font-serif block">
-                          ₹{p.sale_price.toLocaleString('en-IN')}
-                        </span>
-                      </div>
-                    )}
 
-                    <div className="grid grid-cols-2 gap-2 pt-1">
-                      {p.available_for === 'both' || p.available_for === 'rent' ? (
                         <button
                           onClick={() => addToRentalCart(p, 1, '6_months')}
-                          className="w-full py-2.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-[11px] font-bold uppercase tracking-wider transition shadow border border-[#D4A24C]/40 text-center flex items-center justify-center gap-1 cursor-pointer"
-                          title="Add to Corporate Rental Fleet Cart"
+                          className="w-full py-2.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer"
                         >
                           <Repeat className="w-3.5 h-3.5 text-[#D4A24C]" />
-                          <span>Rent Fleet</span>
+                          <span>Rent Fleet (Add to Cart)</span>
                         </button>
-                      ) : (
-                        <button
-                          onClick={() => openRFQ(`${p.title} (${p.sale_stock || p.stock_quantity} in stock) - Bulk Purchase Inquiry`)}
-                          className="w-full py-2.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-[11px] font-bold uppercase tracking-wider transition shadow border border-[#D4A24C]/40 text-center cursor-pointer"
-                        >
-                          Inquire Bulk
-                        </button>
-                      )}
+                      </>
+                    ) : availableFor === 'sale' ? (
+                      /* DEDICATED BUY CARD */
+                      <>
+                        <div className="flex items-baseline justify-between">
+                          <div>
+                            <span className="text-[9px] font-bold uppercase tracking-wider text-[#5A6B63] block">Direct Purchase Price</span>
+                            <span className="text-base font-bold text-[#0D3B2A] font-serif">
+                              ₹{p.sale_price.toLocaleString('en-IN')}
+                            </span>
+                          </div>
+                          <span className="text-[10px] font-semibold text-[#8A5E12] bg-[#FAF7F2] px-2 py-0.5 rounded-full border border-[#D4A24C]/30">
+                            100% Tax Invoiced
+                          </span>
+                        </div>
 
-                      <button
-                        onClick={() => addToBuyCart(p, 1)}
-                        className="w-full py-2.5 rounded-full bg-[#F3E8D2] hover:bg-[#E6D5B8] text-[#0D3B2A] text-[11px] font-bold uppercase tracking-wider transition flex items-center justify-center gap-1 border border-[#D4A24C]/40 shadow-sm cursor-pointer"
-                        title="Add to Cart for Outright Purchase"
-                      >
-                        <ShoppingCart className="w-3.5 h-3.5 text-[#0D3B2A]" />
-                        <span>Add to Cart</span>
-                      </button>
-                    </div>
+                        <button
+                          onClick={() => addToBuyCart(p, 1)}
+                          className="w-full py-2.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer"
+                        >
+                          <ShoppingCart className="w-3.5 h-3.5 text-[#D4A24C]" />
+                          <span>Add to Cart (Buy)</span>
+                        </button>
+                      </>
+                    ) : (
+                      /* BALANCED ALL ITEMS VIEW */
+                      <>
+                        <div className="flex items-baseline justify-between">
+                          <div>
+                            <span className="text-[9px] font-bold uppercase tracking-wider text-[#5A6B63] block">Purchase Price</span>
+                            <span className="text-base font-bold text-[#0D3B2A] font-serif">
+                              ₹{p.sale_price.toLocaleString('en-IN')}
+                            </span>
+                          </div>
+                          {p.rental_price_monthly > 0 && (
+                            <span className="text-[11px] font-bold text-[#8A5E12] bg-[#FAF7F2] px-2.5 py-0.5 rounded-full border border-[#D4A24C]/30">
+                              or ₹{p.rental_price_monthly.toLocaleString('en-IN')}/mo
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+                          {p.available_for === 'both' ? (
+                            <>
+                              <button
+                                onClick={() => addToRentalCart(p, 1, '6_months')}
+                                className="w-full py-2 rounded-full bg-[#FAF7F2] hover:bg-[#F3E8D2] text-[#0D3B2A] text-[11px] font-bold uppercase tracking-wider transition border border-[#D4A24C]/40 flex items-center justify-center gap-1 cursor-pointer"
+                                title="Add to Rental Fleet Cart"
+                              >
+                                <Repeat className="w-3 h-3 text-[#D4A24C]" />
+                                <span>Rent</span>
+                              </button>
+                              <button
+                                onClick={() => addToBuyCart(p, 1)}
+                                className="w-full py-2 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-[11px] font-bold uppercase tracking-wider transition shadow border border-[#D4A24C]/40 flex items-center justify-center gap-1 cursor-pointer"
+                                title="Add to Direct Purchase Cart"
+                              >
+                                <ShoppingCart className="w-3 h-3 text-[#D4A24C]" />
+                                <span>Buy</span>
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <button
+                                onClick={() => openRFQ(`${p.title} - Wholesale Purchase Inquiry`)}
+                                className="w-full py-2 rounded-full bg-[#FAF7F2] hover:bg-[#F3E8D2] text-[#0D3B2A] text-[11px] font-bold uppercase tracking-wider transition border border-[#D4A24C]/40 cursor-pointer"
+                              >
+                                Inquire
+                              </button>
+                              <button
+                                onClick={() => addToBuyCart(p, 1)}
+                                className="w-full py-2 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-[11px] font-bold uppercase tracking-wider transition shadow border border-[#D4A24C]/40 flex items-center justify-center gap-1 cursor-pointer"
+                              >
+                                <ShoppingCart className="w-3 h-3 text-[#D4A24C]" />
+                                <span>Buy</span>
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               ))}
