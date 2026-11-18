@@ -24,7 +24,7 @@ import {
 import api from '../services/api';
 import toast from 'react-hot-toast';
 import VideoReels from '../components/VideoReels';
-import CategoriesMoorishArch from '../components/CategoriesMoorishArch';
+import EnterpriseCategoryShowcase from '../components/EnterpriseCategoryShowcase';
 import BestSellersSection from '../components/BestSellersSection';
 import CompleteCollectionSection from '../components/CompleteCollectionSection';
 import RentalCalculator from '../components/RentalCalculator';
@@ -296,8 +296,8 @@ export default function Home() {
       </div>
 
       <div className="space-y-20 pt-16 pb-20">
-        {/* 3. AL-TOOBA SIGNATURE MOORISH ARCH CATEGORIES SECTION */}
-        <CategoriesMoorishArch />
+        {/* 3. ENTERPRISE HARDWARE SHOWCASE */}
+        <EnterpriseCategoryShowcase />
 
         {/* 4. AL-TOOBA 1:1 OUR BEST SELLERS SECTION */}
         <BestSellersSection onOpenRFQ={openRFQ} />
