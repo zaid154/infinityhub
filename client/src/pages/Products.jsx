@@ -327,99 +327,87 @@ export default function Products() {
               {products.map((p) => (
                 <div
                   key={p._id}
-                  className="bg-white rounded-3xl p-4 sm:p-5 border border-[#0D3B2A]/10 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_30px_rgba(13,59,42,0.08)] transition-all duration-300 flex flex-col justify-between group"
+                  className="bg-white rounded-3xl p-4 sm:p-5 border border-[#D4A24C]/25 hover:border-[#D4A24C] shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_16px_36px_rgba(13,59,42,0.1)] transition-all duration-300 flex flex-col justify-between group"
                 >
                   <div>
-                    {/* Compact Single-Row Top Meta */}
-                    <div className="flex items-center justify-between mb-3 text-[10px]">
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className={`px-2 py-0.5 rounded-full font-bold tracking-wider uppercase ${
-                          p.condition === 'brand_new'
-                            ? 'bg-amber-100 text-amber-900 border border-amber-300 font-extrabold'
-                            : p.condition === 'open_box'
-                            ? 'bg-sky-100 text-sky-900 border border-sky-300'
-                            : 'bg-[#F3E8D2] text-[#0D3B2A]'
-                        }`}>
-                          {p.condition === 'brand_new' ? '★ Brand New' : p.condition.replace(/_/g, ' ')}
-                        </span>
+                    {/* Top Row: Clean Condition Pill (Left) & Stock Status (Right) - Zero Wrapping */}
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold tracking-wider uppercase border shadow-xs ${
+                        p.condition === 'brand_new'
+                          ? 'bg-amber-50 text-amber-900 border-amber-300'
+                          : p.condition === 'open_box'
+                          ? 'bg-sky-50 text-sky-900 border-sky-300'
+                          : 'bg-[#FAF7F2] text-[#8A5E12] border-[#D4A24C]/40'
+                      }`}>
+                        {p.condition === 'brand_new' ? '★ Brand New' : p.condition === 'open_box' ? 'Open Box' : 'Grade A+ Certified'}
+                      </span>
 
-                        {availableFor === 'all' && (
-                          <span className={`px-1.5 py-0.5 rounded font-bold uppercase text-[9px] ${
-                            p.available_for === 'rent'
-                              ? 'bg-purple-100 text-purple-800'
-                              : p.available_for === 'sale'
-                              ? 'bg-emerald-100 text-emerald-800'
-                              : 'bg-stone-100 text-stone-700'
-                          }`}>
-                            {p.available_for === 'rent' ? 'Rent Only' : p.available_for === 'sale' ? 'Buy Only' : 'Buy & Rent'}
-                          </span>
-                        )}
+                      {/* Stock availability: Clean, single-line indicator that NEVER wraps */}
+                      <div className="flex items-center gap-1.5 text-[11px] font-mono font-medium text-emerald-800 shrink-0">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
+                        <span>{(p.sale_stock || p.stock_quantity || 1)} in stock</span>
                       </div>
-
-                      {availableFor === 'rent' ? (
-                        <span className="font-mono text-[#8A5E12] font-bold">
-                          Fleet: {p.rental_stock !== undefined ? p.rental_stock : 3} Units
-                        </span>
-                      ) : availableFor === 'sale' ? (
-                        <span className="font-mono text-[#0D3B2A] font-bold">
-                          Stock: {p.sale_stock !== undefined ? p.sale_stock : p.stock_quantity} Units
-                        </span>
-                      ) : (
-                        <span className="font-mono text-[#5A6B63] font-semibold text-[10px]">
-                          {p.available_for === 'both' ? (
-                            <>Buy: <strong className="text-[#0D3B2A]">{p.sale_stock || p.stock_quantity}</strong> · Fleet: <strong className="text-[#8A5E12]">{p.rental_stock || 0}</strong></>
-                          ) : p.available_for === 'rent' ? (
-                            <>Fleet: <strong className="text-[#8A5E12]">{p.rental_stock || 0}</strong> Units</>
-                          ) : (
-                            <>Stock: <strong className="text-[#0D3B2A]">{p.sale_stock || p.stock_quantity}</strong> Units</>
-                          )}
-                        </span>
-                      )}
                     </div>
 
-                    {/* Image Stage Container */}
+                    {/* Image Pedestal Stage Container */}
                     <Link to={`/products/${p.slug}`} className="block">
-                      <div className="h-40 rounded-2xl bg-[#FAF7F2] flex items-center justify-center p-3 mb-3 overflow-hidden border border-[#D4A24C]/20 cursor-pointer group-hover:bg-[#F3E8D2]/30 transition">
+                      <div className="h-44 sm:h-48 rounded-2xl bg-gradient-to-b from-[#FAF7F2] via-[#F6F0E7] to-[#EFE7DC] flex items-center justify-center p-3 mb-3.5 overflow-hidden border border-[#D4A24C]/20 cursor-pointer group-hover:border-[#D4A24C]/60 transition-all duration-300 relative">
+                        {/* Deployment badge floating inside stage top-right */}
+                        <div className="absolute top-2.5 right-2.5 z-10">
+                          <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold tracking-wider uppercase bg-white/90 text-[#0D3B2A] border border-[#D4A24C]/30 shadow-xs backdrop-blur-xs">
+                            {p.available_for === 'rent' ? 'Lease Only' : p.available_for === 'sale' ? 'Direct Buy' : 'Buy & Lease'}
+                          </span>
+                        </div>
+
+                        {/* Pedestal surface shadow */}
+                        <div className="absolute bottom-2 w-32 h-4 bg-black/10 rounded-full blur-xs pointer-events-none" />
+
                         <img
                           src={getProductImage(p)}
                           alt={p.title}
-                          className="h-full object-contain group-hover:scale-105 transition duration-500 filter drop-shadow-sm"
+                          className="relative z-10 max-h-36 max-w-[88%] object-contain group-hover:scale-108 transition-transform duration-500 ease-out filter drop-shadow-[0_8px_14px_rgba(0,0,0,0.14)]"
                         />
                       </div>
                     </Link>
 
-                    {/* Title & Spec */}
-                    <Link to={`/products/${p.slug}`} className="hover:text-[#D4A24C] transition block">
-                      <h3 className="text-sm font-bold text-[#0D3B2A] line-clamp-1 font-serif group-hover:text-[#D4A24C] transition">
+                    {/* Brand / Category Micro Tag */}
+                    <div className="text-[10px] font-mono uppercase tracking-widest text-[#8A5E12] font-semibold mb-1">
+                      {p.brand || (p.category === 'laptop' ? 'Enterprise Laptop' : p.category === 'gpu' ? 'Workstation GPU' : p.category === 'monitor' ? 'Business Display' : 'Enterprise PC')}
+                    </div>
+
+                    {/* Product Title */}
+                    <Link to={`/products/${p.slug}`} className="hover:text-[#B8860B] transition block">
+                      <h3 className="text-[14px] sm:text-[15px] font-serif font-bold text-[#0D3B2A] group-hover:text-[#B8860B] transition-colors leading-snug line-clamp-2 min-h-[40px]">
                         {p.title}
                       </h3>
                     </Link>
 
-                    <p className="text-[11px] text-[#5A6B63] mt-0.5 line-clamp-1 font-mono">
+                    {/* Spec Summary */}
+                    <p className="text-[11px] text-[#5A6B63] font-mono mt-1 leading-normal line-clamp-1">
                       {getProductSpecSummary(p)}
                     </p>
                   </div>
 
                   {/* Context-Aware Bottom Section (Different Cards for Rent vs Buy vs All) */}
-                  <div className="pt-3 mt-3 border-t border-[#D4A24C]/20 space-y-2.5">
+                  <div className="pt-3.5 mt-3 border-t border-[#D4A24C]/20 space-y-3">
                     {availableFor === 'rent' || p.available_for === 'rent' ? (
                       /* DEDICATED RENTAL CARD */
                       <>
                         <div className="flex items-baseline justify-between">
                           <div>
                             <span className="text-[9px] font-bold uppercase tracking-wider text-[#8A5E12] block">Monthly Fleet Lease</span>
-                            <span className="text-base font-bold text-[#0D3B2A] font-serif">
-                              ₹{p.rental_price_monthly?.toLocaleString('en-IN') || 1350}<span className="text-xs font-normal text-[#5A6B63] font-sans">/mo</span>
+                            <span className="text-base sm:text-lg font-bold text-[#0D3B2A] font-serif">
+                              ₹{(p.rental_price_monthly || 1350).toLocaleString('en-IN')}<span className="text-xs font-normal text-[#5A6B63] font-sans">/mo</span>
                             </span>
                           </div>
-                          <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                          <span className="text-[10px] font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
                             24h Swap SLA
                           </span>
                         </div>
 
                         <button
                           onClick={() => addToRentalCart(p, 1, '6_months')}
-                          className="w-full py-2.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer"
+                          className="w-full py-2.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-sm flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
                         >
                           <Repeat className="w-3.5 h-3.5 text-[#D4A24C]" />
                           <span>Rent Fleet (Add to Cart)</span>
@@ -431,7 +419,7 @@ export default function Products() {
                         <div className="flex items-baseline justify-between">
                           <div>
                             <span className="text-[9px] font-bold uppercase tracking-wider text-[#5A6B63] block">Direct Purchase Price</span>
-                            <span className="text-base font-bold text-[#0D3B2A] font-serif">
+                            <span className="text-base sm:text-lg font-bold text-[#0D3B2A] font-serif">
                               ₹{p.sale_price.toLocaleString('en-IN')}
                             </span>
                           </div>
@@ -442,7 +430,7 @@ export default function Products() {
 
                         <button
                           onClick={() => addToBuyCart(p, 1)}
-                          className="w-full py-2.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer"
+                          className="w-full py-2.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-sm flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
                         >
                           <ShoppingCart className="w-3.5 h-3.5 text-[#D4A24C]" />
                           <span>Add to Cart (Buy)</span>
@@ -454,12 +442,12 @@ export default function Products() {
                         <div className="flex items-baseline justify-between">
                           <div>
                             <span className="text-[9px] font-bold uppercase tracking-wider text-[#5A6B63] block">Purchase Price</span>
-                            <span className="text-base font-bold text-[#0D3B2A] font-serif">
+                            <span className="text-base sm:text-lg font-bold text-[#0D3B2A] font-serif">
                               ₹{p.sale_price.toLocaleString('en-IN')}
                             </span>
                           </div>
                           {p.rental_price_monthly > 0 && (
-                            <span className="text-[11px] font-bold text-[#8A5E12] bg-[#FAF7F2] px-2.5 py-0.5 rounded-full border border-[#D4A24C]/30">
+                            <span className="text-[11px] font-bold text-[#8A5E12] bg-[#FAF7F2] px-2.5 py-0.5 rounded-full border border-[#D4A24C]/35">
                               or ₹{p.rental_price_monthly.toLocaleString('en-IN')}/mo
                             </span>
                           )}
@@ -468,18 +456,18 @@ export default function Products() {
                         <div className="grid grid-cols-2 gap-2">
                           <button
                             onClick={() => addToRentalCart(p, 1, '6_months')}
-                            className="w-full py-2 rounded-full bg-[#FAF7F2] hover:bg-[#F3E8D2] text-[#0D3B2A] text-[11px] font-bold uppercase tracking-wider transition border border-[#D4A24C]/40 flex items-center justify-center gap-1 cursor-pointer"
+                            className="w-full py-2 px-2 rounded-full bg-[#FAF7F2] hover:bg-[#F3ECE1] text-[#8A5E12] text-xs font-bold uppercase tracking-wider transition border border-[#D4A24C]/40 flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
                             title="Add to Rental Fleet Cart"
                           >
-                            <Repeat className="w-3 h-3 text-[#D4A24C]" />
+                            <Repeat className="w-3.5 h-3.5 text-[#D4A24C]" />
                             <span>Rent</span>
                           </button>
                           <button
                             onClick={() => addToBuyCart(p, 1)}
-                            className="w-full py-2 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-[11px] font-bold uppercase tracking-wider transition shadow border border-[#D4A24C]/40 flex items-center justify-center gap-1 cursor-pointer"
+                            className="w-full py-2 px-2 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-sm border border-[#D4A24C]/40 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
                             title="Add to Direct Purchase Cart"
                           >
-                            <ShoppingCart className="w-3 h-3 text-[#D4A24C]" />
+                            <ShoppingCart className="w-3.5 h-3.5 text-[#D4A24C]" />
                             <span>Buy</span>
                           </button>
                         </div>
