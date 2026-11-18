@@ -120,9 +120,9 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <a href="#rental-calculator" className="hover:text-[#FAF7F2] hover:translate-x-1 inline-block transition-transform duration-200">
+                <Link to="/rental" className="hover:text-[#FAF7F2] hover:translate-x-1 inline-block transition-transform duration-200">
                   Fleet Cost Estimator & Calculator
-                </a>
+                </Link>
               </li>
               <li>
                 <Link to="/rental" className="hover:text-[#FAF7F2] hover:translate-x-1 inline-block transition-transform duration-200">
