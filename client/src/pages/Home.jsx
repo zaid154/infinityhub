@@ -25,6 +25,7 @@ import {
 import api from '../services/api';
 import toast from 'react-hot-toast';
 import VideoReels from '../components/VideoReels';
+import CategoriesMoorishArch from '../components/CategoriesMoorishArch';
 
 export default function Home() {
   const { openRFQ } = useOutletContext();
@@ -320,44 +321,9 @@ export default function Home() {
 
       <div className="space-y-20 pt-16 pb-20">
         {/* 3. AL-TOOBA SIGNATURE MOORISH ARCH CATEGORIES SECTION */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-8 space-y-10">
-        <div className="text-center max-w-2xl mx-auto space-y-2">
-          <span className="text-[11px] uppercase tracking-[0.25em] text-[#D4A24C] font-semibold block">
-            — DISCOVER BY HARDWARE FLEET
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-normal text-[#0D3B2A] font-serif">
-            Shop by Commercial Categories
-          </h2>
-          <p className="text-sm text-[#5A6B63]">
-            Sourced directly from verified corporate refresh cycles, stress-tested and Grade A+ guaranteed.
-          </p>
-        </div>
+        <CategoriesMoorishArch />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {categoriesMoorish.map((cat) => (
-            <Link
-              key={cat.id}
-              to={`/products?category=${cat.id}`}
-              className="arch-card bg-white border border-[#D4A24C]/40 hover:border-[#D4A24C] p-6 shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col items-center text-center space-y-4"
-            >
-              <div className="w-36 h-36 rounded-full bg-[#FAF7F2] border border-[#D4A24C]/20 p-4 flex items-center justify-center overflow-hidden group-hover:scale-105 transition duration-300">
-                <img src={cat.image} alt={cat.name} className="h-full object-contain" />
-              </div>
-              <div>
-                <span className="inline-block px-3 py-1 rounded-full bg-[#F3E8D2] text-[#0D3B2A] text-[10px] font-bold tracking-widest uppercase mb-2">
-                  {cat.count}
-                </span>
-                <h3 className="font-serif text-lg font-bold text-[#0D3B2A] group-hover:text-[#D4A24C] transition">
-                  {cat.name}
-                </h3>
-                <p className="text-xs text-[#5A6B63] mt-1">{cat.desc}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* 4. ASYMMETRIC BENTO GRID - 5 CORE SOLUTIONS (AL-TOOBA HAMPERS STYLE) */}
+        {/* 4. ASYMMETRIC BENTO GRID - 5 CORE SOLUTIONS (AL-TOOBA HAMPERS STYLE) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-8 space-y-10">
         <div className="text-center max-w-2xl mx-auto space-y-2">
           <span className="text-[11px] uppercase tracking-[0.25em] text-[#D4A24C] font-semibold block">
