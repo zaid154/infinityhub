@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useOutletContext, useNavigate } from 'react-router-dom';
+import { useParams, Link, useOutletContext } from 'react-router-dom';
 import {
   ShieldCheck,
   Award,
   Truck,
   Lock,
-  ArrowLeft,
   ChevronDown,
   ShoppingBag,
   Zap,
   ArrowRight,
   Minus,
-  Plus,
-  Star
+  Plus
 } from 'lucide-react';
 import api from '../services/api';
 import { useCart } from '../context/CartContext';
@@ -22,7 +20,6 @@ export default function ProductDetail() {
   const { slug } = useParams();
   const { openRFQ } = useOutletContext();
   const { addToCart } = useCart();
-  const navigate = useNavigate();
 
   const [product, setProduct] = useState(null);
   const [related, setRelated] = useState([]);
@@ -74,41 +71,51 @@ export default function ProductDetail() {
     );
   }
 
-  // Build authentic 3-image gallery like Al-Tooba (1/3)
-  const baseImg = product.images?.[0]?.url && !product.images[0].url.includes('photo-1544717305-2782549b5136')
-    ? product.images[0].url
-    : '/products/real-thinkpad-t14-transparent.png';
-
+  // Curate 3 category-specific transparent studio cutouts (1/3 gallery)
   const getGalleryImages = () => {
-    if (product.images && product.images.length >= 3) {
-      return product.images.map((img) => img.url);
-    }
-    if (product.category === 'monitor') {
+    const s = product.slug?.toLowerCase() || '';
+    const cat = product.category?.toLowerCase() || '';
+
+    if (cat === 'gpu' || s.includes('rtx') || s.includes('graphics')) {
       return [
-        baseImg,
-        '/products/real-dell-display-transparent.png',
-        '/products/dell-ultrasharp-display.png'
-      ];
-    }
-    if (product.category === 'ram') {
-      return [
-        baseImg,
-        '/products/real-enterprise-ram-transparent.png',
-        '/products/commercial-elite.png'
-      ];
-    }
-    if (product.category === 'desktop') {
-      return [
-        baseImg,
         '/products/real-optiplex-pc-transparent.png',
-        '/products/real-optiplex-pc.png'
+        '/products/commercial-elite.png',
+        '/products/real-mobile-workstation-transparent.png'
       ];
     }
-    // Default corporate laptop angles
+    if (cat === 'monitor' || s.includes('display') || s.includes('p2419h') || s.includes('ultrasharp')) {
+      return [
+        '/products/real-dell-display-transparent.png',
+        '/products/dell-ultrasharp-display.png',
+        '/products/real-dell-display-transparent.png'
+      ];
+    }
+    if (cat === 'ram' || s.includes('ddr4') || s.includes('memory')) {
+      return [
+        '/products/real-enterprise-ram-transparent.png',
+        '/products/commercial-elite.png',
+        '/products/real-enterprise-ram-transparent.png'
+      ];
+    }
+    if (cat === 'desktop' || s.includes('optiplex')) {
+      return [
+        '/products/real-optiplex-pc-transparent.png',
+        '/products/commercial-elite.png',
+        '/products/real-optiplex-pc-transparent.png'
+      ];
+    }
+    if (s.includes('latitude')) {
+      return [
+        '/products/real-dell-latitude-transparent.png',
+        '/products/real-thinkpad-t14-transparent.png',
+        '/products/real-mobile-workstation-transparent.png'
+      ];
+    }
+    // Default ThinkPad & Corporate Laptops
     return [
-      baseImg,
       '/products/real-thinkpad-t14-transparent.png',
-      '/products/real-dell-latitude-transparent.png'
+      '/products/real-dell-latitude-transparent.png',
+      '/products/real-mobile-workstation-transparent.png'
     ];
   };
 
@@ -126,39 +133,42 @@ export default function ProductDetail() {
     openRFQ(`Instant 1-Click Order: ${qty}x ${product.title} (Est. ₹${(product.sale_price * qty).toLocaleString('en-IN')})`);
   };
 
-  return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-8 py-8 space-y-12 select-none">
-      {/* Top Back Link */}
-      <Link
-        to="/products"
-        className="inline-flex items-center gap-2 text-xs font-bold text-[#5A6B63] hover:text-[#0D3B2A] transition"
-      >
-        <ArrowLeft className="w-4 h-4 text-[#8A5E12]" />
-        <span>Back to Hardware Catalog</span>
-      </Link>
+  // Concise title formatting like Al-Tooba
+  const categoryKicker = product.category === 'laptop'
+    ? 'CORPORATE LAPTOPS'
+    : product.category === 'monitor'
+    ? 'DISPLAYS & MONITORS'
+    : product.category === 'gpu'
+    ? 'WORKSTATION GRAPHICS'
+    : product.category === 'ram'
+    ? 'CERTIFIED MEMORY'
+    : product.category?.toUpperCase() || 'ENTERPRISE HARDWARE';
 
-      {/* Main Al-Tooba 1:1 Product Section Grid */}
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-8 pt-4 sm:pt-6 pb-16 select-none">
+      
+      {/* Al-Tooba Exact 1:1 Product Section Grid (No wasted red-box dead space) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
         
         {/* Left Column: Vertical Thumbnails + Main Rounded Stage (Al-Tooba 1:1 Anatomy) */}
-        <div className="lg:col-span-7 flex flex-col-reverse sm:flex-row gap-4 items-start">
+        <div className="lg:col-span-7 flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 items-start">
           
           {/* Vertical Thumbnails Stack (Desktop: vertical flex-col, Mobile: horizontal flex-row) */}
-          <div className="flex sm:flex-col gap-3 w-full sm:w-24 shrink-0 overflow-x-auto sm:overflow-visible pb-2 sm:pb-0">
+          <div className="flex sm:flex-col gap-2.5 sm:gap-3 w-full sm:w-20 md:w-24 shrink-0 overflow-x-auto sm:overflow-visible pb-1 sm:pb-0">
             {galleryImages.map((img, idx) => (
               <button
                 key={idx}
                 type="button"
                 onClick={() => setSelectedImage(idx)}
-                className={`w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-white p-2.5 flex items-center justify-center transition-all cursor-pointer border-2 shrink-0 ${
+                className={`w-18 h-18 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-2xl bg-white p-2 flex items-center justify-center transition-all cursor-pointer border-2 shrink-0 ${
                   selectedImage === idx
                     ? 'border-[#0D3B2A] shadow-md ring-2 ring-[#0D3B2A]/20'
-                    : 'border-gray-200 hover:border-gray-400 opacity-70 hover:opacity-100'
+                    : 'border-gray-200 hover:border-gray-400 opacity-75 hover:opacity-100'
                 }`}
               >
                 <img
                   src={img}
-                  alt={`View ${idx + 1}`}
+                  alt={`Angle ${idx + 1}`}
                   className="w-full h-full object-contain filter drop-shadow-sm"
                 />
               </button>
@@ -166,13 +176,13 @@ export default function ProductDetail() {
           </div>
 
           {/* Main Large Image Stage Container (Rounded Linen/Warm Stage like Al-Tooba) */}
-          <div className="flex-1 w-full h-[380px] sm:h-[460px] md:h-[500px] bg-[#F4EFE6] rounded-3xl p-6 sm:p-10 flex items-center justify-center relative overflow-hidden border border-[#D4A24C]/25 shadow-inner">
+          <div className="flex-1 w-full h-[360px] sm:h-[440px] md:h-[480px] bg-[#F4EFE6] rounded-[28px] sm:rounded-[32px] p-6 sm:p-10 flex items-center justify-center relative overflow-hidden border border-[#D4A24C]/25 shadow-inner">
             {/* Top-Right Image Count Pill: 1/3 */}
             <div className="absolute top-4 right-4 bg-black/75 backdrop-blur text-white text-[11px] font-mono font-bold px-3 py-1 rounded-full z-10 shadow-sm">
               {selectedImage + 1}/{galleryImages.length}
             </div>
 
-            {/* Central Hardware Image */}
+            {/* Central Hardware Cutout Image (Transparent PNG on warm linen stage) */}
             <img
               src={galleryImages[selectedImage]}
               alt={product.title}
@@ -182,23 +192,23 @@ export default function ProductDetail() {
 
         </div>
 
-        {/* Right Column: Details, Pricing, Trust Grid, Stepper & 1-Click Buy Now */}
-        <div className="lg:col-span-5 space-y-5">
+        {/* Right Column: Title, Pricing, Trust Grid, Stepper & 1-Click Buy Now */}
+        <div className="lg:col-span-5 space-y-4 sm:space-y-5">
           
           {/* Category Kicker */}
           <div>
-            <span className="text-[11px] font-sans font-bold uppercase tracking-[0.2em] text-[#8A5E12] block mb-1.5">
-              — {product.category === 'laptop' ? 'CORPORATE LAPTOPS' : product.category === 'monitor' ? 'DISPLAYS & MONITORS' : product.category === 'ram' ? 'CERTIFIED MEMORY' : product.category?.toUpperCase() || 'ENTERPRISE HARDWARE'}
+            <span className="text-[11px] font-sans font-bold uppercase tracking-[0.2em] text-[#8A5E12] block mb-1">
+              — {categoryKicker}
             </span>
             
-            {/* Product Title */}
+            {/* Product Title (Playfair Serif, Deep Emerald) */}
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif text-[#0D3B2A] font-bold tracking-tight leading-snug">
               {product.title}
             </h1>
           </div>
 
           {/* Price Row: Main Price + Strikethrough + SAVE 20% Badge (Exact Al-Tooba Anatomy) */}
-          <div className="flex items-baseline gap-3 flex-wrap pt-1">
+          <div className="flex items-baseline gap-3 flex-wrap pt-0.5">
             <span className="text-3xl sm:text-4xl font-bold font-serif text-[#0D3B2A]">
               ₹{product.sale_price.toLocaleString('en-IN')}
             </span>
@@ -215,8 +225,8 @@ export default function ProductDetail() {
             )}
           </div>
 
-          {/* 2x2 Trust Guarantees Grid (Exact Al-Tooba Layout) */}
-          <div className="grid grid-cols-2 gap-y-3.5 gap-x-4 py-4 border-y border-[#D4A24C]/25 text-xs sm:text-[13px] text-[#0D3B2A] font-medium">
+          {/* 2x2 Trust Guarantees Grid (Exact Al-Tooba Layout with Gold Outline Icons) */}
+          <div className="grid grid-cols-2 gap-y-3 gap-x-4 py-3.5 border-y border-[#D4A24C]/25 text-xs sm:text-[13px] text-[#0D3B2A] font-medium">
             <div className="flex items-center gap-2">
               <ShieldCheck className="w-4 h-4 text-[#8A5E12] shrink-0" />
               <span>100% Grade A+ Certified</span>
@@ -236,14 +246,14 @@ export default function ProductDetail() {
           </div>
 
           {/* Description Excerpt with "READ MORE ∨" Toggle */}
-          <div className="space-y-1.5 pt-1">
+          <div className="space-y-1">
             <p className={`text-xs sm:text-sm text-[#5A6B63] leading-relaxed font-sans ${!readMore ? 'line-clamp-2' : ''}`}>
               {product.description || 'Enterprise Grade A+ certified machine sourced from top tier corporate refresh cycles. 30-point diagnostics tested with zero component degradation.'}
             </p>
             <button
               type="button"
               onClick={() => setReadMore(!readMore)}
-              className="text-[11px] font-bold uppercase tracking-wider text-[#0D3B2A] hover:text-[#8A5E12] flex items-center gap-1 transition-colors cursor-pointer pt-1"
+              className="text-[11px] font-bold uppercase tracking-wider text-[#0D3B2A] hover:text-[#8A5E12] flex items-center gap-1 transition-colors cursor-pointer pt-0.5"
             >
               <span>{readMore ? 'READ LESS' : 'READ MORE'}</span>
               <ChevronDown className={`w-3.5 h-3.5 transform transition-transform ${readMore ? 'rotate-180' : ''}`} />
@@ -251,7 +261,7 @@ export default function ProductDetail() {
           </div>
 
           {/* Quantity Stepper & "ADD TO CART" Pill Button Row */}
-          <div className="flex items-center gap-3 sm:gap-4 pt-3">
+          <div className="flex items-center gap-3 sm:gap-4 pt-2">
             <span className="text-xs font-bold uppercase tracking-wider text-[#0D3B2A] shrink-0 font-sans">
               QUANTITY:
             </span>
@@ -297,10 +307,10 @@ export default function ProductDetail() {
             <ArrowRight className="w-4 h-4 text-[#D4A24C] group-hover:translate-x-1 transition-transform" />
           </button>
 
-          {/* Technical Specifications Box */}
+          {/* Technical Specifications Accordion / Box */}
           {product.specs && Object.keys(product.specs).length > 0 && (
-            <div className="pt-4 border-t border-[#D4A24C]/20">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-[#0D3B2A] font-sans mb-3">
+            <div className="pt-3 border-t border-[#D4A24C]/20">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[#0D3B2A] font-sans mb-2">
                 TECHNICAL SPECIFICATIONS
               </h3>
               <div className="bg-white rounded-2xl border border-[#D4A24C]/25 p-4 text-xs space-y-2">
