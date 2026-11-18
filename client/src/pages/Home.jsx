@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useOutletContext } from 'react-router-dom';
 import {
   Laptop,
@@ -30,6 +30,19 @@ export default function Home() {
   const { openRFQ } = useOutletContext();
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
+  const heroVideoRef = useRef(null);
+
+  // Guarantee hero video playback on load
+  useEffect(() => {
+    if (heroVideoRef.current) {
+      const playPromise = heroVideoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((err) => {
+          console.log('Hero video autoplay notice:', err);
+        });
+      }
+    }
+  }, []);
 
   // Rental Calculator State
   const [calcTier, setCalcTier] = useState({
@@ -192,173 +205,213 @@ export default function Home() {
   return (
     <div className="space-y-20 pb-20 bg-[#FAF7F2] text-[#111827]">
       {/* 1. HERO SECTION - AL-TOOBA CINEMATIC AMBIENT VIDEO BACKGROUND */}
-      <section className="relative pt-16 pb-24 px-4 sm:px-8 border-b border-[#D4A24C]/20 bg-[#FAF7F2] overflow-hidden min-h-[640px] flex items-center">
+      <section className="relative pt-20 pb-24 px-4 sm:px-8 bg-[#072117] overflow-hidden min-h-[680px] lg:min-h-[760px] flex items-center border-b border-[#D4A24C]/30 text-white">
         {/* Ambient Video Background - Exact Al-Tooba Technique */}
         <video
+          ref={heroVideoRef}
           autoPlay
           loop
           muted
           playsInline
-          poster="https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=1600&auto=format&fit=crop&q=80"
-          className="absolute inset-0 w-full h-full object-cover object-center z-0 opacity-20 filter contrast-125 pointer-events-none"
+          preload="auto"
+          className="absolute inset-0 w-full h-full object-cover object-center z-0 opacity-70 filter contrast-110 brightness-90 pointer-events-none"
         >
-          <source src="https://assets.mixkit.co/videos/preview/mixkit-circuit-board-and-electronic-components-43184-large.mp4" type="video/mp4" />
+          <source src="/videos/hero-ambient.mp4" type="video/mp4" />
+          <source src="https://imrmuj-v6.myshopify.com/cdn/shop/videos/c/vp/e8f3a0cac3034ad7b4e656c5c6faa9c0/e8f3a0cac3034ad7b4e656c5c6faa9c0.HD-720p-4.5Mbps-91834390.mp4" type="video/mp4" />
         </video>
 
-        {/* Ambient Video Overlay Gradient for Text Crispness */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#FAF7F2] via-[#FAF7F2]/90 to-[#FAF7F2]/75 backdrop-blur-[0.5px] z-[1]"></div>
-        <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(#D4A24C_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none z-[1]"></div>
+        {/* Ambient Video Overlay Gradient for Text Crispness - Al-Tooba Emerald & Vignette */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#072117]/65 via-[#072117]/40 to-[#072117]/90 z-[1] pointer-events-none"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#072117]/95 via-[#072117]/50 to-transparent z-[1] pointer-events-none hidden lg:block"></div>
+        <div className="absolute inset-0 opacity-[0.05] bg-[radial-gradient(#D4A24C_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none z-[1]"></div>
 
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10 w-full">
           {/* Left Column: Typography & CTAs */}
           <div className="lg:col-span-7 space-y-6">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#F3E8D2] border border-[#D4A24C]/40 text-xs font-semibold text-[#0D3B2A] tracking-wide">
-              <span className="w-2 h-2 rounded-full bg-[#D4A24C] animate-pulse"></span>
-              <span>— CERTIFIED COMMERCIAL HARDWARE & PROVEN FLEET LEASING</span>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0D3B2A]/90 border border-[#D4A24C]/50 text-xs font-semibold text-[#D4A24C] tracking-wide backdrop-blur-md shadow-lg">
+              <Sparkles className="w-3.5 h-3.5 text-[#D4A24C] animate-pulse" />
+              <span>CERTIFIED COMMERCIAL HARDWARE & PROVEN FLEET LEASING</span>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-[#0D3B2A] font-serif leading-[1.15]">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-white font-serif leading-[1.12] drop-shadow-[0_10px_25px_rgba(0,0,0,0.85)]">
               Authentic Commercial IT Hardware & <br />
-              <span className="italic font-normal text-[#D4A24C]">Bulk Fleet Rentals</span> at 60% Lower TCO.
+              <span className="text-[#F59E0B] italic font-serif font-extrabold drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">
+                Bulk Fleet Rentals
+              </span> at 60% Lower TCO.
             </h1>
 
-            <p className="text-base sm:text-lg text-[#5A6B63] max-w-2xl leading-relaxed">
-              Equip your workforce with Grade A+ certified commercial laptops, high-performance workstation GPUs, and frameless IPS displays. Available for <strong className="text-[#0D3B2A]">immediate bulk purchase</strong> or <strong className="text-[#0D3B2A]">flexible monthly rental</strong> with guaranteed same-day replacement SLA.
+            <p className="text-base sm:text-lg text-white/90 max-w-2xl leading-relaxed drop-shadow-[0_4px_10px_rgba(0,0,0,0.8)] font-sans">
+              Equip your workforce with Grade A+ certified commercial laptops, high-performance workstation GPUs, and frameless IPS displays. Available for <strong className="text-white font-bold underline decoration-[#D4A24C]">immediate bulk purchase</strong> or <strong className="text-white font-bold underline decoration-[#D4A24C]">flexible monthly rental</strong> with guaranteed same-day replacement SLA.
             </p>
 
             {/* Action Buttons including Watch Reels Link */}
-            <div className="pt-2 flex flex-wrap items-center gap-3">
+            <div className="pt-2 flex flex-wrap items-center gap-3.5">
               <button
                 onClick={() => openRFQ('Priority Bulk Requirement')}
-                className="px-7 py-3.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-[#FAF7F2] font-bold text-xs uppercase tracking-widest shadow-xl border border-[#D4A24C]/40 transition flex items-center gap-2 transform hover:-translate-y-0.5"
+                className="group relative overflow-hidden rounded-full px-8 py-4 text-xs font-sans font-extrabold uppercase tracking-[0.15em] bg-gradient-to-r from-[#eec373] via-[#D4A24C] to-[#eec373] text-[#072117] shadow-[0_8px_25px_rgba(212,162,76,0.5)] transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] cursor-pointer flex items-center gap-2"
               >
-                <FileCheck2 className="w-4 h-4 text-[#D4A24C]" />
-                <span>Get Instant Quote</span>
+                <span className="relative z-10 flex items-center gap-2">
+                  <FileCheck2 className="w-4 h-4 text-[#072117]" />
+                  <span>Get Instant Quote</span>
+                </span>
+                <div className="absolute inset-0 bg-white/25 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" />
               </button>
 
               <a
+                href="#video-reels"
+                className="px-6 py-4 rounded-full bg-black/50 hover:bg-black/80 text-white border border-[#D4A24C]/60 font-bold text-xs uppercase tracking-widest backdrop-blur-md transition-all flex items-center gap-2.5 shadow-xl hover:border-[#D4A24C] cursor-pointer group"
+              >
+                <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B] animate-ping"></span>
+                <span>▶ Watch Video Reels</span>
+              </a>
+
+              <a
                 href="#rental-calculator"
-                className="px-6 py-3.5 rounded-full bg-transparent hover:bg-[#D4A24C]/10 border-2 border-[#D4A24C] text-[#0D3B2A] font-bold text-xs uppercase tracking-widest transition flex items-center gap-2 shadow-sm"
+                className="px-6 py-4 rounded-full bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold text-xs uppercase tracking-widest backdrop-blur-md transition flex items-center gap-2 shadow-sm"
               >
                 <Calculator className="w-4 h-4 text-[#D4A24C]" />
                 <span>Calculate Rental</span>
               </a>
-
-              <a
-                href="#video-reels"
-                className="px-6 py-3.5 rounded-full bg-white/90 hover:bg-white text-[#0D3B2A] border border-[#D4A24C]/60 font-bold text-xs uppercase tracking-widest transition flex items-center gap-2 shadow-md hover:border-[#0D3B2A]"
-              >
-                <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></span>
-                <span>▶ Watch Video Reels</span>
-              </a>
             </div>
 
             {/* Trust Mini Strip */}
-            <div className="pt-6 grid grid-cols-2 sm:grid-cols-4 gap-4 border-t border-[#D4A24C]/20">
+            <div className="pt-6 grid grid-cols-2 sm:grid-cols-4 gap-4 border-t border-white/15">
               <div>
-                <div className="text-2xl font-bold text-[#0D3B2A] font-serif">1,450+</div>
-                <div className="text-xs text-[#5A6B63] font-medium tracking-wide">Ready in Warehouse</div>
+                <div className="text-2xl sm:text-3xl font-bold text-white font-serif drop-shadow-md">1,450+</div>
+                <div className="text-xs text-white/70 font-medium tracking-wide">Ready in Warehouse</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-[#0D3B2A] font-serif">24-48h</div>
-                <div className="text-xs text-[#5A6B63] font-medium tracking-wide">On-Site SLA Swap</div>
+                <div className="text-2xl sm:text-3xl font-bold text-white font-serif drop-shadow-md">24-48h</div>
+                <div className="text-xs text-white/70 font-medium tracking-wide">On-Site SLA Swap</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-[#0D3B2A] font-serif">100%</div>
-                <div className="text-xs text-[#5A6B63] font-medium tracking-wide">GST Input Credit</div>
+                <div className="text-2xl sm:text-3xl font-bold text-white font-serif drop-shadow-md">100%</div>
+                <div className="text-xs text-white/70 font-medium tracking-wide">GST Input Credit</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-[#D4A24C] font-serif">Grade A+</div>
-                <div className="text-xs text-[#5A6B63] font-medium tracking-wide">30-Point Certified</div>
+                <div className="text-2xl sm:text-3xl font-bold text-[#F59E0B] font-serif drop-shadow-md">Grade A+</div>
+                <div className="text-xs text-white/70 font-medium tracking-wide">30-Point Certified</div>
               </div>
             </div>
           </div>
 
-          {/* Right Column: Live Fleet Dispatch Display */}
+          {/* Right Column: Live Fleet Dispatch Display - Luxury Emerald Glass Console */}
           <div className="lg:col-span-5">
-            <div className="bg-white rounded-3xl p-6 sm:p-7 shadow-xl border border-[#D4A24C]/30 space-y-5 relative">
-              <div className="flex items-center justify-between pb-4 border-b border-[#FAF7F2]">
+            <div className="bg-[#0D3B2A]/85 backdrop-blur-xl rounded-3xl p-6 sm:p-7 shadow-[0_25px_60px_rgba(0,0,0,0.6)] border border-[#D4A24C]/40 space-y-5 relative">
+              <div className="flex items-center justify-between pb-4 border-b border-[#D4A24C]/20">
                 <div>
                   <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#D4A24C] font-bold">
                     Warehouse Dispatch
                   </span>
-                  <h3 className="text-base font-bold text-[#0D3B2A] font-serif">Live Fleet Inventory Status</h3>
+                  <h3 className="text-base font-bold text-white font-serif">Live Fleet Inventory Status</h3>
                 </div>
-                <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-[#F3E8D2] text-[#0D3B2A] border border-[#D4A24C]/40 flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#D4A24C] animate-ping"></span> Live Stock
+                <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-[#072117] text-[#D4A24C] border border-[#D4A24C]/40 flex items-center gap-1.5 shadow-inner">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-ping"></span> Live Stock
                 </span>
               </div>
 
               {/* Item 1 */}
-              <div className="p-3.5 rounded-2xl bg-[#FAF7F2] border border-[#D4A24C]/20 flex items-center justify-between hover:border-[#D4A24C] transition">
+              <div className="p-3.5 rounded-2xl bg-[#072117]/80 border border-[#D4A24C]/25 flex items-center justify-between hover:border-[#D4A24C] transition">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#0D3B2A] text-[#D4A24C] flex items-center justify-center font-bold">
+                  <div className="w-10 h-10 rounded-full bg-[#0D3B2A] text-[#D4A24C] border border-[#D4A24C]/30 flex items-center justify-center font-bold">
                     <Laptop className="w-5 h-5" />
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-[#0D3B2A]">ThinkPad T490 / T14 Fleets</h4>
-                    <p className="text-[11px] text-[#5A6B63]">Core i5/i7 • 16GB • 512GB NVMe</p>
+                    <h4 className="text-xs font-bold text-white">ThinkPad T490 / T14 Fleets</h4>
+                    <p className="text-[11px] text-white/70">Core i5/i7 • 16GB • 512GB NVMe</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <span className="text-xs font-bold text-[#0D3B2A] font-mono">85 Units</span>
-                  <p className="text-[10px] text-[#D4A24C] font-medium">Rent ₹1,450/mo</p>
+                  <span className="text-xs font-bold text-[#F59E0B] font-mono">85 Units</span>
+                  <p className="text-[10px] text-white/80 font-medium">Rent ₹1,450/mo</p>
                 </div>
               </div>
 
               {/* Item 2 */}
-              <div className="p-3.5 rounded-2xl bg-[#FAF7F2] border border-[#D4A24C]/20 flex items-center justify-between hover:border-[#D4A24C] transition">
+              <div className="p-3.5 rounded-2xl bg-[#072117]/80 border border-[#D4A24C]/25 flex items-center justify-between hover:border-[#D4A24C] transition">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#0D3B2A] text-[#D4A24C] flex items-center justify-center font-bold">
+                  <div className="w-10 h-10 rounded-full bg-[#0D3B2A] text-[#D4A24C] border border-[#D4A24C]/30 flex items-center justify-center font-bold">
                     <Monitor className="w-5 h-5" />
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-[#0D3B2A]">Dell UltraSharp 24" Displays</h4>
-                    <p className="text-[11px] text-[#5A6B63]">Height Adjustable Pivot Stand</p>
+                    <h4 className="text-xs font-bold text-white">Dell UltraSharp 24" Displays</h4>
+                    <p className="text-[11px] text-white/70">Height Adjustable Pivot Stand</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <span className="text-xs font-bold text-[#0D3B2A] font-mono">110 Units</span>
-                  <p className="text-[10px] text-[#D4A24C] font-medium">Wholesale ₹5,499</p>
+                  <span className="text-xs font-bold text-[#F59E0B] font-mono">110 Units</span>
+                  <p className="text-[10px] text-white/80 font-medium">Wholesale ₹5,499</p>
                 </div>
               </div>
 
               {/* Item 3 */}
-              <div className="p-3.5 rounded-2xl bg-[#FAF7F2] border border-[#D4A24C]/20 flex items-center justify-between hover:border-[#D4A24C] transition">
+              <div className="p-3.5 rounded-2xl bg-[#072117]/80 border border-[#D4A24C]/25 flex items-center justify-between hover:border-[#D4A24C] transition">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#0D3B2A] text-[#D4A24C] flex items-center justify-center font-bold">
+                  <div className="w-10 h-10 rounded-full bg-[#0D3B2A] text-[#D4A24C] border border-[#D4A24C]/30 flex items-center justify-center font-bold">
                     <Cpu className="w-5 h-5" />
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-[#0D3B2A]">16GB DDR4 & RTX 3060</h4>
-                    <p className="text-[11px] text-[#5A6B63]">MemTest86 & FurMark Certified</p>
+                    <h4 className="text-xs font-bold text-white">16GB DDR4 & RTX 3060</h4>
+                    <p className="text-[11px] text-white/70">MemTest86 & FurMark Certified</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <span className="text-xs font-bold text-[#0D3B2A] font-mono">In Stock</span>
-                  <p className="text-[10px] text-[#D4A24C] font-medium">Ready to Ship</p>
+                  <span className="text-xs font-bold text-[#F59E0B] font-mono">In Stock</span>
+                  <p className="text-[10px] text-white/80 font-medium">Ready to Ship</p>
                 </div>
               </div>
 
               <button
                 onClick={() => openRFQ('Priority Sample Inspection')}
-                className="w-full py-3 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs uppercase tracking-widest transition shadow border border-[#D4A24C]/40 flex items-center justify-center gap-2"
+                className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#eec373] via-[#D4A24C] to-[#eec373] text-[#072117] font-bold text-xs uppercase tracking-widest transition shadow-lg hover:brightness-105 active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>Book Priority Inspection Sample</span>
-                <ArrowRight className="w-4 h-4 text-[#D4A24C]" />
+                <ArrowRight className="w-4 h-4 text-[#072117]" />
               </button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 2. AL-TOOBA CONTINUOUS MARQUEE RIBBON */}
-      <div className="bg-[#072117] text-[#D4A24C] py-3.5 border-y border-[#D4A24C]/30 overflow-hidden font-serif tracking-widest text-xs uppercase">
-        <div className="max-w-7xl mx-auto px-4 flex flex-wrap justify-between items-center gap-4 text-center">
-          <span className="flex items-center gap-2">✦ 100% TAX INVOICE WITH GSTR-2B</span>
-          <span className="flex items-center gap-2">✦ 30-POINT DIAGNOSTIC CERTIFIED</span>
-          <span className="flex items-center gap-2">✦ 24-48 HOUR ON-SITE SLA SWAP</span>
-          <span className="flex items-center gap-2">✦ PAN-INDIA CORPORATE DISPATCH</span>
+      {/* 2. AL-TOOBA RUNNING GOLD TICKER MARQUEE STRIP */}
+      <div className="w-full bg-[#183623] border-y border-[#D4A24C]/30 py-3.5 sm:py-4 overflow-hidden relative z-10 select-none [contain:paint]">
+        <div className="animate-marquee">
+          <div className="flex shrink-0 items-center gap-10 sm:gap-14 text-white/90 font-serif italic text-sm sm:text-base pr-10 sm:pr-14">
+            {[...Array(3)].map((_, i) => (
+              <span key={i} className="flex items-center gap-4 sm:gap-6 shrink-0">
+                <span>Enterprise Refurbished Hardware to Perfection</span>
+                <span className="text-[#F59E0B] font-sans font-bold text-[10px] sm:text-xs uppercase tracking-widest">
+                  ✦ NOVA INFOTECH
+                </span>
+                <span>24-48h Pan-India Replacement SLA</span>
+                <span className="text-[#F59E0B] font-sans font-bold text-[10px] sm:text-xs uppercase tracking-widest">
+                  ✦ 100% GSTR-2B TAX CREDIT
+                </span>
+                <span>Grade A+ 30-Point Rigorously Certified</span>
+                <span className="text-[#F59E0B] font-sans font-bold text-[10px] sm:text-xs uppercase tracking-widest">
+                  ✦ ZERO HIDDEN CHARGES
+                </span>
+              </span>
+            ))}
+          </div>
+          <div className="flex shrink-0 items-center gap-10 sm:gap-14 text-white/90 font-serif italic text-sm sm:text-base pr-10 sm:pr-14" aria-hidden="true">
+            {[...Array(3)].map((_, i) => (
+              <span key={`dup-${i}`} className="flex items-center gap-4 sm:gap-6 shrink-0">
+                <span>Enterprise Refurbished Hardware to Perfection</span>
+                <span className="text-[#F59E0B] font-sans font-bold text-[10px] sm:text-xs uppercase tracking-widest">
+                  ✦ NOVA INFOTECH
+                </span>
+                <span>24-48h Pan-India Replacement SLA</span>
+                <span className="text-[#F59E0B] font-sans font-bold text-[10px] sm:text-xs uppercase tracking-widest">
+                  ✦ 100% GSTR-2B TAX CREDIT
+                </span>
+                <span>Grade A+ 30-Point Rigorously Certified</span>
+                <span className="text-[#F59E0B] font-sans font-bold text-[10px] sm:text-xs uppercase tracking-widest">
+                  ✦ ZERO HIDDEN CHARGES
+                </span>
+              </span>
+            ))}
+          </div>
         </div>
       </div>
 
