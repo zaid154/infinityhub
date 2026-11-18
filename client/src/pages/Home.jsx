@@ -28,6 +28,7 @@ import VideoReels from '../components/VideoReels';
 import CategoriesMoorishArch from '../components/CategoriesMoorishArch';
 import BestSellersSection from '../components/BestSellersSection';
 import CompleteCollectionSection from '../components/CompleteCollectionSection';
+import RentalCalculator from '../components/RentalCalculator';
 
 export default function Home() {
   const { openRFQ } = useOutletContext();
@@ -46,20 +47,6 @@ export default function Home() {
       }
     }
   }, []);
-
-  // Rental Calculator State
-  const [calcTier, setCalcTier] = useState({
-    key: 'standard',
-    basePrice: 1350,
-    name: 'Office Essential (Core i5)'
-  });
-  const [calcQty, setCalcQty] = useState(15);
-  const [calcDuration, setCalcDuration] = useState({
-    key: '6m',
-    multiplier: 1.0,
-    name: '6 Months (Std)'
-  });
-  const [includeGst, setIncludeGst] = useState(false);
 
   // Helper to format specs for any hardware category
   const getProductSpecSummary = (p) => {
@@ -117,18 +104,6 @@ export default function Home() {
     };
     fetchFeatured();
   }, []);
-
-  const volumeDiscountPercent = calcQty >= 100 ? 10 : calcQty >= 50 ? 5 : 0;
-  const basePerUnit = Math.round(calcTier.basePrice * calcDuration.multiplier);
-  const perUnitRental = Math.round(basePerUnit * (1 - volumeDiscountPercent / 100));
-  const subtotalMonthly = perUnitRental * calcQty;
-  const gstAmount = Math.round(subtotalMonthly * 0.18);
-  const totalMonthlyRental = includeGst ? subtotalMonthly + gstAmount : subtotalMonthly;
-
-  const handleRentalBook = () => {
-    const context = `Rental Fleet: ${calcQty}x ${calcTier.name} for ${calcDuration.name} (Subtotal: ₹${subtotalMonthly.toLocaleString('en-IN')}/mo${includeGst ? ' + 18% GST: ₹' + totalMonthlyRental.toLocaleString('en-IN') : ''})`;
-    openRFQ(context);
-  };
 
   const handleBuybackSubmit = async (e) => {
     e.preventDefault();
@@ -447,246 +422,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 7. INTERACTIVE CORPORATE RENTAL CALCULATOR - AL-TOOBA DARK FOREST STYLE */}
-      <section id="rental-calculator" className="max-w-6xl mx-auto px-4 sm:px-8">
-        <div className="bg-[#072117] text-white rounded-3xl p-8 sm:p-12 shadow-2xl border border-[#D4A24C]/40 space-y-8">
-          <div className="text-center max-w-2xl mx-auto space-y-2">
-            <span className="text-xs font-mono uppercase tracking-widest text-[#D4A24C] font-bold">
-              Instant Operating Cost Projection
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-serif font-normal text-[#FAF7F2]">
-              Interactive Corporate Rental Calculator
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-300">
-              Customize device tier, fleet size, and tenure with zero maintenance overhead and GSTR-2B input credit.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center pt-4">
-            {/* Controls */}
-            <div className="lg:col-span-7 space-y-6">
-              {/* 1. Tier Selection */}
-              <div>
-                <label className="block text-xs font-mono uppercase text-[#D4A24C] font-bold mb-3">
-                  1. Machine Configuration Tier
-                </label>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                  <button
-                    onClick={() =>
-                      setCalcTier({
-                        key: 'standard',
-                        basePrice: 1350,
-                        name: 'Office Essential (Core i5)'
-                      })
-                    }
-                    className={`p-3.5 rounded-2xl text-left border transition ${
-                      calcTier.key === 'standard'
-                        ? 'bg-[#0D3B2A] border-[#D4A24C] text-white shadow-md'
-                        : 'bg-black/30 border-slate-700 text-slate-300 hover:border-slate-500'
-                    }`}
-                  >
-                    <span className="font-bold block font-serif">Office Essential</span>
-                    <span className="text-[11px] opacity-80 block">Core i5 • 8GB • SSD</span>
-                    <span className="text-xs font-mono mt-2 block font-semibold text-[#D4A24C]">
-                      ₹1,350/mo
-                    </span>
-                  </button>
-
-                  <button
-                    onClick={() =>
-                      setCalcTier({
-                        key: 'developer',
-                        basePrice: 1850,
-                        name: 'Developer Pro (Core i7)'
-                      })
-                    }
-                    className={`p-3.5 rounded-2xl text-left border transition ${
-                      calcTier.key === 'developer'
-                        ? 'bg-[#0D3B2A] border-[#D4A24C] text-white shadow-md'
-                        : 'bg-black/30 border-slate-700 text-slate-300 hover:border-slate-500'
-                    }`}
-                  >
-                    <span className="font-bold block font-serif">Developer Pro</span>
-                    <span className="text-[11px] opacity-80 block">Core i7 • 16GB • NVMe</span>
-                    <span className="text-xs font-mono mt-2 block font-semibold text-[#D4A24C]">
-                      ₹1,850/mo
-                    </span>
-                  </button>
-
-                  <button
-                    onClick={() =>
-                      setCalcTier({
-                        key: 'workstation',
-                        basePrice: 3200,
-                        name: 'VFX / GPU Workstation'
-                      })
-                    }
-                    className={`p-3.5 rounded-2xl text-left border transition ${
-                      calcTier.key === 'workstation'
-                        ? 'bg-[#0D3B2A] border-[#D4A24C] text-white shadow-md'
-                        : 'bg-black/30 border-slate-700 text-slate-300 hover:border-slate-500'
-                    }`}
-                  >
-                    <span className="font-bold block font-serif">VFX / GPU Rig</span>
-                    <span className="text-[11px] opacity-80 block">32GB • RTX Graphics</span>
-                    <span className="text-xs font-mono mt-2 block font-semibold text-[#D4A24C]">
-                      ₹3,200/mo
-                    </span>
-                  </button>
-                </div>
-              </div>
-
-              {/* 2. Quantity Slider */}
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <label className="text-xs font-mono uppercase text-[#D4A24C] font-bold">
-                    2. Device Fleet Quantity
-                  </label>
-                  <span className="text-sm font-bold font-mono text-[#D4A24C] bg-[#0D3B2A] px-3 py-1 rounded-full border border-[#D4A24C]/40">
-                    {calcQty} Laptops
-                  </span>
-                </div>
-                <input
-                  type="range"
-                  min="5"
-                  max="150"
-                  step="5"
-                  value={calcQty}
-                  onChange={(e) => setCalcQty(Number(e.target.value))}
-                  className="w-full h-2 bg-black/40 rounded-lg appearance-none cursor-pointer accent-[#D4A24C]"
-                />
-                <div className="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
-                  <span>5 Units (MOQ)</span>
-                  <span>50 Units</span>
-                  <span>100 Units</span>
-                  <span>150+ Units</span>
-                </div>
-              </div>
-
-              {/* 3. Duration Selector */}
-              <div>
-                <label className="block text-xs font-mono uppercase text-[#D4A24C] font-bold mb-3">
-                  3. Contract Tenure
-                </label>
-                <div className="grid grid-cols-3 gap-3 text-xs">
-                  <button
-                    onClick={() =>
-                      setCalcDuration({ key: '1-3m', multiplier: 1.15, name: '1–3 Months' })
-                    }
-                    className={`py-2.5 rounded-full font-bold border transition ${
-                      calcDuration.key === '1-3m'
-                        ? 'bg-[#0D3B2A] border-[#D4A24C] text-white'
-                        : 'bg-black/30 border-slate-700 text-slate-300'
-                    }`}
-                  >
-                    1–3 Months
-                  </button>
-                  <button
-                    onClick={() =>
-                      setCalcDuration({ key: '6m', multiplier: 1.0, name: '6 Months (Std)' })
-                    }
-                    className={`py-2.5 rounded-full font-bold border transition ${
-                      calcDuration.key === '6m'
-                        ? 'bg-[#0D3B2A] border-[#D4A24C] text-white'
-                        : 'bg-black/30 border-slate-700 text-slate-300'
-                    }`}
-                  >
-                    6 Months
-                  </button>
-                  <button
-                    onClick={() =>
-                      setCalcDuration({ key: '12m', multiplier: 0.85, name: '12+ Months (15% Off)' })
-                    }
-                    className={`py-2.5 rounded-full font-bold border transition ${
-                      calcDuration.key === '12m'
-                        ? 'bg-[#0D3B2A] border-[#D4A24C] text-white'
-                        : 'bg-black/30 border-slate-700 text-slate-300'
-                    }`}
-                  >
-                    12+ Mo (15% Off)
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Estimate Summary Box */}
-            <div className="lg:col-span-5 bg-[#0D3B2A]/90 p-6 sm:p-7 rounded-3xl border border-[#D4A24C]/40 space-y-5 shadow-2xl">
-              <div className="flex items-center justify-between">
-                <span className="text-xs uppercase tracking-wider text-slate-300 font-mono font-semibold">
-                  Fleet Quotation Estimate
-                </span>
-                {volumeDiscountPercent > 0 && (
-                  <span className="px-2.5 py-0.5 rounded-full bg-[#D4A24C] text-[#0D3B2A] text-[10px] font-bold">
-                    {volumeDiscountPercent}% Fleet Rebate Applied
-                  </span>
-                )}
-              </div>
-
-              <div>
-                <div className="text-3xl sm:text-4xl font-extrabold text-[#D4A24C] font-mono">
-                  ₹{totalMonthlyRental.toLocaleString('en-IN')}{' '}
-                  <span className="text-xs font-normal text-slate-300 font-sans">
-                    {includeGst ? '/ month (Incl. 18% GST)' : '/ month + 18% GST'}
-                  </span>
-                </div>
-                <div className="mt-3 flex items-center justify-between text-xs text-slate-300 bg-black/30 px-3 py-2 rounded-2xl border border-slate-700">
-                  <span>Include 18% GST in Display</span>
-                  <button
-                    type="button"
-                    onClick={() => setIncludeGst(!includeGst)}
-                    className={`w-11 h-6 flex items-center rounded-full p-1 transition ${
-                      includeGst ? 'bg-[#D4A24C]' : 'bg-slate-700'
-                    }`}
-                  >
-                    <div
-                      className={`bg-white w-4 h-4 rounded-full shadow-md transform transition ${
-                        includeGst ? 'translate-x-5' : ''
-                      }`}
-                    />
-                  </button>
-                </div>
-              </div>
-
-              <p className="text-xs text-emerald-300 font-medium flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#D4A24C]" /> 24-48h SLA swap standby machines & on-site repair included
-              </p>
-
-              <div className="space-y-2 text-xs text-slate-200 pt-3 border-t border-[#D4A24C]/20">
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Selected Tier:</span>
-                  <span className="font-semibold text-white">{calcTier.name}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Fleet Volume:</span>
-                  <span className="font-semibold text-white">{calcQty} Units</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Tenure:</span>
-                  <span className="font-semibold text-white">{calcDuration.name}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Net Rate Per Unit:</span>
-                  <span className="font-semibold text-[#D4A24C]">₹{perUnitRental}/mo</span>
-                </div>
-                {includeGst && (
-                  <div className="flex justify-between text-slate-300 border-t border-slate-700/60 pt-2">
-                    <span>18% GST (100% Tax Credit on GSTR-2B):</span>
-                    <span className="font-mono text-[#D4A24C]">+₹{gstAmount.toLocaleString('en-IN')}</span>
-                  </div>
-                )}
-              </div>
-
-              <button
-                onClick={handleRentalBook}
-                className="w-full py-3.5 rounded-full bg-[#D4A24C] hover:bg-[#c5943b] text-[#0D3B2A] font-bold text-xs uppercase tracking-widest transition shadow-lg flex items-center justify-center gap-2"
-              >
-                <span>Lock In This Fleet Quotation</span>
-                <Send className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* 8. COMPACT LUXURY CORPORATE RENTAL CALCULATOR */}
+      <RentalCalculator onOpenRFQ={openRFQ} />
 
       {/* 8. 30-POINT TESTING PROTOCOL */}
       <section className="max-w-7xl mx-auto px-4 sm:px-8 space-y-10">
