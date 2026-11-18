@@ -272,6 +272,7 @@ export default function Products() {
             <div className="space-y-1">
               {[
                 { id: 'all', label: 'All Conditions' },
+                { id: 'brand_new', label: '★ Brand New (Sealed)' },
                 { id: 'grade_a_plus', label: 'Grade A+ Pristine' },
                 { id: 'grade_a', label: 'Grade A Corporate' },
                 { id: 'grade_b', label: 'Grade B Budget' }
@@ -331,9 +332,29 @@ export default function Products() {
                   <div>
                     {/* Compact Single-Row Top Meta */}
                     <div className="flex items-center justify-between mb-3 text-[10px]">
-                      <span className="px-2 py-0.5 rounded-full font-bold bg-[#F3E8D2] text-[#0D3B2A] tracking-wider uppercase">
-                        {p.condition.replace(/_/g, ' ')}
-                      </span>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className={`px-2 py-0.5 rounded-full font-bold tracking-wider uppercase ${
+                          p.condition === 'brand_new'
+                            ? 'bg-amber-100 text-amber-900 border border-amber-300 font-extrabold'
+                            : p.condition === 'open_box'
+                            ? 'bg-sky-100 text-sky-900 border border-sky-300'
+                            : 'bg-[#F3E8D2] text-[#0D3B2A]'
+                        }`}>
+                          {p.condition === 'brand_new' ? '★ Brand New' : p.condition.replace(/_/g, ' ')}
+                        </span>
+
+                        {availableFor === 'all' && (
+                          <span className={`px-1.5 py-0.5 rounded font-bold uppercase text-[9px] ${
+                            p.available_for === 'rent'
+                              ? 'bg-purple-100 text-purple-800'
+                              : p.available_for === 'sale'
+                              ? 'bg-emerald-100 text-emerald-800'
+                              : 'bg-stone-100 text-stone-700'
+                          }`}>
+                            {p.available_for === 'rent' ? 'Rent Only' : p.available_for === 'sale' ? 'Buy Only' : 'Buy & Rent'}
+                          </span>
+                        )}
+                      </div>
 
                       {availableFor === 'rent' ? (
                         <span className="font-mono text-[#8A5E12] font-bold">
@@ -344,11 +365,13 @@ export default function Products() {
                           Stock: {p.sale_stock !== undefined ? p.sale_stock : p.stock_quantity} Units
                         </span>
                       ) : (
-                        <span className="font-mono text-[#5A6B63] font-semibold">
+                        <span className="font-mono text-[#5A6B63] font-semibold text-[10px]">
                           {p.available_for === 'both' ? (
                             <>Buy: <strong className="text-[#0D3B2A]">{p.sale_stock || p.stock_quantity}</strong> · Fleet: <strong className="text-[#8A5E12]">{p.rental_stock || 0}</strong></>
+                          ) : p.available_for === 'rent' ? (
+                            <>Fleet: <strong className="text-[#8A5E12]">{p.rental_stock || 0}</strong> Units</>
                           ) : (
-                            <>Stock: <strong className="text-[#0D3B2A]">{p.sale_stock || p.stock_quantity}</strong></>
+                            <>Stock: <strong className="text-[#0D3B2A]">{p.sale_stock || p.stock_quantity}</strong> Units</>
                           )}
                         </span>
                       )}
@@ -379,7 +402,7 @@ export default function Products() {
 
                   {/* Context-Aware Bottom Section (Different Cards for Rent vs Buy vs All) */}
                   <div className="pt-3 mt-3 border-t border-[#D4A24C]/20 space-y-2.5">
-                    {availableFor === 'rent' ? (
+                    {availableFor === 'rent' || p.available_for === 'rent' ? (
                       /* DEDICATED RENTAL CARD */
                       <>
                         <div className="flex items-baseline justify-between">
@@ -402,7 +425,7 @@ export default function Products() {
                           <span>Rent Fleet (Add to Cart)</span>
                         </button>
                       </>
-                    ) : availableFor === 'sale' ? (
+                    ) : availableFor === 'sale' || p.available_for === 'sale' ? (
                       /* DEDICATED BUY CARD */
                       <>
                         <div className="flex items-baseline justify-between">
@@ -426,7 +449,7 @@ export default function Products() {
                         </button>
                       </>
                     ) : (
-                      /* BALANCED ALL ITEMS VIEW */
+                      /* BALANCED ALL ITEMS VIEW (Available for Both) */
                       <>
                         <div className="flex items-baseline justify-between">
                           <div>
@@ -443,42 +466,22 @@ export default function Products() {
                         </div>
 
                         <div className="grid grid-cols-2 gap-2">
-                          {p.available_for === 'both' ? (
-                            <>
-                              <button
-                                onClick={() => addToRentalCart(p, 1, '6_months')}
-                                className="w-full py-2 rounded-full bg-[#FAF7F2] hover:bg-[#F3E8D2] text-[#0D3B2A] text-[11px] font-bold uppercase tracking-wider transition border border-[#D4A24C]/40 flex items-center justify-center gap-1 cursor-pointer"
-                                title="Add to Rental Fleet Cart"
-                              >
-                                <Repeat className="w-3 h-3 text-[#D4A24C]" />
-                                <span>Rent</span>
-                              </button>
-                              <button
-                                onClick={() => addToBuyCart(p, 1)}
-                                className="w-full py-2 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-[11px] font-bold uppercase tracking-wider transition shadow border border-[#D4A24C]/40 flex items-center justify-center gap-1 cursor-pointer"
-                                title="Add to Direct Purchase Cart"
-                              >
-                                <ShoppingCart className="w-3 h-3 text-[#D4A24C]" />
-                                <span>Buy</span>
-                              </button>
-                            </>
-                          ) : (
-                            <>
-                              <button
-                                onClick={() => openRFQ(`${p.title} - Wholesale Purchase Inquiry`)}
-                                className="w-full py-2 rounded-full bg-[#FAF7F2] hover:bg-[#F3E8D2] text-[#0D3B2A] text-[11px] font-bold uppercase tracking-wider transition border border-[#D4A24C]/40 cursor-pointer"
-                              >
-                                Inquire
-                              </button>
-                              <button
-                                onClick={() => addToBuyCart(p, 1)}
-                                className="w-full py-2 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-[11px] font-bold uppercase tracking-wider transition shadow border border-[#D4A24C]/40 flex items-center justify-center gap-1 cursor-pointer"
-                              >
-                                <ShoppingCart className="w-3 h-3 text-[#D4A24C]" />
-                                <span>Buy</span>
-                              </button>
-                            </>
-                          )}
+                          <button
+                            onClick={() => addToRentalCart(p, 1, '6_months')}
+                            className="w-full py-2 rounded-full bg-[#FAF7F2] hover:bg-[#F3E8D2] text-[#0D3B2A] text-[11px] font-bold uppercase tracking-wider transition border border-[#D4A24C]/40 flex items-center justify-center gap-1 cursor-pointer"
+                            title="Add to Rental Fleet Cart"
+                          >
+                            <Repeat className="w-3 h-3 text-[#D4A24C]" />
+                            <span>Rent</span>
+                          </button>
+                          <button
+                            onClick={() => addToBuyCart(p, 1)}
+                            className="w-full py-2 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-[11px] font-bold uppercase tracking-wider transition shadow border border-[#D4A24C]/40 flex items-center justify-center gap-1 cursor-pointer"
+                            title="Add to Direct Purchase Cart"
+                          >
+                            <ShoppingCart className="w-3 h-3 text-[#D4A24C]" />
+                            <span>Buy</span>
+                          </button>
                         </div>
                       </>
                     )}

@@ -171,6 +171,9 @@ export const createProduct = async (req, res, next) => {
       }
     }
 
+    const parsedSaleStock = req.body.sale_stock !== undefined ? Number(req.body.sale_stock) : (available_for === 'rent' ? 0 : Number(stock_quantity) || 1);
+    const parsedRentalStock = req.body.rental_stock !== undefined ? Number(req.body.rental_stock) : (available_for === 'sale' ? 0 : Number(stock_quantity) || 0);
+
     const product = await Product.create({
       title,
       slug,
@@ -182,7 +185,9 @@ export const createProduct = async (req, res, next) => {
       available_for: available_for || 'both',
       sale_price: Number(sale_price) || 0,
       rental_price_monthly: Number(rental_price_monthly) || 0,
-      stock_quantity: Number(stock_quantity) || 1,
+      stock_quantity: Number(stock_quantity) || (parsedSaleStock + parsedRentalStock) || 1,
+      sale_stock: parsedSaleStock,
+      rental_stock: parsedRentalStock,
       images: images || [],
       specs: specs || {},
       gst_rate: finalGstRate,

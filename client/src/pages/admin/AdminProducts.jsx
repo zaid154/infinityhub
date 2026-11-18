@@ -146,20 +146,37 @@ export default function AdminProducts() {
                     <td className="py-3.5 px-4 capitalize font-semibold text-slate-700">{p.category}</td>
 
                     <td className="py-3.5 px-4">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700 uppercase">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                        p.condition === 'brand_new'
+                          ? 'bg-amber-100 text-amber-900 border border-amber-300'
+                          : p.condition === 'open_box'
+                          ? 'bg-blue-100 text-blue-900'
+                          : 'bg-slate-100 text-slate-700'
+                      }`}>
                         {p.condition.replace(/_/g, ' ')}
                       </span>
                     </td>
 
                     <td className="py-3.5 px-4 font-mono">
-                      <span className="font-bold text-slate-900 block">₹{p.sale_price.toLocaleString('en-IN')}</span>
-                      {p.rental_price_monthly > 0 && (
+                      {p.available_for !== 'rent' && (
+                        <span className="font-bold text-slate-900 block">₹{p.sale_price.toLocaleString('en-IN')}</span>
+                      )}
+                      {p.available_for !== 'sale' && p.rental_price_monthly > 0 && (
                         <span className="text-[10px] text-[#0D3B2A] font-semibold block">Rent: ₹{p.rental_price_monthly}/mo</span>
                       )}
                     </td>
 
-                    <td className="py-3.5 px-4">
-                      <span className="font-bold font-mono text-slate-800">{p.stock_quantity}</span>
+                    <td className="py-3.5 px-4 font-mono text-[11px]">
+                      {p.available_for === 'both' ? (
+                        <div>
+                          <span className="text-slate-800 font-bold block">Sale: {p.sale_stock !== undefined ? p.sale_stock : p.stock_quantity}</span>
+                          <span className="text-[#8A5E12] font-semibold block">Fleet: {p.rental_stock || 0}</span>
+                        </div>
+                      ) : p.available_for === 'rent' ? (
+                        <span className="text-[#8A5E12] font-bold">Fleet: {p.rental_stock || 0}</span>
+                      ) : (
+                        <span className="text-slate-800 font-bold">Sale: {p.sale_stock !== undefined ? p.sale_stock : p.stock_quantity}</span>
+                      )}
                     </td>
 
                     <td className="py-3.5 px-4 font-mono font-semibold text-slate-600">{p.gst_rate}%</td>

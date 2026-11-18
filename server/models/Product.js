@@ -35,7 +35,7 @@ const productSchema = new mongoose.Schema(
     },
     condition: {
       type: String,
-      enum: ['grade_a_plus', 'grade_a', 'grade_b', 'for_parts'],
+      enum: ['brand_new', 'open_box', 'grade_a_plus', 'grade_a', 'grade_b', 'for_parts'],
       default: 'grade_a_plus'
     },
     available_for: {

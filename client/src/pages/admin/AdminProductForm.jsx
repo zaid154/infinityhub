@@ -29,6 +29,8 @@ export default function AdminProductForm() {
     sale_price: '',
     rental_price_monthly: '',
     stock_quantity: 1,
+    sale_stock: 1,
+    rental_stock: 0,
     gst_rate: 18,
     description: '',
     specs: {
@@ -69,6 +71,8 @@ export default function AdminProductForm() {
                 sale_price: found.sale_price,
                 rental_price_monthly: found.rental_price_monthly || '',
                 stock_quantity: found.stock_quantity,
+                sale_stock: found.sale_stock !== undefined ? found.sale_stock : (found.available_for === 'rent' ? 0 : found.stock_quantity),
+                rental_stock: found.rental_stock !== undefined ? found.rental_stock : (found.available_for === 'sale' ? 0 : 0),
                 gst_rate: found.gst_rate || 18,
                 description: found.description || '',
                 specs: found.specs || {},
@@ -271,7 +275,9 @@ export default function AdminProductForm() {
                 onChange={(e) => setFormData({ ...formData, condition: e.target.value })}
                 className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
               >
-                <option value="grade_a_plus">Grade A+ Pristine</option>
+                <option value="brand_new">Brand New (Factory Sealed / Unused)</option>
+                <option value="open_box">Open Box (Surplus / Unused)</option>
+                <option value="grade_a_plus">Grade A+ Pristine (Corporate Refurbished)</option>
                 <option value="grade_a">Grade A Corporate</option>
                 <option value="grade_b">Grade B Budget</option>
                 <option value="for_parts">For Parts / Scrap</option>
@@ -287,7 +293,7 @@ export default function AdminProductForm() {
               >
                 <option value="both">Both Sale & Rent</option>
                 <option value="sale">Direct Sale Only</option>
-                <option value="rent">Rental Only</option>
+                <option value="rent">Rental Fleet Only</option>
               </select>
             </div>
           </div>
@@ -295,9 +301,9 @@ export default function AdminProductForm() {
 
         {/* Pricing & Stock Box */}
         <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-          <h2 className="text-sm font-bold text-slate-900">Commercial Pricing & Inventory</h2>
+          <h2 className="text-sm font-bold text-slate-900">Commercial Pricing & Segregated Inventory</h2>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
             <div>
               <label className="block font-semibold text-slate-700 mb-1">Sale Price (₹) *</label>
               <input
@@ -322,29 +328,55 @@ export default function AdminProductForm() {
             </div>
 
             <div>
-              <label className="block font-semibold text-slate-700 mb-1">Stock Quantity *</label>
+              <label className="block font-semibold text-slate-700 mb-1">Direct Sale Stock</label>
               <input
                 type="number"
-                required
                 min="0"
-                value={formData.stock_quantity}
-                onChange={(e) => setFormData({ ...formData, stock_quantity: Number(e.target.value) })}
+                placeholder="e.g. 10"
+                value={formData.sale_stock}
+                onChange={(e) => {
+                  const val = Number(e.target.value);
+                  setFormData({
+                    ...formData,
+                    sale_stock: val,
+                    stock_quantity: val + (formData.rental_stock || 0)
+                  });
+                }}
                 className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] font-mono"
               />
             </div>
 
             <div>
-              <label className="block font-semibold text-slate-700 mb-1">Applicable GST Rate</label>
+              <label className="block font-semibold text-slate-700 mb-1">Rental Fleet Stock</label>
+              <input
+                type="number"
+                min="0"
+                placeholder="e.g. 3"
+                value={formData.rental_stock}
+                onChange={(e) => {
+                  const val = Number(e.target.value);
+                  setFormData({
+                    ...formData,
+                    rental_stock: val,
+                    stock_quantity: (formData.sale_stock || 0) + val
+                  });
+                }}
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] font-mono"
+              />
+            </div>
+
+            <div>
+              <label className="block font-semibold text-slate-700 mb-1">Applicable GST</label>
               <select
                 value={formData.gst_rate}
                 onChange={(e) => setFormData({ ...formData, gst_rate: Number(e.target.value) })}
                 className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] font-mono"
               >
-                <option value="0">0% (Nil / Exempt)</option>
+                <option value="0">0% (Exempt)</option>
                 <option value="5">5% GST</option>
                 <option value="12">12% GST</option>
                 <option value="18">18% GST (Standard Hardware)</option>
-                <option value="28">28% GST</option>
+                <option value="28">28% GST (Luxury)</option>
               </select>
             </div>
           </div>

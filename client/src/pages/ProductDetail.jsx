@@ -215,65 +215,129 @@ export default function ProductDetail() {
               <span className="text-[10px] sm:text-[11px] font-sans font-bold uppercase tracking-[0.2em] text-[#8A5E12]">
                 — {categoryKicker}
               </span>
+              {product.condition === 'brand_new' && (
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-900 border border-amber-300 tracking-wider uppercase shadow-sm">
+                  ★ Brand New Sealed Box
+                </span>
+              )}
               {product.available_for === 'both' ? (
                 <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#0D3B2A] text-[#FAF7F2] tracking-wider uppercase flex items-center gap-1 shadow-sm">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#D4A24C]" />
                   Buy & Rent Available
                 </span>
               ) : product.available_for === 'rent' ? (
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#D4A24C] text-[#072117] tracking-wider uppercase flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#0D3B2A]" />
-                  Corporate Rental Only
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#8A5E12] text-white tracking-wider uppercase flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#FAF7F2]" />
+                  Corporate Rental Fleet
                 </span>
               ) : (
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 tracking-wider uppercase border border-slate-200">
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-900 tracking-wider uppercase border border-emerald-300">
                   Direct Sale Only
                 </span>
               )}
             </div>
             
-            {/* Product Title (Playfair Serif, Deep Emerald, Compact leading) */}
+            {/* Product Title */}
             <h1 className="text-xl sm:text-2xl lg:text-[26px] font-serif text-[#0D3B2A] font-bold tracking-tight leading-snug">
               {product.title}
             </h1>
           </div>
 
-          {/* Price Row: Main Price + Strikethrough + SAVE 20% Badge (Exact Al-Tooba Anatomy) */}
+          {/* Price Row: Context-Aware for Rent vs Buy vs Both */}
           <div className="flex items-baseline gap-2.5 flex-wrap">
-            <span className="text-2xl sm:text-3xl font-bold font-serif text-[#0D3B2A]">
-              ₹{product.sale_price.toLocaleString('en-IN')}
-            </span>
-            <span className="text-sm sm:text-base font-sans text-gray-400 line-through">
-              ₹{originalPrice.toLocaleString('en-IN')}
-            </span>
-            <span className="px-2 py-0.5 rounded-md bg-[#FFEAEA] text-[#D9383A] text-[11px] font-bold uppercase tracking-wider">
-              SAVE {discountPercent}%
-            </span>
-            {product.rental_price_monthly > 0 && (
-              <span className="text-[11px] font-semibold text-[#8A5E12] bg-[#F2E8D5] px-2.5 py-0.5 rounded-full ml-auto">
-                or Lease ₹{product.rental_price_monthly.toLocaleString('en-IN')}/mo
-              </span>
+            {product.available_for === 'rent' ? (
+              <>
+                <span className="text-2xl sm:text-3xl font-bold font-serif text-[#0D3B2A]">
+                  ₹{product.rental_price_monthly.toLocaleString('en-IN')}<span className="text-sm font-sans text-[#5A6B63]">/month</span>
+                </span>
+                <span className="px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[11px] font-bold uppercase tracking-wider">
+                  Zero CAPEX Fleet
+                </span>
+              </>
+            ) : (
+              <>
+                <span className="text-2xl sm:text-3xl font-bold font-serif text-[#0D3B2A]">
+                  ₹{product.sale_price.toLocaleString('en-IN')}
+                </span>
+                {originalPrice > product.sale_price && (
+                  <>
+                    <span className="text-sm sm:text-base font-sans text-gray-400 line-through">
+                      ₹{originalPrice.toLocaleString('en-IN')}
+                    </span>
+                    <span className="px-2 py-0.5 rounded-md bg-[#FFEAEA] text-[#D9383A] text-[11px] font-bold uppercase tracking-wider">
+                      SAVE {discountPercent}%
+                    </span>
+                  </>
+                )}
+                {product.available_for === 'both' && product.rental_price_monthly > 0 && (
+                  <span className="text-[11px] font-semibold text-[#8A5E12] bg-[#F2E8D5] px-2.5 py-0.5 rounded-full ml-auto">
+                    or Lease ₹{product.rental_price_monthly.toLocaleString('en-IN')}/mo
+                  </span>
+                )}
+              </>
             )}
           </div>
 
-          {/* 2x2 Trust Guarantees Grid (Exact Al-Tooba Layout with Gold Outline Icons) */}
+          {/* 2x2 Trust Guarantees Grid */}
           <div className="grid grid-cols-2 gap-y-2.5 gap-x-3 py-2.5 border-y border-[#D4A24C]/25 text-[11px] sm:text-xs text-[#0D3B2A] font-medium">
-            <div className="flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#8A5E12] shrink-0" />
-              <span>100% Grade A+ Certified</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Award className="w-3.5 h-3.5 text-[#8A5E12] shrink-0" />
-              <span>6–12 Months Warranty</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Truck className="w-3.5 h-3.5 text-[#8A5E12] shrink-0" />
-              <span>24–48h SLA Dispatch</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Lock className="w-3.5 h-3.5 text-[#8A5E12] shrink-0" />
-              <span>100% Tax Invoiced (GST)</span>
-            </div>
+            {product.condition === 'brand_new' ? (
+              <>
+                <div className="flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#8A5E12] shrink-0" />
+                  <span>100% Brand New Sealed</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Award className="w-3.5 h-3.5 text-[#8A5E12] shrink-0" />
+                  <span>1-Year Official OEM Warranty</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Truck className="w-3.5 h-3.5 text-[#8A5E12] shrink-0" />
+                  <span>24–48h Insured Dispatch</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Lock className="w-3.5 h-3.5 text-[#8A5E12] shrink-0" />
+                  <span>Original GST Tax Invoice (18% ITC)</span>
+                </div>
+              </>
+            ) : product.available_for === 'rent' ? (
+              <>
+                <div className="flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#8A5E12] shrink-0" />
+                  <span>Corporate Grade A+ Fleet</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Award className="w-3.5 h-3.5 text-[#8A5E12] shrink-0" />
+                  <span>Free On-Site AMC & Diagnostics</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Truck className="w-3.5 h-3.5 text-[#8A5E12] shrink-0" />
+                  <span>24h Standby Replacement SLA</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Lock className="w-3.5 h-3.5 text-[#8A5E12] shrink-0" />
+                  <span>100% Tax Deductible OPEX</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#8A5E12] shrink-0" />
+                  <span>100% Grade A+ Certified</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Award className="w-3.5 h-3.5 text-[#8A5E12] shrink-0" />
+                  <span>6–12 Months Warranty</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Truck className="w-3.5 h-3.5 text-[#8A5E12] shrink-0" />
+                  <span>24–48h SLA Dispatch</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Lock className="w-3.5 h-3.5 text-[#8A5E12] shrink-0" />
+                  <span>100% Tax Invoiced (GST)</span>
+                </div>
+              </>
+            )}
           </div>
 
           {/* Description Excerpt with "READ MORE ∨" Toggle */}
@@ -306,73 +370,87 @@ export default function ProductDetail() {
             )}
           </div>
 
-          {/* Quantity Stepper & Dual Action Buttons */}
-          <div className="space-y-2.5 pt-1">
-            <div className="flex items-center gap-2.5 sm:gap-3">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#0D3B2A] shrink-0 font-sans">
-                QUANTITY:
-              </span>
-              
-              {/* Stepper Pill [ -  1  + ] clamped to maxSale */}
-              <div className="inline-flex items-center justify-between rounded-full border border-gray-300 bg-white px-2.5 py-1 text-xs font-mono font-bold text-[#0D3B2A] w-24 shadow-sm">
-                <button
-                  type="button"
-                  onClick={() => setQty(Math.max(1, qty - 1))}
-                  className="p-1 text-gray-500 hover:text-[#0D3B2A] hover:bg-gray-100 rounded-full transition cursor-pointer"
-                >
-                  <Minus className="w-3 h-3" />
-                </button>
-                <span>{qty}</span>
-                <button
-                  type="button"
-                  disabled={qty >= maxSale}
-                  onClick={() => {
-                    if (qty < maxSale) {
-                      setQty(qty + 1);
-                    } else {
-                      toast.error(`Maximum available direct stock is ${maxSale} units.`);
-                    }
-                  }}
-                  className="p-1 text-gray-500 hover:text-[#0D3B2A] hover:bg-gray-100 disabled:opacity-30 rounded-full transition cursor-pointer"
-                >
-                  <Plus className="w-3 h-3" />
-                </button>
-              </div>
-
-              {/* ADD TO CART (BUY) Pill Button */}
-              <button
-                type="button"
-                onClick={handleAddToCart}
-                className="flex-1 py-2 sm:py-2.5 px-4 sm:px-5 rounded-full border-2 border-[#0D3B2A] bg-transparent text-[#0D3B2A] hover:bg-[#0D3B2A] hover:text-[#FAF7F2] font-sans font-bold text-[11px] sm:text-xs uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
-              >
-                <span>ADD TO CART (BUY)</span>
-                <ShoppingBag className="w-3.5 h-3.5" />
-              </button>
-            </div>
-
-            {/* If product has rental option, show RENT FLEET button */}
-            {product.rental_price_monthly > 0 && (
+          {/* Action Buttons: Context-Aware for Rent vs Buy vs Both */}
+          {product.available_for === 'rent' ? (
+            <div className="space-y-3 pt-1">
               <button
                 type="button"
                 onClick={handleAddRental}
-                className="w-full py-2.5 sm:py-3 rounded-full bg-[#FAF7F2] hover:bg-[#F3E8D2] text-[#0D3B2A] border border-[#D4A24C]/40 font-sans font-bold text-xs uppercase tracking-[0.15em] shadow-sm flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95"
+                className="w-full py-3 sm:py-3.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-sans font-bold text-xs sm:text-sm uppercase tracking-[0.2em] shadow-lg flex items-center justify-center gap-2 cursor-pointer transition-all hover:brightness-105 active:scale-95 group"
               >
                 <Repeat className="w-4 h-4 text-[#D4A24C]" />
-                <span>RENT THIS FLEET (₹{product.rental_price_monthly.toLocaleString('en-IN')}/mo)</span>
+                <span>RENT THIS FLEET (ADD TO LEASE CART)</span>
+                <ArrowRight className="w-4 h-4 text-[#D4A24C] group-hover:translate-x-1 transition-transform" />
               </button>
-            )}
-          </div>
+            </div>
+          ) : (
+            <div className="space-y-2.5 pt-1">
+              <div className="flex items-center gap-2.5 sm:gap-3">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#0D3B2A] shrink-0 font-sans">
+                  QUANTITY:
+                </span>
+                
+                {/* Stepper Pill [ -  1  + ] clamped to maxSale */}
+                <div className="inline-flex items-center justify-between rounded-full border border-gray-300 bg-white px-2.5 py-1 text-xs font-mono font-bold text-[#0D3B2A] w-24 shadow-sm">
+                  <button
+                    type="button"
+                    onClick={() => setQty(Math.max(1, qty - 1))}
+                    className="p-1 text-gray-500 hover:text-[#0D3B2A] hover:bg-gray-100 rounded-full transition cursor-pointer"
+                  >
+                    <Minus className="w-3 h-3" />
+                  </button>
+                  <span>{qty}</span>
+                  <button
+                    type="button"
+                    disabled={qty >= maxSale}
+                    onClick={() => {
+                      if (qty < maxSale) {
+                        setQty(qty + 1);
+                      } else {
+                        toast.error(`Maximum available direct stock is ${maxSale} units.`);
+                      }
+                    }}
+                    className="p-1 text-gray-500 hover:text-[#0D3B2A] hover:bg-gray-100 disabled:opacity-30 rounded-full transition cursor-pointer"
+                  >
+                    <Plus className="w-3 h-3" />
+                  </button>
+                </div>
 
-          {/* Main Full-Width Instant 1-Click Buy Now Pill Button */}
-          <button
-            type="button"
-            onClick={handleInstantBuy}
-            className="w-full py-3 sm:py-3.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-sans font-bold text-xs sm:text-sm uppercase tracking-[0.2em] shadow-lg flex items-center justify-center gap-2 cursor-pointer transition-all hover:brightness-105 active:scale-95 group"
-          >
-            <Zap className="w-4 h-4 text-[#D4A24C] fill-[#D4A24C]" />
-            <span>INSTANT 1-CLICK BUY NOW</span>
-            <ArrowRight className="w-4 h-4 text-[#D4A24C] group-hover:translate-x-1 transition-transform" />
-          </button>
+                {/* ADD TO CART (BUY) Pill Button */}
+                <button
+                  type="button"
+                  onClick={handleAddToCart}
+                  className="flex-1 py-2 sm:py-2.5 px-4 sm:px-5 rounded-full border-2 border-[#0D3B2A] bg-transparent text-[#0D3B2A] hover:bg-[#0D3B2A] hover:text-[#FAF7F2] font-sans font-bold text-[11px] sm:text-xs uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
+                >
+                  <span>ADD TO CART (BUY)</span>
+                  <ShoppingBag className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              {/* If product has rental option (both), show RENT FLEET button */}
+              {product.available_for === 'both' && product.rental_price_monthly > 0 && (
+                <button
+                  type="button"
+                  onClick={handleAddRental}
+                  className="w-full py-2.5 sm:py-3 rounded-full bg-[#FAF7F2] hover:bg-[#F3E8D2] text-[#0D3B2A] border border-[#D4A24C]/40 font-sans font-bold text-xs uppercase tracking-[0.15em] shadow-sm flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95"
+                >
+                  <Repeat className="w-4 h-4 text-[#D4A24C]" />
+                  <span>RENT THIS FLEET (₹{product.rental_price_monthly.toLocaleString('en-IN')}/mo)</span>
+                </button>
+              )}
+
+              {/* Main Full-Width Instant 1-Click Buy Now Pill Button */}
+              <button
+                type="button"
+                onClick={handleInstantBuy}
+                className="w-full py-3 sm:py-3.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-sans font-bold text-xs sm:text-sm uppercase tracking-[0.2em] shadow-lg flex items-center justify-center gap-2 cursor-pointer transition-all hover:brightness-105 active:scale-95 group"
+              >
+                <Zap className="w-4 h-4 text-[#D4A24C] fill-[#D4A24C]" />
+                <span>INSTANT 1-CLICK BUY NOW</span>
+                <ArrowRight className="w-4 h-4 text-[#D4A24C] group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
+          )}
 
           {/* Technical Specifications Accordion / Box */}
           {product.specs && Object.keys(product.specs).length > 0 && (
