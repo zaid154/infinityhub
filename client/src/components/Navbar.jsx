@@ -24,33 +24,29 @@ export default function Navbar({ onOpenRFQ }) {
   const navigate = useNavigate();
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200">
-      {/* Top Enterprise Information Bar */}
-      <div className="bg-slate-950 text-slate-300 text-xs py-2 px-4 sm:px-8 border-b border-slate-800">
+    <header className="sticky top-0 z-40 bg-[#FAF7F2]/95 backdrop-blur-md border-b border-[#0D3B2A]/10 transition-all duration-300">
+      {/* Top Enterprise Information Bar - Al-Tooba Style */}
+      <div className="bg-[#072117] text-[#D4A24C] text-[11px] py-2 px-4 sm:px-8 border-b border-[#D4A24C]/20 tracking-wider">
         <div className="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
-          <div className="flex items-center space-x-6">
-            <span className="flex items-center gap-2 text-emerald-400 font-semibold font-mono text-[11px]">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              Live Stock: 1,450+ Units Available (Ready to Ship)
-            </span>
-            <span className="hidden md:inline-flex items-center gap-1.5 text-slate-300 text-[11px]">
-              <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
-              Pan-India Dispatch • 24–48h SLA Replacement • 100% Tax Invoicing (GSTR-2B)
+          <div className="flex items-center space-x-4">
+            <span className="flex items-center gap-1.5 font-medium">
+              <span>✨</span>
+              <span>PAN-INDIA DISPATCH ✦ 24–48H ONSITE SLA ✦ 100% GSTR-2B TAX CREDIT</span>
             </span>
           </div>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 text-[11px]">
             <a
               href="tel:+919876543210"
-              className="hover:text-white transition flex items-center gap-1.5 font-medium text-[11px]"
+              className="hover:text-white transition flex items-center gap-1.5 font-medium text-slate-200"
             >
-              <Phone className="w-3 h-3 text-emerald-400" />
+              <Phone className="w-3 h-3 text-[#D4A24C]" />
               +91 98765 43210 (Procurement Desk)
             </a>
-            <span className="text-slate-700">|</span>
+            <span className="text-[#D4A24C]/40">|</span>
             <button
               onClick={() => onOpenRFQ?.('Corporate Inventory Catalog')}
-              className="text-blue-400 hover:text-blue-300 font-semibold flex items-center gap-1 text-[11px]"
+              className="text-[#D4A24C] hover:text-white font-semibold flex items-center gap-1"
             >
               <FileText className="w-3 h-3" />
               Request Catalog (PDF)
@@ -61,47 +57,47 @@ export default function Navbar({ onOpenRFQ }) {
 
       {/* Main Navbar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">
-        {/* Brand Logo */}
+        {/* Brand Logo - Al-Tooba Style */}
         <Link to="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-950 via-blue-950 to-blue-700 flex items-center justify-center text-white shadow-md shadow-blue-900/20 group-hover:scale-105 transition">
-            <svg className="w-5 h-5 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+          <div className="w-10 h-10 rounded-full bg-[#0D3B2A] border border-[#D4A24C]/50 flex items-center justify-center text-[#D4A24C] shadow-md group-hover:scale-105 transition">
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
             </svg>
           </div>
           <div>
-            <div className="text-xl font-extrabold tracking-tight text-slate-900 flex items-center gap-1.5 font-heading">
-              NOVA <span className="text-blue-600 font-medium">INFOTECH</span>
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-900 text-white font-mono font-semibold">
+            <div className="text-xl sm:text-2xl font-bold tracking-tight text-[#0D3B2A] font-serif flex items-center gap-1.5">
+              NOVA <span className="text-[#D4A24C] font-normal italic">INFOTECH</span>
+              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#0D3B2A] text-[#FAF7F2] font-mono tracking-widest font-semibold">
                 B2B
               </span>
             </div>
-            <p className="text-[10px] text-slate-500 tracking-wider uppercase font-medium">
-              Enterprise Hardware & Rentals
+            <p className="text-[9px] text-[#5A6B63] tracking-[0.2em] uppercase font-semibold">
+              Certified Enterprise Hardware
             </p>
           </div>
         </Link>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden lg:flex items-center space-x-8 text-sm font-semibold text-slate-700">
-          <Link to="/" className="hover:text-blue-600 transition">
+        <nav className="hidden lg:flex items-center space-x-7 text-[12px] uppercase font-semibold tracking-[0.14em] text-[#0D3B2A]">
+          <Link to="/" className="hover:text-[#D4A24C] transition">
             Home
           </Link>
-          <Link to="/products" className="hover:text-blue-600 transition">
-            Hardware Inventory
+          <Link to="/products" className="hover:text-[#D4A24C] transition">
+            Inventory
           </Link>
-          <Link to="/rental" className="hover:text-blue-600 transition flex items-center gap-1.5">
-            <span className="px-1.5 py-0.5 rounded text-[10px] bg-blue-100 text-blue-700 font-bold">
+          <Link to="/rental" className="hover:text-[#D4A24C] transition flex items-center gap-1">
+            <span className="px-1.5 py-0.2 rounded-full text-[9px] bg-[#F3E8D2] text-[#0D3B2A] border border-[#D4A24C]/30 font-bold">
               Hot
             </span>
             Rental Calculator
           </Link>
-          <Link to="/buyback" className="hover:text-blue-600 transition">
+          <Link to="/buyback" className="hover:text-[#D4A24C] transition">
             Asset Liquidation
           </Link>
-          <Link to="/about" className="hover:text-blue-600 transition">
+          <Link to="/about" className="hover:text-[#D4A24C] transition">
             About Us
           </Link>
-          <Link to="/contact" className="hover:text-blue-600 transition">
+          <Link to="/contact" className="hover:text-[#D4A24C] transition">
             Contact
           </Link>
         </nav>
@@ -111,12 +107,12 @@ export default function Navbar({ onOpenRFQ }) {
           {/* Cart Icon */}
           <Link
             to="/cart"
-            className="relative p-2 text-slate-600 hover:text-blue-600 transition rounded-lg hover:bg-slate-100"
+            className="relative p-2.5 text-[#0D3B2A] hover:text-[#D4A24C] transition rounded-full hover:bg-[#F3E8D2]/40"
             title="Quotation Cart"
           >
             <ShoppingCart className="w-5 h-5" />
             {cartCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-5 h-5 bg-blue-600 text-white rounded-full text-[11px] font-bold flex items-center justify-center shadow">
+              <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#D4A24C] text-[#0D3B2A] rounded-full text-[10px] font-bold flex items-center justify-center shadow">
                 {cartCount}
               </span>
             )}
@@ -128,15 +124,15 @@ export default function Navbar({ onOpenRFQ }) {
               {isAdmin ? (
                 <Link
                   to="/admin"
-                  className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow transition"
+                  className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-semibold shadow transition border border-[#D4A24C]/30"
                 >
-                  <LayoutDashboard className="w-3.5 h-3.5" />
+                  <LayoutDashboard className="w-3.5 h-3.5 text-[#D4A24C]" />
                   Admin Panel
                 </Link>
               ) : (
                 <Link
                   to="/dashboard"
-                  className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 text-xs font-semibold hover:bg-blue-100 transition"
+                  className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#F3E8D2] text-[#0D3B2A] border border-[#D4A24C]/40 text-xs font-semibold hover:bg-[#E6D5B8] transition"
                 >
                   <User className="w-3.5 h-3.5" />
                   {user.name.split(' ')[0]}
@@ -144,7 +140,7 @@ export default function Navbar({ onOpenRFQ }) {
               )}
               <button
                 onClick={logout}
-                className="p-2 text-slate-500 hover:text-red-600 transition rounded-lg hover:bg-red-50"
+                className="p-2 text-slate-500 hover:text-red-600 transition rounded-full hover:bg-red-50"
                 title="Logout"
               >
                 <LogOut className="w-4 h-4" />
@@ -154,92 +150,92 @@ export default function Navbar({ onOpenRFQ }) {
             <div className="flex items-center space-x-2">
               <Link
                 to="/login"
-                className="hidden sm:inline-flex px-4 py-2 text-xs font-semibold text-slate-700 hover:text-blue-600 transition"
+                className="hidden sm:inline-flex px-3 py-2 text-xs font-semibold uppercase tracking-wider text-[#0D3B2A] hover:text-[#D4A24C] transition"
               >
                 Sign In
               </Link>
               <Link
                 to="/signup"
-                className="hidden sm:inline-flex px-3.5 py-2 rounded-lg border border-slate-300 text-slate-700 hover:border-slate-400 text-xs font-semibold transition"
+                className="hidden sm:inline-flex px-4 py-2 rounded-full border border-[#D4A24C] text-[#0D3B2A] hover:bg-[#D4A24C]/10 text-xs font-semibold uppercase tracking-wider transition"
               >
                 Register
               </Link>
             </div>
           )}
 
-          {/* Request Quote Main Button */}
+          {/* Request Quote Main Button - Al-Tooba Gold & Emerald Pill */}
           <button
             onClick={() => onOpenRFQ?.('General Bulk RFQ')}
-            className="px-4 sm:px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold tracking-wide shadow-md shadow-blue-600/25 transition flex items-center gap-1.5"
+            className="px-5 py-2.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-[#FAF7F2] text-xs font-bold uppercase tracking-wider shadow-md border border-[#D4A24C]/50 transition flex items-center gap-1.5"
           >
             <span>Request RFQ</span>
-            <ChevronRight className="w-3.5 h-3.5" />
+            <ChevronRight className="w-3.5 h-3.5 text-[#D4A24C]" />
           </button>
 
           {/* Mobile Menu Toggle Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 text-slate-700 hover:text-blue-600 rounded-lg hover:bg-slate-100"
+            className="lg:hidden p-2 text-[#0D3B2A] hover:text-[#D4A24C] rounded-full hover:bg-[#F3E8D2]/40"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Drawer Navigation */}
+      {/* Mobile Drawer Navigation - Al-Tooba Sacred Forest Style */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-white border-b border-slate-200 px-4 pt-3 pb-6 space-y-3">
+        <div className="lg:hidden bg-[#0D3B2A] text-white border-b border-[#D4A24C]/30 px-6 pt-6 pb-8 space-y-4 animate-in slide-in-from-top duration-300">
           <Link
             to="/"
             onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-sm font-semibold text-slate-800 hover:text-blue-600 border-b border-slate-100"
+            className="block py-2 font-serif italic text-xl text-[#FAF7F2] hover:text-[#D4A24C] border-b border-[#D4A24C]/10"
           >
             Home
           </Link>
           <Link
             to="/products"
             onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-sm font-semibold text-slate-800 hover:text-blue-600 border-b border-slate-100"
+            className="block py-2 font-serif italic text-xl text-[#FAF7F2] hover:text-[#D4A24C] border-b border-[#D4A24C]/10"
           >
-            Hardware Inventory (Laptops, Monitors, Parts)
+            Hardware Inventory
           </Link>
           <Link
             to="/rental"
             onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-sm font-semibold text-slate-800 hover:text-blue-600 border-b border-slate-100"
+            className="block py-2 font-serif italic text-xl text-[#FAF7F2] hover:text-[#D4A24C] border-b border-[#D4A24C]/10"
           >
             Corporate Rental Calculator
           </Link>
           <Link
             to="/buyback"
             onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-sm font-semibold text-slate-800 hover:text-blue-600 border-b border-slate-100"
+            className="block py-2 font-serif italic text-xl text-[#FAF7F2] hover:text-[#D4A24C] border-b border-[#D4A24C]/10"
           >
-            Sell Old IT Assets (Buyback)
+            Asset Liquidation
           </Link>
           <Link
             to="/about"
             onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-sm font-semibold text-slate-800 hover:text-blue-600 border-b border-slate-100"
+            className="block py-2 font-serif italic text-xl text-[#FAF7F2] hover:text-[#D4A24C] border-b border-[#D4A24C]/10"
           >
             About Us & Testing Protocol
           </Link>
           <Link
             to="/contact"
             onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-sm font-semibold text-slate-800 hover:text-blue-600 border-b border-slate-100"
+            className="block py-2 font-serif italic text-xl text-[#FAF7F2] hover:text-[#D4A24C] border-b border-[#D4A24C]/10"
           >
-            Contact & Location
+            Contact & Procurement Desk
           </Link>
 
-          <div className="pt-3 flex flex-col gap-2">
+          <div className="pt-4 flex flex-col gap-2">
             {isAuthenticated ? (
               <>
                 {isAdmin ? (
                   <Link
                     to="/admin"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="w-full text-center py-2.5 rounded-lg bg-slate-900 text-white text-xs font-bold"
+                    className="w-full text-center py-3 rounded-full bg-[#D4A24C] text-[#0D3B2A] text-xs font-bold uppercase tracking-wider"
                   >
                     Go to Admin Dashboard
                   </Link>
@@ -247,7 +243,7 @@ export default function Navbar({ onOpenRFQ }) {
                   <Link
                     to="/dashboard"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="w-full text-center py-2.5 rounded-lg bg-blue-50 text-blue-700 text-xs font-bold border border-blue-200"
+                    className="w-full text-center py-3 rounded-full bg-[#F3E8D2] text-[#0D3B2A] text-xs font-bold"
                   >
                     Customer Account
                   </Link>
@@ -257,24 +253,24 @@ export default function Navbar({ onOpenRFQ }) {
                     logout();
                     setMobileMenuOpen(false);
                   }}
-                  className="w-full text-center py-2 text-xs font-semibold text-red-600"
+                  className="w-full text-center py-2 text-xs font-semibold text-red-300 hover:text-red-200"
                 >
                   Logout
                 </button>
               </>
             ) : (
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-3 pt-2">
                 <Link
                   to="/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-center py-2.5 rounded-lg border border-slate-300 text-slate-800 text-xs font-bold"
+                  className="text-center py-2.5 rounded-full border border-[#D4A24C] text-[#FAF7F2] text-xs font-bold uppercase tracking-wider"
                 >
                   Sign In
                 </Link>
                 <Link
                   to="/signup"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-center py-2.5 rounded-lg bg-blue-600 text-white text-xs font-bold"
+                  className="text-center py-2.5 rounded-full bg-[#D4A24C] text-[#0D3B2A] text-xs font-bold uppercase tracking-wider"
                 >
                   Register
                 </Link>

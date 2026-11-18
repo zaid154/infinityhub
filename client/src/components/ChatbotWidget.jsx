@@ -69,31 +69,31 @@ export default function ChatbotWidget() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="flex items-center gap-2 px-3.5 py-2.5 rounded-full bg-slate-950 border border-slate-700 text-white text-xs font-semibold shadow-2xl hover:bg-slate-900 transition group hover:border-slate-500"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#0D3B2A] border border-[#D4A24C]/60 text-[#FAF7F2] text-xs font-semibold shadow-2xl hover:bg-[#153423] transition group"
         >
-          <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
-          <Bot className="w-4 h-4 text-blue-400 group-hover:scale-110 transition" />
-          <span>Procurement Assistant</span>
+          <span className="w-2 h-2 rounded-full bg-[#D4A24C] animate-pulse"></span>
+          <Bot className="w-4 h-4 text-[#D4A24C] group-hover:scale-110 transition" />
+          <span className="uppercase tracking-wider text-[11px] font-bold">IT Consultant</span>
         </button>
       )}
 
       {/* Expanded Chat Window */}
       {isOpen && (
-        <div className="bg-white border border-slate-300 rounded-2xl shadow-2xl w-[340px] sm:w-[380px] h-[500px] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="bg-[#FAF7F2] border border-[#D4A24C]/40 rounded-3xl shadow-2xl w-[340px] sm:w-[380px] h-[500px] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
           {/* Header */}
-          <div className="bg-slate-950 p-4 text-white flex items-center justify-between border-b border-slate-800">
+          <div className="bg-[#072117] p-4 text-white flex items-center justify-between border-b border-[#D4A24C]/30">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
-                <Sparkles className="w-4 h-4 text-white" />
+              <div className="w-8 h-8 rounded-full bg-[#0D3B2A] border border-[#D4A24C]/50 flex items-center justify-center">
+                <Sparkles className="w-4 h-4 text-[#D4A24C]" />
               </div>
               <div>
-                <h4 className="text-xs font-bold flex items-center gap-1.5 font-heading">
+                <h4 className="text-xs font-bold flex items-center gap-1.5 font-serif">
                   Nova IT Desk
-                  <span className="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
-                    Live
+                  <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-[#D4A24C]/20 text-[#D4A24C] border border-[#D4A24C]/40 font-mono">
+                    Online
                   </span>
                 </h4>
-                <p className="text-[10px] text-slate-400">Enterprise Hardware & Rental Advisory</p>
+                <p className="text-[10px] text-slate-300">Enterprise Hardware & Rental Advisory</p>
               </div>
             </div>
             <button

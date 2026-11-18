@@ -13,9 +13,9 @@ export default function WhatsAppFloat({ onOpenRFQ }) {
       {onOpenRFQ && (
         <button
           onClick={() => onOpenRFQ('Floating Quick Button')}
-          className="flex items-center gap-2 px-4 py-3 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-2xl border border-slate-700 transition transform hover:-translate-y-0.5"
+          className="flex items-center gap-2 px-5 py-3 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-[#FAF7F2] font-bold text-xs uppercase tracking-wider shadow-2xl border border-[#D4A24C]/60 transition transform hover:-translate-y-0.5"
         >
-          <FileText className="w-4 h-4 text-blue-400" />
+          <FileText className="w-4 h-4 text-[#D4A24C]" />
           <span>Request Quick RFQ</span>
         </button>
       )}
@@ -25,10 +25,10 @@ export default function WhatsAppFloat({ onOpenRFQ }) {
         href={`https://wa.me/${whatsappNumber}?text=${whatsappText}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="w-12 h-12 rounded-full bg-[#25D366] hover:bg-[#20ba59] text-white shadow-2xl shadow-emerald-500/30 flex items-center justify-center transition-all duration-300 hover:scale-105"
+        className="w-12 h-12 rounded-full bg-[#0D3B2A] hover:bg-[#153423] border border-[#D4A24C]/60 text-[#25D366] shadow-2xl flex items-center justify-center transition-all duration-300 hover:scale-105"
         title="Chat with Corporate IT Desk on WhatsApp"
       >
-        <MessageCircle className="w-6 h-6 fill-current" />
+        <MessageCircle className="w-6 h-6 fill-current text-[#25D366]" />
       </a>
     </div>
   );

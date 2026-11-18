@@ -4,25 +4,40 @@
   html {
     scroll-behavior: smooth;
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #FAF7F2;
+    color: #111827;
   }
-  h1, h2, h3, h4, .font-heading {
-    font-family: 'Outfit', 'Inter', system-ui, sans-serif;
-    letter-spacing: -0.02em;
+  h1, h2, h3, h4, .font-heading, .font-serif {
+    font-family: 'Playfair Display', Georgia, serif;
+    letter-spacing: -0.01em;
   }
 }
 
-/* Custom Scrollbar */
+/* Moorish Arch / Islamic Arch Card Silhouette */
+.arch-card {
+  border-top-left-radius: 90px;
+  border-top-right-radius: 90px;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+}
+
+/* Subtle Golden Watermark Pattern */
+.bg-parchment {
+  background-color: #FAF7F2;
+}
+
+/* Custom Scrollbar - Warm Linen & Gold */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #FAF7F2;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #D4A24C;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #B38636;
 }
