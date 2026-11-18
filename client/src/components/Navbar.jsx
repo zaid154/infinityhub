@@ -35,43 +35,10 @@ export default function Navbar({ onOpenRFQ }) {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? 'bg-[#072117]/95 backdrop-blur-md border-b border-[#D4A24C]/25 shadow-[0_10px_30px_rgba(0,0,0,0.5)]'
-          : 'bg-gradient-to-b from-black/70 via-black/30 to-transparent border-b border-white/10'
+          ? 'bg-[#072117]/95 backdrop-blur-md border-b border-[#D4A24C]/25 shadow-[0_10px_30px_rgba(0,0,0,0.5)] py-0'
+          : 'bg-gradient-to-b from-black/75 via-black/35 to-transparent border-b border-white/10'
       }`}
     >
-      {/* Top Enterprise Information Bar - Slim Gold Ticker (Transparent / Auto-hides on deep scroll) */}
-      <div
-        className={`transition-all duration-300 overflow-hidden ${
-          scrolled ? 'h-0 opacity-0' : 'h-auto opacity-100'
-        } bg-[#072117]/60 backdrop-blur-sm text-[#D4A24C] text-[10px] sm:text-[11px] py-1.5 px-4 sm:px-8 border-b border-white/10 tracking-wider`}
-      >
-        <div className="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
-          <div className="flex items-center space-x-3">
-            <span className="flex items-center gap-1.5 font-medium text-white/90">
-              <Sparkles className="w-3 h-3 text-[#D4A24C]" />
-              <span>PAN-INDIA DISPATCH ✦ 24–48H ONSITE SLA ✦ 100% GSTR-2B TAX CREDIT</span>
-            </span>
-          </div>
-
-          <div className="flex items-center space-x-4 text-[10px] sm:text-[11px]">
-            <a
-              href="tel:+919876543210"
-              className="hover:text-white transition flex items-center gap-1.5 font-medium text-white/80"
-            >
-              <Phone className="w-3 h-3 text-[#D4A24C]" />
-              +91 98765 43210 (Procurement Desk)
-            </a>
-            <span className="text-white/20">|</span>
-            <button
-              onClick={() => onOpenRFQ?.('Corporate Inventory Catalog')}
-              className="text-[#D4A24C] hover:text-white font-semibold flex items-center gap-1 cursor-pointer"
-            >
-              <FileText className="w-3 h-3" />
-              Request Catalog (PDF)
-            </button>
-          </div>
-        </div>
-      </div>
 
       {/* Main Transparent Navbar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">

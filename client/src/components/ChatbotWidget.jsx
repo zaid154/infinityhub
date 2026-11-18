@@ -64,16 +64,17 @@ export default function ChatbotWidget() {
   };
 
   return (
-    <div className="fixed bottom-6 left-6 z-40">
-      {/* Minimized Toggle Pill */}
+    <div className="fixed bottom-5 left-5 z-40">
+      {/* Minimized Toggle Round Button - Sleek & Non-Intrusive */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#0D3B2A] border border-[#D4A24C]/60 text-[#FAF7F2] text-xs font-semibold shadow-2xl hover:bg-[#153423] transition group"
+          className="relative w-12 h-12 rounded-full bg-[#072117]/90 border border-[#D4A24C]/60 text-[#D4A24C] shadow-[0_8px_25px_rgba(0,0,0,0.5)] hover:scale-110 active:scale-95 transition-all duration-300 flex items-center justify-center group cursor-pointer backdrop-blur-md"
+          title="Nova IT Consultant AI"
         >
-          <span className="w-2 h-2 rounded-full bg-[#D4A24C] animate-pulse"></span>
-          <Bot className="w-4 h-4 text-[#D4A24C] group-hover:scale-110 transition" />
-          <span className="uppercase tracking-wider text-[11px] font-bold">IT Consultant</span>
+          <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-[#10B981] animate-ping" />
+          <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-[#10B981]" />
+          <Bot className="w-5 h-5 text-[#D4A24C] group-hover:scale-110 transition-transform" />
         </button>
       )}
 

@@ -206,7 +206,7 @@ export default function Home() {
   return (
     <div className="space-y-20 pb-20 bg-[#FAF7F2] text-[#111827]">
       {/* 1. HERO SECTION - AL-TOOBA CINEMATIC AMBIENT VIDEO BACKGROUND & 3D PRODUCT POPUP */}
-      <section className="relative pt-28 sm:pt-36 pb-16 sm:pb-24 px-4 sm:px-8 bg-[#072117] overflow-hidden min-h-[720px] lg:min-h-[820px] flex items-center border-b border-[#D4A24C]/30 text-white">
+      <section className="relative pt-20 sm:pt-24 pb-8 sm:pb-12 px-4 sm:px-8 bg-[#072117] overflow-hidden min-h-[85vh] sm:min-h-[88vh] max-h-[780px] flex items-center border-b border-[#D4A24C]/30 text-white">
         {/* Ambient Video Background - Exact Al-Tooba Technique */}
         <video
           ref={heroVideoRef}
@@ -226,30 +226,30 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-r from-[#072117]/90 via-[#072117]/40 to-transparent z-[1] pointer-events-none hidden lg:block"></div>
         <div className="absolute inset-0 opacity-[0.04] bg-[radial-gradient(#D4A24C_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none z-[1]"></div>
 
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10 w-full">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center relative z-10 w-full">
           {/* Left Column: Al-Tooba Style Typography & CTAs */}
-          <div className="lg:col-span-6 space-y-6">
+          <div className="lg:col-span-6 space-y-3.5">
             {/* Top Star Emblem */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#0D3B2A]/80 border border-[#D4A24C]/50 text-xs font-semibold text-[#D4A24C] tracking-wide backdrop-blur-md shadow-lg">
-              <Sparkles className="w-3.5 h-3.5 text-[#D4A24C] animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0D3B2A]/85 border border-[#D4A24C]/50 text-[10px] sm:text-[11px] font-semibold text-[#D4A24C] tracking-wide backdrop-blur-md shadow-md">
+              <Sparkles className="w-3 h-3 text-[#D4A24C] animate-pulse" />
               <span>CERTIFIED COMMERCIAL HARDWARE & PROVEN FLEET LEASING</span>
             </div>
 
             {/* Majestic Heading - Exactly like Al-Tooba ("Reviving Sunnah, restoring purity") */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-normal tracking-tight text-white font-serif leading-[1.08] drop-shadow-[0_12px_24px_rgba(0,0,0,0.85)] select-none">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-normal tracking-tight text-white font-serif leading-[1.12] drop-shadow-[0_12px_24px_rgba(0,0,0,0.85)] select-none">
               Authentic <span className="text-[#F59E0B] italic font-serif font-extrabold drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">IT Fleets,</span> <br />
               proven <span className="text-[#F59E0B] italic font-serif font-extrabold drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">performance.</span>
             </h1>
 
-            <p className="text-sm sm:text-base text-white/95 leading-relaxed font-sans drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)] font-medium max-w-xl">
+            <p className="text-xs sm:text-sm text-white/95 leading-relaxed font-sans drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)] font-medium max-w-md">
               Equip your enterprise workforce with certified Grade A+ commercial fleets, workstation graphics, and pivot displays. Available for immediate bulk dispatch or flexible monthly leasing with guaranteed 24-48h replacement SLA.
             </p>
 
-            {/* Action Buttons including Watch Reels Link */}
-            <div className="pt-2 flex flex-wrap items-center gap-3.5">
+            {/* Action Buttons */}
+            <div className="pt-2 flex flex-wrap items-center gap-3">
               <button
                 onClick={() => openRFQ('Priority Fleet Requirement')}
-                className="group relative overflow-hidden rounded-full px-8 py-3.5 text-xs font-sans font-extrabold uppercase tracking-[0.15em] bg-gradient-to-r from-[#eec373] via-[#D4A24C] to-[#eec373] text-[#072117] shadow-[0_8px_25px_rgba(212,162,76,0.45)] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer flex items-center gap-2"
+                className="group relative overflow-hidden rounded-full px-7 py-3 text-xs font-sans font-extrabold uppercase tracking-[0.15em] bg-gradient-to-r from-[#eec373] via-[#D4A24C] to-[#eec373] text-[#072117] shadow-[0_8px_25px_rgba(212,162,76,0.45)] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer flex items-center gap-2"
               >
                 <span className="relative z-10 flex items-center gap-2">
                   <span>EXPLORE INVENTORY</span>
@@ -260,7 +260,7 @@ export default function Home() {
 
               <a
                 href="#video-reels"
-                className="px-6 py-3.5 rounded-full bg-black/45 hover:bg-black/75 text-white border border-[#D4A24C]/60 font-bold text-xs uppercase tracking-widest backdrop-blur-md transition-all flex items-center gap-2 shadow-lg"
+                className="px-5 py-3 rounded-full bg-black/45 hover:bg-black/75 text-white border border-[#D4A24C]/60 font-bold text-xs uppercase tracking-widest backdrop-blur-md transition-all flex items-center gap-2 shadow-lg"
               >
                 <span className="w-2 h-2 rounded-full bg-[#F59E0B] animate-ping" />
                 <span>▶ Watch Lab Reels</span>
@@ -268,31 +268,11 @@ export default function Home() {
 
               <a
                 href="#rental-calculator"
-                className="px-6 py-3.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/25 text-white font-bold text-xs uppercase tracking-widest backdrop-blur-md transition flex items-center gap-2 shadow-sm"
+                className="px-5 py-3 rounded-full bg-white/10 hover:bg-white/20 border border-white/25 text-white font-bold text-xs uppercase tracking-widest backdrop-blur-md transition flex items-center gap-2 shadow-sm"
               >
-                <Calculator className="w-4 h-4 text-[#D4A24C]" />
-                <span>Rental Calculator</span>
+                <Calculator className="w-3.5 h-3.5 text-[#D4A24C]" />
+                <span>Calculator</span>
               </a>
-            </div>
-
-            {/* Trust Mini Strip */}
-            <div className="pt-6 grid grid-cols-2 sm:grid-cols-4 gap-4 border-t border-white/15">
-              <div>
-                <div className="text-2xl sm:text-3xl font-bold text-white font-serif drop-shadow-md">1,450+</div>
-                <div className="text-xs text-white/70 font-medium tracking-wide">Ready in Warehouse</div>
-              </div>
-              <div>
-                <div className="text-2xl sm:text-3xl font-bold text-white font-serif drop-shadow-md">24-48h</div>
-                <div className="text-xs text-white/70 font-medium tracking-wide">On-Site SLA Swap</div>
-              </div>
-              <div>
-                <div className="text-2xl sm:text-3xl font-bold text-white font-serif drop-shadow-md">100%</div>
-                <div className="text-xs text-white/70 font-medium tracking-wide">GSTR-2B Tax Credit</div>
-              </div>
-              <div>
-                <div className="text-2xl sm:text-3xl font-bold text-[#F59E0B] font-serif drop-shadow-md">Grade A+</div>
-                <div className="text-xs text-white/70 font-medium tracking-wide">30-Point Certified</div>
-              </div>
             </div>
           </div>
 
