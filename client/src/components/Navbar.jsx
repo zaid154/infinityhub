@@ -60,9 +60,6 @@ export default function Navbar({ onOpenRFQ }) {
           <div>
             <div className="text-xl sm:text-2xl font-bold tracking-tight text-white font-serif flex items-center gap-1.5 drop-shadow-md">
               NOVA <span className="text-[#F59E0B] font-normal italic">INFOTECH</span>
-              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#D4A24C] text-[#072117] font-mono tracking-widest font-extrabold shadow-sm">
-                B2B
-              </span>
             </div>
             <p className="text-[9px] text-white/70 tracking-[0.2em] uppercase font-semibold">
               Certified Enterprise Hardware
@@ -78,10 +75,7 @@ export default function Navbar({ onOpenRFQ }) {
           <Link to="/products" className="hover:text-[#F59E0B] transition-colors drop-shadow-sm">
             Products
           </Link>
-          <Link to="/rental" className="hover:text-[#F59E0B] transition-colors flex items-center gap-1.5 drop-shadow-sm">
-            <span className="px-1.5 py-0.2 rounded-full text-[9px] bg-[#D4A24C] text-[#072117] font-extrabold">
-              HOT
-            </span>
+          <Link to="/rental" className="hover:text-[#F59E0B] transition-colors drop-shadow-sm">
             Rental
           </Link>
           <Link to="/buyback" className="hover:text-[#F59E0B] transition-colors drop-shadow-sm">

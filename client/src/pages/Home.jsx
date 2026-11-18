@@ -215,25 +215,19 @@ export default function Home() {
           playsInline
           preload="auto"
           poster="/videos/hero-ambient-poster.jpg"
-          className="absolute inset-0 w-full h-full object-cover object-center z-0 opacity-80 filter contrast-105 brightness-95 pointer-events-none"
+          className="absolute inset-0 w-full h-full object-cover object-center z-0 opacity-90 filter contrast-105 brightness-100 pointer-events-none"
         >
           <source src="/videos/hero-ambient.mp4" type="video/mp4" />
         </video>
 
-        {/* Ambient Video Overlay Gradient for Text Crispness - Al-Tooba Emerald & Vignette */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#072117]/65 via-[#072117]/35 to-[#072117]/85 z-[1] pointer-events-none"></div>
-        <div className="absolute inset-0 bg-gradient-to-r from-[#072117]/90 via-[#072117]/45 to-transparent z-[1] pointer-events-none hidden lg:block"></div>
-        <div className="absolute inset-0 opacity-[0.04] bg-[radial-gradient(#D4A24C_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none z-[1]"></div>
+        {/* Ambient Video Overlay Gradient - Crisp Video Visibility from Top to Bottom */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#072117]/25 to-[#072117]/80 z-[1] pointer-events-none"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#072117]/85 via-[#072117]/35 to-transparent z-[1] pointer-events-none hidden lg:block"></div>
+        <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(#D4A24C_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none z-[1]"></div>
 
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center relative z-10 w-full my-auto">
           {/* Left Column: Al-Tooba Style Typography & CTAs */}
-          <div className="lg:col-span-6 space-y-3.5">
-            {/* Top Star Emblem */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0D3B2A]/85 border border-[#D4A24C]/50 text-[10px] sm:text-[11px] font-semibold text-[#D4A24C] tracking-wide backdrop-blur-md shadow-md">
-              <Sparkles className="w-3 h-3 text-[#D4A24C] animate-pulse" />
-              <span>CERTIFIED COMMERCIAL HARDWARE & PROVEN FLEET LEASING</span>
-            </div>
-
+          <div className="lg:col-span-6 space-y-4">
             {/* Majestic Heading - Exactly like Al-Tooba ("Reviving Sunnah, restoring purity") */}
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-normal tracking-tight text-white font-serif leading-[1.12] drop-shadow-[0_12px_24px_rgba(0,0,0,0.85)] select-none">
               Authentic <span className="text-[#F59E0B] italic font-serif font-extrabold drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">IT Fleets,</span> <br />
@@ -275,27 +269,8 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Right Column: Native Video Hardware Integration with Sleek Interactive Fleet Chip */}
-          <div className="lg:col-span-6 flex flex-col items-center lg:items-end justify-center pt-6 lg:pt-0">
-            <div
-              onClick={() => openRFQ('Executive Fleet Hardware Showcase')}
-              className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-[#072117]/85 backdrop-blur-xl border border-[#D4A24C]/60 text-white shadow-[0_12px_35px_rgba(0,0,0,0.65)] cursor-pointer hover:border-[#D4A24C] hover:scale-105 active:scale-95 transition-all group select-none"
-            >
-              <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] animate-ping" />
-              <span className="text-[10px] sm:text-[11px] font-mono text-[#D4A24C] uppercase tracking-wider font-extrabold flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-[#D4A24C]" />
-                GRADE A+ CERTIFIED
-              </span>
-              <span className="text-white/30 font-light">|</span>
-              <span className="text-xs sm:text-sm font-serif font-bold text-white group-hover:text-[#F59E0B] transition-colors">
-                ThinkPad & UltraSharp Fleets
-              </span>
-              <span className="text-xs font-mono font-bold text-[#F59E0B]">
-                Lease ₹1,450/mo
-              </span>
-              <ArrowRight className="w-3.5 h-3.5 text-[#D4A24C] group-hover:translate-x-1 transition-transform ml-0.5" />
-            </div>
-          </div>
+          {/* Right Column: Unobstructed view for ambient video hardware */}
+          <div className="lg:col-span-6 hidden lg:block" />
         </div>
       </section>
 
