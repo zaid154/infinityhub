@@ -271,33 +271,8 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Right Column: Balanced Glassmorphic Fleet Card on Desktop/Laptop */}
-          <div className="lg:col-span-5 hidden lg:flex flex-col items-end justify-center">
-            <div
-              onClick={() => openRFQ('Executive Fleet Hardware Consultation')}
-              className="group max-w-sm rounded-2xl bg-[#072117]/80 backdrop-blur-2xl border border-[#D4A24C]/40 hover:border-[#D4A24C] p-6 shadow-[0_20px_50px_rgba(0,0,0,0.65)] transition-all duration-300 cursor-pointer hover:scale-[1.02]"
-            >
-              <div className="flex items-center justify-between gap-4 mb-3">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#10B981]/20 text-[#10B981] border border-[#10B981]/40 text-[10px] font-mono font-bold uppercase tracking-wider">
-                  <span className="w-2 h-2 rounded-full bg-[#10B981] animate-ping" />
-                  Ready For Dispatch
-                </span>
-                <span className="text-xs font-mono text-[#D4A24C] font-extrabold">
-                  Lease ₹1,450/mo
-                </span>
-              </div>
-              <h3 className="font-serif text-lg font-bold text-white group-hover:text-[#F59E0B] transition-colors leading-snug">
-                Certified ThinkPad & Dell Fleets
-              </h3>
-              <p className="text-xs text-white/75 leading-relaxed mt-1.5">
-                Magnesium roll-cages, 30-point diagnostics, clean OS imaging, and ironclad 24–48h hardware replacement SLA.
-              </p>
-              <div className="mt-4 pt-3.5 border-t border-white/10 flex items-center justify-between text-xs font-bold text-[#D4A24C]">
-                <span>Request Fleet RFQ</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
-              </div>
-            </div>
-          </div>
+          {/* Right Column: Completely unobstructed for full ambient video visibility */}
+          <div className="lg:col-span-5 hidden lg:block" />
         </div>
       </section>
 
