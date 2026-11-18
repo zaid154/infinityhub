@@ -27,6 +27,7 @@ import toast from 'react-hot-toast';
 import VideoReels from '../components/VideoReels';
 import CategoriesMoorishArch from '../components/CategoriesMoorishArch';
 import BestSellersSection from '../components/BestSellersSection';
+import CompleteCollectionSection from '../components/CompleteCollectionSection';
 
 export default function Home() {
   const { openRFQ } = useOutletContext();
@@ -427,7 +428,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 6. AL-TOOBA STYLE 3D VIDEO REELS CAROUSEL */}
+      {/* 6. AL-TOOBA 1:1 OUR COMPLETE COLLECTION - RENTING & SELLING FLEETS */}
+      <CompleteCollectionSection onOpenRFQ={openRFQ} />
+
+      {/* 7. AL-TOOBA STYLE 3D VIDEO REELS CAROUSEL */}
       <VideoReels />
 
       {/* 7. SPIRITUAL / CORE VALUE BANNER (AL-TOOBA SIGNATURE QUOTE) */}
