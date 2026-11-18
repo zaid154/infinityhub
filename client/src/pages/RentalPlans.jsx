@@ -80,49 +80,49 @@ export default function RentalPlans() {
   const fleetTiers = [
     {
       id: 'office',
-      role: 'Operations & BPO Fleet',
-      hardware: 'Lenovo ThinkPad T490 (Grade A+)',
+      role: 'Operations Fleet',
+      hardware: 'Lenovo ThinkPad T490',
       image: '/products/real-thinkpad-t14-transparent.png',
       rate: '1,350',
-      specsList: ['Core i5 vPro', '16GB DDR4', '256GB NVMe SSD', '14.0" FHD Display', 'Windows 11 Pro'],
+      specsList: ['Core i5 vPro', '16GB DDR4 RAM', '256GB NVMe SSD', '14.0" FHD Display'],
       sla: '48h Swap SLA',
-      tagline: 'Ideal for Telecalling, BPO, Sales & General Operations',
+      tagline: 'Ideal for BPO, Telecalling, Sales Teams & Backoffice',
       popular: false,
       badge: 'Tier 1'
     },
     {
       id: 'developer',
-      role: 'Developer & Engineering',
-      hardware: 'Dell Latitude 7490 Corporate',
+      role: 'Developer Fleet',
+      hardware: 'Dell Latitude 7490 Pro',
       image: '/products/real-dell-latitude-transparent.png',
       rate: '1,850',
-      specsList: ['Core i7 / Ryzen 7', '16GB Dual-Channel', '512GB NVMe SSD', 'Backlit TrackPoint', 'Win 11 / Ubuntu'],
+      specsList: ['Core i7 / Ryzen 7', '16GB Dual-Channel', '512GB NVMe SSD', 'FHD IPS / Win 11'],
       sla: '24h Standby SLA',
-      tagline: 'Optimal for Full-Stack Developers, QA Engineers & Analysts',
+      tagline: 'Optimal for Full-Stack Developers, QA & Data Analysts',
       popular: true,
       badge: 'Most Popular'
     },
     {
       id: 'workstation',
-      role: 'Heavy Compute & AI Rigs',
-      hardware: 'HP Elite / Precision Rig',
+      role: 'Workstation & AI',
+      hardware: 'HP EliteBook Workstation',
       image: '/products/real-mobile-workstation-transparent.png',
       rate: '3,200',
-      specsList: ['Hexa-Core i7/i9', '32GB 3200MHz RAM', '1TB Gen4 SSD', 'Dedicated RTX GPU', 'Calibrated IPS'],
+      specsList: ['Hexa-Core i7/i9', '32GB 3200MHz RAM', '1TB Gen4 High-IOPS', 'Dedicated RTX GPU'],
       sla: '24h VIP SLA',
-      tagline: 'High-Performance Rigs for 3D Modeling, Video & ML Workloads',
+      tagline: 'High-Performance Rig for 3D Modeling, Video & AI Code',
       popular: false,
       badge: 'Enterprise Rig'
     },
     {
       id: 'macbook',
-      role: 'Creative & Executive',
-      hardware: 'Apple MacBook Air 13.3" M1',
+      role: 'Executive & Creative',
+      hardware: 'Apple MacBook Air M1',
       image: 'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=800&auto=format&fit=crop&q=80',
       rate: '2,800',
-      specsList: ['Apple M1 8-Core', '8GB Unified RAM', '256GB NVMe SSD', 'Retina True Tone', 'macOS Sonoma MDM'],
+      specsList: ['Apple M1 8-Core', '8GB Unified RAM', '256GB NVMe SSD', 'Retina True Tone'],
       sla: '24h Swap SLA',
-      tagline: 'Engineered for Creative Directors, UI/UX & iOS Developers',
+      tagline: 'Engineered for Product Designers, UI/UX & iOS Teams',
       popular: false,
       badge: 'Apple Fleet'
     }
@@ -242,8 +242,8 @@ export default function RentalPlans() {
               key={tier.id}
               className={`rounded-3xl p-5 flex flex-col justify-between transition-all duration-300 relative ${
                 tier.popular
-                  ? 'bg-white border-2 border-[#D4A24C] shadow-xl ring-4 ring-[#D4A24C]/10'
-                  : 'bg-white border border-[#D4A24C]/25 shadow-sm hover:shadow-md'
+                  ? 'bg-white border-2 border-[#D4A24C] shadow-lg ring-2 ring-[#D4A24C]/15'
+                  : 'bg-white border border-[#D4A24C]/25 shadow-sm hover:shadow-md hover:border-[#0D3B2A]/40'
               }`}
             >
               {tier.popular && (
@@ -254,11 +254,11 @@ export default function RentalPlans() {
 
               <div>
                 {/* Single Clean Top Row: Badge & Role */}
-                <div className="flex items-center justify-between mb-2 text-[10px]">
-                  <span className="font-bold uppercase tracking-widest text-[#8A5E12]">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#8A5E12]">
                     {tier.badge}
                   </span>
-                  <span className="font-medium text-[#5A6B63] font-mono truncate max-w-[130px]">
+                  <span className="text-[10px] font-mono font-medium text-[#5A6B63] bg-[#0D3B2A]/5 px-2 py-0.5 rounded-full">
                     {tier.role}
                   </span>
                 </div>
@@ -268,33 +268,34 @@ export default function RentalPlans() {
                   <img
                     src={tier.image}
                     alt={tier.hardware}
-                    className="max-h-full max-w-full object-contain filter drop-shadow-sm hover:scale-105 transition-transform duration-300"
+                    className="max-h-full max-w-full object-contain filter drop-shadow-sm hover:scale-105 transition-transform duration-300 mix-blend-multiply"
                   />
                 </div>
 
                 {/* Hardware Name & Target Tagline */}
-                <h3 className="text-sm font-bold font-serif text-[#0D3B2A] line-clamp-1">
+                <h3 className="text-base font-bold font-serif text-[#0D3B2A] tracking-tight">
                   {tier.hardware}
                 </h3>
-                <p className="text-[11px] text-[#5A6B63] mt-0.5 line-clamp-1">
+                <p className="text-[11px] text-[#5A6B63] mt-1 leading-snug min-h-[32px]">
                   {tier.tagline}
                 </p>
 
-                {/* Clean Modern Spec Pills (Zero AI Checkmark Clutter) */}
-                <div className="flex flex-wrap gap-1.5 pt-2.5 my-2 border-t border-[#D4A24C]/15">
+                {/* Symmetrical 2x2 Spec Grid */}
+                <div className="grid grid-cols-2 gap-1.5 pt-3 my-2.5 border-t border-[#D4A24C]/15">
                   {tier.specsList.map((spec, sIdx) => (
-                    <span
+                    <div
                       key={sIdx}
-                      className="px-2 py-0.5 rounded-md bg-[#FAF7F2] text-[#0D3B2A] text-[10px] font-mono font-medium border border-[#D4A24C]/20"
+                      className="px-2 py-1 rounded-md bg-[#FAF7F2] text-[#0D3B2A] text-[10px] font-mono font-medium border border-[#D4A24C]/20 text-center truncate"
+                      title={spec}
                     >
                       {spec}
-                    </span>
+                    </div>
                   ))}
                 </div>
               </div>
 
               {/* Dedicated Bottom Pricing & Action Row */}
-              <div className="pt-3 mt-2 border-t border-[#D4A24C]/20 space-y-2.5">
+              <div className="pt-3 mt-auto border-t border-[#D4A24C]/20 space-y-2.5">
                 <div className="flex items-baseline justify-between">
                   <div>
                     <span className="text-[9px] uppercase tracking-wider font-bold text-[#8A5E12] block">
@@ -312,10 +313,10 @@ export default function RentalPlans() {
 
                 <button
                   onClick={() => openRFQ(`Fleet Package Selection: ${tier.hardware} (Starting ₹${tier.rate}/mo)`)}
-                  className={`w-full py-2.5 rounded-full font-bold text-xs uppercase tracking-wider transition shadow cursor-pointer flex items-center justify-center gap-1.5 ${
+                  className={`w-full py-2.5 rounded-full font-bold text-xs uppercase tracking-wider transition shadow-sm cursor-pointer flex items-center justify-center gap-1.5 active:scale-95 ${
                     tier.popular
-                      ? 'bg-[#0D3B2A] hover:bg-[#153423] text-white border border-[#D4A24C]/50'
-                      : 'bg-[#FAF7F2] hover:bg-[#F3E8D2] text-[#0D3B2A] border border-[#D4A24C]/30'
+                      ? 'bg-[#0D3B2A] hover:bg-[#153423] text-white border border-[#D4A24C]'
+                      : 'bg-white hover:bg-[#0D3B2A] text-[#0D3B2A] hover:text-white border-2 border-[#0D3B2A]/30 hover:border-[#0D3B2A]'
                   }`}
                 >
                   <span>Select {tier.hardware.split(' ')[0]} Fleet</span>

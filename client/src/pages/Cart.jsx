@@ -16,7 +16,7 @@ import {
   Building,
   Info
 } from 'lucide-react';
-import { useCart } from '../context/CartContext';
+import { useCart, getTenureDiscount } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import toast from 'react-hot-toast';
@@ -30,6 +30,7 @@ export default function Cart() {
     cartCount,
     buySubtotal,
     rentalMonthlyTotal,
+    rentalSavingsTotal,
     updateBuyQuantity,
     updateRentalQuantity,
     updateRentalTenure,
@@ -83,8 +84,8 @@ export default function Cart() {
     if (cat === 'gpu' || s.includes('rtx 3060') || s.includes('graphics')) {
       return '/products/real-rtx-3060-gpu-transparent.png';
     }
-    if (cat === 'ram' || s.includes('ddr4') || s.includes('memory')) {
-      return '/products/real-ram-modules-transparent.png';
+    if (cat === 'ram' || s.includes('ddr4') || s.includes('memory') || s.includes('samsung') || s.includes('micron')) {
+      return '/products/real-enterprise-ram-transparent.png';
     }
     if (cat === 'monitor' || s.includes('p2419h') || s.includes('display')) {
       return '/products/real-dell-display-transparent.png';
@@ -390,6 +391,10 @@ export default function Cart() {
                           <img
                             src={getProductImage(p)}
                             alt={p.title}
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = '/products/real-thinkpad-t14-transparent.png';
+                            }}
                             className="max-h-full object-contain filter drop-shadow-sm"
                           />
                         </div>
@@ -665,7 +670,10 @@ export default function Cart() {
 
                 {rentalCart.map((item) => {
                   const p = item.product;
-                  const itemMonthly = (p.rental_price_monthly || 0) * item.quantity;
+                  const discount = getTenureDiscount(item.tenure);
+                  const baseRate = p.rental_price_monthly || 1350;
+                  const effectiveRate = Math.round(baseRate * (1 - discount));
+                  const itemMonthly = effectiveRate * item.quantity;
                   const maxRental = p.rental_stock !== undefined ? p.rental_stock : 5;
                   const isMax = item.quantity >= maxRental;
 
@@ -680,18 +688,38 @@ export default function Cart() {
                             <img
                               src={getProductImage(p)}
                               alt={p.title}
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = '/products/real-thinkpad-t14-transparent.png';
+                              }}
                               className="max-h-full object-contain filter drop-shadow-sm"
                             />
                           </div>
                           <div>
-                            <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-[#FAF7F2] text-[#8A5E12] uppercase border border-[#D4A24C]/30">
-                              Active Rental Fleet: {maxRental} Available
-                            </span>
+                            <div className="flex items-center gap-2">
+                              <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-[#FAF7F2] text-[#8A5E12] uppercase border border-[#D4A24C]/30">
+                                Active Rental Fleet: {maxRental} Available
+                              </span>
+                              {discount > 0 && (
+                                <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-300">
+                                  Save {Math.round(discount * 100)}%
+                                </span>
+                              )}
+                            </div>
                             <h3 className="text-xs sm:text-sm font-bold text-[#0D3B2A] font-serif line-clamp-1 mt-1">
                               {p.title}
                             </h3>
                             <p className="text-[11px] text-[#5A6B63] font-mono">
-                              Base: ₹{p.rental_price_monthly?.toLocaleString('en-IN') || 1350}/mo per device
+                              Rate:{' '}
+                              {discount > 0 && (
+                                <span className="line-through text-slate-400 mr-1.5">
+                                  ₹{baseRate.toLocaleString('en-IN')}/mo
+                                </span>
+                              )}
+                              <span className="font-bold text-[#0D3B2A]">
+                                ₹{effectiveRate.toLocaleString('en-IN')}/mo
+                              </span>{' '}
+                              per device
                             </p>
                           </div>
                         </div>
@@ -851,7 +879,23 @@ export default function Cart() {
                     <div className="flex justify-between">
                       <span>Base Monthly Rental:</span>
                       <span className="font-mono font-bold text-[#0D3B2A]">
-                        ₹{rentalMonthlyTotal.toLocaleString('en-IN')}/mo
+                        ₹{(rentalMonthlyTotal + rentalSavingsTotal).toLocaleString('en-IN')}/mo
+                      </span>
+                    </div>
+
+                    {rentalSavingsTotal > 0 && (
+                      <div className="flex justify-between text-emerald-700 font-semibold">
+                        <span>Tenure Lease Discount:</span>
+                        <span className="font-mono">
+                          -₹{rentalSavingsTotal.toLocaleString('en-IN')}/mo
+                        </span>
+                      </div>
+                    )}
+
+                    <div className="flex justify-between">
+                      <span>Refundable Security Deposit:</span>
+                      <span className="font-mono font-bold text-[#0D3B2A]">
+                        ₹0 (100% Zero-Collateral)
                       </span>
                     </div>
 
@@ -863,7 +907,7 @@ export default function Cart() {
                     </div>
 
                     <div className="border-t border-[#D4A24C]/20 pt-3 flex justify-between items-baseline text-sm">
-                      <span className="font-bold text-[#0D3B2A] font-serif">Effective Monthly OPEX:</span>
+                      <span className="font-bold text-[#0D3B2A] font-serif">Grand Monthly Recurring:</span>
                       <span className="text-xl font-bold text-[#0D3B2A] font-serif">
                         ₹{grandRentalMonthly.toLocaleString('en-IN')}<span className="text-xs text-[#5A6B63] font-sans font-normal">/mo</span>
                       </span>

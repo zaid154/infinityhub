@@ -3,6 +3,12 @@ import toast from 'react-hot-toast';
 
 const CartContext = createContext();
 
+export const getTenureDiscount = (tenure) => {
+  if (tenure === '12_months') return 0.15;
+  if (tenure === '6_months') return 0.05;
+  return 0; // 3_months or default
+};
+
 export const CartProvider = ({ children }) => {
   // Buy Cart: Outright Capex Purchases
   const [buyCart, setBuyCart] = useState(() => {
@@ -192,11 +198,20 @@ export const CartProvider = ({ children }) => {
     0
   );
 
-  // Rental monthly calculation
-  const rentalMonthlyTotal = rentalCart.reduce(
+  // Rental monthly calculation with tenure discounts (5% for 6mo, 15% for 12mo)
+  const rentalUndiscountedTotal = rentalCart.reduce(
     (total, item) => total + (item.product.rental_price_monthly || 0) * item.quantity,
     0
   );
+
+  const rentalMonthlyTotal = rentalCart.reduce((total, item) => {
+    const baseRate = item.product.rental_price_monthly || 0;
+    const discount = getTenureDiscount(item.tenure);
+    const effectiveMonthlyRate = Math.round(baseRate * (1 - discount));
+    return total + effectiveMonthlyRate * item.quantity;
+  }, 0);
+
+  const rentalSavingsTotal = Math.max(0, rentalUndiscountedTotal - rentalMonthlyTotal);
 
   return (
     <CartContext.Provider
@@ -226,7 +241,9 @@ export const CartProvider = ({ children }) => {
         rentalCartCount,
         cartCount,
         buySubtotal,
-        rentalMonthlyTotal
+        rentalMonthlyTotal,
+        rentalSavingsTotal,
+        getTenureDiscount
       }}
     >
       {children}
