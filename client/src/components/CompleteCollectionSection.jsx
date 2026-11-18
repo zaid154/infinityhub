@@ -18,7 +18,7 @@ const COMPLETE_COLLECTION = [
     original_price: 2700,
     rating: '5.0',
     reviews: 58,
-    image: '/products/thinkpad-t14.png',
+    image: '/products/real-thinkpad-t14-transparent.png',
     inStock: true,
     slug: 'lenovo-thinkpad-t14-gen-2-enterprise'
   },
@@ -35,7 +35,7 @@ const COMPLETE_COLLECTION = [
     original_price: 42000,
     rating: '4.9',
     reviews: 44,
-    image: '/products/commercial-elite.png',
+    image: '/products/real-dell-latitude-transparent.png',
     inStock: true,
     slug: 'dell-latitude-5420-corporate-business-laptop'
   },
@@ -52,26 +52,26 @@ const COMPLETE_COLLECTION = [
     original_price: 2400,
     rating: '4.9',
     reviews: 38,
-    image: '/products/workstation-laptop.png',
+    image: '/products/real-mobile-workstation-transparent.png',
     inStock: true,
     slug: 'hp-elitebook-850-g7-aluminum-workhorse'
   },
   {
     _id: 'col-4',
-    title: 'ThinkPad X1 Carbon Ultralight Executive',
-    brand: 'THINKPAD X-SERIES',
-    category: 'laptop',
+    title: 'Dell OptiPlex 7000 Micro Enterprise PC',
+    brand: 'DELL OPTIPLEX',
+    category: 'desktop',
     badge: 'OUTRIGHT SALE',
     type: 'sale',
-    specs: 'Core i7 10th Gen • 16GB RAM • 1TB NVMe • 1.09kg Carbon Fiber',
+    specs: 'Core i7 12th Gen • 32GB RAM • 1TB NVMe • Win 11 Pro',
     active_price: 36000,
     price_unit: '',
     original_price: 54000,
     rating: '5.0',
     reviews: 26,
-    image: '/products/ultrabook-pro.png',
+    image: '/products/real-optiplex-pc-transparent.png',
     inStock: true,
-    slug: 'lenovo-thinkpad-x1-carbon-executive'
+    slug: 'dell-optiplex-7000-micro-desktop'
   },
   {
     _id: 'col-5',
@@ -86,7 +86,7 @@ const COMPLETE_COLLECTION = [
     original_price: 1100,
     rating: '4.9',
     reviews: 64,
-    image: '/products/dell-ultrasharp-display.png',
+    image: '/products/real-dell-display-transparent.png',
     inStock: true,
     slug: 'dell-ultrasharp-u2720q-4k-uhd-display'
   }

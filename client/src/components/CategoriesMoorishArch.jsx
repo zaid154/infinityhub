@@ -4,40 +4,40 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const CATEGORIES = [
   {
-    id: 'laptop',
+    id: 'thinkpad',
     name: 'ThinkPad Fleets',
-    image: '/products/thinkpad-t14.png',
+    image: '/products/real-thinkpad-t14-transparent.png',
+    link: '/products?category=laptop'
+  },
+  {
+    id: 'ultrabook',
+    name: 'Dell Latitude',
+    image: '/products/real-dell-latitude-transparent.png',
+    link: '/products?category=laptop'
+  },
+  {
+    id: 'workstation',
+    name: 'Workstations',
+    image: '/products/real-mobile-workstation-transparent.png',
     link: '/products?category=laptop'
   },
   {
     id: 'monitor',
     name: 'Business Displays',
-    image: '/products/dell-ultrasharp-display.png',
+    image: '/products/real-dell-display-transparent.png',
     link: '/products?category=monitor'
-  },
-  {
-    id: 'gpu',
-    name: 'Workstation GPUs',
-    image: '/products/commercial-elite.png',
-    link: '/products?category=gpu'
-  },
-  {
-    id: 'ram',
-    name: 'Certified Memory',
-    image: '/products/workstation-laptop.png',
-    link: '/products?category=ram'
   },
   {
     id: 'desktop',
     name: 'Enterprise PCs',
-    image: '/products/ultrabook-pro.png',
+    image: '/products/real-optiplex-pc-transparent.png',
     link: '/products?category=desktop'
   },
   {
-    id: 'storage',
-    name: 'NVMe Storage',
-    image: '/products/enterprise-notebook.png',
-    link: '/products?category=storage'
+    id: 'ram',
+    name: 'RAM & Storage',
+    image: '/products/real-enterprise-ram-transparent.png',
+    link: '/products?category=ram'
   }
 ];
 
@@ -52,7 +52,7 @@ export default function CategoriesMoorishArch() {
   };
 
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-8 space-y-6 sm:space-y-8 select-none">
+    <section className="max-w-7xl mx-auto px-4 sm:px-8 space-y-8 select-none">
       {/* SVG ClipPath Definition for Exact Moorish Arch Geometry */}
       <svg width="0" height="0" className="absolute pointer-events-none">
         <defs>
@@ -62,19 +62,18 @@ export default function CategoriesMoorishArch() {
         </defs>
       </svg>
 
-      {/* Header Row: Title & Subtitle + Carousel Navigation Arrows */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-        <div className="text-center sm:text-left space-y-1.5 flex-1">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-normal text-[#0D3B2A] tracking-tight">
-            Shop by Categories
-          </h2>
-          <span className="text-[11px] sm:text-xs uppercase tracking-[0.25em] text-[#D4A24C] font-semibold block">
-            EXPLORE OUR WIDE RANGE OF ENTERPRISE FLEETS
-          </span>
-        </div>
+      {/* Header Row: Centered Title & Subtitle + Carousel Navigation Arrows */}
+      <div className="relative flex flex-col items-center justify-center text-center">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-[#0D3B2A] tracking-tight mb-2">
+          Shop by Categories
+        </h2>
+        <span className="text-[11px] sm:text-xs uppercase tracking-[0.25em] text-[#D4A24C] font-semibold block">
+          EXPLORE OUR WIDE RANGE OF ENTERPRISE FLEETS
+        </span>
+        <div className="w-12 h-0.5 bg-[#D4A24C] mx-auto mt-3.5 opacity-50"></div>
 
         {/* Carousel Arrow Buttons - Exactly like Al-Tooba (< and >) */}
-        <div className="flex items-center justify-center sm:justify-end gap-2.5">
+        <div className="hidden sm:flex absolute right-0 bottom-1 items-center gap-2">
           <button
             onClick={() => scroll('left')}
             aria-label="Previous Category"
@@ -101,29 +100,29 @@ export default function CategoriesMoorishArch() {
           <Link
             key={cat.id}
             to={cat.link}
-            className="relative min-w-[170px] sm:min-w-[200px] md:min-w-[220px] lg:min-w-0 aspect-[3/4.5] lg:aspect-[3/4.7] cursor-pointer group snap-center filter drop-shadow-[0_10px_20px_rgba(13,59,42,0.10)] block shrink-0 lg:shrink transition-transform duration-300 hover:-translate-y-1.5"
+            className="relative min-w-[170px] sm:min-w-[200px] md:min-w-[220px] lg:min-w-0 aspect-[3/4.6] lg:aspect-[3/4.8] cursor-pointer group snap-center filter drop-shadow-[0_10px_20px_rgba(13,59,42,0.08)] block shrink-0 lg:shrink transition-transform duration-300 hover:-translate-y-1.5"
           >
             {/* Card Interior with Mehrab Clip Path */}
             <div
               className="relative w-full h-full overflow-hidden bg-white group-hover:bg-[#FCFAF7] transition-colors"
               style={{ clipPath: 'url(#mehrab-clip)' }}
             >
-              {/* Product Cutout Image Standing Upright */}
-              <div className="absolute inset-0 flex items-center justify-center pt-8 pb-12 px-3">
+              {/* Product Cutout Image Standing Upright with Generous Vertical Space */}
+              <div className="absolute inset-0 flex items-center justify-center pt-10 pb-16 px-4">
                 <img
                   src={cat.image}
                   alt={cat.name}
                   loading="lazy"
-                  className="w-full h-full object-contain object-bottom group-hover:scale-110 transition-transform duration-700 ease-out filter drop-shadow-[0_12px_14px_rgba(0,0,0,0.16)]"
+                  className="w-full h-full object-contain object-bottom group-hover:scale-108 transition-transform duration-500 ease-out filter drop-shadow-[0_10px_14px_rgba(0,0,0,0.12)]"
                 />
               </div>
 
               {/* Bottom Subtle Gradient Shadow */}
-              <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#E8E1D5]/70 via-white/50 to-transparent pointer-events-none" />
+              <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#E8E1D5]/70 via-white/40 to-transparent pointer-events-none" />
 
-              {/* Category Name Label at Bottom - Exactly like Al-Tooba */}
-              <div className="absolute inset-x-0 bottom-3.5 sm:bottom-4 flex flex-col items-center justify-end text-center z-20 pointer-events-none px-2">
-                <h3 className="text-sm sm:text-base md:text-lg font-serif font-bold text-[#0D3B2A] group-hover:text-[#D4A24C] transition-colors tracking-wide leading-tight drop-shadow-sm">
+              {/* Category Name Label at Bottom - Exactly like Al-Tooba (Single Line, Uniform Baseline) */}
+              <div className="absolute inset-x-0 bottom-3.5 sm:bottom-4 h-7 flex items-center justify-center text-center z-20 pointer-events-none px-2">
+                <h3 className="text-xs sm:text-sm md:text-[15px] font-serif font-bold text-[#0D3B2A] group-hover:text-[#D4A24C] transition-colors tracking-wide leading-tight truncate w-full drop-shadow-sm">
                   {cat.name}
                 </h3>
               </div>

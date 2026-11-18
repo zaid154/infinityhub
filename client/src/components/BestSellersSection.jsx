@@ -15,7 +15,7 @@ const BEST_SELLER_LAPTOPS = [
     original_rental: 2200,
     rating: '5.0',
     reviews: 48,
-    image: '/products/thinkpad-t14.png',
+    image: '/products/real-thinkpad-t14-transparent.png',
     inStock: true,
     slug: 'lenovo-thinkpad-t490-enterprise-business-laptop'
   },
@@ -29,7 +29,7 @@ const BEST_SELLER_LAPTOPS = [
     original_rental: 2400,
     rating: '4.9',
     reviews: 36,
-    image: '/products/commercial-elite.png',
+    image: '/products/real-dell-latitude-transparent.png',
     inStock: true,
     slug: 'dell-latitude-7490-ultrabook-corporate-edition'
   },
@@ -43,7 +43,7 @@ const BEST_SELLER_LAPTOPS = [
     original_rental: 2150,
     rating: '4.9',
     reviews: 29,
-    image: '/products/workstation-laptop.png',
+    image: '/products/real-dell-latitude-transparent.png',
     inStock: true,
     slug: 'hp-elitebook-840-g6-aluminum-executive-series'
   },
@@ -57,7 +57,7 @@ const BEST_SELLER_LAPTOPS = [
     original_rental: 4500,
     rating: '5.0',
     reviews: 19,
-    image: '/products/ultrabook-pro.png',
+    image: '/products/real-mobile-workstation-transparent.png',
     inStock: false, // Out of stock indicator like Kalonji Shampoo on Al-Tooba
     slug: 'dell-precision-5540-workstation'
   },
@@ -71,7 +71,7 @@ const BEST_SELLER_LAPTOPS = [
     original_rental: 750,
     rating: '4.9',
     reviews: 52,
-    image: '/products/dell-ultrasharp-display.png',
+    image: '/products/real-dell-display-transparent.png',
     inStock: true,
     slug: 'dell-professional-p2419h-24-inch-ips-frameless-display'
   }
