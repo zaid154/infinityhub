@@ -35,16 +35,15 @@ export default function Navbar({ onOpenRFQ }) {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? 'bg-[#072117]/95 backdrop-blur-md border-b border-[#D4A24C]/25 shadow-[0_10px_30px_rgba(0,0,0,0.5)] py-0'
-          : 'bg-gradient-to-b from-black/75 via-black/35 to-transparent border-b border-white/10'
+          ? 'bg-[#FAF7F2]/95 backdrop-blur-md border-b border-[#D4A24C]/30 shadow-[0_8px_30px_rgba(0,0,0,0.06)]'
+          : 'bg-gradient-to-b from-black/75 via-black/35 to-transparent border-b border-transparent'
       }`}
     >
-
-      {/* Main Transparent Navbar */}
+      {/* Main Transparent / Frosted Navbar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">
-        {/* Brand Logo - Al-Tooba Style (Gold & White) */}
+        {/* Brand Logo - Al-Tooba Style (Gold & White / Dark Emerald) */}
         <Link to="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-full bg-[#0D3B2A]/90 border border-[#D4A24C]/60 flex items-center justify-center text-[#D4A24C] shadow-lg group-hover:scale-105 transition backdrop-blur-sm">
+          <div className="w-10 h-10 rounded-full bg-[#0D3B2A] border border-[#D4A24C]/60 flex items-center justify-center text-[#D4A24C] shadow-lg group-hover:scale-105 transition">
             <svg
               className="w-5 h-5"
               viewBox="0 0 24 24"
@@ -58,33 +57,39 @@ export default function Navbar({ onOpenRFQ }) {
             </svg>
           </div>
           <div>
-            <div className="text-xl sm:text-2xl font-bold tracking-tight text-white font-serif flex items-center gap-1.5 drop-shadow-md">
-              NOVA <span className="text-[#F59E0B] font-normal italic">INFOTECH</span>
+            <div className={`text-xl sm:text-2xl font-bold tracking-tight font-serif flex items-center gap-1.5 transition-colors ${
+              scrolled ? 'text-[#072117]' : 'text-white drop-shadow-md'
+            }`}>
+              NOVA <span className={`${scrolled ? 'text-[#D4A24C]' : 'text-[#F59E0B]'} font-normal italic`}>INFOTECH</span>
             </div>
-            <p className="text-[9px] text-white/70 tracking-[0.2em] uppercase font-semibold">
+            <p className={`text-[9px] tracking-[0.2em] uppercase font-semibold transition-colors ${
+              scrolled ? 'text-[#5A6B63]' : 'text-white/70'
+            }`}>
               Certified Enterprise Hardware
             </p>
           </div>
         </Link>
 
-        {/* Desktop Navigation Links - Al-Tooba Crisp White Font */}
-        <nav className="hidden lg:flex items-center space-x-8 text-[12px] uppercase font-bold tracking-[0.16em] text-white">
-          <Link to="/" className="hover:text-[#F59E0B] transition-colors drop-shadow-sm">
+        {/* Desktop Navigation Links - Switches White to Deep Emerald on Scroll */}
+        <nav className={`hidden lg:flex items-center space-x-8 text-[12px] uppercase font-bold tracking-[0.16em] transition-colors ${
+          scrolled ? 'text-[#072117]' : 'text-white'
+        }`}>
+          <Link to="/" className={`transition-colors ${scrolled ? 'hover:text-[#D4A24C]' : 'hover:text-[#F59E0B] drop-shadow-sm'}`}>
             Home
           </Link>
-          <Link to="/products" className="hover:text-[#F59E0B] transition-colors drop-shadow-sm">
+          <Link to="/products" className={`transition-colors ${scrolled ? 'hover:text-[#D4A24C]' : 'hover:text-[#F59E0B] drop-shadow-sm'}`}>
             Products
           </Link>
-          <Link to="/rental" className="hover:text-[#F59E0B] transition-colors drop-shadow-sm">
+          <Link to="/rental" className={`transition-colors ${scrolled ? 'hover:text-[#D4A24C]' : 'hover:text-[#F59E0B] drop-shadow-sm'}`}>
             Rental
           </Link>
-          <Link to="/buyback" className="hover:text-[#F59E0B] transition-colors drop-shadow-sm">
+          <Link to="/buyback" className={`transition-colors ${scrolled ? 'hover:text-[#D4A24C]' : 'hover:text-[#F59E0B] drop-shadow-sm'}`}>
             Liquidation
           </Link>
-          <Link to="/about" className="hover:text-[#F59E0B] transition-colors drop-shadow-sm">
+          <Link to="/about" className={`transition-colors ${scrolled ? 'hover:text-[#D4A24C]' : 'hover:text-[#F59E0B] drop-shadow-sm'}`}>
             About
           </Link>
-          <Link to="/contact" className="hover:text-[#F59E0B] transition-colors drop-shadow-sm">
+          <Link to="/contact" className={`transition-colors ${scrolled ? 'hover:text-[#D4A24C]' : 'hover:text-[#F59E0B] drop-shadow-sm'}`}>
             Contact Us
           </Link>
         </nav>
@@ -105,7 +110,11 @@ export default function Navbar({ onOpenRFQ }) {
               ) : (
                 <Link
                   to="/dashboard"
-                  className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/10 text-white border border-white/20 text-xs font-semibold hover:bg-white/20 transition backdrop-blur-sm"
+                  className={`hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full border text-xs font-semibold transition backdrop-blur-sm ${
+                    scrolled
+                      ? 'bg-[#072117]/10 text-[#072117] border-[#072117]/20 hover:bg-[#072117]/20'
+                      : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
+                  }`}
                 >
                   <User className="w-3.5 h-3.5" />
                   {user.name.split(' ')[0]}
@@ -113,7 +122,9 @@ export default function Navbar({ onOpenRFQ }) {
               )}
               <button
                 onClick={logout}
-                className="p-2 text-white/70 hover:text-red-400 transition rounded-full hover:bg-white/10"
+                className={`p-2 transition rounded-full ${
+                  scrolled ? 'text-[#072117]/70 hover:text-red-500 hover:bg-black/5' : 'text-white/70 hover:text-red-400 hover:bg-white/10'
+                }`}
                 title="Logout"
               >
                 <LogOut className="w-4 h-4" />
@@ -122,7 +133,11 @@ export default function Navbar({ onOpenRFQ }) {
           ) : (
             <Link
               to="/login"
-              className="p-2.5 text-white hover:text-[#F59E0B] transition rounded-full hover:bg-white/10"
+              className={`p-2.5 transition rounded-full ${
+                scrolled
+                  ? 'text-[#072117] hover:text-[#D4A24C] hover:bg-black/5'
+                  : 'text-white hover:text-[#F59E0B] hover:bg-white/10'
+              }`}
               title="Sign In / Account"
             >
               <User className="w-5 h-5" />
@@ -132,7 +147,11 @@ export default function Navbar({ onOpenRFQ }) {
           {/* Cart Icon - Al-Tooba Bag Style */}
           <Link
             to="/cart"
-            className="relative p-2.5 text-white hover:text-[#F59E0B] transition rounded-full hover:bg-white/10"
+            className={`relative p-2.5 transition rounded-full ${
+              scrolled
+                ? 'text-[#072117] hover:text-[#D4A24C] hover:bg-black/5'
+                : 'text-white hover:text-[#F59E0B] hover:bg-white/10'
+            }`}
             title="Quotation Cart"
           >
             <ShoppingCart className="w-5 h-5" />
@@ -155,7 +174,11 @@ export default function Navbar({ onOpenRFQ }) {
           {/* Mobile Menu Toggle Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 text-white hover:text-[#F59E0B] rounded-full hover:bg-white/10"
+            className={`lg:hidden p-2 rounded-full transition ${
+              scrolled
+                ? 'text-[#072117] hover:text-[#D4A24C] hover:bg-black/5'
+                : 'text-white hover:text-[#F59E0B] hover:bg-white/10'
+            }`}
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
