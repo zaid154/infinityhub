@@ -71,6 +71,9 @@ export default function RentalPlans() {
     if (s.includes('elitebook') || s.includes('hp')) {
       return '/products/real-mobile-workstation-transparent.png';
     }
+    if (s.includes('macbook') || s.includes('apple')) {
+      return p.images?.[0]?.url || 'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=800&auto=format&fit=crop&q=80';
+    }
     return p.images?.[0]?.url || '/products/real-thinkpad-t14-transparent.png';
   };
 
@@ -125,6 +128,23 @@ export default function RentalPlans() {
       sla: '24h VIP Direct Engineer Dispatch',
       popular: false,
       badge: 'Enterprise Flagship'
+    },
+    {
+      id: 'macbook',
+      name: 'Apple Silicon Fleet',
+      rate: '2,800',
+      tagline: 'Engineered for Creative Directors, UI/UX & iOS Developers',
+      specs: [
+        'Apple M1/M2 Silicon Processor (8-Core)',
+        '8GB / 16GB Unified High-Speed Memory',
+        '256GB / 512GB Ultra-Fast NVMe Storage',
+        '13.3" Retina Display with True Tone',
+        'macOS Sonoma Enterprise MDM Ready',
+        'Up to 18-Hour Battery Endurance'
+      ],
+      sla: '24h VIP Direct Engineer Swap',
+      popular: false,
+      badge: 'Apple Fleet'
     }
   ];
 
@@ -171,6 +191,14 @@ export default function RentalPlans() {
     {
       q: 'How does the 18% GST Input Tax Credit benefit our company?',
       a: 'Unlike asset capital purchases which tie up cash in depreciation schedules, monthly equipment rental invoices carry 100% deductible Operational Expenditure (OPEX) classification and 18% input credit verifiable directly in your GSTR-2B filing.'
+    },
+    {
+      q: 'What is your policy regarding accidental physical or liquid damage?',
+      a: 'Standard mechanical wear-and-tear, thermal degradation, keyboard usage, and battery performance are 100% covered under our free AMC. For accidental physical drops or liquid spills, repairs are billed at direct component cost price without inflated service markups.'
+    },
+    {
+      q: 'Can laptops be shipped directly to remote work-from-home (WFH) employees?',
+      a: 'Yes. We provide white-glove direct shipping to employees residing anywhere in India across 300+ cities. Each laptop arrives packaged in tamper-evident secure transit cases with pre-configured corporate VPN and MDM logins.'
     }
   ];
 
@@ -228,11 +256,11 @@ export default function RentalPlans() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch pt-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch pt-2">
           {fleetTiers.map((tier) => (
             <div
               key={tier.id}
-              className={`rounded-3xl p-6 sm:p-7 flex flex-col justify-between transition-all duration-300 relative ${
+              className={`rounded-3xl p-5 sm:p-6 flex flex-col justify-between transition-all duration-300 relative ${
                 tier.popular
                   ? 'bg-white border-2 border-[#D4A24C] shadow-xl ring-4 ring-[#D4A24C]/10'
                   : 'bg-white border border-[#D4A24C]/25 shadow-sm hover:shadow-md'
@@ -433,6 +461,67 @@ export default function RentalPlans() {
       </section>
 
       {/* ======================================================== */}
+      {/* SECTION: CAPEX VS OPEX FINANCIAL COMPARISON MATRIX       */}
+      {/* ======================================================== */}
+      <section className="bg-white rounded-3xl border border-[#D4A24C]/25 p-6 sm:p-10 space-y-6 shadow-sm overflow-hidden">
+        <div className="text-center max-w-2xl mx-auto space-y-1.5">
+          <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#8A5E12] font-bold">
+            — FINANCIAL INTELLIGENCE FOR CFOS
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#0D3B2A]">
+            Outright Purchase (CAPEX) vs Nova Fleet Lease (OPEX)
+          </h2>
+          <p className="text-xs sm:text-sm text-[#5A6B63]">
+            Why leading tech enterprises and high-growth startups preserve capital by leasing hardware fleets.
+          </p>
+        </div>
+
+        <div className="overflow-x-auto pt-2">
+          <table className="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr className="bg-[#072117] text-[#FAF7F2] font-mono uppercase tracking-wider text-[10px]">
+                <th className="py-4 px-4 sm:px-6 rounded-l-xl">Decision Metric</th>
+                <th className="py-4 px-4 sm:px-6 text-red-300">Outright Purchase (CAPEX)</th>
+                <th className="py-4 px-4 sm:px-6 text-[#D4A24C] font-bold rounded-r-xl bg-[#0D3B2A]">Nova Enterprise Lease (OPEX)</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#D4A24C]/15 font-sans">
+              <tr className="hover:bg-[#FAF7F2]/60 transition">
+                <td className="py-3.5 px-4 sm:px-6 font-bold text-[#0D3B2A]">Upfront Cash Outlay</td>
+                <td className="py-3.5 px-4 sm:px-6 text-red-600 font-semibold">₹10 Lakhs – ₹30 Lakhs capital blocked immediately</td>
+                <td className="py-3.5 px-4 sm:px-6 font-bold text-[#0D3B2A] bg-[#FAF7F2]">₹0 Zero Upfront (100% Cash Flow Preserved)</td>
+              </tr>
+              <tr className="hover:bg-[#FAF7F2]/60 transition">
+                <td className="py-3.5 px-4 sm:px-6 font-bold text-[#0D3B2A]">Corporate Tax Treatment</td>
+                <td className="py-3.5 px-4 sm:px-6 text-slate-500">Slow multi-year asset depreciation schedules</td>
+                <td className="py-3.5 px-4 sm:px-6 font-bold text-emerald-700 bg-[#FAF7F2]">100% Tax Deductible OPEX in Current FY</td>
+              </tr>
+              <tr className="hover:bg-[#FAF7F2]/60 transition">
+                <td className="py-3.5 px-4 sm:px-6 font-bold text-[#0D3B2A]">GST Input Credit</td>
+                <td className="py-3.5 px-4 sm:px-6 text-slate-500">Fixed one-time capital invoice ITC</td>
+                <td className="py-3.5 px-4 sm:px-6 font-bold text-[#0D3B2A] bg-[#FAF7F2]">Monthly 18% GSTR-2B Input Credit Every Month</td>
+              </tr>
+              <tr className="hover:bg-[#FAF7F2]/60 transition">
+                <td className="py-3.5 px-4 sm:px-6 font-bold text-[#0D3B2A]">Annual Maintenance (AMC)</td>
+                <td className="py-3.5 px-4 sm:px-6 text-red-600 font-semibold">₹3,500 – ₹6,000 per device/year + paid parts</td>
+                <td className="py-3.5 px-4 sm:px-6 font-bold text-emerald-700 bg-[#FAF7F2]">100% Free AMC, Free Spares & Diagnostics</td>
+              </tr>
+              <tr className="hover:bg-[#FAF7F2]/60 transition">
+                <td className="py-3.5 px-4 sm:px-6 font-bold text-[#0D3B2A]">Employee Breakdown SLA</td>
+                <td className="py-3.5 px-4 sm:px-6 text-slate-500">5 to 10 days downtime at OEM repair centers</td>
+                <td className="py-3.5 px-4 sm:px-6 font-bold text-[#0D3B2A] bg-[#FAF7F2]">24–48h Standby Laptop Replacement On-Site</td>
+              </tr>
+              <tr className="hover:bg-[#FAF7F2]/60 transition">
+                <td className="py-3.5 px-4 sm:px-6 font-bold text-[#0D3B2A]">Obsolescence & Tech Refresh</td>
+                <td className="py-3.5 px-4 sm:px-6 text-slate-500">Stuck with slow aging machines after 3 years</td>
+                <td className="py-3.5 px-4 sm:px-6 font-bold text-[#0D3B2A] bg-[#FAF7F2]">Upgrade to Next-Gen Fleets Every 12–24 Months</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {/* ======================================================== */}
       {/* SECTION 5: 4-STEP ENTERPRISE ONBOARDING WORKFLOW        */}
       {/* ======================================================== */}
       <section className="bg-white rounded-3xl border border-[#D4A24C]/25 p-8 sm:p-10 space-y-8 shadow-sm">
@@ -540,6 +629,48 @@ export default function RentalPlans() {
             <p className="text-xs text-[#5A6B63] leading-relaxed">
               Tier discounts of 5% on 6-month leases and 15% on 12+ month contracts, plus volume bonuses on fleets of 25+ and 50+ laptops.
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ======================================================== */}
+      {/* SECTION: PAN-INDIA LOGISTICS HUBS & REMOTE DISPATCH      */}
+      {/* ======================================================== */}
+      <section className="bg-[#072117] rounded-3xl border border-[#D4A24C]/30 p-8 sm:p-10 space-y-6 text-white shadow-xl relative overflow-hidden">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#FAF7F2]/10 pb-5">
+          <div>
+            <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#D4A24C] font-bold block">
+              — NATIONWIDE TRANSIT SLA
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#FAF7F2] mt-0.5">
+              Pan-India Hub Dispatch & WFH White-Glove Logistics
+            </h2>
+          </div>
+          <p className="text-xs text-[#90b09a] max-w-md leading-relaxed">
+            Centralized fulfillment hubs equipped with diagnostic test benches ensuring rapid deployment directly to corporate offices or remote employees' doorsteps.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+          <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-1">
+            <span className="text-xs font-bold text-[#D4A24C] font-serif block">📍 Delhi NCR Hub</span>
+            <span className="text-[11px] text-[#FAF7F2] font-semibold block">Same-Day / 24h Delivery</span>
+            <span className="text-[10px] text-[#90b09a]">Noida, Gurgaon, Delhi, Faridabad</span>
+          </div>
+          <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-1">
+            <span className="text-xs font-bold text-[#D4A24C] font-serif block">📍 Bangalore Hub</span>
+            <span className="text-[11px] text-[#FAF7F2] font-semibold block">24-Hour Delivery</span>
+            <span className="text-[10px] text-[#90b09a]">Electronic City, Whitefield, ORR</span>
+          </div>
+          <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-1">
+            <span className="text-xs font-bold text-[#D4A24C] font-serif block">📍 Mumbai & Pune</span>
+            <span className="text-[11px] text-[#FAF7F2] font-semibold block">24–48h Transit SLA</span>
+            <span className="text-[10px] text-[#90b09a]">BKC, Andheri, Hinjewadi, Magarpatta</span>
+          </div>
+          <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-1">
+            <span className="text-xs font-bold text-[#D4A24C] font-serif block">📍 Pan-India & Remote WFH</span>
+            <span className="text-[11px] text-[#FAF7F2] font-semibold block">Insured Tracked Courier</span>
+            <span className="text-[10px] text-[#90b09a]">Direct to employee home in 300+ cities</span>
           </div>
         </div>
       </section>

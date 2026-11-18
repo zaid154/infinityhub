@@ -32,6 +32,13 @@ const TIERS = [
     subtitle: 'Dell Precision • 32GB • RTX GPU',
     price: 3200,
     icon: Server
+  },
+  {
+    id: 'macbook',
+    name: 'Apple Silicon Fleet',
+    subtitle: 'MacBook Air M1/M2 • 8/16GB • Retina',
+    price: 2800,
+    icon: Laptop
   }
 ];
 
@@ -44,7 +51,7 @@ const DURATIONS = [
 const PRESETS = [5, 15, 30, 50, 100];
 
 export default function RentalCalculator({ onOpenRFQ }) {
-  const { addToCart } = useCart();
+  const { addToRentalCart } = useCart();
   const [selectedTier, setSelectedTier] = useState(TIERS[0]);
   const [quantity, setQuantity] = useState(15);
   const [duration, setDuration] = useState(DURATIONS[1]);
@@ -65,18 +72,20 @@ export default function RentalCalculator({ onOpenRFQ }) {
   };
 
   const handleAddToCart = () => {
-    addToCart(
+    const tenureKey = duration.id === '3m' ? '3_months' : duration.id === '12m' ? '12_months' : '6_months';
+    addToRentalCart(
       {
         _id: `custom-lease-${selectedTier.id}-${quantity}-${duration.id}`,
-        title: `${quantity}x ${selectedTier.name} Lease (${duration.label})`,
-        sale_price: finalTotal * (duration.id === '3m' ? 3 : duration.id === '6m' ? 6 : 12),
+        title: `${quantity}x ${selectedTier.name} Corporate Lease (${duration.label})`,
         rental_price_monthly: finalTotal,
-        images: [{ url: '/products/real-thinkpad-t14-transparent.png' }],
-        category: 'rental'
+        rental_stock: 999, // custom bundle has dedicated fulfillment
+        images: [{ url: selectedTier.id === 'macbook' ? 'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=800&auto=format&fit=crop&q=80' : '/products/real-thinkpad-t14-transparent.png' }],
+        category: 'laptop'
       },
-      1
+      1,
+      tenureKey
     );
-    toast.success(`${quantity}x ${selectedTier.name} rental lease package added to cart!`);
+    toast.success(`${quantity}x ${selectedTier.name} fleet lease added to Corporate Rental Cart!`);
   };
 
   return (
@@ -117,7 +126,7 @@ export default function RentalCalculator({ onOpenRFQ }) {
                   Base ₹{selectedTier.price.toLocaleString('en-IN')}/mo
                 </span>
               </div>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {TIERS.map((tier) => (
                   <button
                     key={tier.id}
@@ -201,7 +210,7 @@ export default function RentalCalculator({ onOpenRFQ }) {
                   </span>
                 )}
               </div>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {DURATIONS.map((d) => (
                   <button
                     key={d.id}
