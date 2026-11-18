@@ -204,9 +204,9 @@ export default function Home() {
   ];
 
   return (
-    <div className="space-y-20 pb-20 bg-[#FAF7F2] text-[#111827]">
+    <div className="bg-[#FAF7F2] text-[#111827]">
       {/* 1. HERO SECTION - AL-TOOBA CINEMATIC AMBIENT VIDEO BACKGROUND & 3D PRODUCT POPUP */}
-      <section className="relative pt-20 sm:pt-24 pb-8 sm:pb-12 px-4 sm:px-8 bg-[#072117] overflow-hidden min-h-[85vh] sm:min-h-[88vh] max-h-[780px] flex items-center border-b border-[#D4A24C]/30 text-white">
+      <section className="relative w-full h-screen min-h-[600px] flex flex-col justify-center overflow-hidden bg-[#072117] text-white pt-20 pb-6 px-4 sm:px-8 border-b border-[#D4A24C]/30">
         {/* Ambient Video Background - Exact Al-Tooba Technique */}
         <video
           ref={heroVideoRef}
@@ -226,7 +226,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-r from-[#072117]/90 via-[#072117]/40 to-transparent z-[1] pointer-events-none hidden lg:block"></div>
         <div className="absolute inset-0 opacity-[0.04] bg-[radial-gradient(#D4A24C_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none z-[1]"></div>
 
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center relative z-10 w-full">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center relative z-10 w-full my-auto">
           {/* Left Column: Al-Tooba Style Typography & CTAs */}
           <div className="lg:col-span-6 space-y-3.5">
             {/* Top Star Emblem */}
@@ -284,7 +284,7 @@ export default function Home() {
       </section>
 
       {/* 2. AL-TOOBA RUNNING GOLD TICKER MARQUEE STRIP */}
-      <div className="w-full bg-[#183623] border-y border-[#D4A24C]/30 py-3.5 sm:py-4 overflow-hidden relative z-10 select-none [contain:paint]">
+      <div className="w-full bg-[#183623] border-b border-[#D4A24C]/30 py-3.5 sm:py-4 overflow-hidden relative z-10 select-none [contain:paint]">
         <div className="animate-marquee">
           <div className="flex shrink-0 items-center gap-10 sm:gap-14 text-white/90 font-serif italic text-sm sm:text-base pr-10 sm:pr-14">
             {[...Array(3)].map((_, i) => (
@@ -325,7 +325,8 @@ export default function Home() {
         </div>
       </div>
 
-      {/* 3. AL-TOOBA SIGNATURE MOORISH ARCH CATEGORIES SECTION */}
+      <div className="space-y-20 pt-16 pb-20">
+        {/* 3. AL-TOOBA SIGNATURE MOORISH ARCH CATEGORIES SECTION */}
       <section className="max-w-7xl mx-auto px-4 sm:px-8 space-y-10">
         <div className="text-center max-w-2xl mx-auto space-y-2">
           <span className="text-[11px] uppercase tracking-[0.25em] text-[#D4A24C] font-semibold block">
@@ -1014,6 +1015,7 @@ export default function Home() {
           })}
         </div>
       </section>
+      </div>
     </div>
   );
 }
