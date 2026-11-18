@@ -39,9 +39,31 @@ export default function Products() {
   };
 
   const getProductImage = (p) => {
+    const s = p.slug?.toLowerCase() || '';
+    const cat = p.category?.toLowerCase() || '';
+
+    if (cat === 'gpu' || s.includes('rtx') || s.includes('3060')) {
+      return '/products/real-rtx-3060-gpu-transparent.png';
+    }
+    if (cat === 'ram' || s.includes('ddr4') || s.includes('memory')) {
+      return '/products/real-enterprise-ram-transparent.png';
+    }
+    if (cat === 'monitor' || s.includes('p2419h') || s.includes('display')) {
+      return '/products/real-dell-display-transparent.png';
+    }
+    if (s.includes('latitude')) {
+      return '/products/real-dell-latitude-transparent.png';
+    }
+    if (s.includes('thinkpad')) {
+      return '/products/real-thinkpad-t14-transparent.png';
+    }
+    if (s.includes('elitebook') || s.includes('hp')) {
+      return '/products/real-mobile-workstation-transparent.png';
+    }
+
     const url = p.images?.[0]?.url;
-    if (!url || url.includes('photo-1544717305-2782549b5136') || p.slug?.includes('hp-elitebook')) {
-      return 'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=800&auto=format&fit=crop&q=80';
+    if (!url || url.includes('photo-1544717305-2782549b5136')) {
+      return '/products/real-thinkpad-t14-transparent.png';
     }
     return url;
   };

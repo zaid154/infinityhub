@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import WhatsAppFloat from '../components/WhatsAppFloat';
-import ChatbotWidget from '../components/ChatbotWidget';
 import RFQModal from '../components/RFQModal';
 
 export default function MainLayout() {
@@ -26,8 +24,6 @@ export default function MainLayout() {
       </main>
 
       <Footer />
-      <WhatsAppFloat onOpenRFQ={openRFQ} />
-      <ChatbotWidget />
 
       <RFQModal
         isOpen={rfqModalOpen}

@@ -78,9 +78,9 @@ export default function ProductDetail() {
 
     if (cat === 'gpu' || s.includes('rtx') || s.includes('graphics')) {
       return [
-        '/products/real-optiplex-pc-transparent.png',
-        '/products/commercial-elite.png',
-        '/products/real-mobile-workstation-transparent.png'
+        '/products/real-rtx-3060-gpu-transparent.png',
+        '/products/real-rtx-3060-gpu.jpg',
+        '/products/real-optiplex-pc-transparent.png'
       ];
     }
     if (cat === 'monitor' || s.includes('display') || s.includes('p2419h') || s.includes('ultrasharp')) {
@@ -145,22 +145,22 @@ export default function ProductDetail() {
     : product.category?.toUpperCase() || 'ENTERPRISE HARDWARE';
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-8 pt-4 sm:pt-6 pb-16 select-none">
+    <div className="max-w-7xl mx-auto px-4 sm:px-8 pt-3 sm:pt-4 pb-14 select-none">
       
-      {/* Al-Tooba Exact 1:1 Product Section Grid (No wasted red-box dead space) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+      {/* Al-Tooba Exact 1:1 Product Section Grid (Compact Above-The-Fold Architecture) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-start">
         
         {/* Left Column: Vertical Thumbnails + Main Rounded Stage (Al-Tooba 1:1 Anatomy) */}
-        <div className="lg:col-span-7 flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 items-start">
+        <div className="lg:col-span-7 flex flex-col-reverse sm:flex-row gap-3 items-start">
           
           {/* Vertical Thumbnails Stack (Desktop: vertical flex-col, Mobile: horizontal flex-row) */}
-          <div className="flex sm:flex-col gap-2.5 sm:gap-3 w-full sm:w-20 md:w-24 shrink-0 overflow-x-auto sm:overflow-visible pb-1 sm:pb-0">
+          <div className="flex sm:flex-col gap-2 w-full sm:w-18 md:w-20 shrink-0 overflow-x-auto sm:overflow-visible pb-1 sm:pb-0">
             {galleryImages.map((img, idx) => (
               <button
                 key={idx}
                 type="button"
                 onClick={() => setSelectedImage(idx)}
-                className={`w-18 h-18 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-2xl bg-white p-2 flex items-center justify-center transition-all cursor-pointer border-2 shrink-0 ${
+                className={`w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-xl bg-white p-2 flex items-center justify-center transition-all cursor-pointer border-2 shrink-0 ${
                   selectedImage === idx
                     ? 'border-[#0D3B2A] shadow-md ring-2 ring-[#0D3B2A]/20'
                     : 'border-gray-200 hover:border-gray-400 opacity-75 hover:opacity-100'
@@ -176,9 +176,9 @@ export default function ProductDetail() {
           </div>
 
           {/* Main Large Image Stage Container (Rounded Linen/Warm Stage like Al-Tooba) */}
-          <div className="flex-1 w-full h-[360px] sm:h-[440px] md:h-[480px] bg-[#F4EFE6] rounded-[28px] sm:rounded-[32px] p-6 sm:p-10 flex items-center justify-center relative overflow-hidden border border-[#D4A24C]/25 shadow-inner">
+          <div className="flex-1 w-full h-[320px] sm:h-[380px] lg:h-[410px] bg-[#F4EFE6] rounded-[24px] sm:rounded-[28px] p-5 sm:p-8 flex items-center justify-center relative overflow-hidden border border-[#D4A24C]/25 shadow-inner">
             {/* Top-Right Image Count Pill: 1/3 */}
-            <div className="absolute top-4 right-4 bg-black/75 backdrop-blur text-white text-[11px] font-mono font-bold px-3 py-1 rounded-full z-10 shadow-sm">
+            <div className="absolute top-3.5 right-3.5 bg-black/75 backdrop-blur text-white text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full z-10 shadow-sm">
               {selectedImage + 1}/{galleryImages.length}
             </div>
 
@@ -186,88 +186,88 @@ export default function ProductDetail() {
             <img
               src={galleryImages[selectedImage]}
               alt={product.title}
-              className="max-h-full max-w-full object-contain transition-all duration-300 filter drop-shadow-[0_20px_25px_rgba(0,0,0,0.12)] hover:scale-105"
+              className="max-h-full max-w-full object-contain transition-all duration-300 filter drop-shadow-[0_15px_20px_rgba(0,0,0,0.12)] hover:scale-105"
             />
           </div>
 
         </div>
 
         {/* Right Column: Title, Pricing, Trust Grid, Stepper & 1-Click Buy Now */}
-        <div className="lg:col-span-5 space-y-4 sm:space-y-5">
+        <div className="lg:col-span-5 space-y-3.5 sm:space-y-4">
           
-          {/* Category Kicker */}
+          {/* Category Kicker & Title */}
           <div>
-            <span className="text-[11px] font-sans font-bold uppercase tracking-[0.2em] text-[#8A5E12] block mb-1">
+            <span className="text-[10px] sm:text-[11px] font-sans font-bold uppercase tracking-[0.2em] text-[#8A5E12] block mb-1">
               — {categoryKicker}
             </span>
             
-            {/* Product Title (Playfair Serif, Deep Emerald) */}
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif text-[#0D3B2A] font-bold tracking-tight leading-snug">
+            {/* Product Title (Playfair Serif, Deep Emerald, Compact leading) */}
+            <h1 className="text-xl sm:text-2xl lg:text-[26px] font-serif text-[#0D3B2A] font-bold tracking-tight leading-snug">
               {product.title}
             </h1>
           </div>
 
           {/* Price Row: Main Price + Strikethrough + SAVE 20% Badge (Exact Al-Tooba Anatomy) */}
-          <div className="flex items-baseline gap-3 flex-wrap pt-0.5">
-            <span className="text-3xl sm:text-4xl font-bold font-serif text-[#0D3B2A]">
+          <div className="flex items-baseline gap-2.5 flex-wrap">
+            <span className="text-2xl sm:text-3xl font-bold font-serif text-[#0D3B2A]">
               ₹{product.sale_price.toLocaleString('en-IN')}
             </span>
-            <span className="text-base sm:text-lg font-sans text-gray-400 line-through">
+            <span className="text-sm sm:text-base font-sans text-gray-400 line-through">
               ₹{originalPrice.toLocaleString('en-IN')}
             </span>
-            <span className="px-2.5 py-0.5 rounded-md bg-[#FFEAEA] text-[#D9383A] text-xs font-bold uppercase tracking-wider">
+            <span className="px-2 py-0.5 rounded-md bg-[#FFEAEA] text-[#D9383A] text-[11px] font-bold uppercase tracking-wider">
               SAVE {discountPercent}%
             </span>
             {product.rental_price_monthly > 0 && (
-              <span className="text-xs font-semibold text-[#8A5E12] bg-[#F2E8D5] px-2.5 py-1 rounded-full ml-auto">
+              <span className="text-[11px] font-semibold text-[#8A5E12] bg-[#F2E8D5] px-2.5 py-0.5 rounded-full ml-auto">
                 or Lease ₹{product.rental_price_monthly.toLocaleString('en-IN')}/mo
               </span>
             )}
           </div>
 
           {/* 2x2 Trust Guarantees Grid (Exact Al-Tooba Layout with Gold Outline Icons) */}
-          <div className="grid grid-cols-2 gap-y-3 gap-x-4 py-3.5 border-y border-[#D4A24C]/25 text-xs sm:text-[13px] text-[#0D3B2A] font-medium">
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-[#8A5E12] shrink-0" />
+          <div className="grid grid-cols-2 gap-y-2.5 gap-x-3 py-2.5 border-y border-[#D4A24C]/25 text-[11px] sm:text-xs text-[#0D3B2A] font-medium">
+            <div className="flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#8A5E12] shrink-0" />
               <span>100% Grade A+ Certified</span>
             </div>
-            <div className="flex items-center gap-2">
-              <Award className="w-4 h-4 text-[#8A5E12] shrink-0" />
+            <div className="flex items-center gap-1.5">
+              <Award className="w-3.5 h-3.5 text-[#8A5E12] shrink-0" />
               <span>6–12 Months Warranty</span>
             </div>
-            <div className="flex items-center gap-2">
-              <Truck className="w-4 h-4 text-[#8A5E12] shrink-0" />
+            <div className="flex items-center gap-1.5">
+              <Truck className="w-3.5 h-3.5 text-[#8A5E12] shrink-0" />
               <span>24–48h SLA Dispatch</span>
             </div>
-            <div className="flex items-center gap-2">
-              <Lock className="w-4 h-4 text-[#8A5E12] shrink-0" />
+            <div className="flex items-center gap-1.5">
+              <Lock className="w-3.5 h-3.5 text-[#8A5E12] shrink-0" />
               <span>100% Tax Invoiced (GST)</span>
             </div>
           </div>
 
           {/* Description Excerpt with "READ MORE ∨" Toggle */}
           <div className="space-y-1">
-            <p className={`text-xs sm:text-sm text-[#5A6B63] leading-relaxed font-sans ${!readMore ? 'line-clamp-2' : ''}`}>
+            <p className={`text-xs text-[#5A6B63] leading-relaxed font-sans ${!readMore ? 'line-clamp-2' : ''}`}>
               {product.description || 'Enterprise Grade A+ certified machine sourced from top tier corporate refresh cycles. 30-point diagnostics tested with zero component degradation.'}
             </p>
             <button
               type="button"
               onClick={() => setReadMore(!readMore)}
-              className="text-[11px] font-bold uppercase tracking-wider text-[#0D3B2A] hover:text-[#8A5E12] flex items-center gap-1 transition-colors cursor-pointer pt-0.5"
+              className="text-[10px] font-bold uppercase tracking-wider text-[#0D3B2A] hover:text-[#8A5E12] flex items-center gap-1 transition-colors cursor-pointer"
             >
               <span>{readMore ? 'READ LESS' : 'READ MORE'}</span>
-              <ChevronDown className={`w-3.5 h-3.5 transform transition-transform ${readMore ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`w-3 h-3 transform transition-transform ${readMore ? 'rotate-180' : ''}`} />
             </button>
           </div>
 
           {/* Quantity Stepper & "ADD TO CART" Pill Button Row */}
-          <div className="flex items-center gap-3 sm:gap-4 pt-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#0D3B2A] shrink-0 font-sans">
+          <div className="flex items-center gap-2.5 sm:gap-3 pt-1">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#0D3B2A] shrink-0 font-sans">
               QUANTITY:
             </span>
             
             {/* Stepper Pill [ -  1  + ] */}
-            <div className="inline-flex items-center justify-between rounded-full border border-gray-300 bg-white px-3 py-1.5 text-xs font-mono font-bold text-[#0D3B2A] w-28 shadow-sm">
+            <div className="inline-flex items-center justify-between rounded-full border border-gray-300 bg-white px-2.5 py-1 text-xs font-mono font-bold text-[#0D3B2A] w-24 shadow-sm">
               <button
                 type="button"
                 onClick={() => setQty(Math.max(1, qty - 1))}
@@ -289,7 +289,7 @@ export default function ProductDetail() {
             <button
               type="button"
               onClick={handleAddToCart}
-              className="flex-1 py-2.5 sm:py-3 px-5 sm:px-6 rounded-full border-2 border-[#0D3B2A] bg-transparent text-[#0D3B2A] hover:bg-[#0D3B2A] hover:text-[#FAF7F2] font-sans font-bold text-xs uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-sm active:scale-95"
+              className="flex-1 py-2 sm:py-2.5 px-4 sm:px-5 rounded-full border-2 border-[#0D3B2A] bg-transparent text-[#0D3B2A] hover:bg-[#0D3B2A] hover:text-[#FAF7F2] font-sans font-bold text-[11px] sm:text-xs uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
             >
               <span>ADD TO CART</span>
               <ShoppingBag className="w-3.5 h-3.5" />
@@ -300,7 +300,7 @@ export default function ProductDetail() {
           <button
             type="button"
             onClick={handleInstantBuy}
-            className="w-full py-3.5 sm:py-4 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-sans font-bold text-xs sm:text-sm uppercase tracking-[0.2em] shadow-lg flex items-center justify-center gap-2.5 cursor-pointer transition-all hover:brightness-105 active:scale-95 group"
+            className="w-full py-3 sm:py-3.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-sans font-bold text-xs sm:text-sm uppercase tracking-[0.2em] shadow-lg flex items-center justify-center gap-2 cursor-pointer transition-all hover:brightness-105 active:scale-95 group"
           >
             <Zap className="w-4 h-4 text-[#D4A24C] fill-[#D4A24C]" />
             <span>INSTANT 1-CLICK BUY NOW</span>
@@ -309,15 +309,15 @@ export default function ProductDetail() {
 
           {/* Technical Specifications Accordion / Box */}
           {product.specs && Object.keys(product.specs).length > 0 && (
-            <div className="pt-3 border-t border-[#D4A24C]/20">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-[#0D3B2A] font-sans mb-2">
+            <div className="pt-2 border-t border-[#D4A24C]/20">
+              <h3 className="text-[11px] font-bold uppercase tracking-wider text-[#0D3B2A] font-sans mb-1.5">
                 TECHNICAL SPECIFICATIONS
               </h3>
-              <div className="bg-white rounded-2xl border border-[#D4A24C]/25 p-4 text-xs space-y-2">
+              <div className="bg-white rounded-xl border border-[#D4A24C]/25 p-3 text-[11px] space-y-1.5">
                 {Object.entries(product.specs).map(([k, v]) => {
                   if (!v) return null;
                   return (
-                    <div key={k} className="flex justify-between border-b border-[#D4A24C]/10 pb-1.5 last:border-none">
+                    <div key={k} className="flex justify-between border-b border-[#D4A24C]/10 pb-1 last:border-none">
                       <span className="font-semibold text-[#5A6B63] capitalize">
                         {k.replace(/_/g, ' ')}
                       </span>
