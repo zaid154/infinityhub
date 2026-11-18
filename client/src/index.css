@@ -59,3 +59,16 @@
 .animate-marquee:hover {
   animation-play-state: paused;
 }
+
+/* 3D Floating Pop-up Animation for Showcase Products */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
