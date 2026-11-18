@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import BrandLogo from './BrandLogo';
 
 export default function Footer() {
   const [email, setEmail] = useState('');
@@ -23,21 +24,7 @@ export default function Footer() {
           
           {/* Column 1: Brand & Bio + Luxury Pill Newsletter */}
           <div className="space-y-4">
-            <Link to="/" className="flex items-center gap-3 group inline-block">
-              <div className="w-10 h-10 rounded-full bg-[#0D3B2A] border border-[#D4A24C]/60 flex items-center justify-center text-[#D4A24C] shadow-md group-hover:scale-105 transition-transform">
-                <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                </svg>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xl font-bold tracking-tight text-[#FAF7F2] font-serif leading-none">
-                  NOVA <span className="text-[#D4A24C] italic font-normal">INFOTECH</span>
-                </span>
-                <span className="text-[9px] uppercase tracking-[0.25em] text-[#90b09a] font-sans font-semibold mt-1">
-                  ENTERPRISE IT INFRASTRUCTURE
-                </span>
-              </div>
-            </Link>
+            <BrandLogo theme="dark" />
 
             <p className="text-xs sm:text-sm leading-relaxed text-[#90b09a]">
               Nova Infotech® provisions enterprise-grade commercial laptops, flexible corporate rental leases, and verified hardware fleets across India with guaranteed 24–48h replacement SLA.

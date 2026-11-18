@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import BrandLogo from './BrandLogo';
 
 export default function Navbar({ onOpenRFQ }) {
   const { user, isAuthenticated, isAdmin, logout } = useAuth();
@@ -45,34 +46,8 @@ export default function Navbar({ onOpenRFQ }) {
     >
       {/* Main Transparent / Frosted Navbar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">
-        {/* Brand Logo - Al-Tooba Style (Gold & White / Dark Emerald) */}
-        <Link to="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-full bg-[#0D3B2A] border border-[#D4A24C]/60 flex items-center justify-center text-[#D4A24C] shadow-lg group-hover:scale-105 transition">
-            <svg
-              className="w-5 h-5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-            </svg>
-          </div>
-          <div>
-            <div className={`text-xl sm:text-2xl font-bold tracking-tight font-serif flex items-center gap-1.5 transition-colors ${
-              isSolidNav ? 'text-[#072117]' : 'text-white drop-shadow-md'
-            }`}>
-              NOVA <span className={`${isSolidNav ? 'text-[#D4A24C]' : 'text-[#F59E0B]'} font-normal italic`}>INFOTECH</span>
-            </div>
-            <p className={`text-[9px] tracking-[0.2em] uppercase font-semibold transition-colors ${
-              isSolidNav ? 'text-[#5A6B63]' : 'text-white/70'
-            }`}>
-              Certified Enterprise Hardware
-            </p>
-          </div>
-        </Link>
+        {/* Brand Logo - Unified Single Source Asset */}
+        <BrandLogo isSolidNav={isSolidNav} />
 
         {/* Desktop Navigation Links - Switches White to Deep Emerald on Scroll */}
         <nav className={`hidden lg:flex items-center space-x-8 text-[12px] uppercase font-bold tracking-[0.16em] transition-colors ${

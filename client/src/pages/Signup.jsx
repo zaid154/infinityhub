@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Server, User, Mail, Lock, Phone, Building, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
+import BrandLogo from '../components/BrandLogo';
 
 export default function Signup() {
   const { register } = useAuth();
@@ -57,9 +58,9 @@ export default function Signup() {
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
       <div className="bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-xl max-w-md w-full space-y-6">
-        <div className="text-center space-y-2">
-          <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center text-white mx-auto shadow-md">
-            <Server className="w-6 h-6" />
+        <div className="text-center space-y-4">
+          <div className="flex justify-center">
+            <BrandLogo theme="light" size="md" />
           </div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
             Register Corporate Account
