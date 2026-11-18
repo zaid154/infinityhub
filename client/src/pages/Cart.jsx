@@ -126,7 +126,7 @@ export default function Cart() {
           contact: shippingAddress.phone
         },
         theme: {
-          color: '#2563eb'
+          color: '#0D3B2A'
         }
       };
 
@@ -142,22 +142,62 @@ export default function Cart() {
     }
   };
 
+  // Corporate Purchase Order (Net-30 / Proforma / Wire) Handler
+  const handleCorporatePO = async () => {
+    if (!isAuthenticated) {
+      toast.error('Please sign in or register to place a corporate purchase order.');
+      navigate('/login?redirect=/cart');
+      return;
+    }
+
+    if (!shippingAddress.street || !shippingAddress.phone) {
+      toast.error('Please enter delivery street address and contact phone.');
+      return;
+    }
+
+    setProcessing(true);
+    try {
+      const orderPayload = {
+        items: cart.map((item) => ({
+          product_id: item.product._id,
+          quantity: item.quantity
+        })),
+        shipping_address: shippingAddress,
+        delivery_zone_id: selectedZone,
+        payment_method: 'po'
+      };
+
+      const res = await api.post('/orders', orderPayload);
+      if (res.data.success) {
+        clearCart();
+        toast.success('Official Corporate Purchase Order generated! Redirecting to orders...');
+        navigate('/dashboard/orders');
+      } else {
+        toast.error('Failed to generate purchase order.');
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Error processing purchase order.');
+    } finally {
+      setProcessing(false);
+    }
+  };
+
   if (cart.length === 0) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center space-y-4">
-        <div className="w-16 h-16 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto">
+        <div className="w-16 h-16 rounded-full bg-[#F4EFE6] text-[#0D3B2A] flex items-center justify-center mx-auto border border-[#D4A24C]/30">
           <ShoppingCart className="w-8 h-8" />
         </div>
-        <h2 className="text-2xl font-bold text-slate-800">Your Quotation Cart is Empty</h2>
-        <p className="text-xs text-slate-500">
+        <h2 className="text-2xl font-bold font-serif text-[#0D3B2A]">Your Quotation Cart is Empty</h2>
+        <p className="text-xs text-[#5A6B63]">
           Browse our certified refurbished laptops, monitors, and components to add items.
         </p>
         <Link
           to="/products"
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs uppercase tracking-wide transition shadow"
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs uppercase tracking-wider transition shadow border border-[#D4A24C]/40"
         >
           <span>Explore Hardware Catalog</span>
-          <ArrowRight className="w-4 h-4" />
+          <ArrowRight className="w-4 h-4 text-[#D4A24C]" />
         </Link>
       </div>
     );
@@ -259,7 +299,7 @@ export default function Cart() {
                   placeholder="e.g. Acme Tech Solutions"
                   value={shippingAddress.company_name}
                   onChange={(e) => setShippingAddress({ ...shippingAddress, company_name: e.target.value })}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
                 />
               </div>
               <div>
@@ -269,7 +309,7 @@ export default function Cart() {
                   placeholder="07AAAAA0000A1Z5"
                   value={shippingAddress.gst_number}
                   onChange={(e) => setShippingAddress({ ...shippingAddress, gst_number: e.target.value })}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600 uppercase"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] uppercase"
                 />
               </div>
             </div>
@@ -282,7 +322,7 @@ export default function Cart() {
                   placeholder="Full name"
                   value={shippingAddress.contact_person}
                   onChange={(e) => setShippingAddress({ ...shippingAddress, contact_person: e.target.value })}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
                 />
               </div>
               <div>
@@ -292,7 +332,7 @@ export default function Cart() {
                   placeholder="WhatsApp or Mobile"
                   value={shippingAddress.phone}
                   onChange={(e) => setShippingAddress({ ...shippingAddress, phone: e.target.value })}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
                 />
               </div>
             </div>
@@ -304,7 +344,7 @@ export default function Cart() {
                 placeholder="Office suite, building, road..."
                 value={shippingAddress.street}
                 onChange={(e) => setShippingAddress({ ...shippingAddress, street: e.target.value })}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
               />
             </div>
 
@@ -315,7 +355,7 @@ export default function Cart() {
                   type="text"
                   value={shippingAddress.city}
                   onChange={(e) => setShippingAddress({ ...shippingAddress, city: e.target.value })}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
                 />
               </div>
               <div>
@@ -324,7 +364,7 @@ export default function Cart() {
                   type="text"
                   value={shippingAddress.state}
                   onChange={(e) => setShippingAddress({ ...shippingAddress, state: e.target.value })}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
                 />
               </div>
               <div>
@@ -333,7 +373,7 @@ export default function Cart() {
                   type="text"
                   value={shippingAddress.pincode}
                   onChange={(e) => setShippingAddress({ ...shippingAddress, pincode: e.target.value })}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
                 />
               </div>
             </div>
@@ -345,7 +385,7 @@ export default function Cart() {
                 <select
                   value={selectedZone}
                   onChange={(e) => setSelectedZone(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
                 >
                   {deliveryZones.map((z) => (
                     <option key={z._id} value={z._id}>
@@ -359,51 +399,63 @@ export default function Cart() {
         </div>
 
         {/* Right Order Summary & Actions */}
-        <div className="lg:col-span-5 bg-white p-6 sm:p-7 rounded-3xl border border-slate-200 shadow-xl space-y-6">
-          <h3 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-3">
+        <div className="lg:col-span-5 bg-white p-6 sm:p-8 rounded-3xl border border-[#D4A24C]/25 shadow-xl space-y-6">
+          <h3 className="text-base font-bold font-serif text-[#0D3B2A] border-b border-[#D4A24C]/20 pb-3">
             Quotation & Tax Summary
           </h3>
 
-          <div className="space-y-3 text-xs text-slate-600">
+          <div className="space-y-3 text-xs text-[#5A6B63]">
             <div className="flex justify-between">
               <span>Hardware Subtotal:</span>
-              <span className="font-bold text-slate-900 font-mono">
+              <span className="font-bold text-[#0D3B2A] font-mono">
                 ₹{cartSubtotal.toLocaleString('en-IN')}
               </span>
             </div>
 
             <div className="flex justify-between">
               <span>GST (Calculated per item):</span>
-              <span className="font-bold text-slate-900 font-mono">
+              <span className="font-bold text-[#0D3B2A] font-mono">
                 + ₹{totalGst.toLocaleString('en-IN')}
               </span>
             </div>
 
             <div className="flex justify-between">
               <span>Delivery Logistics ({currentZone?.zone_name || 'Standard'}):</span>
-              <span className="font-bold text-slate-900 font-mono">
+              <span className="font-bold text-[#0D3B2A] font-mono">
                 + ₹{deliveryCharge.toLocaleString('en-IN')}
               </span>
             </div>
 
-            <div className="flex justify-between pt-3 border-t border-slate-200 text-sm">
-              <span className="font-extrabold text-slate-900">Grand Total:</span>
-              <span className="font-extrabold text-blue-600 font-mono text-base">
+            <div className="flex justify-between pt-3 border-t border-[#D4A24C]/20 text-sm">
+              <span className="font-bold font-serif text-[#0D3B2A]">Grand Total:</span>
+              <span className="font-bold text-[#0D3B2A] font-serif text-lg">
                 ₹{grandTotal.toLocaleString('en-IN')}
               </span>
             </div>
           </div>
 
-          <div className="space-y-3 pt-2">
+          <div className="space-y-2.5 pt-2">
+            {/* 1. Official Corporate Purchase Order Option */}
+            <button
+              onClick={handleCorporatePO}
+              disabled={processing}
+              className="w-full py-3.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs uppercase tracking-wider transition shadow-lg flex items-center justify-center gap-2 border border-[#D4A24C]/40 cursor-pointer"
+            >
+              <FileText className="w-4 h-4 text-[#D4A24C]" />
+              <span>{processing ? 'Generating PO...' : 'Generate Corporate PO (Net-30 / Proforma)'}</span>
+            </button>
+
+            {/* 2. Instant Online Payment Option */}
             <button
               onClick={handleRazorpayOrder}
               disabled={processing}
-              className="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs uppercase tracking-wider transition shadow-lg shadow-blue-600/25 flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-full bg-gradient-to-r from-[#eec373] via-[#D4A24C] to-[#eec373] hover:brightness-105 text-[#072117] font-extrabold text-xs uppercase tracking-wider transition shadow-md flex items-center justify-center gap-2 cursor-pointer"
             >
-              <CreditCard className="w-4 h-4" />
-              <span>{processing ? 'Processing...' : 'Pay via Razorpay (Instant Order)'}</span>
+              <CreditCard className="w-4 h-4 text-[#072117]" />
+              <span>{processing ? 'Processing...' : 'Pay Online via Razorpay'}</span>
             </button>
 
+            {/* 3. WhatsApp Direct RFQ Option */}
             <button
               onClick={() => {
                 const message = `*OFFICIAL BULK RFQ FROM CART*\n------------------------------\n${cart
@@ -411,16 +463,15 @@ export default function Cart() {
                   .join('\n')}\n------------------------------\n*Subtotal:* ₹${cartSubtotal}\n*Total with GST:* ₹${grandTotal}\n*Location:* ${shippingAddress.city}\n------------------------------\nPlease share formal GST Proforma invoice.`;
                 window.open(`https://wa.me/919876543210?text=${encodeURIComponent(message)}`, '_blank');
               }}
-              className="w-full py-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 font-bold text-xs uppercase tracking-wider transition flex items-center justify-center gap-2"
+              className="w-full py-2.5 rounded-full bg-[#FAF7F2] hover:bg-[#F3E8D2] text-[#0D3B2A] border border-[#D4A24C]/30 font-bold text-[11px] uppercase tracking-wider transition flex items-center justify-center gap-2 cursor-pointer"
             >
-              <FileText className="w-4 h-4" />
-              <span>Send Cart via WhatsApp RFQ</span>
+              <span>Forward Cart to Direct Desk via WhatsApp</span>
             </button>
           </div>
 
-          <p className="text-[11px] text-slate-500 text-center flex items-center justify-center gap-1.5 pt-2">
-            <ShieldCheck className="w-4 h-4 text-emerald-600" />
-            100% Tax Compliant Invoice issued upon confirmation.
+          <p className="text-[11px] text-[#5A6B63] text-center flex items-center justify-center gap-1.5 pt-1">
+            <ShieldCheck className="w-4 h-4 text-[#8A5E12]" />
+            100% Tax Compliant GSTR-2B Invoice issued upon confirmation.
           </p>
         </div>
       </div>

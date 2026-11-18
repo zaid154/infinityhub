@@ -23,13 +23,18 @@ export default function AdminCustomers() {
   }, []);
 
   return (
-    <div className="space-y-6 text-xs">
+    <div className="space-y-6 text-xs select-none">
       <div>
-        <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Customer & Corporate Directory</h1>
-        <p className="text-slate-500 mt-1">Registered clients, enterprise contact persons, and verification records.</p>
+        <span className="text-[10px] font-sans uppercase tracking-[0.2em] text-[#8A5E12] font-bold block">
+          — ENTERPRISE CLIENT REPOSITORY
+        </span>
+        <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#0D3B2A] tracking-tight mt-0.5">
+          Customer & Corporate Directory
+        </h1>
+        <p className="text-[#5A6B63] mt-1">Registered corporate entities, enterprise contact persons, and GST verification records.</p>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-3xl border border-[#D4A24C]/25 shadow-sm overflow-hidden">
         {loading ? (
           <div className="text-center py-20 text-slate-400">Loading customers...</div>
         ) : customers.length === 0 ? (
@@ -38,7 +43,7 @@ export default function AdminCustomers() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 font-mono uppercase tracking-wider text-[10px]">
+                <tr className="bg-[#FAF7F2] border-b border-[#D4A24C]/15 text-[#8A5E12] font-mono uppercase tracking-wider text-[10px]">
                   <th className="py-3.5 px-4 font-bold">Contact Name</th>
                   <th className="py-3.5 px-4 font-bold">Company</th>
                   <th className="py-3.5 px-4 font-bold">Email</th>

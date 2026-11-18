@@ -23,7 +23,8 @@ export const getProducts = async (req, res, next) => {
     const query = { is_active: true };
 
     if (category && category !== 'all') {
-      query.category = category;
+      const singular = category.replace(/s$/, '');
+      query.category = { $in: [category, singular, `${singular}s`] };
     }
     if (brand && brand !== 'all') {
       query.brand = new RegExp(`^${brand}$`, 'i');

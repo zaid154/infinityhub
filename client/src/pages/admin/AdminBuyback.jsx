@@ -48,13 +48,16 @@ export default function AdminBuyback() {
   };
 
   return (
-    <div className="space-y-6 text-xs">
+    <div className="space-y-6 text-xs select-none">
       <div>
-        <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Corporate Asset Liquidation (Buyback)</h1>
-        <p className="text-slate-500 mt-1">Review companies looking to liquidate used laptops, servers, and scrap hardware.</p>
+        <span className="text-[10px] font-sans uppercase tracking-[0.2em] text-[#8A5E12] font-bold block">
+          — ITAD ASSET DISPOSITION
+        </span>
+        <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#0D3B2A] tracking-tight mt-0.5">Corporate Asset Liquidation (Buyback)</h1>
+        <p className="text-[#5A6B63] mt-1">Review companies looking to liquidate used laptops, servers, and scrap hardware.</p>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-3xl border border-[#D4A24C]/25 shadow-sm overflow-hidden">
         {loading ? (
           <div className="text-center py-20 text-slate-400">Loading buyback requests...</div>
         ) : requests.length === 0 ? (
@@ -124,7 +127,7 @@ export default function AdminBuyback() {
                             setOfferedPrice(item.offered_price || '');
                             setNotes(item.admin_notes || '');
                           }}
-                          className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 hover:bg-blue-600 hover:text-white font-bold text-[11px] transition"
+                          className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 hover:bg-[#0D3B2A] hover:text-white font-bold text-[11px] transition"
                         >
                           Valuation
                         </button>
@@ -183,10 +186,10 @@ export default function AdminBuyback() {
               />
             </div>
             <div className="flex justify-end gap-2 pt-2">
-              <button onClick={() => setSelectedItem(null)} className="px-4 py-2 text-slate-600 font-bold">
+              <button onClick={() => setSelectedItem(null)} className="px-4 py-2 rounded-full text-slate-600 hover:bg-slate-100 font-bold transition">
                 Cancel
               </button>
-              <button onClick={handleUpdate} className="px-5 py-2 rounded-xl bg-blue-600 text-white font-bold">
+              <button onClick={handleUpdate} className="px-6 py-2 rounded-full bg-[#0D3B2A] text-white hover:bg-[#153423] font-bold shadow border border-[#D4A24C]/40 transition">
                 Save
               </button>
             </div>

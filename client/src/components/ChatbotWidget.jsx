@@ -106,12 +106,12 @@ export default function ChatbotWidget() {
           </div>
 
           {/* Quick Prompts Bar */}
-          <div className="bg-slate-50 px-3 py-2 border-b border-slate-200 flex items-center gap-1.5 overflow-x-auto text-[11px]">
+          <div className="bg-[#FAF7F2] px-3 py-2 border-b border-[#0D3B2A]/10 flex items-center gap-1.5 overflow-x-auto text-[11px]">
             {quickPrompts.map((q, idx) => (
               <button
                 key={idx}
                 onClick={() => handleSend(q)}
-                className="whitespace-nowrap px-2.5 py-1 rounded-md bg-white border border-slate-200 text-slate-700 hover:border-blue-500 hover:text-blue-600 transition"
+                className="whitespace-nowrap px-2.5 py-1 rounded-full bg-white border border-[#D4A24C]/30 text-slate-700 hover:border-[#0D3B2A] hover:text-[#0D3B2A] transition"
               >
                 {q}
               </button>
@@ -119,7 +119,7 @@ export default function ChatbotWidget() {
           </div>
 
           {/* Messages Container */}
-          <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-50/50 text-xs">
+          <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-[#FAF7F2] text-xs">
             {messages.map((m, idx) => (
               <div
                 key={idx}
@@ -128,8 +128,8 @@ export default function ChatbotWidget() {
                 <div
                   className={`max-w-[85%] p-3 rounded-2xl leading-relaxed whitespace-pre-wrap ${
                     m.sender === 'user'
-                      ? 'bg-blue-600 text-white rounded-br-none shadow-sm'
-                      : 'bg-white text-slate-800 border border-slate-200 rounded-bl-none shadow-sm'
+                      ? 'bg-[#0D3B2A] text-white rounded-br-none shadow-sm'
+                      : 'bg-white text-slate-800 border border-[#D4A24C]/25 rounded-bl-none shadow-sm'
                   }`}
                 >
                   {m.text}
@@ -138,9 +138,9 @@ export default function ChatbotWidget() {
             ))}
             {loading && (
               <div className="flex justify-start">
-                <div className="bg-white border border-slate-200 p-3 rounded-2xl rounded-bl-none flex items-center gap-2 text-slate-500">
-                  <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600" />
-                  <span>Thinking...</span>
+                <div className="bg-white border border-[#D4A24C]/30 p-3 rounded-2xl rounded-bl-none flex items-center gap-2 text-slate-600">
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-[#0D3B2A]" />
+                  <span>Consulting catalog...</span>
                 </div>
               </div>
             )}
@@ -153,21 +153,21 @@ export default function ChatbotWidget() {
               e.preventDefault();
               handleSend();
             }}
-            className="p-3 bg-white border-t border-slate-200 flex items-center gap-2"
+            className="p-3 bg-white border-t border-[#0D3B2A]/10 flex items-center gap-2"
           >
             <input
               type="text"
               placeholder="Ask about laptop specs, rentals, stock..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              className="flex-1 bg-slate-100 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-blue-500 transition"
+              className="flex-1 bg-[#FAF7F2] border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-[#0D3B2A] transition"
             />
             <button
               type="submit"
               disabled={loading || !input.trim()}
-              className="p-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white transition shadow"
+              className="p-2.5 rounded-xl bg-[#0D3B2A] hover:bg-[#124e38] disabled:opacity-50 text-white transition shadow"
             >
-              <Send className="w-3.5 h-3.5" />
+              <Send className="w-3.5 h-3.5 text-[#D4A24C]" />
             </button>
           </form>
         </div>

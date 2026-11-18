@@ -46,13 +46,16 @@ export default function AdminRentals() {
   };
 
   return (
-    <div className="space-y-6 text-xs">
+    <div className="space-y-6 text-xs select-none">
       <div>
-        <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Corporate Rental Fleets</h1>
-        <p className="text-slate-500 mt-1">Track active leases, renewal dates, and returned equipment.</p>
+        <span className="text-[10px] font-sans uppercase tracking-[0.2em] text-[#8A5E12] font-bold block">
+          — ENTERPRISE LEASE CONTROL
+        </span>
+        <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#0D3B2A] tracking-tight mt-0.5">Corporate Rental Fleets</h1>
+        <p className="text-[#5A6B63] mt-1">Track active leases, renewal dates, and returned equipment.</p>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-3xl border border-[#D4A24C]/25 shadow-sm overflow-hidden">
         {loading ? (
           <div className="text-center py-20 text-slate-400">Loading rentals...</div>
         ) : rentals.length === 0 ? (
@@ -87,7 +90,7 @@ export default function AdminRentals() {
 
                     <td className="py-3.5 px-4 capitalize text-slate-600">{r.tenure.replace(/_/g, ' ')}</td>
 
-                    <td className="py-3.5 px-4 font-mono font-bold text-blue-600">
+                    <td className="py-3.5 px-4 font-mono font-bold text-[#0D3B2A]">
                       ₹{r.monthly_rate.toLocaleString('en-IN')}/mo
                     </td>
 
@@ -98,7 +101,7 @@ export default function AdminRentals() {
                             ? 'bg-emerald-100 text-emerald-800'
                             : r.status === 'returned'
                             ? 'bg-slate-100 text-slate-700'
-                            : 'bg-red-100 text-red-800'
+                            : 'bg-[#F3E8D2] text-[#8A5E12]'
                         }`}
                       >
                         {r.status}
@@ -112,7 +115,7 @@ export default function AdminRentals() {
                           setStatus(r.status);
                           setNotes(r.admin_notes || '');
                         }}
-                        className="px-3 py-1 rounded-lg bg-slate-100 text-slate-700 hover:bg-blue-600 hover:text-white font-bold text-[11px] transition"
+                        className="px-3.5 py-1 rounded-full bg-[#FAF7F2] text-[#0D3B2A] hover:bg-[#F3E8D2] border border-[#D4A24C]/35 font-bold text-[11px] transition"
                       >
                         Manage
                       </button>
@@ -127,14 +130,14 @@ export default function AdminRentals() {
 
       {selectedRental && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl space-y-4 border border-slate-200">
-            <h3 className="text-base font-bold text-slate-900">Manage Rental Fleet</h3>
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl space-y-4 border border-[#D4A24C]/30">
+            <h3 className="text-base font-bold font-serif text-[#0D3B2A]">Manage Rental Fleet</h3>
             <div>
               <label className="block font-semibold text-slate-700 mb-1">Status</label>
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-semibold"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-semibold focus:outline-none focus:border-[#0D3B2A]"
               >
                 <option value="active">Active</option>
                 <option value="returned">Returned / Closed</option>
@@ -148,17 +151,17 @@ export default function AdminRentals() {
                 rows="3"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A]"
               />
             </div>
             <div className="flex justify-end gap-2 pt-2">
               <button
                 onClick={() => setSelectedRental(null)}
-                className="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 font-bold"
+                className="px-4 py-2 rounded-full text-slate-600 hover:bg-slate-100 font-bold"
               >
                 Cancel
               </button>
-              <button onClick={handleUpdate} className="px-5 py-2 rounded-xl bg-blue-600 text-white font-bold">
+              <button onClick={handleUpdate} className="px-6 py-2 rounded-full bg-[#0D3B2A] text-white hover:bg-[#153423] font-bold shadow border border-[#D4A24C]/40 transition">
                 Save
               </button>
             </div>

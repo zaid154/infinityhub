@@ -83,7 +83,7 @@ export default function Buyback() {
 
           <div className="p-6 bg-white rounded-3xl border border-slate-200 space-y-4 shadow-sm">
             <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <Award className="w-5 h-5 text-blue-600" />
+              <Award className="w-5 h-5 text-[#D4A24C]" />
               Fair Market Valuation
             </h3>
             <p className="leading-relaxed">
@@ -93,7 +93,7 @@ export default function Buyback() {
 
           <div className="p-6 bg-white rounded-3xl border border-slate-200 space-y-4 shadow-sm">
             <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <Truck className="w-5 h-5 text-purple-600" />
+              <Truck className="w-5 h-5 text-[#0D3B2A]" />
               Pan-India Doorstep Pickup
             </h3>
             <p className="leading-relaxed">
@@ -225,9 +225,9 @@ export default function Buyback() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs uppercase tracking-wider transition shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2"
+              className="w-full py-3.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs uppercase tracking-wider transition shadow-lg flex items-center justify-center gap-2 border border-[#D4A24C]/40 cursor-pointer"
             >
-              <Recycle className="w-4 h-4" />
+              <Recycle className="w-4 h-4 text-[#D4A24C]" />
               <span>{submitting ? 'Submitting...' : 'Submit Lot for Valuation'}</span>
             </button>
           </form>

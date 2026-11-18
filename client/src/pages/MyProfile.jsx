@@ -31,9 +31,9 @@ export default function MyProfile() {
     <div className="max-w-3xl mx-auto px-4 sm:px-8 py-10 space-y-8">
       <Link
         to="/dashboard"
-        className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-blue-600"
+        className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-[#0D3B2A] transition"
       >
-        <ArrowLeft className="w-4 h-4" />
+        <ArrowLeft className="w-4 h-4 text-[#D4A24C]" />
         <span>Back to Portal Overview</span>
       </Link>
 
@@ -54,7 +54,7 @@ export default function MyProfile() {
                 required
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
               />
             </div>
 
@@ -64,7 +64,7 @@ export default function MyProfile() {
                 type="text"
                 value={formData.company_name}
                 onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
               />
             </div>
           </div>
@@ -76,7 +76,7 @@ export default function MyProfile() {
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
               />
             </div>
 
@@ -106,7 +106,7 @@ export default function MyProfile() {
                     address: { ...formData.address, street: e.target.value }
                   })
                 }
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
               />
             </div>
 
@@ -122,7 +122,7 @@ export default function MyProfile() {
                       address: { ...formData.address, city: e.target.value }
                     })
                   }
-                  className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+                  className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
                 />
               </div>
 
@@ -137,7 +137,7 @@ export default function MyProfile() {
                       address: { ...formData.address, state: e.target.value }
                     })
                   }
-                  className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+                  className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
                 />
               </div>
 
@@ -152,7 +152,7 @@ export default function MyProfile() {
                       address: { ...formData.address, pincode: e.target.value }
                     })
                   }
-                  className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+                  className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
                 />
               </div>
             </div>
@@ -162,9 +162,9 @@ export default function MyProfile() {
             <button
               type="submit"
               disabled={submitting}
-              className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs uppercase tracking-wider transition shadow flex items-center gap-2"
+              className="px-8 py-3 rounded-full bg-[#0D3B2A] hover:bg-[#124e38] text-white font-bold text-xs uppercase tracking-wider transition shadow-lg shadow-[#0D3B2A]/20 flex items-center gap-2"
             >
-              <Save className="w-4 h-4" />
+              <Save className="w-4 h-4 text-[#D4A24C]" />
               <span>{submitting ? 'Saving...' : 'Save Changes'}</span>
             </button>
           </div>

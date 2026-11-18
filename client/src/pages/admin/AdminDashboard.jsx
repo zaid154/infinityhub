@@ -43,78 +43,83 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 select-none">
       {/* Top Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Enterprise Overview</h1>
-          <p className="text-xs text-slate-500 mt-1">Real-time hardware inventory, quotation leads, and rental fleets.</p>
+          <span className="text-[10px] font-sans uppercase tracking-[0.2em] text-[#8A5E12] font-bold block">
+            — EXECUTIVE OPERATIONS DESK
+          </span>
+          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#0D3B2A] tracking-tight mt-0.5">
+            Enterprise Fleet Overview
+          </h1>
+          <p className="text-xs text-[#5A6B63] mt-1">Real-time hardware inventory, quotation leads, and rental fleets.</p>
         </div>
         <div className="flex items-center gap-2">
           <Link
             to="/admin/products/new"
-            className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow transition"
+            className="px-5 py-2.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs uppercase tracking-wider shadow transition border border-[#D4A24C]/40 flex items-center gap-1.5"
           >
-            + Add New Product
+            <span>+ Add New Hardware</span>
           </Link>
         </div>
       </div>
 
       {/* Metrics Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <div className="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div className="p-6 bg-white rounded-3xl border border-[#D4A24C]/25 shadow-sm flex items-center justify-between">
           <div>
-            <span className="text-[11px] font-mono text-slate-400 uppercase font-bold tracking-wider block">
-              Live Stock
+            <span className="text-[10px] font-sans text-[#8A5E12] uppercase font-bold tracking-wider block">
+              Active Stock
             </span>
-            <span className="text-2xl font-extrabold text-slate-900 font-mono mt-1 block">
+            <span className="text-2xl font-bold text-[#0D3B2A] font-serif mt-1 block">
               {stats?.totalProducts || 0} Products
             </span>
           </div>
-          <div className="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
-            <Package className="w-5 h-5" />
+          <div className="w-12 h-12 rounded-2xl bg-[#FAF7F2] text-[#0D3B2A] border border-[#D4A24C]/30 flex items-center justify-center font-bold shadow-sm">
+            <Package className="w-5 h-5 text-[#8A5E12]" />
           </div>
         </div>
 
-        <div className="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div className="p-6 bg-white rounded-3xl border border-[#D4A24C]/25 shadow-sm flex items-center justify-between">
           <div>
-            <span className="text-[11px] font-mono text-slate-400 uppercase font-bold tracking-wider block">
-              New RFQs / Inquiries
+            <span className="text-[10px] font-sans text-[#8A5E12] uppercase font-bold tracking-wider block">
+              Pending RFQs / Leads
             </span>
-            <span className="text-2xl font-extrabold text-amber-600 font-mono mt-1 block">
+            <span className="text-2xl font-bold text-[#8A5E12] font-serif mt-1 block">
               {stats?.newInquiries || 0} Pending
             </span>
           </div>
-          <div className="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
-            <FileText className="w-5 h-5" />
+          <div className="w-12 h-12 rounded-2xl bg-[#FAF7F2] text-[#8A5E12] border border-[#D4A24C]/30 flex items-center justify-center font-bold shadow-sm">
+            <FileText className="w-5 h-5 text-[#8A5E12]" />
           </div>
         </div>
 
-        <div className="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div className="p-6 bg-white rounded-3xl border border-[#D4A24C]/25 shadow-sm flex items-center justify-between">
           <div>
-            <span className="text-[11px] font-mono text-slate-400 uppercase font-bold tracking-wider block">
-              Active Rentals
+            <span className="text-[10px] font-sans text-[#8A5E12] uppercase font-bold tracking-wider block">
+              Active Leases
             </span>
-            <span className="text-2xl font-extrabold text-emerald-600 font-mono mt-1 block">
+            <span className="text-2xl font-bold text-[#0D3B2A] font-serif mt-1 block">
               {stats?.activeRentals || 0} Fleets
             </span>
           </div>
-          <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
-            <Repeat className="w-5 h-5" />
+          <div className="w-12 h-12 rounded-2xl bg-[#FAF7F2] text-[#0D3B2A] border border-[#D4A24C]/30 flex items-center justify-center font-bold shadow-sm">
+            <Repeat className="w-5 h-5 text-[#0D3B2A]" />
           </div>
         </div>
 
-        <div className="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div className="p-6 bg-white rounded-3xl border border-[#D4A24C]/25 shadow-sm flex items-center justify-between">
           <div>
-            <span className="text-[11px] font-mono text-slate-400 uppercase font-bold tracking-wider block">
+            <span className="text-[10px] font-sans text-[#8A5E12] uppercase font-bold tracking-wider block">
               Total Revenue
             </span>
-            <span className="text-2xl font-extrabold text-blue-600 font-mono mt-1 block">
+            <span className="text-2xl font-bold text-[#0D3B2A] font-serif mt-1 block">
               ₹{(stats?.totalRevenue || 0).toLocaleString('en-IN')}
             </span>
           </div>
-          <div className="w-11 h-11 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
-            <TrendingUp className="w-5 h-5" />
+          <div className="w-12 h-12 rounded-2xl bg-[#FAF7F2] text-[#8A5E12] border border-[#D4A24C]/30 flex items-center justify-center font-bold shadow-sm">
+            <TrendingUp className="w-5 h-5 text-[#8A5E12]" />
           </div>
         </div>
       </div>
@@ -122,13 +127,13 @@ export default function AdminDashboard() {
       {/* Two Columns: Recent Inquiries & Recent Orders */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Recent RFQs */}
-        <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-7 shadow-sm space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <FileText className="w-4 h-4 text-blue-600" />
+        <div className="bg-white rounded-3xl border border-[#D4A24C]/25 p-6 sm:p-7 shadow-sm space-y-4">
+          <div className="flex items-center justify-between border-b border-[#D4A24C]/15 pb-3">
+            <h2 className="text-sm font-bold font-serif text-[#0D3B2A] flex items-center gap-2">
+              <FileText className="w-4 h-4 text-[#8A5E12]" />
               Latest Corporate RFQs / Leads
             </h2>
-            <Link to="/admin/inquiries" className="text-xs text-blue-600 font-bold hover:underline flex items-center gap-1">
+            <Link to="/admin/inquiries" className="text-xs text-[#8A5E12] font-bold hover:underline flex items-center gap-1">
               <span>View All</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
@@ -141,18 +146,18 @@ export default function AdminDashboard() {
               {recentInquiries.map((inq) => (
                 <div
                   key={inq._id}
-                  className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-3 text-xs"
+                  className="p-3.5 rounded-2xl bg-[#FAF7F2] border border-[#D4A24C]/20 flex items-center justify-between gap-3 text-xs"
                 >
                   <div>
-                    <h4 className="font-bold text-slate-900">{inq.company_name}</h4>
-                    <p className="text-[11px] text-slate-500">
+                    <h4 className="font-bold text-[#0D3B2A]">{inq.company_name}</h4>
+                    <p className="text-[11px] text-[#5A6B63]">
                       {inq.contact_person} ({inq.phone}) • {inq.quantity}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
                     <span
-                      className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                        inq.status === 'new' ? 'bg-amber-100 text-amber-800' : 'bg-slate-200 text-slate-700'
+                      className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+                        inq.status === 'new' ? 'bg-[#F3E8D2] text-[#8A5E12] border border-[#D4A24C]/30' : 'bg-slate-200 text-slate-700'
                       }`}
                     >
                       {inq.status}
@@ -161,10 +166,10 @@ export default function AdminDashboard() {
                       href={`https://wa.me/${inq.phone.replace(/[^0-9]/g, '')}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-1.5 rounded-lg bg-emerald-500 text-white hover:bg-emerald-600 transition"
+                      className="p-1.5 rounded-lg bg-[#0D3B2A] text-white hover:bg-[#153423] transition"
                       title="Reply on WhatsApp"
                     >
-                      <MessageSquare className="w-3.5 h-3.5" />
+                      <MessageSquare className="w-3.5 h-3.5 text-[#D4A24C]" />
                     </a>
                   </div>
                 </div>
@@ -174,13 +179,13 @@ export default function AdminDashboard() {
         </div>
 
         {/* Recent Orders */}
-        <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-7 shadow-sm space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <ShoppingBag className="w-4 h-4 text-emerald-600" />
+        <div className="bg-white rounded-3xl border border-[#D4A24C]/25 p-6 sm:p-7 shadow-sm space-y-4">
+          <div className="flex items-center justify-between border-b border-[#D4A24C]/15 pb-3">
+            <h2 className="text-sm font-bold font-serif text-[#0D3B2A] flex items-center gap-2">
+              <ShoppingBag className="w-4 h-4 text-[#0D3B2A]" />
               Recent Purchase Orders
             </h2>
-            <Link to="/admin/orders" className="text-xs text-blue-600 font-bold hover:underline flex items-center gap-1">
+            <Link to="/admin/orders" className="text-xs text-[#8A5E12] font-bold hover:underline flex items-center gap-1">
               <span>View All</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
@@ -193,17 +198,17 @@ export default function AdminDashboard() {
               {recentOrders.map((o) => (
                 <div
                   key={o._id}
-                  className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-3 text-xs"
+                  className="p-3.5 rounded-2xl bg-[#FAF7F2] border border-[#D4A24C]/20 flex items-center justify-between gap-3 text-xs"
                 >
                   <div>
-                    <span className="font-bold text-slate-900 font-mono">{o.invoice_number}</span>
-                    <p className="text-[11px] text-slate-500">
+                    <span className="font-bold text-[#0D3B2A] font-mono">{o.invoice_number}</span>
+                    <p className="text-[11px] text-[#5A6B63]">
                       {o.shipping_address?.company_name || o.user?.name} • ₹{o.grand_total.toLocaleString('en-IN')}
                     </p>
                   </div>
                   <span
-                    className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                      o.payment_status === 'paid' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
+                    className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+                      o.payment_status === 'paid' ? 'bg-emerald-100 text-emerald-800' : 'bg-[#F3E8D2] text-[#8A5E12]'
                     }`}
                   >
                     {o.payment_status}

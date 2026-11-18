@@ -8,7 +8,7 @@ import razorpayInstance from '../config/razorpay.js';
 // @access  Private
 export const createOrder = async (req, res, next) => {
   try {
-    const { items, shipping_address, delivery_zone_id } = req.body;
+    const { items, shipping_address, delivery_zone_id, payment_method = 'razorpay' } = req.body;
 
     if (!items || items.length === 0) {
       return res.status(400).json({ success: false, message: 'No items in order' });
@@ -55,7 +55,29 @@ export const createOrder = async (req, res, next) => {
 
     const grand_total = subtotal + total_gst + delivery_charges;
 
-    // Create Razorpay Order
+    // Handle B2B Corporate Purchase Order (Net-30 / Proforma / Wire)
+    if (payment_method === 'po') {
+      const order = await Order.create({
+        user: req.user._id,
+        items: orderItems,
+        subtotal,
+        total_gst,
+        delivery_charges,
+        grand_total,
+        shipping_address,
+        payment_status: 'pending',
+        order_status: 'placed'
+      });
+
+      return res.status(201).json({
+        success: true,
+        order,
+        is_po: true,
+        message: 'Official Corporate Purchase Order registered successfully! Proforma invoice generated.'
+      });
+    }
+
+    // Otherwise initiate Razorpay Order for online payment
     let razorpay_order_id = '';
     try {
       const rzpOrder = await razorpayInstance.orders.create({

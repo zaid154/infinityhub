@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingBag, CreditCard, Truck, CheckCircle2, Eye, Edit2 } from 'lucide-react';
+import { ShoppingBag, CreditCard, Truck, CheckCircle2, Eye, Edit2, Printer } from 'lucide-react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
+import InvoiceModal from '../../components/InvoiceModal';
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [viewingInvoice, setViewingInvoice] = useState(null);
   const [orderStatus, setOrderStatus] = useState('');
   const [paymentStatus, setPaymentStatus] = useState('');
 
@@ -46,15 +48,20 @@ export default function AdminOrders() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 select-none">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Orders & Tax Invoices</h1>
-          <p className="text-xs text-slate-500 mt-1">Manage purchase orders, payments, and dispatch tracking.</p>
+          <span className="text-[10px] font-sans uppercase tracking-[0.2em] text-[#8A5E12] font-bold block">
+            — DISPATCH & BILLING OPERATIONS
+          </span>
+          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#0D3B2A] tracking-tight mt-0.5">
+            Orders & Tax Invoices
+          </h1>
+          <p className="text-xs text-[#5A6B63] mt-1">Manage purchase orders, payments, and dispatch tracking.</p>
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden text-xs">
+      <div className="bg-white rounded-3xl border border-[#D4A24C]/25 shadow-sm overflow-hidden text-xs">
         {loading ? (
           <div className="text-center py-20 text-xs text-slate-400">Loading orders...</div>
         ) : orders.length === 0 ? (
@@ -63,7 +70,7 @@ export default function AdminOrders() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 font-mono uppercase tracking-wider text-[10px]">
+                <tr className="bg-[#FAF7F2] border-b border-[#D4A24C]/15 text-[#8A5E12] font-mono uppercase tracking-wider text-[10px]">
                   <th className="py-3.5 px-4 font-bold">Invoice / Date</th>
                   <th className="py-3.5 px-4 font-bold">Client / Company</th>
                   <th className="py-3.5 px-4 font-bold">Items Count</th>
@@ -77,7 +84,7 @@ export default function AdminOrders() {
                 {orders.map((o) => (
                   <tr key={o._id} className="hover:bg-slate-50 transition">
                     <td className="py-3.5 px-4 font-mono">
-                      <strong className="text-slate-900 block">{o.invoice_number}</strong>
+                      <strong className="text-[#0D3B2A] block">{o.invoice_number}</strong>
                       <span className="text-[10px] text-slate-400">
                         {new Date(o.createdAt).toLocaleDateString('en-IN', {
                           day: 'numeric',
@@ -100,14 +107,14 @@ export default function AdminOrders() {
                       {o.items?.length || 0} hardware items
                     </td>
 
-                    <td className="py-3.5 px-4 font-mono font-bold text-slate-900">
+                    <td className="py-3.5 px-4 font-mono font-bold text-[#0D3B2A]">
                       ₹{o.grand_total.toLocaleString('en-IN')}
                     </td>
 
                     <td className="py-3.5 px-4">
                       <span
                         className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                          o.payment_status === 'paid' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
+                          o.payment_status === 'paid' ? 'bg-emerald-100 text-emerald-800' : 'bg-[#F3E8D2] text-[#8A5E12]'
                         }`}
                       >
                         {o.payment_status}
@@ -115,22 +122,32 @@ export default function AdminOrders() {
                     </td>
 
                     <td className="py-3.5 px-4">
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-blue-100 text-blue-800">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-[#FAF7F2] text-[#0D3B2A] border border-[#D4A24C]/30">
                         {o.order_status}
                       </span>
                     </td>
 
                     <td className="py-3.5 px-4 text-right">
-                      <button
-                        onClick={() => {
-                          setSelectedOrder(o);
-                          setOrderStatus(o.order_status);
-                          setPaymentStatus(o.payment_status);
-                        }}
-                        className="px-3 py-1 rounded-lg bg-slate-100 text-slate-700 hover:bg-blue-600 hover:text-white font-bold text-[11px] transition"
-                      >
-                        Update
-                      </button>
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={() => setViewingInvoice(o)}
+                          className="px-3 py-1 rounded-full bg-[#FAF7F2] hover:bg-[#F3E8D2] text-[#0D3B2A] border border-[#D4A24C]/30 font-bold text-[11px] flex items-center gap-1 transition"
+                          title="Print / View Tax Invoice"
+                        >
+                          <Printer className="w-3 h-3 text-[#8A5E12]" />
+                          <span>Invoice</span>
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSelectedOrder(o);
+                            setOrderStatus(o.order_status);
+                            setPaymentStatus(o.payment_status);
+                          }}
+                          className="px-3 py-1 rounded-full bg-[#0D3B2A] text-white hover:bg-[#153423] font-bold text-[11px] transition"
+                        >
+                          Status
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -140,17 +157,22 @@ export default function AdminOrders() {
         )}
       </div>
 
+      {/* Invoice Viewer Modal */}
+      {viewingInvoice && (
+        <InvoiceModal order={viewingInvoice} onClose={() => setViewingInvoice(null)} />
+      )}
+
       {/* Edit Order Modal */}
       {selectedOrder && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl space-y-4 text-xs border border-slate-200">
-            <h3 className="text-base font-bold text-slate-900">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl space-y-4 text-xs border border-[#D4A24C]/30">
+            <h3 className="text-base font-bold font-serif text-[#0D3B2A]">
               Manage Order: {selectedOrder.invoice_number}
             </h3>
 
-            <div className="p-3 bg-slate-50 rounded-xl space-y-1 text-slate-600">
-              <p>Client: <strong>{selectedOrder.shipping_address?.company_name || selectedOrder.user?.name}</strong></p>
-              <p>Total: <strong>₹{selectedOrder.grand_total.toLocaleString('en-IN')}</strong></p>
+            <div className="p-3 bg-[#FAF7F2] rounded-xl space-y-1 text-slate-600 border border-[#D4A24C]/20">
+              <p>Client: <strong className="text-[#0D3B2A]">{selectedOrder.shipping_address?.company_name || selectedOrder.user?.name}</strong></p>
+              <p>Total: <strong className="text-[#8A5E12]">₹{selectedOrder.grand_total.toLocaleString('en-IN')}</strong></p>
               <p>Shipping To: {selectedOrder.shipping_address?.street}, {selectedOrder.shipping_address?.city}</p>
             </div>
 
@@ -159,7 +181,7 @@ export default function AdminOrders() {
               <select
                 value={orderStatus}
                 onChange={(e) => setOrderStatus(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-semibold"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-semibold focus:outline-none focus:border-[#0D3B2A]"
               >
                 <option value="placed">Placed</option>
                 <option value="confirmed">Confirmed</option>
@@ -174,7 +196,7 @@ export default function AdminOrders() {
               <select
                 value={paymentStatus}
                 onChange={(e) => setPaymentStatus(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-semibold"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-semibold focus:outline-none focus:border-[#0D3B2A]"
               >
                 <option value="pending">Pending</option>
                 <option value="paid">Paid (Verified)</option>
@@ -186,13 +208,13 @@ export default function AdminOrders() {
             <div className="flex items-center justify-end gap-2 pt-2">
               <button
                 onClick={() => setSelectedOrder(null)}
-                className="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 font-bold"
+                className="px-4 py-2 rounded-full text-slate-600 hover:bg-slate-100 font-bold transition"
               >
                 Cancel
               </button>
               <button
                 onClick={handleUpdate}
-                className="px-5 py-2 rounded-xl bg-blue-600 text-white font-bold shadow"
+                className="px-6 py-2 rounded-full bg-[#0D3B2A] text-white hover:bg-[#153423] font-bold shadow transition border border-[#D4A24C]/40"
               >
                 Save
               </button>

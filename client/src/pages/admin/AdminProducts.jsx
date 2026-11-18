@@ -47,42 +47,47 @@ export default function AdminProducts() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 select-none">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Hardware Catalog Management</h1>
-          <p className="text-xs text-slate-500 mt-1">Manage laptops, monitors, RAM, GPUs and pricing.</p>
+          <span className="text-[10px] font-sans uppercase tracking-[0.2em] text-[#8A5E12] font-bold block">
+            — HARDWARE ASSET CONTROL
+          </span>
+          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#0D3B2A] tracking-tight mt-0.5">
+            Hardware Catalog Management
+          </h1>
+          <p className="text-xs text-[#5A6B63] mt-1">Manage laptops, monitors, RAM, GPUs, condition grades, and lease pricing.</p>
         </div>
 
         <Link
           to="/admin/products/new"
-          className="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow flex items-center gap-1.5 transition"
+          className="px-5 py-2.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs uppercase tracking-wider shadow flex items-center gap-1.5 transition border border-[#D4A24C]/40"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-4 h-4 text-[#D4A24C]" />
           <span>Add New Hardware</span>
         </Link>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3 text-xs">
-        <div className="relative w-full sm:w-64">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+      <div className="bg-white p-4 rounded-3xl border border-[#D4A24C]/25 shadow-sm flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div className="relative w-full sm:w-72">
+          <Search className="w-4 h-4 text-[#8A5E12] absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             placeholder="Search by title, brand, model..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+            className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A]"
           />
         </div>
 
         <div className="flex items-center gap-2">
-          <label className="font-semibold text-slate-500">Category:</label>
+          <label className="font-bold text-[#8A5E12] uppercase tracking-wider text-[11px]">Category:</label>
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-semibold text-slate-700 focus:outline-none focus:border-blue-600"
+            className="px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-semibold text-slate-700 focus:outline-none focus:border-[#0D3B2A]"
           >
             <option value="all">All Categories</option>
             <option value="laptop">Laptops</option>
@@ -97,7 +102,7 @@ export default function AdminProducts() {
       </div>
 
       {/* Products Table */}
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-3xl border border-[#D4A24C]/25 shadow-sm overflow-hidden">
         {loading ? (
           <div className="text-center py-20 text-xs text-slate-400">Loading catalog...</div>
         ) : products.length === 0 ? (
@@ -149,7 +154,7 @@ export default function AdminProducts() {
                     <td className="py-3.5 px-4 font-mono">
                       <span className="font-bold text-slate-900 block">₹{p.sale_price.toLocaleString('en-IN')}</span>
                       {p.rental_price_monthly > 0 && (
-                        <span className="text-[10px] text-blue-600 block">Rent: ₹{p.rental_price_monthly}/mo</span>
+                        <span className="text-[10px] text-[#0D3B2A] font-semibold block">Rent: ₹{p.rental_price_monthly}/mo</span>
                       )}
                     </td>
 
@@ -164,14 +169,14 @@ export default function AdminProducts() {
                         <Link
                           to={`/products/${p.slug}`}
                           target="_blank"
-                          className="p-1.5 rounded-lg text-slate-500 hover:text-blue-600 hover:bg-slate-100 transition"
+                          className="p-1.5 rounded-lg text-slate-500 hover:text-[#0D3B2A] hover:bg-slate-100 transition"
                           title="View on site"
                         >
-                          <ExternalLink className="w-4 h-4" />
+                          <ExternalLink className="w-4 h-4 text-[#D4A24C]" />
                         </Link>
                         <Link
                           to={`/admin/products/edit/${p._id}`}
-                          className="p-1.5 rounded-lg text-slate-500 hover:text-blue-600 hover:bg-slate-100 transition"
+                          className="p-1.5 rounded-lg text-slate-500 hover:text-[#0D3B2A] hover:bg-slate-100 transition"
                           title="Edit"
                         >
                           <Edit2 className="w-4 h-4" />

@@ -29,9 +29,9 @@ export default function VerifyEmail() {
       <div className="bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-xl max-w-md w-full text-center space-y-4">
         {status === 'verifying' && (
           <>
-            <Loader2 className="w-12 h-12 text-blue-600 animate-spin mx-auto" />
-            <h2 className="text-xl font-bold text-slate-900">Verifying Email Address...</h2>
-            <p className="text-xs text-slate-500">Please wait while we validate your credentials.</p>
+            <Loader2 className="w-12 h-12 text-[#D4A24C] animate-spin mx-auto" />
+            <h2 className="text-xl font-bold font-serif text-[#0D3B2A]">Verifying Email Address...</h2>
+            <p className="text-xs text-[#5A6B63]">Please wait while we validate your credentials.</p>
           </>
         )}
 
@@ -40,12 +40,12 @@ export default function VerifyEmail() {
             <div className="w-16 h-16 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto">
               <CheckCircle2 className="w-8 h-8" />
             </div>
-            <h2 className="text-xl font-bold text-slate-900">Email Verified Successfully!</h2>
+            <h2 className="text-xl font-bold font-serif text-[#0D3B2A]">Email Verified Successfully!</h2>
             <p className="text-xs text-slate-600">{message}</p>
             <div className="pt-4">
               <Link
                 to="/login"
-                className="inline-block px-6 py-2.5 rounded-xl bg-blue-600 text-white text-xs font-bold shadow transition"
+                className="inline-block px-6 py-2.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold shadow transition border border-[#D4A24C]/40"
               >
                 Proceed to Sign In
               </Link>
@@ -58,12 +58,12 @@ export default function VerifyEmail() {
             <div className="w-16 h-16 rounded-full bg-red-50 text-red-600 flex items-center justify-center mx-auto">
               <XCircle className="w-8 h-8" />
             </div>
-            <h2 className="text-xl font-bold text-slate-900">Verification Failed</h2>
+            <h2 className="text-xl font-bold font-serif text-[#0D3B2A]">Verification Failed</h2>
             <p className="text-xs text-slate-600">{message}</p>
             <div className="pt-4">
               <Link
                 to="/login"
-                className="inline-block px-6 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold shadow transition"
+                className="inline-block px-6 py-2.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold shadow transition border border-[#D4A24C]/40"
               >
                 Return to Login
               </Link>

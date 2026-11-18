@@ -71,7 +71,7 @@ export default function ProductDetail() {
     );
   }
 
-  // Curate 3 category-specific transparent studio cutouts (1/3 gallery)
+  // Curate 3 true angles of the SAME hardware item
   const getGalleryImages = () => {
     const s = product.slug?.toLowerCase() || '';
     const cat = product.category?.toLowerCase() || '';
@@ -80,42 +80,49 @@ export default function ProductDetail() {
       return [
         '/products/real-rtx-3060-gpu-transparent.png',
         '/products/real-rtx-3060-gpu.jpg',
-        '/products/real-optiplex-pc-transparent.png'
+        '/products/real-rtx-3060-gpu-transparent.png'
       ];
     }
     if (cat === 'monitor' || s.includes('display') || s.includes('p2419h') || s.includes('ultrasharp')) {
       return [
         '/products/real-dell-display-transparent.png',
-        '/products/dell-ultrasharp-display.png',
-        '/products/real-dell-display-transparent.png'
+        '/products/real-dell-display.png',
+        '/products/dell-ultrasharp-display.png'
       ];
     }
     if (cat === 'ram' || s.includes('ddr4') || s.includes('memory')) {
       return [
         '/products/real-enterprise-ram-transparent.png',
-        '/products/commercial-elite.png',
+        '/products/real-enterprise-ram.png',
         '/products/real-enterprise-ram-transparent.png'
       ];
     }
     if (cat === 'desktop' || s.includes('optiplex')) {
       return [
         '/products/real-optiplex-pc-transparent.png',
-        '/products/commercial-elite.png',
+        '/products/real-optiplex-pc.png',
         '/products/real-optiplex-pc-transparent.png'
       ];
     }
     if (s.includes('latitude')) {
       return [
         '/products/real-dell-latitude-transparent.png',
-        '/products/real-thinkpad-t14-transparent.png',
+        '/products/real-dell-latitude.png',
+        '/products/real-dell-latitude-transparent.png'
+      ];
+    }
+    if (s.includes('elitebook') || s.includes('workstation') || s.includes('hp')) {
+      return [
+        '/products/real-mobile-workstation-transparent.png',
+        '/products/real-mobile-workstation.png',
         '/products/real-mobile-workstation-transparent.png'
       ];
     }
-    // Default ThinkPad & Corporate Laptops
+    // Default ThinkPad Corporate Laptops
     return [
       '/products/real-thinkpad-t14-transparent.png',
-      '/products/real-dell-latitude-transparent.png',
-      '/products/real-mobile-workstation-transparent.png'
+      '/products/real-thinkpad-t14.png',
+      '/products/thinkpad-t14.png'
     ];
   };
 

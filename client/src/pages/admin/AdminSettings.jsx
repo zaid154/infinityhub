@@ -76,7 +76,7 @@ export default function AdminSettings() {
         {/* Business Identity */}
         <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
           <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-            <Building className="w-4 h-4 text-blue-600" />
+            <Building className="w-4 h-4 text-[#D4A24C]" />
             Company Identity & Branding
           </h2>
 
@@ -88,7 +88,7 @@ export default function AdminSettings() {
                 required
                 value={settings.company_name}
                 onChange={(e) => setSettings({ ...settings, company_name: e.target.value })}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
               />
             </div>
 
@@ -98,7 +98,7 @@ export default function AdminSettings() {
                 type="text"
                 value={settings.tagline}
                 onChange={(e) => setSettings({ ...settings, tagline: e.target.value })}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
               />
             </div>
           </div>
@@ -110,7 +110,7 @@ export default function AdminSettings() {
                 type="text"
                 value={settings.gst_number}
                 onChange={(e) => setSettings({ ...settings, gst_number: e.target.value })}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600 uppercase font-mono"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] uppercase font-mono"
               />
             </div>
 
@@ -120,7 +120,7 @@ export default function AdminSettings() {
                 type="text"
                 value={settings.invoice_prefix}
                 onChange={(e) => setSettings({ ...settings, invoice_prefix: e.target.value })}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600 font-mono"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] font-mono"
               />
             </div>
           </div>
@@ -129,7 +129,7 @@ export default function AdminSettings() {
         {/* Communication Channels */}
         <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
           <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-            <Phone className="w-4 h-4 text-emerald-600" />
+            <Phone className="w-4 h-4 text-[#0D3B2A]" />
             Direct Communication & WhatsApp
           </h2>
 
@@ -141,7 +141,7 @@ export default function AdminSettings() {
                 required
                 value={settings.phone}
                 onChange={(e) => setSettings({ ...settings, phone: e.target.value })}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
               />
             </div>
 
@@ -155,7 +155,7 @@ export default function AdminSettings() {
                 placeholder="+919876543210"
                 value={settings.whatsapp}
                 onChange={(e) => setSettings({ ...settings, whatsapp: e.target.value })}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
               />
             </div>
           </div>
@@ -167,7 +167,7 @@ export default function AdminSettings() {
               required
               value={settings.email}
               onChange={(e) => setSettings({ ...settings, email: e.target.value })}
-              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
             />
           </div>
         </div>
@@ -175,7 +175,7 @@ export default function AdminSettings() {
         {/* Physical Address & Maps */}
         <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
           <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-purple-600" />
+            <MapPin className="w-4 h-4 text-[#D4A24C]" />
             Warehouse Address & Google Maps Embed
           </h2>
 
@@ -185,7 +185,7 @@ export default function AdminSettings() {
               rows="2"
               value={settings.address}
               onChange={(e) => setSettings({ ...settings, address: e.target.value })}
-              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
             />
           </div>
 
@@ -196,7 +196,7 @@ export default function AdminSettings() {
               placeholder="https://www.google.com/maps/embed?pb=..."
               value={settings.google_maps_embed_url}
               onChange={(e) => setSettings({ ...settings, google_maps_embed_url: e.target.value })}
-              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600 font-mono text-[11px]"
+              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] font-mono text-[11px]"
             />
           </div>
         </div>
@@ -204,9 +204,9 @@ export default function AdminSettings() {
         <button
           type="submit"
           disabled={saving}
-          className="px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs uppercase tracking-wider transition shadow-lg shadow-blue-600/25 flex items-center gap-2"
+          className="px-8 py-3.5 rounded-full bg-[#0D3B2A] hover:bg-[#124e38] text-white font-bold text-xs uppercase tracking-wider transition shadow-lg shadow-[#0D3B2A]/25 flex items-center gap-2"
         >
-          <Save className="w-4 h-4" />
+          <Save className="w-4 h-4 text-[#D4A24C]" />
           <span>{saving ? 'Saving...' : 'Update Settings'}</span>
         </button>
       </form>

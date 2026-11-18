@@ -75,12 +75,21 @@ export default function Products() {
   const [loading, setLoading] = useState(true);
 
   // Filters State
-  const [category, setCategory] = useState(searchParams.get('category') || 'all');
+  const initialCat = (searchParams.get('category') || 'all').replace(/s$/, '');
+  const [category, setCategory] = useState(initialCat);
   const [condition, setCondition] = useState('all');
   const [availableFor, setAvailableFor] = useState('all');
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState('newest');
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+
+  useEffect(() => {
+    const cat = searchParams.get('category');
+    if (cat) {
+      setCategory(cat.replace(/s$/, ''));
+      setPage(1);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const fetchProducts = async () => {

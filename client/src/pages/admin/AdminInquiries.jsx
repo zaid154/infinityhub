@@ -49,21 +49,26 @@ export default function AdminInquiries() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 select-none">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Corporate RFQs & Inquiries</h1>
-          <p className="text-xs text-slate-500 mt-1">
+          <span className="text-[10px] font-sans uppercase tracking-[0.2em] text-[#8A5E12] font-bold block">
+            — PIPELINE & LEAD MANAGEMENT
+          </span>
+          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#0D3B2A] tracking-tight mt-0.5">
+            Corporate RFQs & Inquiries
+          </h1>
+          <p className="text-xs text-[#5A6B63] mt-1">
             Track procurement leads, update quotation statuses, and connect directly on WhatsApp.
           </p>
         </div>
 
         <div className="flex items-center gap-2 text-xs">
-          <label className="font-semibold text-slate-500">Status:</label>
+          <label className="font-bold text-[#8A5E12] uppercase tracking-wider text-[11px]">Status:</label>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 bg-white border border-slate-300 rounded-xl font-semibold text-slate-700 focus:outline-none focus:border-blue-600"
+            className="px-3 py-2 bg-white border border-[#D4A24C]/30 rounded-xl font-semibold text-slate-700 focus:outline-none focus:border-[#0D3B2A]"
           >
             <option value="all">All Inquiries</option>
             <option value="new">New (Uncontacted)</option>
@@ -76,7 +81,7 @@ export default function AdminInquiries() {
       </div>
 
       {/* Inquiries Table */}
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden text-xs">
+      <div className="bg-white rounded-3xl border border-[#D4A24C]/25 shadow-sm overflow-hidden text-xs">
         {loading ? (
           <div className="text-center py-20 text-xs text-slate-400">Loading inquiries...</div>
         ) : inquiries.length === 0 ? (
@@ -158,7 +163,7 @@ export default function AdminInquiries() {
                             setNewStatus(inq.status);
                             setAdminNotes(inq.admin_notes || '');
                           }}
-                          className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 hover:bg-blue-600 hover:text-white font-bold text-[11px] transition"
+                          className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 hover:bg-[#0D3B2A] hover:text-white font-bold text-[11px] transition"
                         >
                           Manage
                         </button>
@@ -209,20 +214,20 @@ export default function AdminInquiries() {
                 placeholder="e.g. Sent proforma quote of ₹18,500/unit for 20 ThinkPads..."
                 value={adminNotes}
                 onChange={(e) => setAdminNotes(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
               />
             </div>
 
             <div className="flex items-center justify-end gap-2 pt-2">
               <button
                 onClick={() => setSelectedInquiry(null)}
-                className="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 font-bold"
+                className="px-4 py-2 rounded-full text-slate-600 hover:bg-slate-100 font-bold transition"
               >
                 Cancel
               </button>
               <button
                 onClick={handleUpdate}
-                className="px-5 py-2 rounded-xl bg-blue-600 text-white font-bold shadow"
+                className="px-6 py-2.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs shadow transition border border-[#D4A24C]/40"
               >
                 Save Updates
               </button>

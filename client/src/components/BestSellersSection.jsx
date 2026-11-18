@@ -43,7 +43,7 @@ const BEST_SELLER_LAPTOPS = [
     original_rental: 2150,
     rating: '4.9',
     reviews: 29,
-    image: '/products/real-dell-latitude-transparent.png',
+    image: '/products/real-mobile-workstation-transparent.png',
     inStock: true,
     slug: 'hp-elitebook-840-g6-aluminum-executive'
   },
@@ -57,7 +57,7 @@ const BEST_SELLER_LAPTOPS = [
     original_rental: 1800,
     rating: '5.0',
     reviews: 19,
-    image: '/products/real-optiplex-pc-transparent.png',
+    image: '/products/real-rtx-3060-gpu-transparent.png',
     inStock: false,
     slug: 'nvidia-geforce-rtx-3060-12gb-gddr6-workstation-gpu'
   },

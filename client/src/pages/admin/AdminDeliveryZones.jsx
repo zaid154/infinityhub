@@ -97,9 +97,9 @@ export default function AdminDeliveryZones() {
 
         <button
           onClick={handleOpenAdd}
-          className="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow flex items-center gap-1.5 transition"
+          className="px-5 py-2.5 rounded-full bg-[#0D3B2A] hover:bg-[#124e38] text-white font-bold text-xs shadow flex items-center gap-1.5 transition tracking-wider uppercase"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-4 h-4 text-[#D4A24C]" />
           <span>Add Delivery Zone</span>
         </button>
       </div>
@@ -139,7 +139,7 @@ export default function AdminDeliveryZones() {
                     <div className="flex items-center justify-end gap-2">
                       <button
                         onClick={() => handleOpenEdit(z)}
-                        className="p-1.5 rounded-lg text-slate-500 hover:text-blue-600"
+                        className="p-1.5 rounded-lg text-slate-500 hover:text-[#0D3B2A] transition"
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
@@ -205,7 +205,7 @@ export default function AdminDeliveryZones() {
                   type="checkbox"
                   checked={formData.is_active}
                   onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                  className="accent-blue-600"
+                  className="accent-[#0D3B2A]"
                 />
                 <span className="font-semibold text-slate-700">Active</span>
               </div>
@@ -214,13 +214,13 @@ export default function AdminDeliveryZones() {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 text-slate-600 font-bold"
+                  className="px-4 py-2 text-slate-600 font-bold hover:text-slate-900 transition"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-blue-600 text-white font-bold shadow"
+                  className="px-6 py-2.5 rounded-full bg-[#0D3B2A] hover:bg-[#124e38] text-white font-bold text-xs shadow tracking-wider uppercase transition"
                 >
                   Save Zone
                 </button>

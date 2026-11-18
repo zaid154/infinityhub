@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
   ArrowLeft,
   Upload,
-  Sparkles,
+  FileText,
   Save,
   Trash2,
   Package,
@@ -187,9 +187,9 @@ export default function AdminProductForm() {
     <div className="max-w-4xl mx-auto space-y-6 pb-20">
       <Link
         to="/admin/products"
-        className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-blue-600"
+        className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-[#0D3B2A] transition"
       >
-        <ArrowLeft className="w-4 h-4" />
+        <ArrowLeft className="w-4 h-4 text-[#D4A24C]" />
         <span>Back to Products</span>
       </Link>
 
@@ -206,7 +206,7 @@ export default function AdminProductForm() {
         {/* Basic Details Box */}
         <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
           <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-            <Package className="w-4 h-4 text-blue-600" />
+            <Package className="w-4 h-4 text-[#D4A24C]" />
             General Information
           </h2>
 
@@ -218,7 +218,7 @@ export default function AdminProductForm() {
               placeholder="e.g. Lenovo ThinkPad T490 Core i5 16GB 512GB SSD"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
             />
           </div>
 
@@ -231,7 +231,7 @@ export default function AdminProductForm() {
                 placeholder="e.g. Lenovo, Dell, HP, NVIDIA, Samsung"
                 value={formData.brand}
                 onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
               />
             </div>
             <div>
@@ -241,7 +241,7 @@ export default function AdminProductForm() {
                 placeholder="e.g. ThinkPad T490"
                 value={formData.model}
                 onChange={(e) => setFormData({ ...formData, model: e.target.value })}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
               />
             </div>
           </div>
@@ -252,7 +252,7 @@ export default function AdminProductForm() {
               <select
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
               >
                 <option value="laptop">Corporate Laptops</option>
                 <option value="desktop">Commercial Desktops</option>
@@ -269,7 +269,7 @@ export default function AdminProductForm() {
               <select
                 value={formData.condition}
                 onChange={(e) => setFormData({ ...formData, condition: e.target.value })}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
               >
                 <option value="grade_a_plus">Grade A+ Pristine</option>
                 <option value="grade_a">Grade A Corporate</option>
@@ -283,7 +283,7 @@ export default function AdminProductForm() {
               <select
                 value={formData.available_for}
                 onChange={(e) => setFormData({ ...formData, available_for: e.target.value })}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
               >
                 <option value="both">Both Sale & Rent</option>
                 <option value="sale">Direct Sale Only</option>
@@ -306,7 +306,7 @@ export default function AdminProductForm() {
                 placeholder="e.g. 21500"
                 value={formData.sale_price}
                 onChange={(e) => setFormData({ ...formData, sale_price: e.target.value })}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600 font-mono"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] font-mono"
               />
             </div>
 
@@ -317,7 +317,7 @@ export default function AdminProductForm() {
                 placeholder="e.g. 1450"
                 value={formData.rental_price_monthly}
                 onChange={(e) => setFormData({ ...formData, rental_price_monthly: e.target.value })}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600 font-mono"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] font-mono"
               />
             </div>
 
@@ -329,7 +329,7 @@ export default function AdminProductForm() {
                 min="0"
                 value={formData.stock_quantity}
                 onChange={(e) => setFormData({ ...formData, stock_quantity: Number(e.target.value) })}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600 font-mono"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] font-mono"
               />
             </div>
 
@@ -338,7 +338,7 @@ export default function AdminProductForm() {
               <select
                 value={formData.gst_rate}
                 onChange={(e) => setFormData({ ...formData, gst_rate: Number(e.target.value) })}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600 font-mono"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] font-mono"
               >
                 <option value="0">0% (Nil / Exempt)</option>
                 <option value="5">5% GST</option>
@@ -370,7 +370,7 @@ export default function AdminProductForm() {
                     specs: { ...formData.specs, processor: e.target.value }
                   })
                 }
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
               />
             </div>
 
@@ -386,7 +386,7 @@ export default function AdminProductForm() {
                     specs: { ...formData.specs, ram: e.target.value }
                   })
                 }
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
               />
             </div>
           </div>
@@ -404,7 +404,7 @@ export default function AdminProductForm() {
                     specs: { ...formData.specs, storage: e.target.value }
                   })
                 }
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
               />
             </div>
 
@@ -420,7 +420,7 @@ export default function AdminProductForm() {
                     specs: { ...formData.specs, screen_size: e.target.value }
                   })
                 }
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
               />
             </div>
           </div>
@@ -438,7 +438,7 @@ export default function AdminProductForm() {
                     specs: { ...formData.specs, gpu_model: e.target.value }
                   })
                 }
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
               />
             </div>
 
@@ -454,7 +454,7 @@ export default function AdminProductForm() {
                     specs: { ...formData.specs, operating_system: e.target.value }
                   })
                 }
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
               />
             </div>
           </div>
@@ -470,7 +470,7 @@ export default function AdminProductForm() {
             <span className="text-[11px] text-slate-400">Multiple images allowed</span>
           </div>
 
-          <div className="border-2 border-dashed border-slate-300 rounded-2xl p-6 text-center hover:border-blue-500 transition bg-slate-50 cursor-pointer relative">
+          <div className="border-2 border-dashed border-[#D4A24C]/40 rounded-2xl p-6 text-center hover:border-[#0D3B2A] transition bg-[#FAF7F2] cursor-pointer relative">
             <input
               type="file"
               multiple
@@ -480,8 +480,8 @@ export default function AdminProductForm() {
             />
             <div className="space-y-1">
               {uploadingImages ? (
-                <div className="flex items-center justify-center gap-2 text-blue-600 font-bold">
-                  <Loader2 className="w-5 h-5 animate-spin" />
+                <div className="flex items-center justify-center gap-2 text-[#0D3B2A] font-bold">
+                  <Loader2 className="w-5 h-5 animate-spin text-[#D4A24C]" />
                   <span>Streaming images to Cloudinary...</span>
                 </div>
               ) : (
@@ -525,17 +525,17 @@ export default function AdminProductForm() {
               type="button"
               onClick={handleGenerateAIDescription}
               disabled={generatingAI}
-              className="px-3.5 py-1.5 rounded-xl bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 font-bold text-xs flex items-center gap-1.5 transition"
+              className="px-4 py-1.5 rounded-full bg-[#FAF7F2] text-[#0D3B2A] border border-[#D4A24C]/40 hover:bg-[#F3E8D2] font-bold text-xs flex items-center gap-1.5 transition shadow-sm cursor-pointer"
             >
               {generatingAI ? (
                 <>
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  <span>Generating with Gemini...</span>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-[#8A5E12]" />
+                  <span>Drafting Corporate Specs...</span>
                 </>
               ) : (
                 <>
-                  <Sparkles className="w-3.5 h-3.5 text-purple-600" />
-                  <span>Auto-Generate with Google Gemini</span>
+                  <FileText className="w-3.5 h-3.5 text-[#8A5E12]" />
+                  <span>Generate Corporate B2B Specs</span>
                 </>
               )}
             </button>
@@ -543,10 +543,10 @@ export default function AdminProductForm() {
 
           <textarea
             rows="5"
-            placeholder="Detailed description or click Auto-Generate with Gemini..."
+            placeholder="Detailed technical specifications, enterprise certification, and usage highlights..."
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600 leading-relaxed font-sans"
+            className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] leading-relaxed font-sans"
           />
         </div>
 
@@ -557,7 +557,7 @@ export default function AdminProductForm() {
               type="checkbox"
               checked={formData.is_featured}
               onChange={(e) => setFormData({ ...formData, is_featured: e.target.checked })}
-              className="accent-blue-600 w-4 h-4 rounded"
+              className="accent-[#0D3B2A] w-4 h-4 rounded"
             />
             <span className="font-semibold text-slate-700">Mark as Featured on Homepage</span>
           </label>
@@ -567,7 +567,7 @@ export default function AdminProductForm() {
               type="checkbox"
               checked={formData.is_hot_deal}
               onChange={(e) => setFormData({ ...formData, is_hot_deal: e.target.checked })}
-              className="accent-blue-600 w-4 h-4 rounded"
+              className="accent-[#0D3B2A] w-4 h-4 rounded"
             />
             <span className="font-semibold text-slate-700">Mark as Hot Deal</span>
           </label>
@@ -577,7 +577,7 @@ export default function AdminProductForm() {
               type="checkbox"
               checked={formData.is_active}
               onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-              className="accent-blue-600 w-4 h-4 rounded"
+              className="accent-[#0D3B2A] w-4 h-4 rounded"
             />
             <span className="font-semibold text-slate-700">Active (Visible in Catalog)</span>
           </label>
@@ -588,9 +588,9 @@ export default function AdminProductForm() {
           <button
             type="submit"
             disabled={submitting}
-            className="px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs uppercase tracking-wider transition shadow-lg shadow-blue-600/25 flex items-center gap-2"
+            className="px-8 py-3.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs uppercase tracking-wider transition shadow-lg flex items-center gap-2 border border-[#D4A24C]/40 cursor-pointer"
           >
-            <Save className="w-4 h-4" />
+            <Save className="w-4 h-4 text-[#D4A24C]" />
             <span>{submitting ? 'Saving...' : isEdit ? 'Update Hardware' : 'Publish to Catalog'}</span>
           </button>
         </div>

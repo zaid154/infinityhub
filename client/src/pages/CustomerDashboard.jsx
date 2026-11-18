@@ -38,15 +38,18 @@ export default function CustomerDashboard() {
   }, []);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-8 py-10 space-y-8">
+    <div className="max-w-6xl mx-auto px-4 sm:px-8 py-10 space-y-8 select-none">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#D4A24C]/25">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+          <span className="text-[10px] font-sans uppercase tracking-[0.2em] text-[#8A5E12] font-bold block">
+            — ENTERPRISE CLIENT OVERVIEW
+          </span>
+          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#0D3B2A] tracking-tight mt-0.5">
             Corporate Client Portal
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Welcome, <strong className="text-slate-800">{user?.name}</strong>{' '}
+          <p className="text-xs sm:text-sm text-[#5A6B63] mt-1">
+            Welcome, <strong className="text-[#0D3B2A]">{user?.name}</strong>{' '}
             {user?.company_name && `(${user.company_name})`}
           </p>
         </div>
@@ -54,13 +57,13 @@ export default function CustomerDashboard() {
         <div className="flex items-center gap-2">
           <Link
             to="/products"
-            className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow transition"
+            className="px-5 py-2.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs uppercase tracking-wider shadow transition border border-[#D4A24C]/40"
           >
             Browse New Hardware
           </Link>
           <Link
             to="/dashboard/profile"
-            className="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 font-bold text-xs hover:bg-slate-50 transition"
+            className="px-4 py-2.5 rounded-full border border-[#D4A24C]/30 text-[#0D3B2A] font-bold text-xs hover:bg-[#FAF7F2] transition"
           >
             Edit Profile
           </Link>
@@ -69,59 +72,59 @@ export default function CustomerDashboard() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <div className="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div className="p-6 bg-white rounded-3xl border border-[#D4A24C]/25 shadow-sm flex items-center justify-between">
           <div>
-            <span className="text-xs text-slate-500 font-bold uppercase tracking-wider block font-mono">
+            <span className="text-[10px] text-[#8A5E12] font-bold uppercase tracking-wider block font-sans">
               Total Orders
             </span>
-            <span className="text-2xl font-extrabold text-slate-900 font-mono mt-1 block">
+            <span className="text-2xl font-bold text-[#0D3B2A] font-serif mt-1 block">
               {orders.length}
             </span>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
-            <ShoppingBag className="w-6 h-6" />
+          <div className="w-12 h-12 rounded-2xl bg-[#FAF7F2] text-[#0D3B2A] border border-[#D4A24C]/30 flex items-center justify-center font-bold">
+            <ShoppingBag className="w-6 h-6 text-[#8A5E12]" />
           </div>
         </div>
 
-        <div className="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div className="p-6 bg-white rounded-3xl border border-[#D4A24C]/25 shadow-sm flex items-center justify-between">
           <div>
-            <span className="text-xs text-slate-500 font-bold uppercase tracking-wider block font-mono">
+            <span className="text-[10px] text-[#8A5E12] font-bold uppercase tracking-wider block font-sans">
               Active Leases
             </span>
-            <span className="text-2xl font-extrabold text-emerald-600 font-mono mt-1 block">
+            <span className="text-2xl font-bold text-[#0D3B2A] font-serif mt-1 block">
               {rentals.filter((r) => r.status === 'active').length}
             </span>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
-            <Repeat className="w-6 h-6" />
+          <div className="w-12 h-12 rounded-2xl bg-[#FAF7F2] text-[#0D3B2A] border border-[#D4A24C]/30 flex items-center justify-center font-bold">
+            <Repeat className="w-6 h-6 text-[#0D3B2A]" />
           </div>
         </div>
 
-        <div className="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div className="p-6 bg-white rounded-3xl border border-[#D4A24C]/25 shadow-sm flex items-center justify-between">
           <div>
-            <span className="text-xs text-slate-500 font-bold uppercase tracking-wider block font-mono">
+            <span className="text-[10px] text-[#8A5E12] font-bold uppercase tracking-wider block font-sans">
               Account Status
             </span>
-            <span className="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded border border-emerald-300 mt-2 inline-block">
+            <span className="text-xs font-bold text-[#0D3B2A] bg-[#FAF7F2] px-2.5 py-1 rounded-full border border-[#D4A24C]/40 mt-2 inline-block">
               GST Verified Entity
             </span>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
-            <FileText className="w-6 h-6" />
+          <div className="w-12 h-12 rounded-2xl bg-[#FAF7F2] text-[#8A5E12] border border-[#D4A24C]/30 flex items-center justify-center font-bold">
+            <FileText className="w-6 h-6 text-[#8A5E12]" />
           </div>
         </div>
       </div>
 
       {/* Recent Orders List */}
-      <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-6 shadow-sm">
-        <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-          <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-            <ShoppingBag className="w-4 h-4 text-blue-600" />
+      <div className="bg-white rounded-3xl border border-[#D4A24C]/25 p-6 sm:p-8 space-y-6 shadow-sm">
+        <div className="flex items-center justify-between border-b border-[#D4A24C]/15 pb-4">
+          <h2 className="text-base font-bold font-serif text-[#0D3B2A] flex items-center gap-2">
+            <ShoppingBag className="w-4 h-4 text-[#8A5E12]" />
             Recent Orders & Tax Invoices
           </h2>
           <Link
             to="/dashboard/orders"
-            className="text-xs font-bold text-blue-600 hover:underline flex items-center gap-1"
+            className="text-xs font-bold text-[#8A5E12] hover:text-[#0D3B2A] flex items-center gap-1 transition"
           >
             <span>View All</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -133,7 +136,7 @@ export default function CustomerDashboard() {
         ) : orders.length === 0 ? (
           <div className="text-center py-12 space-y-2">
             <p className="text-xs text-slate-500">No hardware purchase orders placed yet.</p>
-            <Link to="/products" className="text-xs text-blue-600 font-bold hover:underline">
+            <Link to="/products" className="text-xs text-[#0D3B2A] font-bold hover:underline">
               Start your first order
             </Link>
           </div>
@@ -193,10 +196,10 @@ export default function CustomerDashboard() {
           </h2>
           <Link
             to="/dashboard/rentals"
-            className="text-xs font-bold text-blue-600 hover:underline flex items-center gap-1"
+            className="text-xs font-bold text-[#0D3B2A] hover:underline flex items-center gap-1"
           >
             <span>View All</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <ArrowRight className="w-3.5 h-3.5 text-[#D4A24C]" />
           </Link>
         </div>
 
@@ -205,7 +208,7 @@ export default function CustomerDashboard() {
         ) : rentals.length === 0 ? (
           <div className="text-center py-12 space-y-2">
             <p className="text-xs text-slate-500">No active rental fleets currently.</p>
-            <Link to="/rental" className="text-xs text-blue-600 font-bold hover:underline">
+            <Link to="/rental" className="text-xs text-[#0D3B2A] font-bold hover:underline">
               Calculate rental costs for your team
             </Link>
           </div>
@@ -223,10 +226,10 @@ export default function CustomerDashboard() {
                   </p>
                 </div>
                 <div className="text-right">
-                  <span className="font-bold text-blue-600 font-mono">
+                  <span className="font-bold text-[#0D3B2A] font-mono">
                     ₹{r.monthly_rate.toLocaleString('en-IN')}/mo
                   </span>
-                  <p className="text-[10px] text-emerald-600 font-semibold">Active Lease</p>
+                  <p className="text-[10px] text-emerald-700 font-semibold">Active Lease</p>
                 </div>
               </div>
             ))}

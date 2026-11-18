@@ -51,13 +51,13 @@ export default function Contact() {
     <div className="max-w-6xl mx-auto px-4 sm:px-8 py-12 space-y-16">
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto space-y-3">
-        <span className="text-xs font-mono uppercase tracking-widest text-blue-600 font-bold bg-blue-50 px-3 py-1 rounded-md border border-blue-200">
-          Direct Procurement Desk
+        <span className="text-[11px] font-sans uppercase tracking-[0.22em] text-[#8A5E12] font-bold block">
+          — DIRECT PROCUREMENT DESK
         </span>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+        <h1 className="text-3xl sm:text-4xl font-serif font-bold text-[#0D3B2A] tracking-tight">
           Connect With Our Hardware Specialists
         </h1>
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-[#5A6B63]">
           Have an urgent bulk requirement or need a custom quotation? We respond within 2 business hours.
         </p>
       </div>
@@ -69,7 +69,7 @@ export default function Contact() {
             <h3 className="text-base font-bold text-slate-900">Procurement Facility</h3>
 
             <div className="flex items-start gap-3">
-              <MapPin className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
+              <MapPin className="w-5 h-5 text-[#D4A24C] shrink-0 mt-0.5" />
               <div>
                 <strong className="text-slate-800 block text-xs">Warehouse & Diagnostic Lab:</strong>
                 <p className="leading-relaxed mt-0.5">
@@ -79,20 +79,20 @@ export default function Contact() {
             </div>
 
             <div className="flex items-center gap-3">
-              <Phone className="w-5 h-5 text-emerald-600 shrink-0" />
+              <Phone className="w-5 h-5 text-[#0D3B2A] shrink-0" />
               <div>
                 <strong className="text-slate-800 block text-xs">Direct Calling Desk:</strong>
-                <a href="tel:+919876543210" className="text-blue-600 font-semibold hover:underline">
+                <a href="tel:+919876543210" className="text-[#0D3B2A] font-semibold hover:underline">
                   +91 98765 43210
                 </a>
               </div>
             </div>
 
             <div className="flex items-center gap-3">
-              <Mail className="w-5 h-5 text-purple-600 shrink-0" />
+              <Mail className="w-5 h-5 text-[#D4A24C] shrink-0" />
               <div>
                 <strong className="text-slate-800 block text-xs">Procurement Email:</strong>
-                <a href="mailto:procurement@novainfotech.in" className="text-blue-600 font-semibold hover:underline">
+                <a href="mailto:procurement@novainfotech.in" className="text-[#0D3B2A] font-semibold hover:underline">
                   procurement@novainfotech.in
                 </a>
               </div>
@@ -153,7 +153,7 @@ export default function Contact() {
                   placeholder="e.g. Acme Tech Solutions"
                   value={formData.company_name}
                   onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
-                  className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600 transition"
+                  className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition"
                 />
               </div>
             </div>
@@ -169,7 +169,7 @@ export default function Contact() {
                     placeholder="e.g. Aman Sharma"
                     value={formData.contact_person}
                     onChange={(e) => setFormData({ ...formData, contact_person: e.target.value })}
-                    className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600 transition"
+                    className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition"
                   />
                 </div>
               </div>
@@ -184,7 +184,7 @@ export default function Contact() {
                     placeholder="e.g. 9876543210"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600 transition"
+                    className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition"
                   />
                 </div>
               </div>
@@ -200,7 +200,7 @@ export default function Contact() {
                     placeholder="procurement@company.com"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600 transition"
+                    className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition"
                   />
                 </div>
               </div>
@@ -210,7 +210,7 @@ export default function Contact() {
                 <select
                   value={formData.inquiry_type}
                   onChange={(e) => setFormData({ ...formData, inquiry_type: e.target.value })}
-                  className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600 transition"
+                  className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition"
                 >
                   <option value="bulk_purchase">Bulk Hardware Purchase</option>
                   <option value="rental">Corporate Laptop Rental</option>
@@ -228,16 +228,16 @@ export default function Contact() {
                 placeholder="Mention desired configurations, volume, timelines, or questions..."
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600 transition"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition"
               />
             </div>
 
             <button
               type="submit"
               disabled={submitting}
-              className="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs uppercase tracking-wider transition shadow-lg shadow-blue-600/25 flex items-center justify-center gap-2"
+              className="w-full py-3.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs uppercase tracking-wider transition shadow-lg flex items-center justify-center gap-2 border border-[#D4A24C]/40 cursor-pointer"
             >
-              <Send className="w-4 h-4" />
+              <Send className="w-4 h-4 text-[#D4A24C]" />
               <span>{submitting ? 'Transmitting...' : 'Send Inquiry to Corporate Desk'}</span>
             </button>
           </form>

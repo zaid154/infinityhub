@@ -34,15 +34,15 @@ export default function Login() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
-      <div className="bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-xl max-w-md w-full space-y-6">
-        <div className="text-center space-y-4">
-          <div className="flex justify-center">
+      <div className="bg-white p-8 sm:p-10 rounded-3xl border border-[#D4A24C]/25 shadow-xl max-w-md w-full space-y-6">
+        <div className="text-center space-y-3">
+          <div className="flex justify-center mb-1">
             <BrandLogo theme="light" size="md" />
           </div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight font-heading">
+          <h1 className="text-2xl font-bold font-serif text-[#0D3B2A] tracking-tight">
             Sign In to Nova Infotech
           </h1>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-[#5A6B63]">
             Access your corporate procurement orders, rentals & quotes.
           </p>
         </div>
@@ -58,7 +58,7 @@ export default function Login() {
                 placeholder="name@company.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600 transition"
+                className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] transition"
               />
             </div>
           </div>
@@ -66,7 +66,7 @@ export default function Login() {
           <div>
             <div className="flex justify-between items-center mb-1">
               <label className="font-semibold text-slate-700">Password</label>
-              <Link to="/forgot-password" className="text-blue-600 hover:underline text-[11px]">
+              <Link to="/forgot-password" className="text-[#8A5E12] hover:underline text-[11px] font-bold">
                 Forgot Password?
               </Link>
             </div>
@@ -78,7 +78,7 @@ export default function Login() {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600 transition"
+                className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] transition"
               />
             </div>
           </div>
@@ -86,25 +86,25 @@ export default function Login() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs uppercase tracking-wider transition shadow-lg shadow-blue-600/25 flex items-center justify-center gap-2"
+            className="w-full py-3 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs uppercase tracking-wider transition shadow-lg flex items-center justify-center gap-2 border border-[#D4A24C]/40"
           >
             <span>{submitting ? 'Verifying...' : 'Sign In'}</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-4 h-4 text-[#D4A24C]" />
           </button>
         </form>
 
         <div className="text-center pt-2 border-t border-slate-100 text-xs text-slate-500">
           Don't have a corporate account?{' '}
-          <Link to="/signup" className="text-blue-600 font-bold hover:underline">
+          <Link to="/signup" className="text-[#8A5E12] font-bold hover:underline">
             Register Company
           </Link>
         </div>
 
         {/* Demo credentials hint */}
-        <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-[11px] text-slate-500 space-y-1">
-          <p className="font-bold text-slate-700">Initial Admin Credentials:</p>
-          <p>Email: <code className="bg-slate-200 px-1 py-0.5 rounded text-slate-800">admin@technova.com</code></p>
-          <p>Password: <code className="bg-slate-200 px-1 py-0.5 rounded text-slate-800">Admin@123</code></p>
+        <div className="p-3 bg-[#FAF7F2] border border-[#D4A24C]/30 rounded-xl text-[11px] text-[#5A6B63] space-y-1">
+          <p className="font-bold text-[#0D3B2A]">Initial Admin Credentials:</p>
+          <p>Email: <code className="bg-white px-1.5 py-0.5 rounded text-[#0D3B2A] font-mono border border-[#D4A24C]/30">admin@technova.com</code></p>
+          <p>Password: <code className="bg-white px-1.5 py-0.5 rounded text-[#0D3B2A] font-mono border border-[#D4A24C]/30">Admin@123</code></p>
         </div>
       </div>
     </div>

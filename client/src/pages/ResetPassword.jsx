@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Lock, ArrowRight, Server } from 'lucide-react';
+import { Lock, ArrowRight } from 'lucide-react';
 import api from '../services/api';
 import toast from 'react-hot-toast';
+import BrandLogo from '../components/BrandLogo';
 
 export default function ResetPassword() {
   const { token } = useParams();
@@ -35,15 +36,15 @@ export default function ResetPassword() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
-      <div className="bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-xl max-w-md w-full space-y-6">
-        <div className="text-center space-y-2">
-          <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center text-white mx-auto shadow-md">
-            <Server className="w-6 h-6" />
+      <div className="bg-white p-8 sm:p-10 rounded-3xl border border-[#D4A24C]/25 shadow-xl max-w-md w-full space-y-6">
+        <div className="text-center space-y-3">
+          <div className="flex justify-center mb-1">
+            <BrandLogo theme="light" size="md" />
           </div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+          <h1 className="text-2xl font-bold font-serif text-[#0D3B2A] tracking-tight">
             Create New Password
           </h1>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-[#5A6B63]">
             Set a new secure password for your Nova Infotech corporate account.
           </p>
         </div>
@@ -60,7 +61,7 @@ export default function ResetPassword() {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600 transition"
+                className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] transition"
               />
             </div>
           </div>
@@ -76,7 +77,7 @@ export default function ResetPassword() {
                 placeholder="••••••••"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600 transition"
+                className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] transition"
               />
             </div>
           </div>
@@ -84,10 +85,10 @@ export default function ResetPassword() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs uppercase tracking-wider transition shadow-lg shadow-blue-600/25 flex items-center justify-center gap-2"
+            className="w-full py-3 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs uppercase tracking-wider transition shadow-lg flex items-center justify-center gap-2 border border-[#D4A24C]/40"
           >
             <span>{submitting ? 'Updating...' : 'Set New Password'}</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-4 h-4 text-[#D4A24C]" />
           </button>
         </form>
       </div>

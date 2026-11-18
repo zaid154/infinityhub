@@ -51,7 +51,7 @@ export default function RFQModal({ isOpen, onClose, initialContext }) {
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto border border-slate-200">
+      <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto border border-[#D4A24C]/30">
         <button
           onClick={onClose}
           className="absolute top-5 right-5 text-slate-400 hover:text-slate-700 transition p-1"
@@ -60,13 +60,13 @@ export default function RFQModal({ isOpen, onClose, initialContext }) {
         </button>
 
         <div className="mb-6">
-          <span className="text-[10px] font-mono uppercase tracking-widest text-blue-600 font-bold bg-blue-50 px-2.5 py-1 rounded-md border border-blue-200">
-            Priority Procurement Desk
+          <span className="text-[10px] font-sans uppercase tracking-[0.2em] text-[#8A5E12] font-bold block">
+            — PRIORITY PROCUREMENT DESK
           </span>
-          <h3 className="text-xl font-bold text-slate-900 mt-2">
+          <h3 className="text-xl font-bold font-serif text-[#0D3B2A] mt-1">
             Request Official Hardware Quotation
           </h3>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-[#5A6B63] mt-1">
             {initialContext ? `Inquiring for: ${initialContext}` : 'Fill in your enterprise details for an itemized GST quotation.'}
           </p>
         </div>
@@ -82,7 +82,7 @@ export default function RFQModal({ isOpen, onClose, initialContext }) {
                 placeholder="e.g. Innovatech Solutions Pvt Ltd"
                 value={formData.company_name}
                 onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
-                className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600 transition"
+                className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] transition"
               />
             </div>
           </div>
@@ -98,7 +98,7 @@ export default function RFQModal({ isOpen, onClose, initialContext }) {
                   placeholder="e.g. Rajesh Kumar"
                   value={formData.contact_person}
                   onChange={(e) => setFormData({ ...formData, contact_person: e.target.value })}
-                  className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600 transition"
+                  className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] transition"
                 />
               </div>
             </div>
@@ -113,7 +113,7 @@ export default function RFQModal({ isOpen, onClose, initialContext }) {
                   placeholder="e.g. 9876543210"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600 transition"
+                  className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] transition"
                 />
               </div>
             </div>
@@ -129,7 +129,7 @@ export default function RFQModal({ isOpen, onClose, initialContext }) {
                   placeholder="procurement@company.com"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600 transition"
+                  className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] transition"
                 />
               </div>
             </div>
@@ -139,7 +139,7 @@ export default function RFQModal({ isOpen, onClose, initialContext }) {
               <select
                 value={formData.quantity}
                 onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600 transition"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] transition"
               >
                 <option value="5 - 10 Units">5 – 10 Units</option>
                 <option value="11 - 25 Units">11 – 25 Units</option>
@@ -156,26 +156,26 @@ export default function RFQModal({ isOpen, onClose, initialContext }) {
               placeholder="e.g. Need Core i5 8th Gen, 16GB RAM, delivery required in Delhi within 3 days."
               value={formData.message}
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600 transition"
+              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] transition"
             />
           </div>
 
-          <div className="pt-2 space-y-2">
+          <div className="pt-2 space-y-2.5">
             <button
               type="submit"
               disabled={submitting}
-              className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold tracking-wide transition shadow-lg shadow-blue-600/25 flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs uppercase tracking-wider transition shadow-lg flex items-center justify-center gap-2 border border-[#D4A24C]/40 cursor-pointer"
             >
-              <FileText className="w-4 h-4" />
+              <FileText className="w-4 h-4 text-[#D4A24C]" />
               <span>{submitting ? 'Submitting...' : 'Submit Official RFQ Request'}</span>
             </button>
 
             <button
               type="button"
               onClick={handleWhatsAppForward}
-              className="w-full py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 font-semibold transition flex items-center justify-center gap-2"
+              className="w-full py-2.5 rounded-full bg-[#FAF7F2] hover:bg-[#F3E8D2] text-[#0D3B2A] border border-[#D4A24C]/30 font-bold text-[11px] uppercase tracking-wider transition flex items-center justify-center gap-2 cursor-pointer"
             >
-              <MessageSquare className="w-4 h-4 text-emerald-600" />
+              <MessageSquare className="w-4 h-4 text-[#0D3B2A]" />
               <span>Forward Directly via WhatsApp</span>
             </button>
           </div>
