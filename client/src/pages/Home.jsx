@@ -15,7 +15,6 @@ import {
   HardDrive,
   Thermometer,
   ChevronDown,
-  Sparkles,
   Send,
   Building,
   Phone,
@@ -262,15 +261,15 @@ export default function Home() {
               <span key={i} className="flex items-center gap-4 sm:gap-6 shrink-0">
                 <span>Enterprise Refurbished Hardware to Perfection</span>
                 <span className="text-[#F59E0B] font-sans font-bold text-[10px] sm:text-xs uppercase tracking-widest">
-                  ✦ NOVA INFOTECH
+                  • NOVA INFOTECH
                 </span>
                 <span>24-48h Pan-India Replacement SLA</span>
                 <span className="text-[#F59E0B] font-sans font-bold text-[10px] sm:text-xs uppercase tracking-widest">
-                  ✦ 100% GSTR-2B TAX CREDIT
+                  • 100% GSTR-2B TAX CREDIT
                 </span>
                 <span>Grade A+ 30-Point Rigorously Certified</span>
                 <span className="text-[#F59E0B] font-sans font-bold text-[10px] sm:text-xs uppercase tracking-widest">
-                  ✦ ZERO HIDDEN CHARGES
+                  • ZERO HIDDEN CHARGES
                 </span>
               </span>
             ))}
@@ -280,15 +279,15 @@ export default function Home() {
               <span key={`dup-${i}`} className="flex items-center gap-4 sm:gap-6 shrink-0">
                 <span>Enterprise Refurbished Hardware to Perfection</span>
                 <span className="text-[#F59E0B] font-sans font-bold text-[10px] sm:text-xs uppercase tracking-widest">
-                  ✦ NOVA INFOTECH
+                  • NOVA INFOTECH
                 </span>
                 <span>24-48h Pan-India Replacement SLA</span>
                 <span className="text-[#F59E0B] font-sans font-bold text-[10px] sm:text-xs uppercase tracking-widest">
-                  ✦ 100% GSTR-2B TAX CREDIT
+                  • 100% GSTR-2B TAX CREDIT
                 </span>
                 <span>Grade A+ 30-Point Rigorously Certified</span>
                 <span className="text-[#F59E0B] font-sans font-bold text-[10px] sm:text-xs uppercase tracking-widest">
-                  ✦ ZERO HIDDEN CHARGES
+                  • ZERO HIDDEN CHARGES
                 </span>
               </span>
             ))}
@@ -412,7 +411,7 @@ export default function Home() {
       {/* 7. SPIRITUAL / CORE VALUE BANNER (AL-TOOBA SIGNATURE QUOTE) */}
       <section className="max-w-5xl mx-auto px-4 sm:px-8">
         <div className="bg-[#FAF7F2] border-2 border-[#D4A24C]/40 rounded-3xl p-8 sm:p-12 text-center shadow-sm relative overflow-hidden">
-          <div className="text-[#D4A24C] text-sm tracking-[0.3em] font-serif mb-3">✦ ✦ ✦</div>
+          <div className="w-12 h-0.5 bg-[#D4A24C] mx-auto mb-4 opacity-60"></div>
           <blockquote className="font-serif italic text-2xl sm:text-3xl text-[#0D3B2A] leading-relaxed max-w-3xl mx-auto">
             "Indeed, trade is blessed with growth and longevity when conducted with truthfulness, transparent terms, and zero compromise on quality."
           </blockquote>

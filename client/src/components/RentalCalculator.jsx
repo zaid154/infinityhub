@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { Send, CheckCircle2, ShoppingBag, Sparkles } from 'lucide-react';
+import { 
+  Laptop, 
+  Cpu, 
+  Server, 
+  CheckCircle2, 
+  FileDown, 
+  ShoppingBag, 
+  Percent 
+} from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import toast from 'react-hot-toast';
 
@@ -9,21 +17,21 @@ const TIERS = [
     name: 'Office Essential',
     subtitle: 'ThinkPad T490 • Core i5 • 16GB',
     price: 1350,
-    icon: '💻'
+    icon: Laptop
   },
   {
     id: 'developer',
     name: 'Developer Pro',
     subtitle: 'ThinkPad T14 / Latitude • i7 • NVMe',
     price: 1850,
-    icon: '⚡'
+    icon: Cpu
   },
   {
     id: 'workstation',
     name: 'Workstation / AI',
     subtitle: 'Dell Precision • 32GB • RTX GPU',
     price: 3200,
-    icon: '🚀'
+    icon: Server
   }
 ];
 
@@ -121,13 +129,15 @@ export default function RentalCalculator({ onOpenRFQ }) {
                         : 'bg-white/5 border-white/10 text-[#90b09a] hover:border-white/20'
                     }`}
                   >
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <span className="text-sm">{tier.icon}</span>
+                    <div className="flex items-center gap-2 mb-1">
+                      <tier.icon className={`w-3.5 h-3.5 shrink-0 ${
+                        selectedTier.id === tier.id ? 'text-[#D4A24C]' : 'text-[#90b09a]'
+                      }`} />
                       <span className="font-bold text-xs truncate text-[#FAF7F2]">
                         {tier.name}
                       </span>
                     </div>
-                    <p className="text-[10px] text-[#90b09a] truncate">
+                    <p className="text-[10px] text-[#90b09a] truncate pl-5">
                       {tier.subtitle}
                     </p>
                   </button>
@@ -186,8 +196,8 @@ export default function RentalCalculator({ onOpenRFQ }) {
                   Lease Duration
                 </span>
                 {duration.discount > 0 && (
-                  <span className="text-[10px] font-semibold text-[#D4A24C] flex items-center gap-1">
-                    <Sparkles className="w-3 h-3" /> {duration.discount}% Long-Term Rebate
+                  <span className="text-[10px] font-semibold text-[#D4A24C] flex items-center gap-1 font-mono">
+                    <Percent className="w-3 h-3" /> {duration.discount}% Long-Term Rebate
                   </span>
                 )}
               </div>
@@ -288,7 +298,7 @@ export default function RentalCalculator({ onOpenRFQ }) {
                 className="w-full py-2.5 rounded-xl bg-[#D4A24C] hover:bg-[#c5943b] text-[#072117] font-sans font-bold text-xs uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer active:scale-95 shadow-md"
               >
                 <span>Request Formal Quote (PDF)</span>
-                <Send className="w-3.5 h-3.5" />
+                <FileDown className="w-3.5 h-3.5" />
               </button>
 
               <button

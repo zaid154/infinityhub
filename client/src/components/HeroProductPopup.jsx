@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, ArrowRight } from 'lucide-react';
+import { ShieldCheck, ArrowRight } from 'lucide-react';
 
 const SHOWCASE_PRODUCTS = [
   {
@@ -74,7 +74,7 @@ export default function HeroProductPopup({ onOpenRFQ }) {
       >
         <span className="w-2 h-2 rounded-full bg-[#10B981] animate-ping" />
         <span className="text-[10px] font-mono text-[#D4A24C] uppercase tracking-wider font-extrabold flex items-center gap-1">
-          <Sparkles className="w-2.5 h-2.5" />
+          <ShieldCheck className="w-2.5 h-2.5" />
           {current.badge}
         </span>
         <span className="text-white/30 font-light">|</span>

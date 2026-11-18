@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Volume2, VolumeX, Sparkles, ShieldCheck } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Volume2, VolumeX, ShieldCheck } from 'lucide-react';
 
 const REELS = [
   {
@@ -86,7 +86,7 @@ export default function VideoReels() {
       {/* Header */}
       <div className="text-center max-w-2xl mx-auto space-y-3">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0D3B2A]/10 border border-[#D4A24C]/40 text-[#D4A24C] text-[11px] font-bold tracking-[0.2em] uppercase">
-          <Sparkles className="w-3.5 h-3.5" />
+          <ShieldCheck className="w-3.5 h-3.5" />
           <span>Real Diagnostic Lab & Customer Experience</span>
         </div>
         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-normal text-[#0D3B2A] font-serif">

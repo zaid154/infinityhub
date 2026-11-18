@@ -119,7 +119,7 @@ export default function Footer() {
             <ul className="text-xs sm:text-sm space-y-2.5 flex flex-col text-[#90b09a]">
               <li>
                 <Link to="/rental" className="text-[#D4A24C] font-bold hover:text-[#FAF7F2] hover:translate-x-1 inline-block transition-transform duration-200">
-                  ✦ Corporate Laptop Rentals (Zero CAPEX)
+                  Corporate Laptop Rentals (Zero CAPEX)
                 </Link>
               </li>
               <li>
