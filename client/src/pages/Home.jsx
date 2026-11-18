@@ -26,6 +26,7 @@ import api from '../services/api';
 import toast from 'react-hot-toast';
 import VideoReels from '../components/VideoReels';
 import CategoriesMoorishArch from '../components/CategoriesMoorishArch';
+import BestSellersSection from '../components/BestSellersSection';
 
 export default function Home() {
   const { openRFQ } = useOutletContext();
@@ -323,7 +324,10 @@ export default function Home() {
         {/* 3. AL-TOOBA SIGNATURE MOORISH ARCH CATEGORIES SECTION */}
         <CategoriesMoorishArch />
 
-        {/* 4. ASYMMETRIC BENTO GRID - 5 CORE SOLUTIONS (AL-TOOBA HAMPERS STYLE) */}
+        {/* 4. AL-TOOBA 1:1 OUR BEST SELLERS SECTION */}
+        <BestSellersSection onOpenRFQ={openRFQ} />
+
+        {/* 5. ASYMMETRIC BENTO GRID - 5 CORE SOLUTIONS (AL-TOOBA HAMPERS STYLE) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-8 space-y-10">
         <div className="text-center max-w-2xl mx-auto space-y-2">
           <span className="text-[11px] uppercase tracking-[0.25em] text-[#D4A24C] font-semibold block">
@@ -421,105 +425,6 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
-
-      {/* 5. FEATURED COMMERCIAL HARDWARE - AL-TOOBA LUXURY PRODUCT CARDS */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-8 space-y-10">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-          <div>
-            <span className="text-[11px] uppercase tracking-[0.25em] text-[#D4A24C] font-semibold block">
-              — VERIFIED INVENTORY CATALOG
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-normal text-[#0D3B2A] font-serif mt-1">
-              Featured Commercial Hardware
-            </h2>
-            <p className="text-[#5A6B63] text-xs sm:text-sm mt-1">
-              Grade A+ tested units available for immediate dispatch or rental lease.
-            </p>
-          </div>
-          <Link
-            to="/products"
-            className="text-xs font-bold text-[#0D3B2A] hover:text-[#D4A24C] flex items-center gap-1 uppercase tracking-wider"
-          >
-            <span>View All Inventory</span>
-            <ArrowRight className="w-3.5 h-3.5 text-[#D4A24C]" />
-          </Link>
-        </div>
-
-        {loadingProducts ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="h-96 bg-white rounded-3xl border border-[#D4A24C]/20 animate-pulse"></div>
-            ))}
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredProducts.map((p) => (
-              <div
-                key={p._id}
-                className="bg-white rounded-3xl p-6 border border-[#0D3B2A]/10 shadow-[0_10px_30px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_40px_rgba(13,59,42,0.08)] transition-all duration-300 flex flex-col justify-between group"
-              >
-                <div>
-                  <div className="flex justify-between items-start mb-3">
-                    <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-[#F3E8D2] text-[#0D3B2A] tracking-wider uppercase">
-                      {p.category.toUpperCase()}
-                    </span>
-                    <span className="text-[11px] font-mono text-[#5A6B63] font-semibold">
-                      Stock: {p.stock_quantity} Units
-                    </span>
-                  </div>
-
-                  <div className="h-48 rounded-2xl bg-[#FAF7F2] border border-[#D4A24C]/15 flex items-center justify-center p-4 mb-4 overflow-hidden">
-                    <img
-                      src={getProductImage(p)}
-                      alt={p.title}
-                      className="h-full object-contain group-hover:scale-105 transition duration-500"
-                    />
-                  </div>
-
-                  {/* Rating Stars - Al-Tooba Style */}
-                  <div className="flex items-center gap-1 text-[#D4A24C] text-xs mb-1.5">
-                    {[1, 2, 3, 4, 5].map((s) => (
-                      <Star key={s} className="w-3.5 h-3.5 fill-current text-[#D4A24C]" />
-                    ))}
-                    <span className="text-slate-600 font-semibold text-[11px] ml-1">4.9 (Grade A+)</span>
-                  </div>
-
-                  <Link to={`/products/${p.slug}`} className="hover:text-[#D4A24C] transition">
-                    <h3 className="font-serif text-base font-bold text-[#0D3B2A] line-clamp-1">{p.title}</h3>
-                  </Link>
-
-                  <p className="text-xs text-[#5A6B63] mt-1 line-clamp-2 min-h-[32px] font-mono text-[11px]">
-                    {getProductSpecSummary(p)}
-                  </p>
-                </div>
-
-                <div className="pt-4 mt-4 border-t border-[#D4A24C]/20 flex items-center justify-between">
-                  <div>
-                    <span className="text-[10px] text-[#5A6B63] uppercase tracking-wider block font-semibold">
-                      Buy / Rent
-                    </span>
-                    <span className="text-base font-bold text-[#0D3B2A] font-serif">
-                      ₹{p.sale_price.toLocaleString('en-IN')}{' '}
-                      {p.rental_price_monthly > 0 && (
-                        <span className="text-xs text-[#D4A24C] font-normal font-sans">
-                          or ₹{p.rental_price_monthly.toLocaleString('en-IN')}/mo
-                        </span>
-                      )}
-                    </span>
-                  </div>
-
-                  <button
-                    onClick={() => openRFQ(`${p.title} (${p.stock_quantity} in stock)`)}
-                    className="px-5 py-2.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider border border-[#D4A24C]/40 transition shadow"
-                  >
-                    Inquire Bulk
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
       </section>
 
       {/* 6. AL-TOOBA STYLE 3D VIDEO REELS CAROUSEL */}
