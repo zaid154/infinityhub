@@ -9,14 +9,15 @@ import {
   ShoppingCart,
   Eye,
   CheckCircle2,
-  X
+  X,
+  Repeat
 } from 'lucide-react';
 import api from '../services/api';
 import { useCart } from '../context/CartContext';
 
 export default function Products() {
   const { openRFQ } = useOutletContext();
-  const { addToCart } = useCart();
+  const { addToBuyCart, addToRentalCart } = useCart();
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Helper to format specs dynamically
@@ -328,7 +329,7 @@ export default function Products() {
                   className="bg-white rounded-3xl p-6 border border-[#0D3B2A]/10 shadow-[0_10px_30px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_40px_rgba(13,59,42,0.08)] transition-all duration-300 flex flex-col justify-between group"
                 >
                   <div>
-                    <div className="flex justify-between items-center mb-3 gap-2">
+                    <div className="flex justify-between items-start mb-3 gap-2">
                       <div className="flex items-center gap-1.5 flex-wrap">
                         <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#F3E8D2] text-[#0D3B2A] tracking-wider uppercase">
                           {p.condition.replace(/_/g, ' ')}
@@ -349,9 +350,16 @@ export default function Products() {
                           </span>
                         )}
                       </div>
-                      <span className="text-[11px] font-mono text-[#5A6B63] font-semibold shrink-0">
-                        Stock: {p.stock_quantity}
-                      </span>
+                      <div className="text-[10px] font-mono text-[#5A6B63] font-semibold text-right shrink-0">
+                        {p.available_for === 'both' ? (
+                          <>
+                            <span className="block text-[#0D3B2A]">Buy Stock: <strong>{p.sale_stock !== undefined ? p.sale_stock : p.stock_quantity}</strong></span>
+                            <span className="block text-[#8A5E12]">Fleet: <strong>{p.rental_stock !== undefined ? p.rental_stock : 0}</strong></span>
+                          </>
+                        ) : (
+                          <span>Stock: <strong>{p.sale_stock !== undefined ? p.sale_stock : p.stock_quantity}</strong></span>
+                        )}
+                      </div>
                     </div>
 
                     <Link to={`/products/${p.slug}`} className="block">
@@ -404,17 +412,28 @@ export default function Products() {
                     )}
 
                     <div className="grid grid-cols-2 gap-2 pt-1">
-                      <button
-                        onClick={() => openRFQ(`${p.title} (${p.stock_quantity} in stock) - ${p.available_for === 'both' ? 'Rental / Bulk Purchase Inquiry' : 'Bulk Purchase'}`)}
-                        className="w-full py-2.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-[11px] font-bold uppercase tracking-wider transition shadow border border-[#D4A24C]/40 text-center"
-                      >
-                        Inquire Bulk
-                      </button>
+                      {p.available_for === 'both' || p.available_for === 'rent' ? (
+                        <button
+                          onClick={() => addToRentalCart(p, 1, '6_months')}
+                          className="w-full py-2.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-[11px] font-bold uppercase tracking-wider transition shadow border border-[#D4A24C]/40 text-center flex items-center justify-center gap-1 cursor-pointer"
+                          title="Add to Corporate Rental Fleet Cart"
+                        >
+                          <Repeat className="w-3.5 h-3.5 text-[#D4A24C]" />
+                          <span>Rent Fleet</span>
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => openRFQ(`${p.title} (${p.sale_stock || p.stock_quantity} in stock) - Bulk Purchase Inquiry`)}
+                          className="w-full py-2.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-[11px] font-bold uppercase tracking-wider transition shadow border border-[#D4A24C]/40 text-center cursor-pointer"
+                        >
+                          Inquire Bulk
+                        </button>
+                      )}
 
                       <button
-                        onClick={() => addToCart(p, 1)}
-                        className="w-full py-2.5 rounded-full bg-[#F3E8D2] hover:bg-[#E6D5B8] text-[#0D3B2A] text-[11px] font-bold uppercase tracking-wider transition flex items-center justify-center gap-1 border border-[#D4A24C]/40 shadow-sm"
-                        title="Add to Shopping Cart for Purchase"
+                        onClick={() => addToBuyCart(p, 1)}
+                        className="w-full py-2.5 rounded-full bg-[#F3E8D2] hover:bg-[#E6D5B8] text-[#0D3B2A] text-[11px] font-bold uppercase tracking-wider transition flex items-center justify-center gap-1 border border-[#D4A24C]/40 shadow-sm cursor-pointer"
+                        title="Add to Cart for Outright Purchase"
                       >
                         <ShoppingCart className="w-3.5 h-3.5 text-[#0D3B2A]" />
                         <span>Add to Cart</span>

@@ -26,6 +26,14 @@ export const createOrder = async (req, res, next) => {
       }
 
       const qty = Number(item.quantity) || 1;
+      const maxSale = product.sale_stock !== undefined ? product.sale_stock : product.stock_quantity;
+      if (qty > maxSale) {
+        return res.status(400).json({
+          success: false,
+          message: `Requested ${qty} units of "${product.title}", but only ${maxSale} units are available for immediate purchase. Please adjust quantity.`
+        });
+      }
+
       const unitPrice = product.sale_price;
       const itemSubtotal = unitPrice * qty;
       const gstRate = product.gst_rate || 18;
@@ -68,6 +76,13 @@ export const createOrder = async (req, res, next) => {
         payment_status: 'pending',
         order_status: 'placed'
       });
+
+      // Decrement sale_stock
+      for (const it of items) {
+        await Product.findByIdAndUpdate(it.product_id, {
+          $inc: { sale_stock: -Number(it.quantity), stock_quantity: -Number(it.quantity) }
+        });
+      }
 
       return res.status(201).json({
         success: true,

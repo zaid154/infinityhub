@@ -10,7 +10,8 @@ import {
   Zap,
   ArrowRight,
   Minus,
-  Plus
+  Plus,
+  Repeat
 } from 'lucide-react';
 import api from '../services/api';
 import { useCart } from '../context/CartContext';
@@ -19,7 +20,7 @@ import toast from 'react-hot-toast';
 export default function ProductDetail() {
   const { slug } = useParams();
   const { openRFQ } = useOutletContext();
-  const { addToCart } = useCart();
+  const { addToBuyCart, addToRentalCart } = useCart();
 
   const [product, setProduct] = useState(null);
   const [related, setRelated] = useState([]);
@@ -130,13 +131,19 @@ export default function ProductDetail() {
   const originalPrice = Math.round(product.sale_price * 1.25);
   const discountPercent = 20;
 
+  const maxSale = product.sale_stock !== undefined ? product.sale_stock : product.stock_quantity || 10;
+  const maxRental = product.rental_stock !== undefined ? product.rental_stock : 5;
+
   const handleAddToCart = () => {
-    addToCart(product, qty);
-    toast.success(`${qty}x ${product.title} added to quotation cart!`);
+    addToBuyCart(product, qty);
+  };
+
+  const handleAddRental = () => {
+    addToRentalCart(product, qty, '6_months');
   };
 
   const handleInstantBuy = () => {
-    addToCart(product, qty);
+    addToBuyCart(product, qty);
     openRFQ(`Instant 1-Click Order: ${qty}x ${product.title} (Est. ₹${(product.sale_price * qty).toLocaleString('en-IN')})`);
   };
 
@@ -284,43 +291,79 @@ export default function ProductDetail() {
             </button>
           </div>
 
-          {/* Quantity Stepper & "ADD TO CART" Pill Button Row */}
-          <div className="flex items-center gap-2.5 sm:gap-3 pt-1">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#0D3B2A] shrink-0 font-sans">
-              QUANTITY:
+          {/* Live Segregated Stock Transparency */}
+          <div className="flex items-center gap-3 text-xs bg-[#FAF7F2] p-2.5 rounded-xl border border-[#D4A24C]/25 font-mono">
+            <span className="text-[#0D3B2A] font-bold">
+              Direct Buy Stock: <strong>{maxSale} Units</strong>
             </span>
-            
-            {/* Stepper Pill [ -  1  + ] */}
-            <div className="inline-flex items-center justify-between rounded-full border border-gray-300 bg-white px-2.5 py-1 text-xs font-mono font-bold text-[#0D3B2A] w-24 shadow-sm">
+            {product.rental_price_monthly > 0 && (
+              <>
+                <span className="text-[#D4A24C]">•</span>
+                <span className="text-[#8A5E12] font-bold">
+                  Rental Fleet: <strong>{maxRental} Units</strong>
+                </span>
+              </>
+            )}
+          </div>
+
+          {/* Quantity Stepper & Dual Action Buttons */}
+          <div className="space-y-2.5 pt-1">
+            <div className="flex items-center gap-2.5 sm:gap-3">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#0D3B2A] shrink-0 font-sans">
+                QUANTITY:
+              </span>
+              
+              {/* Stepper Pill [ -  1  + ] clamped to maxSale */}
+              <div className="inline-flex items-center justify-between rounded-full border border-gray-300 bg-white px-2.5 py-1 text-xs font-mono font-bold text-[#0D3B2A] w-24 shadow-sm">
+                <button
+                  type="button"
+                  onClick={() => setQty(Math.max(1, qty - 1))}
+                  className="p-1 text-gray-500 hover:text-[#0D3B2A] hover:bg-gray-100 rounded-full transition cursor-pointer"
+                >
+                  <Minus className="w-3 h-3" />
+                </button>
+                <span>{qty}</span>
+                <button
+                  type="button"
+                  disabled={qty >= maxSale}
+                  onClick={() => {
+                    if (qty < maxSale) {
+                      setQty(qty + 1);
+                    } else {
+                      toast.error(`Maximum available direct stock is ${maxSale} units.`);
+                    }
+                  }}
+                  className="p-1 text-gray-500 hover:text-[#0D3B2A] hover:bg-gray-100 disabled:opacity-30 rounded-full transition cursor-pointer"
+                >
+                  <Plus className="w-3 h-3" />
+                </button>
+              </div>
+
+              {/* ADD TO CART (BUY) Pill Button */}
               <button
                 type="button"
-                onClick={() => setQty(Math.max(1, qty - 1))}
-                className="p-1 text-gray-500 hover:text-[#0D3B2A] hover:bg-gray-100 rounded-full transition cursor-pointer"
+                onClick={handleAddToCart}
+                className="flex-1 py-2 sm:py-2.5 px-4 sm:px-5 rounded-full border-2 border-[#0D3B2A] bg-transparent text-[#0D3B2A] hover:bg-[#0D3B2A] hover:text-[#FAF7F2] font-sans font-bold text-[11px] sm:text-xs uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
               >
-                <Minus className="w-3 h-3" />
-              </button>
-              <span>{qty}</span>
-              <button
-                type="button"
-                onClick={() => setQty(qty + 1)}
-                className="p-1 text-gray-500 hover:text-[#0D3B2A] hover:bg-gray-100 rounded-full transition cursor-pointer"
-              >
-                <Plus className="w-3 h-3" />
+                <span>ADD TO CART (BUY)</span>
+                <ShoppingBag className="w-3.5 h-3.5" />
               </button>
             </div>
 
-            {/* ADD TO CART Pill Button */}
-            <button
-              type="button"
-              onClick={handleAddToCart}
-              className="flex-1 py-2 sm:py-2.5 px-4 sm:px-5 rounded-full border-2 border-[#0D3B2A] bg-transparent text-[#0D3B2A] hover:bg-[#0D3B2A] hover:text-[#FAF7F2] font-sans font-bold text-[11px] sm:text-xs uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
-            >
-              <span>ADD TO CART</span>
-              <ShoppingBag className="w-3.5 h-3.5" />
-            </button>
+            {/* If product has rental option, show RENT FLEET button */}
+            {product.rental_price_monthly > 0 && (
+              <button
+                type="button"
+                onClick={handleAddRental}
+                className="w-full py-2.5 sm:py-3 rounded-full bg-[#FAF7F2] hover:bg-[#F3E8D2] text-[#0D3B2A] border border-[#D4A24C]/40 font-sans font-bold text-xs uppercase tracking-[0.15em] shadow-sm flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95"
+              >
+                <Repeat className="w-4 h-4 text-[#D4A24C]" />
+                <span>RENT THIS FLEET (₹{product.rental_price_monthly.toLocaleString('en-IN')}/mo)</span>
+              </button>
+            )}
           </div>
 
-          {/* Main Full-Width Instant 1-Click Buy Now Pill Button (Exact Al-Tooba Anatomy) */}
+          {/* Main Full-Width Instant 1-Click Buy Now Pill Button */}
           <button
             type="button"
             onClick={handleInstantBuy}

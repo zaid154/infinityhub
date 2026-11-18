@@ -4,9 +4,20 @@ import toast from 'react-hot-toast';
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-  const [cart, setCart] = useState(() => {
+  // Buy Cart: Outright Capex Purchases
+  const [buyCart, setBuyCart] = useState(() => {
     try {
-      const saved = localStorage.getItem('technova_cart');
+      const saved = localStorage.getItem('technova_buy_cart') || localStorage.getItem('technova_cart');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  // Rental Cart: Monthly Corporate Opex Leases
+  const [rentalCart, setRentalCart] = useState(() => {
+    try {
+      const saved = localStorage.getItem('technova_rental_cart');
       return saved ? JSON.parse(saved) : [];
     } catch {
       return [];
@@ -14,63 +25,208 @@ export const CartProvider = ({ children }) => {
   });
 
   useEffect(() => {
-    localStorage.setItem('technova_cart', JSON.stringify(cart));
-  }, [cart]);
+    localStorage.setItem('technova_buy_cart', JSON.stringify(buyCart));
+    // Keep legacy key in sync for backwards compatibility
+    localStorage.setItem('technova_cart', JSON.stringify(buyCart));
+  }, [buyCart]);
 
-  const addToCart = (product, quantity = 1) => {
-    setCart((prev) => {
+  useEffect(() => {
+    localStorage.setItem('technova_rental_cart', JSON.stringify(rentalCart));
+  }, [rentalCart]);
+
+  // Add to Buy Cart with strict stock clamping
+  const addToBuyCart = (product, quantity = 1) => {
+    const maxAvailable = product.sale_stock !== undefined ? product.sale_stock : product.stock_quantity || 10;
+    if (maxAvailable <= 0) {
+      toast.error(`Sorry, ${product.title} is currently out of stock for outright purchase.`);
+      return false;
+    }
+
+    let clamped = false;
+    setBuyCart((prev) => {
       const existing = prev.find((item) => item.product._id === product._id);
       if (existing) {
-        toast.success(`Updated ${product.title} quantity in quotation cart`);
+        let newQty = existing.quantity + quantity;
+        if (newQty > maxAvailable) {
+          newQty = maxAvailable;
+          clamped = true;
+        }
         return prev.map((item) =>
-          item.product._id === product._id
-            ? { ...item, quantity: item.quantity + quantity }
-            : item
+          item.product._id === product._id ? { ...item, quantity: newQty } : item
         );
       } else {
-        toast.success(`Added ${product.title} to quotation cart`);
-        return [...prev, { product, quantity }];
+        let initialQty = quantity;
+        if (initialQty > maxAvailable) {
+          initialQty = maxAvailable;
+          clamped = true;
+        }
+        return [...prev, { product, quantity: initialQty }];
       }
     });
+
+    if (clamped) {
+      toast.error(`Direct purchase stock limit reached! Clamped to max ${maxAvailable} units. For larger fleets, submit an Inquire Bulk RFQ.`, {
+        duration: 5000
+      });
+    } else {
+      toast.success(`Added ${product.title} to Purchase Order Cart`);
+    }
+    return true;
   };
 
-  const removeFromCart = (productId) => {
-    setCart((prev) => prev.filter((item) => item.product._id !== productId));
-    toast.success('Item removed from cart');
+  // Add to Rental Cart with strict rental_stock clamping
+  const addToRentalCart = (product, quantity = 1, tenure = '6_months') => {
+    const maxRental = product.rental_stock !== undefined ? product.rental_stock : 5;
+    if (maxRental <= 0) {
+      toast.error(`Sorry, ${product.title} has no units currently available in the active rental fleet.`);
+      return false;
+    }
+
+    let clamped = false;
+    setRentalCart((prev) => {
+      const existing = prev.find((item) => item.product._id === product._id);
+      if (existing) {
+        let newQty = existing.quantity + quantity;
+        if (newQty > maxRental) {
+          newQty = maxRental;
+          clamped = true;
+        }
+        return prev.map((item) =>
+          item.product._id === product._id ? { ...item, quantity: newQty, tenure: tenure || item.tenure } : item
+        );
+      } else {
+        let initialQty = quantity;
+        if (initialQty > maxRental) {
+          initialQty = maxRental;
+          clamped = true;
+        }
+        return [...prev, { product, quantity: initialQty, tenure }];
+      }
+    });
+
+    if (clamped) {
+      toast.error(`Rental fleet limit reached! Clamped to max ${maxRental} units. For larger teams, please request a custom fleet lease quote.`, {
+        duration: 5000
+      });
+    } else {
+      toast.success(`Added ${product.title} to Corporate Rental Fleet Lease Cart`);
+    }
+    return true;
   };
 
-  const updateQuantity = (productId, quantity) => {
+  // Update Buy Cart Quantity with stock clamping
+  const updateBuyQuantity = (productId, quantity) => {
     if (quantity <= 0) {
-      removeFromCart(productId);
+      removeFromBuyCart(productId);
       return;
     }
-    setCart((prev) =>
+    setBuyCart((prev) =>
+      prev.map((item) => {
+        if (item.product._id === productId) {
+          const maxAvailable = item.product.sale_stock !== undefined ? item.product.sale_stock : item.product.stock_quantity || 10;
+          if (quantity > maxAvailable) {
+            toast.error(`Only ${maxAvailable} units available in stock for direct purchase. Cannot select ${quantity}.`);
+            return { ...item, quantity: maxAvailable };
+          }
+          return { ...item, quantity };
+        }
+        return item;
+      })
+    );
+  };
+
+  // Update Rental Cart Quantity with rental_stock clamping
+  const updateRentalQuantity = (productId, quantity) => {
+    if (quantity <= 0) {
+      removeFromRentalCart(productId);
+      return;
+    }
+    setRentalCart((prev) =>
+      prev.map((item) => {
+        if (item.product._id === productId) {
+          const maxRental = item.product.rental_stock !== undefined ? item.product.rental_stock : 5;
+          if (quantity > maxRental) {
+            toast.error(`Only ${maxRental} units available in active rental fleet. Cannot select ${quantity}.`);
+            return { ...item, quantity: maxRental };
+          }
+          return { ...item, quantity };
+        }
+        return item;
+      })
+    );
+  };
+
+  // Update Rental Tenure ('1_month', '3_months', '6_months', '12_months')
+  const updateRentalTenure = (productId, tenure) => {
+    setRentalCart((prev) =>
       prev.map((item) =>
-        item.product._id === productId ? { ...item, quantity } : item
+        item.product._id === productId ? { ...item, tenure } : item
       )
     );
   };
 
-  const clearCart = () => {
-    setCart([]);
+  const removeFromBuyCart = (productId) => {
+    setBuyCart((prev) => prev.filter((item) => item.product._id !== productId));
+    toast.success('Removed item from Purchase Order Cart');
   };
 
-  const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
-  const cartSubtotal = cart.reduce(
-    (total, item) => total + item.product.sale_price * item.quantity,
+  const removeFromRentalCart = (productId) => {
+    setRentalCart((prev) => prev.filter((item) => item.product._id !== productId));
+    toast.success('Removed item from Rental Lease Cart');
+  };
+
+  const clearBuyCart = () => setBuyCart([]);
+  const clearRentalCart = () => setRentalCart([]);
+  const clearCart = () => {
+    setBuyCart([]);
+    setRentalCart([]);
+  };
+
+  // Metrics
+  const buyCartCount = buyCart.reduce((total, item) => total + item.quantity, 0);
+  const rentalCartCount = rentalCart.reduce((total, item) => total + item.quantity, 0);
+  const cartCount = buyCartCount + rentalCartCount;
+
+  const buySubtotal = buyCart.reduce(
+    (total, item) => total + (item.product.sale_price || 0) * item.quantity,
+    0
+  );
+
+  // Rental monthly calculation
+  const rentalMonthlyTotal = rentalCart.reduce(
+    (total, item) => total + (item.product.rental_price_monthly || 0) * item.quantity,
     0
   );
 
   return (
     <CartContext.Provider
       value={{
-        cart,
-        addToCart,
-        removeFromCart,
-        updateQuantity,
+        // Dual Cart States
+        buyCart,
+        rentalCart,
+        // Dual Cart Operations
+        addToBuyCart,
+        addToRentalCart,
+        updateBuyQuantity,
+        updateRentalQuantity,
+        updateRentalTenure,
+        removeFromBuyCart,
+        removeFromRentalCart,
+        clearBuyCart,
+        clearRentalCart,
+        // Backward-compatibility aliases for legacy components
+        cart: buyCart,
+        addToCart: addToBuyCart,
+        updateQuantity: updateBuyQuantity,
+        removeFromCart: removeFromBuyCart,
         clearCart,
+        cartSubtotal: buySubtotal,
+        // Counts & Totals
+        buyCartCount,
+        rentalCartCount,
         cartCount,
-        cartSubtotal
+        buySubtotal,
+        rentalMonthlyTotal
       }}
     >
       {children}

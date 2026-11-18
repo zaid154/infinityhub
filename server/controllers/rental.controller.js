@@ -8,6 +8,15 @@ export const createRental = async (req, res, next) => {
     const product = await Product.findById(product_id);
     if (!product) return res.status(404).json({ success: false, message: 'Product not found' });
 
+    const reqQty = Number(quantity) || 1;
+    const maxRental = product.rental_stock !== undefined ? product.rental_stock : 5;
+    if (reqQty > maxRental) {
+      return res.status(400).json({
+        success: false,
+        message: `Requested ${reqQty} units for lease, but only ${maxRental} units are currently available in the active rental fleet. Please adjust quantity or contact us for a custom procurement quote.`
+      });
+    }
+
     const startDate = new Date();
     const monthsMap = {
       '1_month': 1,
@@ -22,13 +31,18 @@ export const createRental = async (req, res, next) => {
     const rental = await Rental.create({
       user: req.user._id,
       product: product._id,
-      quantity: Number(quantity) || 1,
+      quantity: reqQty,
       tenure: tenure || '6_months',
       monthly_rate: Number(monthly_rate) || product.rental_price_monthly,
       start_date: startDate,
       end_date: endDate,
       status: 'active',
-      payment_status: 'paid'
+      payment_status: 'pending'
+    });
+
+    // Decrement rental_stock
+    await Product.findByIdAndUpdate(product._id, {
+      $inc: { rental_stock: -reqQty }
     });
 
     res.status(201).json({ success: true, message: 'Rental fleet booking confirmed', rental });

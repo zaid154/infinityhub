@@ -55,6 +55,14 @@ const productSchema = new mongoose.Schema(
       type: Number,
       default: 1
     },
+    sale_stock: {
+      type: Number,
+      default: 1
+    },
+    rental_stock: {
+      type: Number,
+      default: 0
+    },
     images: [
       {
         url: { type: String, required: true },

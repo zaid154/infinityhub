@@ -8,7 +8,13 @@ import {
   ArrowRight,
   ShieldCheck,
   CreditCard,
-  FileText
+  FileText,
+  Repeat,
+  Sparkles,
+  CheckCircle2,
+  Clock,
+  Building,
+  Info
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -16,9 +22,31 @@ import api from '../services/api';
 import toast from 'react-hot-toast';
 
 export default function Cart() {
-  const { cart, removeFromCart, updateQuantity, clearCart, cartSubtotal } = useCart();
+  const {
+    buyCart,
+    rentalCart,
+    buyCartCount,
+    rentalCartCount,
+    cartCount,
+    buySubtotal,
+    rentalMonthlyTotal,
+    updateBuyQuantity,
+    updateRentalQuantity,
+    updateRentalTenure,
+    removeFromBuyCart,
+    removeFromRentalCart,
+    clearBuyCart,
+    clearRentalCart
+  } = useCart();
+
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+
+  // Active tab: 'buy' or 'rental'
+  const [activeTab, setActiveTab] = useState(() => {
+    if (buyCart.length === 0 && rentalCart.length > 0) return 'rental';
+    return 'buy';
+  });
 
   const [deliveryZones, setDeliveryZones] = useState([]);
   const [selectedZone, setSelectedZone] = useState('');
@@ -49,19 +77,46 @@ export default function Cart() {
     fetchZones();
   }, []);
 
+  const getProductImage = (p) => {
+    const s = (p.title || '').toLowerCase();
+    const cat = (p.category || '').toLowerCase();
+    if (cat === 'gpu' || s.includes('rtx 3060') || s.includes('graphics')) {
+      return '/products/real-rtx-3060-gpu-transparent.png';
+    }
+    if (cat === 'ram' || s.includes('ddr4') || s.includes('memory')) {
+      return '/products/real-ram-modules-transparent.png';
+    }
+    if (cat === 'monitor' || s.includes('p2419h') || s.includes('display')) {
+      return '/products/real-dell-display-transparent.png';
+    }
+    if (s.includes('latitude')) {
+      return '/products/real-dell-latitude-transparent.png';
+    }
+    if (s.includes('thinkpad')) {
+      return '/products/real-thinkpad-t14-transparent.png';
+    }
+    if (s.includes('elitebook') || s.includes('hp')) {
+      return '/products/real-mobile-workstation-transparent.png';
+    }
+    return p.images?.[0]?.url || '/products/real-thinkpad-t14-transparent.png';
+  };
+
   const currentZone = deliveryZones.find((z) => z._id === selectedZone);
   const deliveryCharge = currentZone ? currentZone.delivery_charge : 0;
 
-  // Calculate GST per item according to each product's gst_rate
-  const totalGst = cart.reduce((acc, item) => {
-    const itemSubtotal = item.product.sale_price * item.quantity;
+  // Buy Cart GST & Total
+  const totalBuyGst = buyCart.reduce((acc, item) => {
+    const itemSubtotal = (item.product.sale_price || 0) * item.quantity;
     const gstRate = item.product.gst_rate || 18;
     return acc + Math.round((itemSubtotal * gstRate) / 100);
   }, 0);
+  const grandBuyTotal = buySubtotal + totalBuyGst + deliveryCharge;
 
-  const grandTotal = cartSubtotal + totalGst + deliveryCharge;
+  // Rental Cart GST & Monthly Total
+  const totalRentalGst = Math.round(rentalMonthlyTotal * 0.18);
+  const grandRentalMonthly = rentalMonthlyTotal + totalRentalGst;
 
-  // Razorpay Checkout Handler
+  // Razorpay Checkout Handler (for Buy Cart)
   const handleRazorpayOrder = async () => {
     if (!isAuthenticated) {
       toast.error('Please sign in or register to place an order.');
@@ -77,7 +132,7 @@ export default function Cart() {
     setProcessing(true);
     try {
       const orderPayload = {
-        items: cart.map((item) => ({
+        items: buyCart.map((item) => ({
           product_id: item.product._id,
           quantity: item.quantity
         })),
@@ -87,14 +142,13 @@ export default function Cart() {
 
       const res = await api.post('/orders', orderPayload);
       if (!res.data.success) {
-        toast.error('Failed to initiate order.');
+        toast.error(res.data.message || 'Failed to initiate order.');
         setProcessing(false);
         return;
       }
 
       const { order, razorpay_order_id, razorpay_key_id, amount } = res.data;
 
-      // Launch Razorpay popup
       const options = {
         key: razorpay_key_id,
         amount: Math.round(amount * 100),
@@ -112,7 +166,7 @@ export default function Cart() {
             });
 
             if (verifyRes.data.success) {
-              clearCart();
+              clearBuyCart();
               toast.success('Payment successful! Order confirmed.');
               navigate(`/dashboard/orders`);
             }
@@ -142,7 +196,7 @@ export default function Cart() {
     }
   };
 
-  // Corporate Purchase Order (Net-30 / Proforma / Wire) Handler
+  // Corporate Purchase Order (Net-30 / Proforma / Wire) Handler (for Buy Cart)
   const handleCorporatePO = async () => {
     if (!isAuthenticated) {
       toast.error('Please sign in or register to place a corporate purchase order.');
@@ -158,7 +212,7 @@ export default function Cart() {
     setProcessing(true);
     try {
       const orderPayload = {
-        items: cart.map((item) => ({
+        items: buyCart.map((item) => ({
           product_id: item.product._id,
           quantity: item.quantity
         })),
@@ -169,11 +223,11 @@ export default function Cart() {
 
       const res = await api.post('/orders', orderPayload);
       if (res.data.success) {
-        clearCart();
+        clearBuyCart();
         toast.success('Official Corporate Purchase Order generated! Redirecting to orders...');
         navigate('/dashboard/orders');
       } else {
-        toast.error('Failed to generate purchase order.');
+        toast.error(res.data.message || 'Failed to generate purchase order.');
       }
     } catch (err) {
       toast.error(err.response?.data?.message || 'Error processing purchase order.');
@@ -182,299 +236,669 @@ export default function Cart() {
     }
   };
 
-  if (cart.length === 0) {
+  // Execute Corporate Master Rental Agreement Handler (for Rental Cart)
+  const handleExecuteRentalLease = async () => {
+    if (!isAuthenticated) {
+      toast.error('Please sign in to execute a corporate fleet lease agreement.');
+      navigate('/login?redirect=/cart');
+      return;
+    }
+
+    if (!shippingAddress.company_name || !shippingAddress.phone) {
+      toast.error('Please specify Company Name and Contact Phone for the Master Rental Agreement.');
+      return;
+    }
+
+    setProcessing(true);
+    try {
+      // Loop through rentalCart items and create lease agreements
+      for (const item of rentalCart) {
+        await api.post('/rentals', {
+          product_id: item.product._id,
+          quantity: item.quantity,
+          tenure: item.tenure || '6_months',
+          monthly_rate: item.product.rental_price_monthly
+        });
+      }
+
+      clearRentalCart();
+      toast.success('Corporate Master Rental Agreement registered! Tracking in portal...');
+      navigate('/dashboard/rentals');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Error executing rental agreement.');
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  // If both carts are completely empty
+  if (cartCount === 0) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center space-y-4">
         <div className="w-16 h-16 rounded-full bg-[#F4EFE6] text-[#0D3B2A] flex items-center justify-center mx-auto border border-[#D4A24C]/30">
-          <ShoppingCart className="w-8 h-8" />
+          <ShoppingCart className="w-8 h-8 text-[#D4A24C]" />
         </div>
-        <h2 className="text-2xl font-bold font-serif text-[#0D3B2A]">Your Quotation Cart is Empty</h2>
-        <p className="text-xs text-[#5A6B63]">
-          Browse our certified refurbished laptops, monitors, and components to add items.
+        <h2 className="text-2xl font-bold font-serif text-[#0D3B2A]">Your Procurement Cart is Empty</h2>
+        <p className="text-xs text-[#5A6B63] max-w-md mx-auto">
+          Explore certified corporate laptops, frameless displays, and GPUs available for outright purchase or flexible monthly lease.
         </p>
-        <Link
-          to="/products"
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs uppercase tracking-wider transition shadow border border-[#D4A24C]/40"
-        >
-          <span>Explore Hardware Catalog</span>
-          <ArrowRight className="w-4 h-4 text-[#D4A24C]" />
-        </Link>
+        <div className="flex items-center justify-center gap-3 pt-2">
+          <Link
+            to="/products"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs uppercase tracking-wider transition shadow border border-[#D4A24C]/40"
+          >
+            <span>Hardware Catalog</span>
+            <ArrowRight className="w-4 h-4 text-[#D4A24C]" />
+          </Link>
+          <Link
+            to="/rental"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#FAF7F2] hover:bg-[#F3E8D2] text-[#0D3B2A] font-bold text-xs uppercase tracking-wider transition border border-[#D4A24C]/40"
+          >
+            <span>Rental Fleet Plans</span>
+          </Link>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-8 py-10 space-y-10">
-      <div className="flex items-center justify-between border-b border-slate-200 pb-4">
+    <div className="max-w-6xl mx-auto px-4 sm:px-8 py-10 space-y-8 select-none">
+      {/* Page Title & Luxury Dual-Cart Tabs */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#D4A24C]/20 pb-5">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            Quotation Cart & Checkout
+          <span className="text-[10px] font-sans uppercase tracking-[0.2em] text-[#8A5E12] font-bold block mb-1">
+            — B2B PROCUREMENT & LEASING DESK
+          </span>
+          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#0D3B2A] tracking-tight">
+            Corporate Cart & Checkout
           </h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Review hardware volumes, tax credits, and delivery zones.
-          </p>
         </div>
-        <button
-          onClick={clearCart}
-          className="text-xs text-red-600 hover:underline flex items-center gap-1"
-        >
-          <Trash2 className="w-3.5 h-3.5" />
-          <span>Clear Cart</span>
-        </button>
+
+        {/* Dual Tab Switcher */}
+        <div className="inline-flex p-1 rounded-full bg-[#FAF7F2] border border-[#D4A24C]/30 shadow-inner">
+          <button
+            onClick={() => setActiveTab('buy')}
+            className={`px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition flex items-center gap-2 cursor-pointer ${
+              activeTab === 'buy'
+                ? 'bg-[#0D3B2A] text-white shadow-md'
+                : 'text-[#5A6B63] hover:text-[#0D3B2A]'
+            }`}
+          >
+            <ShoppingCart className="w-3.5 h-3.5 text-[#D4A24C]" />
+            <span>Direct Purchase ({buyCartCount})</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('rental')}
+            className={`px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition flex items-center gap-2 cursor-pointer ${
+              activeTab === 'rental'
+                ? 'bg-[#0D3B2A] text-white shadow-md'
+                : 'text-[#5A6B63] hover:text-[#0D3B2A]'
+            }`}
+          >
+            <Repeat className="w-3.5 h-3.5 text-[#D4A24C]" />
+            <span>Rental Fleet Lease ({rentalCartCount})</span>
+          </button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left Cart Items List */}
-        <div className="lg:col-span-7 space-y-4">
-          {cart.map((item) => {
-            const p = item.product;
-            const itemTotal = p.sale_price * item.quantity;
-            return (
-              <div
-                key={p._id}
-                className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between gap-4"
+      {/* ======================================================== */}
+      {/* TAB 1: DIRECT PURCHASE ORDER (BUY CART)                  */}
+      {/* ======================================================== */}
+      {activeTab === 'buy' && (
+        <>
+          {buyCart.length === 0 ? (
+            <div className="bg-white rounded-3xl p-12 text-center border border-[#D4A24C]/25 space-y-3">
+              <ShoppingCart className="w-10 h-10 text-slate-300 mx-auto" />
+              <h3 className="font-serif font-bold text-base text-[#0D3B2A]">No items in Direct Purchase Cart</h3>
+              <p className="text-xs text-[#5A6B63]">You have not added any hardware for outright purchase yet.</p>
+              <Link
+                to="/products"
+                className="inline-block mt-2 px-5 py-2.5 rounded-full bg-[#0D3B2A] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#153423] transition"
               >
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 rounded-xl bg-slate-50 p-2 border border-slate-100 flex items-center justify-center shrink-0">
-                    <img
-                      src={p.images?.[0]?.url || 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=200&auto=format&fit=crop&q=80'}
-                      alt=""
-                      className="max-h-full object-contain"
-                    />
-                  </div>
-                  <div>
-                    <h3 className="text-xs sm:text-sm font-bold text-slate-900 line-clamp-1">
-                      {p.title}
-                    </h3>
-                    <p className="text-[11px] text-slate-500 font-mono">
-                      ₹{p.sale_price.toLocaleString('en-IN')} each • GST {p.gst_rate}%
-                    </p>
-                  </div>
+                Browse Hardware Catalog
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              {/* Left Column: Items List */}
+              <div className="lg:col-span-7 space-y-4">
+                <div className="flex items-center justify-between text-xs text-[#5A6B63] px-1 font-mono">
+                  <span>Showing {buyCart.length} hardware model(s) for Outright Purchase</span>
+                  <button
+                    onClick={clearBuyCart}
+                    className="text-red-600 hover:underline flex items-center gap-1 cursor-pointer"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>Clear Buy Cart</span>
+                  </button>
                 </div>
 
-                <div className="flex items-center gap-4">
-                  {/* Quantity Counter */}
-                  <div className="flex items-center border border-slate-200 rounded-lg overflow-hidden bg-slate-50 text-xs">
-                    <button
-                      onClick={() => updateQuantity(p._id, item.quantity - 1)}
-                      className="p-1.5 hover:bg-slate-200 transition"
+                {buyCart.map((item) => {
+                  const p = item.product;
+                  const itemTotal = (p.sale_price || 0) * item.quantity;
+                  const maxSale = p.sale_stock !== undefined ? p.sale_stock : p.stock_quantity || 10;
+                  const isMax = item.quantity >= maxSale;
+
+                  return (
+                    <div
+                      key={p._id}
+                      className="bg-white p-4 sm:p-5 rounded-3xl border border-[#D4A24C]/25 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4"
                     >
-                      <Minus className="w-3 h-3" />
-                    </button>
-                    <span className="px-3 font-bold text-slate-800">{item.quantity}</span>
-                    <button
-                      onClick={() => updateQuantity(p._id, item.quantity + 1)}
-                      className="p-1.5 hover:bg-slate-200 transition"
-                    >
-                      <Plus className="w-3 h-3" />
-                    </button>
+                      <div className="flex items-center gap-3.5">
+                        <div className="w-16 h-16 rounded-2xl bg-[#FAF7F2] p-2 border border-[#D4A24C]/20 flex items-center justify-center shrink-0">
+                          <img
+                            src={getProductImage(p)}
+                            alt={p.title}
+                            className="max-h-full object-contain filter drop-shadow-sm"
+                          />
+                        </div>
+                        <div>
+                          <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-[#FAF7F2] text-[#0D3B2A] uppercase border border-[#D4A24C]/30">
+                            Buy Stock: {maxSale} Available
+                          </span>
+                          <h3 className="text-xs sm:text-sm font-bold text-[#0D3B2A] font-serif line-clamp-1 mt-1">
+                            {p.title}
+                          </h3>
+                          <p className="text-[11px] text-[#5A6B63] font-mono">
+                            ₹{p.sale_price.toLocaleString('en-IN')} unit • GST {p.gst_rate || 18}%
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between sm:justify-end gap-4 border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-100">
+                        {/* Quantity Counter clamped to sale_stock */}
+                        <div className="flex items-center border border-[#D4A24C]/30 rounded-full overflow-hidden bg-[#FAF7F2] text-xs shadow-inner">
+                          <button
+                            onClick={() => updateBuyQuantity(p._id, item.quantity - 1)}
+                            className="p-1.5 px-2.5 hover:bg-[#F3E8D2] transition text-[#0D3B2A] cursor-pointer"
+                          >
+                            <Minus className="w-3 h-3" />
+                          </button>
+                          <span className="px-2 font-bold font-mono text-[#0D3B2A]">{item.quantity}</span>
+                          <button
+                            disabled={isMax}
+                            onClick={() => updateBuyQuantity(p._id, item.quantity + 1)}
+                            className="p-1.5 px-2.5 hover:bg-[#F3E8D2] disabled:opacity-30 transition text-[#0D3B2A] cursor-pointer"
+                            title={isMax ? `Max available direct stock is ${maxSale}` : 'Add 1 more'}
+                          >
+                            <Plus className="w-3 h-3" />
+                          </button>
+                        </div>
+
+                        <div className="text-right min-w-[80px]">
+                          <span className="text-xs sm:text-sm font-bold text-[#0D3B2A] font-mono">
+                            ₹{itemTotal.toLocaleString('en-IN')}
+                          </span>
+                        </div>
+
+                        <button
+                          onClick={() => removeFromBuyCart(p._id)}
+                          className="text-slate-400 hover:text-red-500 transition p-1 cursor-pointer"
+                          title="Remove from cart"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {/* Delivery & Invoicing Address Box */}
+                <div className="bg-white p-6 rounded-3xl border border-[#D4A24C]/25 shadow-sm space-y-4 text-xs">
+                  <h3 className="text-sm font-bold text-[#0D3B2A] font-serif flex items-center gap-1.5">
+                    <Building className="w-4 h-4 text-[#D4A24C]" />
+                    Corporate Delivery Address & Invoicing Info
+                  </h3>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block font-semibold text-slate-700 mb-1">Company / Entity Name</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Acme Tech Solutions"
+                        value={shippingAddress.company_name}
+                        onChange={(e) => setShippingAddress({ ...shippingAddress, company_name: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-semibold text-slate-700 mb-1">GSTIN (for 18% Input Credit)</label>
+                      <input
+                        type="text"
+                        placeholder="07AAAAA0000A1Z5"
+                        value={shippingAddress.gst_number}
+                        onChange={(e) => setShippingAddress({ ...shippingAddress, gst_number: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] uppercase font-mono"
+                      />
+                    </div>
                   </div>
 
-                  <div className="text-right min-w-[70px]">
-                    <span className="text-xs font-bold text-slate-900 font-mono">
-                      ₹{itemTotal.toLocaleString('en-IN')}
-                    </span>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block font-semibold text-slate-700 mb-1">Contact Person *</label>
+                      <input
+                        type="text"
+                        placeholder="Full name"
+                        value={shippingAddress.contact_person}
+                        onChange={(e) => setShippingAddress({ ...shippingAddress, contact_person: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-semibold text-slate-700 mb-1">Phone Number *</label>
+                      <input
+                        type="tel"
+                        placeholder="WhatsApp or Mobile"
+                        value={shippingAddress.phone}
+                        onChange={(e) => setShippingAddress({ ...shippingAddress, phone: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block font-semibold text-slate-700 mb-1">Street Address *</label>
+                    <input
+                      type="text"
+                      placeholder="Office suite, floor, tech park, road..."
+                      value={shippingAddress.street}
+                      onChange={(e) => setShippingAddress({ ...shippingAddress, street: e.target.value })}
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-3">
+                    <div>
+                      <label className="block font-semibold text-slate-700 mb-1">City</label>
+                      <input
+                        type="text"
+                        value={shippingAddress.city}
+                        onChange={(e) => setShippingAddress({ ...shippingAddress, city: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-semibold text-slate-700 mb-1">State</label>
+                      <input
+                        type="text"
+                        value={shippingAddress.state}
+                        onChange={(e) => setShippingAddress({ ...shippingAddress, state: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-semibold text-slate-700 mb-1">Pincode</label>
+                      <input
+                        type="text"
+                        value={shippingAddress.pincode}
+                        onChange={(e) => setShippingAddress({ ...shippingAddress, pincode: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
+                      />
+                    </div>
+                  </div>
+
+                  {deliveryZones.length > 0 && (
+                    <div>
+                      <label className="block font-semibold text-slate-700 mb-1">Logistics & Shipping Zone</label>
+                      <select
+                        value={selectedZone}
+                        onChange={(e) => setSelectedZone(e.target.value)}
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
+                      >
+                        {deliveryZones.map((z) => (
+                          <option key={z._id} value={z._id}>
+                            {z.zone_name} — Delivery: ₹{z.delivery_charge}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Right Column: Outright Purchase Summary Card */}
+              <div className="lg:col-span-5 space-y-4">
+                <div className="bg-white p-6 sm:p-7 rounded-3xl border border-[#D4A24C]/25 shadow-sm space-y-4 text-xs">
+                  <h3 className="text-base font-bold text-[#0D3B2A] font-serif border-b border-[#D4A24C]/15 pb-3">
+                    Outright Purchase Summary
+                  </h3>
+
+                  <div className="space-y-2 text-[#5A6B63]">
+                    <div className="flex justify-between">
+                      <span>Hardware Subtotal:</span>
+                      <span className="font-mono font-bold text-[#0D3B2A]">
+                        ₹{buySubtotal.toLocaleString('en-IN')}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between">
+                      <span>Estimated GST (18% GSTR-2B):</span>
+                      <span className="font-mono font-bold text-emerald-700">
+                        +₹{totalBuyGst.toLocaleString('en-IN')}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between">
+                      <span>Pan-India Secure Transit:</span>
+                      <span className="font-mono font-bold text-[#0D3B2A]">
+                        ₹{deliveryCharge.toLocaleString('en-IN')}
+                      </span>
+                    </div>
+
+                    <div className="border-t border-[#D4A24C]/20 pt-3 flex justify-between items-baseline text-sm">
+                      <span className="font-bold text-[#0D3B2A] font-serif">Grand Tax-Paid Total:</span>
+                      <span className="text-xl font-bold text-[#0D3B2A] font-serif">
+                        ₹{grandBuyTotal.toLocaleString('en-IN')}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-3 bg-[#FAF7F2] rounded-xl border border-[#D4A24C]/20 text-[11px] text-[#5A6B63] space-y-1">
+                    <p className="flex items-center gap-1.5 font-bold text-[#0D3B2A]">
+                      <ShieldCheck className="w-4 h-4 text-[#D4A24C]" />
+                      Enterprise Assurance & Warranty
+                    </p>
+                    <p>Includes 30-point lab certification, 6–12 month warranty, and verified GST invoice.</p>
+                  </div>
+
+                  {/* Dual Checkout Action Buttons */}
+                  <div className="space-y-2.5 pt-2">
+                    <button
+                      onClick={handleCorporatePO}
+                      disabled={processing}
+                      className="w-full py-3.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs uppercase tracking-wider transition shadow-lg flex items-center justify-center gap-2 border border-[#D4A24C]/40 cursor-pointer"
+                    >
+                      <FileText className="w-4 h-4 text-[#D4A24C]" />
+                      <span>{processing ? 'Generating PO...' : 'Generate Corporate PO (Net-30 / Proforma)'}</span>
+                    </button>
+
+                    <button
+                      onClick={handleRazorpayOrder}
+                      disabled={processing}
+                      className="w-full py-3 rounded-full bg-[#FAF7F2] hover:bg-[#F3E8D2] text-[#0D3B2A] font-bold text-xs uppercase tracking-wider transition shadow-sm flex items-center justify-center gap-2 border border-[#D4A24C]/40 cursor-pointer"
+                    >
+                      <CreditCard className="w-4 h-4 text-[#D4A24C]" />
+                      <span>Pay Online via Razorpay</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* ======================================================== */}
+      {/* TAB 2: CORPORATE RENTAL FLEET LEASE (RENTAL CART)       */}
+      {/* ======================================================== */}
+      {activeTab === 'rental' && (
+        <>
+          {rentalCart.length === 0 ? (
+            <div className="bg-white rounded-3xl p-12 text-center border border-[#D4A24C]/25 space-y-3">
+              <Repeat className="w-10 h-10 text-slate-300 mx-auto" />
+              <h3 className="font-serif font-bold text-base text-[#0D3B2A]">No Hardware in Rental Fleet Cart</h3>
+              <p className="text-xs text-[#5A6B63]">
+                Looking to deploy laptops or workstations on flexible monthly leases without capital expenditure?
+              </p>
+              <Link
+                to="/rental"
+                className="inline-block mt-2 px-5 py-2.5 rounded-full bg-[#0D3B2A] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#153423] transition"
+              >
+                Explore Rental Fleet Plans
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              {/* Left Column: Rental Items & Tenure Selector */}
+              <div className="lg:col-span-7 space-y-4">
+                <div className="flex items-center justify-between text-xs text-[#5A6B63] px-1 font-mono">
+                  <span>Showing {rentalCart.length} machine model(s) for Corporate Lease</span>
+                  <button
+                    onClick={clearRentalCart}
+                    className="text-red-600 hover:underline flex items-center gap-1 cursor-pointer"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>Clear Rental Cart</span>
+                  </button>
+                </div>
+
+                {rentalCart.map((item) => {
+                  const p = item.product;
+                  const itemMonthly = (p.rental_price_monthly || 0) * item.quantity;
+                  const maxRental = p.rental_stock !== undefined ? p.rental_stock : 5;
+                  const isMax = item.quantity >= maxRental;
+
+                  return (
+                    <div
+                      key={p._id}
+                      className="bg-white p-5 rounded-3xl border border-[#D4A24C]/25 shadow-sm space-y-4"
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div className="flex items-center gap-3.5">
+                          <div className="w-16 h-16 rounded-2xl bg-[#FAF7F2] p-2 border border-[#D4A24C]/20 flex items-center justify-center shrink-0">
+                            <img
+                              src={getProductImage(p)}
+                              alt={p.title}
+                              className="max-h-full object-contain filter drop-shadow-sm"
+                            />
+                          </div>
+                          <div>
+                            <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-[#FAF7F2] text-[#8A5E12] uppercase border border-[#D4A24C]/30">
+                              Active Rental Fleet: {maxRental} Available
+                            </span>
+                            <h3 className="text-xs sm:text-sm font-bold text-[#0D3B2A] font-serif line-clamp-1 mt-1">
+                              {p.title}
+                            </h3>
+                            <p className="text-[11px] text-[#5A6B63] font-mono">
+                              Base: ₹{p.rental_price_monthly?.toLocaleString('en-IN') || 1350}/mo per device
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between sm:justify-end gap-4">
+                          {/* Quantity Counter clamped to rental_stock */}
+                          <div className="flex items-center border border-[#D4A24C]/30 rounded-full overflow-hidden bg-[#FAF7F2] text-xs shadow-inner">
+                            <button
+                              onClick={() => updateRentalQuantity(p._id, item.quantity - 1)}
+                              className="p-1.5 px-2.5 hover:bg-[#F3E8D2] transition text-[#0D3B2A] cursor-pointer"
+                            >
+                              <Minus className="w-3 h-3" />
+                            </button>
+                            <span className="px-2 font-bold font-mono text-[#0D3B2A]">{item.quantity}</span>
+                            <button
+                              disabled={isMax}
+                              onClick={() => updateRentalQuantity(p._id, item.quantity + 1)}
+                              className="p-1.5 px-2.5 hover:bg-[#F3E8D2] disabled:opacity-30 transition text-[#0D3B2A] cursor-pointer"
+                              title={isMax ? `Max available rental fleet is ${maxRental}` : 'Add 1 more'}
+                            >
+                              <Plus className="w-3 h-3" />
+                            </button>
+                          </div>
+
+                          <div className="text-right min-w-[90px]">
+                            <span className="text-sm font-bold text-[#0D3B2A] font-mono block">
+                              ₹{itemMonthly.toLocaleString('en-IN')}/mo
+                            </span>
+                            <span className="text-[10px] text-[#5A6B63]">monthly billing</span>
+                          </div>
+
+                          <button
+                            onClick={() => removeFromRentalCart(p._id)}
+                            className="text-slate-400 hover:text-red-500 transition p-1 cursor-pointer"
+                            title="Remove from rental cart"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Tenure Selector for this machine */}
+                      <div className="bg-[#FAF7F2] p-3 rounded-2xl border border-[#D4A24C]/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                        <span className="font-bold text-[#0D3B2A] font-serif flex items-center gap-1.5">
+                          <Clock className="w-3.5 h-3.5 text-[#D4A24C]" />
+                          Lease Tenure Commitment:
+                        </span>
+
+                        <div className="grid grid-cols-3 gap-1.5">
+                          {[
+                            { id: '3_months', label: '3 Months' },
+                            { id: '6_months', label: '6 Months (5% Off)' },
+                            { id: '12_months', label: '12+ Months (15% Off)' }
+                          ].map((t) => (
+                            <button
+                              key={t.id}
+                              onClick={() => updateRentalTenure(p._id, t.id)}
+                              className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider transition ${
+                                (item.tenure || '6_months') === t.id
+                                  ? 'bg-[#0D3B2A] text-white shadow-sm'
+                                  : 'bg-white text-[#5A6B63] hover:text-[#0D3B2A] border border-[#D4A24C]/25'
+                              }`}
+                            >
+                              {t.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {/* Corporate Entity Details */}
+                <div className="bg-white p-6 rounded-3xl border border-[#D4A24C]/25 shadow-sm space-y-4 text-xs">
+                  <h3 className="text-sm font-bold text-[#0D3B2A] font-serif flex items-center gap-1.5">
+                    <Building className="w-4 h-4 text-[#D4A24C]" />
+                    Corporate Master Lease Agreement Details
+                  </h3>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block font-semibold text-slate-700 mb-1">Company / Entity Name *</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="Registered business name"
+                        value={shippingAddress.company_name}
+                        onChange={(e) => setShippingAddress({ ...shippingAddress, company_name: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-semibold text-slate-700 mb-1">Corporate GSTIN Number</label>
+                      <input
+                        type="text"
+                        placeholder="07AAAAA0000A1Z5"
+                        value={shippingAddress.gst_number}
+                        onChange={(e) => setShippingAddress({ ...shippingAddress, gst_number: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] uppercase font-mono"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block font-semibold text-slate-700 mb-1">Procurement Officer / Contact *</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="Authorized signatory"
+                        value={shippingAddress.contact_person}
+                        onChange={(e) => setShippingAddress({ ...shippingAddress, contact_person: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-semibold text-slate-700 mb-1">Direct Phone / WhatsApp *</label>
+                      <input
+                        type="tel"
+                        required
+                        placeholder="+91 98765 43210"
+                        value={shippingAddress.phone}
+                        onChange={(e) => setShippingAddress({ ...shippingAddress, phone: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block font-semibold text-slate-700 mb-1">Primary Deployment Office Location *</label>
+                    <input
+                      type="text"
+                      placeholder="Tech park, building, city (e.g. Bangalore, Gurugram, Mumbai)..."
+                      value={shippingAddress.street}
+                      onChange={(e) => setShippingAddress({ ...shippingAddress, street: e.target.value })}
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Corporate Rental Agreement Summary */}
+              <div className="lg:col-span-5 space-y-4">
+                <div className="bg-white p-6 sm:p-7 rounded-3xl border border-[#D4A24C]/25 shadow-sm space-y-4 text-xs">
+                  <h3 className="text-base font-bold text-[#0D3B2A] font-serif border-b border-[#D4A24C]/15 pb-3">
+                    Monthly Lease Quotation Summary
+                  </h3>
+
+                  <div className="space-y-2 text-[#5A6B63]">
+                    <div className="flex justify-between">
+                      <span>Total Fleet Size:</span>
+                      <span className="font-mono font-bold text-[#0D3B2A]">
+                        {rentalCartCount} Machines
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between">
+                      <span>Base Monthly Rental:</span>
+                      <span className="font-mono font-bold text-[#0D3B2A]">
+                        ₹{rentalMonthlyTotal.toLocaleString('en-IN')}/mo
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between">
+                      <span>Monthly GST (18% GSTR-2B):</span>
+                      <span className="font-mono font-bold text-emerald-700">
+                        +₹{totalRentalGst.toLocaleString('en-IN')}/mo
+                      </span>
+                    </div>
+
+                    <div className="border-t border-[#D4A24C]/20 pt-3 flex justify-between items-baseline text-sm">
+                      <span className="font-bold text-[#0D3B2A] font-serif">Effective Monthly OPEX:</span>
+                      <span className="text-xl font-bold text-[#0D3B2A] font-serif">
+                        ₹{grandRentalMonthly.toLocaleString('en-IN')}<span className="text-xs text-[#5A6B63] font-sans font-normal">/mo</span>
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-3 bg-[#FAF7F2] rounded-xl border border-[#D4A24C]/20 text-[11px] text-[#5A6B63] space-y-1.5">
+                    <p className="flex items-center gap-1.5 font-bold text-[#0D3B2A]">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                      Zero Capital Outlay (100% OPEX Deductible)
+                    </p>
+                    <p className="flex items-center gap-1.5 font-bold text-[#0D3B2A]">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                      24–48h SLA Standby Swap Agreement Included
+                    </p>
+                    <p className="flex items-center gap-1.5 font-bold text-[#0D3B2A]">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                      Zero Security Deposit for GSTIN-verified entities
+                    </p>
                   </div>
 
                   <button
-                    onClick={() => removeFromCart(p._id)}
-                    className="text-slate-400 hover:text-red-500 transition p-1"
+                    onClick={handleExecuteRentalLease}
+                    disabled={processing}
+                    className="w-full py-3.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs uppercase tracking-wider transition shadow-lg flex items-center justify-center gap-2 border border-[#D4A24C]/40 cursor-pointer"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Repeat className="w-4 h-4 text-[#D4A24C]" />
+                    <span>{processing ? 'Registering Agreement...' : 'Execute Corporate Rental Agreement (PO)'}</span>
                   </button>
                 </div>
               </div>
-            );
-          })}
-
-          {/* Delivery & Address Form */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4 text-xs">
-            <h3 className="text-sm font-bold text-slate-900">Delivery Address & Invoicing Details</h3>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Company / Entity Name</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Acme Tech Solutions"
-                  value={shippingAddress.company_name}
-                  onChange={(e) => setShippingAddress({ ...shippingAddress, company_name: e.target.value })}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
-                />
-              </div>
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">GSTIN Number (Optional)</label>
-                <input
-                  type="text"
-                  placeholder="07AAAAA0000A1Z5"
-                  value={shippingAddress.gst_number}
-                  onChange={(e) => setShippingAddress({ ...shippingAddress, gst_number: e.target.value })}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] uppercase"
-                />
-              </div>
             </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Contact Person *</label>
-                <input
-                  type="text"
-                  placeholder="Full name"
-                  value={shippingAddress.contact_person}
-                  onChange={(e) => setShippingAddress({ ...shippingAddress, contact_person: e.target.value })}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
-                />
-              </div>
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Phone Number *</label>
-                <input
-                  type="tel"
-                  placeholder="WhatsApp or Mobile"
-                  value={shippingAddress.phone}
-                  onChange={(e) => setShippingAddress({ ...shippingAddress, phone: e.target.value })}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block font-semibold text-slate-700 mb-1">Street Address *</label>
-              <input
-                type="text"
-                placeholder="Office suite, building, road..."
-                value={shippingAddress.street}
-                onChange={(e) => setShippingAddress({ ...shippingAddress, street: e.target.value })}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
-              />
-            </div>
-
-            <div className="grid grid-cols-3 gap-3">
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">City</label>
-                <input
-                  type="text"
-                  value={shippingAddress.city}
-                  onChange={(e) => setShippingAddress({ ...shippingAddress, city: e.target.value })}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
-                />
-              </div>
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">State</label>
-                <input
-                  type="text"
-                  value={shippingAddress.state}
-                  onChange={(e) => setShippingAddress({ ...shippingAddress, state: e.target.value })}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
-                />
-              </div>
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Pincode</label>
-                <input
-                  type="text"
-                  value={shippingAddress.pincode}
-                  onChange={(e) => setShippingAddress({ ...shippingAddress, pincode: e.target.value })}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
-                />
-              </div>
-            </div>
-
-            {/* Delivery Zone Selector */}
-            {deliveryZones.length > 0 && (
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Shipping Zone</label>
-                <select
-                  value={selectedZone}
-                  onChange={(e) => setSelectedZone(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
-                >
-                  {deliveryZones.map((z) => (
-                    <option key={z._id} value={z._id}>
-                      {z.zone_name} — Delivery: ₹{z.delivery_charge}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Right Order Summary & Actions */}
-        <div className="lg:col-span-5 bg-white p-6 sm:p-8 rounded-3xl border border-[#D4A24C]/25 shadow-xl space-y-6">
-          <h3 className="text-base font-bold font-serif text-[#0D3B2A] border-b border-[#D4A24C]/20 pb-3">
-            Quotation & Tax Summary
-          </h3>
-
-          <div className="space-y-3 text-xs text-[#5A6B63]">
-            <div className="flex justify-between">
-              <span>Hardware Subtotal:</span>
-              <span className="font-bold text-[#0D3B2A] font-mono">
-                ₹{cartSubtotal.toLocaleString('en-IN')}
-              </span>
-            </div>
-
-            <div className="flex justify-between">
-              <span>GST (Calculated per item):</span>
-              <span className="font-bold text-[#0D3B2A] font-mono">
-                + ₹{totalGst.toLocaleString('en-IN')}
-              </span>
-            </div>
-
-            <div className="flex justify-between">
-              <span>Delivery Logistics ({currentZone?.zone_name || 'Standard'}):</span>
-              <span className="font-bold text-[#0D3B2A] font-mono">
-                + ₹{deliveryCharge.toLocaleString('en-IN')}
-              </span>
-            </div>
-
-            <div className="flex justify-between pt-3 border-t border-[#D4A24C]/20 text-sm">
-              <span className="font-bold font-serif text-[#0D3B2A]">Grand Total:</span>
-              <span className="font-bold text-[#0D3B2A] font-serif text-lg">
-                ₹{grandTotal.toLocaleString('en-IN')}
-              </span>
-            </div>
-          </div>
-
-          <div className="space-y-2.5 pt-2">
-            {/* 1. Official Corporate Purchase Order Option */}
-            <button
-              onClick={handleCorporatePO}
-              disabled={processing}
-              className="w-full py-3.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs uppercase tracking-wider transition shadow-lg flex items-center justify-center gap-2 border border-[#D4A24C]/40 cursor-pointer"
-            >
-              <FileText className="w-4 h-4 text-[#D4A24C]" />
-              <span>{processing ? 'Generating PO...' : 'Generate Corporate PO (Net-30 / Proforma)'}</span>
-            </button>
-
-            {/* 2. Instant Online Payment Option */}
-            <button
-              onClick={handleRazorpayOrder}
-              disabled={processing}
-              className="w-full py-3 rounded-full bg-gradient-to-r from-[#eec373] via-[#D4A24C] to-[#eec373] hover:brightness-105 text-[#072117] font-extrabold text-xs uppercase tracking-wider transition shadow-md flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <CreditCard className="w-4 h-4 text-[#072117]" />
-              <span>{processing ? 'Processing...' : 'Pay Online via Razorpay'}</span>
-            </button>
-
-            {/* 3. WhatsApp Direct RFQ Option */}
-            <button
-              onClick={() => {
-                const message = `*OFFICIAL BULK RFQ FROM CART*\n------------------------------\n${cart
-                  .map((i) => `• ${i.product.title} (Qty: ${i.quantity})`)
-                  .join('\n')}\n------------------------------\n*Subtotal:* ₹${cartSubtotal}\n*Total with GST:* ₹${grandTotal}\n*Location:* ${shippingAddress.city}\n------------------------------\nPlease share formal GST Proforma invoice.`;
-                window.open(`https://wa.me/919876543210?text=${encodeURIComponent(message)}`, '_blank');
-              }}
-              className="w-full py-2.5 rounded-full bg-[#FAF7F2] hover:bg-[#F3E8D2] text-[#0D3B2A] border border-[#D4A24C]/30 font-bold text-[11px] uppercase tracking-wider transition flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <span>Forward Cart to Direct Desk via WhatsApp</span>
-            </button>
-          </div>
-
-          <p className="text-[11px] text-[#5A6B63] text-center flex items-center justify-center gap-1.5 pt-1">
-            <ShieldCheck className="w-4 h-4 text-[#8A5E12]" />
-            100% Tax Compliant GSTR-2B Invoice issued upon confirmation.
-          </p>
-        </div>
-      </div>
+          )}
+        </>
+      )}
     </div>
   );
 }
