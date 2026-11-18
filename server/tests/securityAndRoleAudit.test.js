@@ -1,4 +1,7 @@
 import http from 'http';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+dotenv.config({ path: './server/.env' });
 
 const BASE_URL = 'http://127.0.0.1:5001';
 
@@ -46,10 +49,10 @@ async function test(name, fn) {
   try {
     await fn();
     results.push({ name, passed: true });
-    console.log(`  PASS: ${name}`);
+    console.log(`  ✓ PASS: ${name}`);
   } catch (err) {
     results.push({ name, passed: false, error: err.message });
-    console.log(`  FAIL: ${name}`);
+    console.log(`  ✗ FAIL: ${name}`);
     console.log(`        Error: ${err.message}`);
   }
 }
@@ -59,19 +62,26 @@ function assert(condition, message) {
 }
 
 async function runAllTests() {
-  console.log('\n======================================================');
-  console.log('   NOVA INFOTECH MASTER SECURITY & ROLE AUDIT SUITE   ');
-  console.log('======================================================\n');
+  console.log('\n================================================================');
+  console.log('   NOVA INFOTECH MASTER ENGINEERING & SECURITY AUDIT SUITE v2   ');
+  console.log('   Lead Auditor: 25-Year Veteran Executive Director of Engg     ');
+  console.log('================================================================\n');
 
-  let customerToken = null;
+  let customerTokenA = null;
+  let customerTokenB = null;
   let adminToken = null;
   let testProductId = null;
   let testOrderId = null;
   let testRentalId = null;
   let testInquiryId = null;
+  let createdProductIds = [];
+  let createdUserIds = [];
+  let createdOrderIds = [];
+  let createdRentalIds = [];
+  let createdInquiryIds = [];
 
-  // ── 1. PUBLIC / GUEST ENDPOINTS ──────────────────────────────────────
-  console.log('\n--- 1. Guest Visitor Public API Tests ---');
+  // ── 1. PUBLIC & GUEST ENDPOINTS ──────────────────────────────────────
+  console.log('--- 1. Guest Visitor Public API Tests ---');
 
   await test('GET /api/health should return status online', async () => {
     const res = await request('GET', '/api/health');
@@ -116,51 +126,83 @@ async function runAllTests() {
     assert(res.status === 201, `Expected 201, got ${res.status}`);
     assert(res.body.success === true, 'Expected success: true');
     testInquiryId = res.body.inquiryId;
+    if (testInquiryId) createdInquiryIds.push(testInquiryId);
   });
 
-  // ── 2. AUTHENTICATION & SESSIONS ─────────────────────────────────────
+  // ── 2. AUTHENTICATION & MULTI-USER ISOLATION ─────────────────────────
   console.log('\n--- 2. Authentication & Credential Security ---');
 
-  const testEmail = `audit-client-${Date.now()}@novainfotech.com`;
-  let verificationToken = null;
+  const testEmailA = `audit-client-a-${Date.now()}@novainfotech.com`;
+  const testEmailB = `audit-client-b-${Date.now()}@novainfotech.com`;
+  let verificationTokenA = null;
+  let verificationTokenB = null;
 
-  await test('POST /api/auth/register should create customer account with verification token', async () => {
+  await test('POST /api/auth/register should create Customer A account with token', async () => {
     const res = await request('POST', '/api/auth/register', {
-      name: 'Audit Client Signatory',
-      email: testEmail,
+      name: 'Client Alpha Signatory',
+      email: testEmailA,
       password: 'Client@Secure123',
-      phone: '+91 98765 00000',
-      company_name: '[TEST-AUDIT] Global FinTech Ltd'
+      phone: '+91 98765 00001',
+      company_name: '[TEST-AUDIT] Client Alpha Corp'
     });
     assert(res.status === 201, `Expected 201, got ${res.status}`);
-    assert(res.body.userId, 'Expected userId in response');
-    verificationToken = res.body.verificationToken;
+    assert(res.body.userId, 'Expected userId');
+    createdUserIds.push(res.body.userId);
+    verificationTokenA = res.body.verificationToken;
   });
 
-  await test('GET /api/auth/verify-email should verify the customer email', async () => {
-    assert(verificationToken, 'Verification token must be present');
-    const res = await request('GET', `/api/auth/verify-email/${verificationToken}`);
+  await test('POST /api/auth/register should create Customer B account with token', async () => {
+    const res = await request('POST', '/api/auth/register', {
+      name: 'Client Beta Signatory',
+      email: testEmailB,
+      password: 'Client@Secure123',
+      phone: '+91 98765 00002',
+      company_name: '[TEST-AUDIT] Client Beta Ltd'
+    });
+    assert(res.status === 201, `Expected 201, got ${res.status}`);
+    assert(res.body.userId, 'Expected userId');
+    createdUserIds.push(res.body.userId);
+    verificationTokenB = res.body.verificationToken;
+  });
+
+  await test('GET /api/auth/verify-email should verify Customer A email', async () => {
+    const res = await request('GET', `/api/auth/verify-email/${verificationTokenA}`);
     assert(res.status === 200, `Expected 200, got ${res.status}`);
     assert(res.body.success === true, 'Expected email verified');
   });
 
-  await test('POST /api/auth/login with wrong password should return 401', async () => {
+  await test('GET /api/auth/verify-email should verify Customer B email', async () => {
+    const res = await request('GET', `/api/auth/verify-email/${verificationTokenB}`);
+    assert(res.status === 200, `Expected 200, got ${res.status}`);
+    assert(res.body.success === true, 'Expected email verified');
+  });
+
+  await test('POST /api/auth/login with wrong password must return 401', async () => {
     const res = await request('POST', '/api/auth/login', {
-      email: testEmail,
+      email: testEmailA,
       password: 'WrongPassword999'
     });
     assert(res.status === 401, `Expected 401, got ${res.status}`);
   });
 
-  await test('POST /api/auth/login as verified Customer should return customer JWT token', async () => {
+  await test('POST /api/auth/login as Customer A should return customer JWT', async () => {
     const res = await request('POST', '/api/auth/login', {
-      email: testEmail,
+      email: testEmailA,
       password: 'Client@Secure123'
     });
     assert(res.status === 200, `Expected 200, got ${res.status}`);
     assert(res.body.token, 'Expected JWT token');
     assert(res.body.user.role === 'customer', 'Expected customer role');
-    customerToken = res.body.token;
+    customerTokenA = res.body.token;
+  });
+
+  await test('POST /api/auth/login as Customer B should return customer JWT', async () => {
+    const res = await request('POST', '/api/auth/login', {
+      email: testEmailB,
+      password: 'Client@Secure123'
+    });
+    assert(res.status === 200, `Expected 200, got ${res.status}`);
+    customerTokenB = res.body.token;
   });
 
   await test('POST /api/auth/login as Admin should return admin JWT token', async () => {
@@ -183,7 +225,14 @@ async function runAllTests() {
 
   await test('SECURITY: Customer token calling GET /api/admin/analytics must return 403', async () => {
     const res = await request('GET', '/api/admin/analytics', null, {
-      Authorization: `Bearer ${customerToken}`
+      Authorization: `Bearer ${customerTokenA}`
+    });
+    assert(res.status === 403, `Expected 403 Forbidden, got ${res.status}`);
+  });
+
+  await test('SECURITY: Customer token calling POST /api/products (Create Product) must return 403', async () => {
+    const res = await request('POST', '/api/products', { title: 'Unauthorized' }, {
+      Authorization: `Bearer ${customerTokenA}`
     });
     assert(res.status === 403, `Expected 403 Forbidden, got ${res.status}`);
   });
@@ -195,8 +244,8 @@ async function runAllTests() {
     assert(res.status === 401, `Expected 401 Unauthorized, got ${res.status}`);
   });
 
-  // ── 4. INPUT INJECTION & TAMPERING RESISTANCE ─────────────────────────
-  console.log('\n--- 4. Input Injection & Rate Tampering Protections ---');
+  // ── 4. INPUT INJECTION & FINANCIAL TAMPERING PROTECTIONS ──────────────
+  console.log('\n--- 4. Input Injection & Financial Tampering Protections ---');
 
   await test('SECURITY: Order with negative quantity (-5) must return 400', async () => {
     const res = await request('POST', '/api/orders', {
@@ -204,7 +253,7 @@ async function runAllTests() {
       shipping_address: { street: 'Main St', phone: '+919810000000' },
       payment_method: 'po'
     }, {
-      Authorization: `Bearer ${customerToken}`
+      Authorization: `Bearer ${customerTokenA}`
     });
     assert(res.status === 400, `Expected 400, got ${res.status}`);
     assert(res.body.message.includes('Invalid quantity'), 'Expected invalid quantity message');
@@ -216,18 +265,18 @@ async function runAllTests() {
       shipping_address: { street: 'Main St', phone: '+919810000000' },
       payment_method: 'po'
     }, {
-      Authorization: `Bearer ${customerToken}`
+      Authorization: `Bearer ${customerTokenA}`
     });
     assert(res.status === 400, `Expected 400, got ${res.status}`);
   });
 
-  await test('SECURITY: Order quantity exceeding sale_stock must return 400', async () => {
+  await test('SECURITY: Order quantity exceeding available sale_stock must return 400', async () => {
     const res = await request('POST', '/api/orders', {
       items: [{ product_id: testProductId, quantity: 999999 }],
       shipping_address: { street: 'Main St', phone: '+919810000000' },
       payment_method: 'po'
     }, {
-      Authorization: `Bearer ${customerToken}`
+      Authorization: `Bearer ${customerTokenA}`
     });
     assert(res.status === 400, `Expected 400, got ${res.status}`);
   });
@@ -238,36 +287,37 @@ async function runAllTests() {
       quantity: -2,
       tenure: '6_months'
     }, {
-      Authorization: `Bearer ${customerToken}`
+      Authorization: `Bearer ${customerTokenA}`
     });
     assert(res.status === 400, `Expected 400, got ${res.status}`);
   });
 
-  await test('SECURITY: Rental with tampered monthly_rate: 1 should be sanitized by server', async () => {
+  await test('SECURITY: Rental with tampered monthly_rate: 1 must be sanitized to verified DB rate', async () => {
     const res = await request('POST', '/api/rentals', {
       product_id: testProductId,
       quantity: 1,
       tenure: '6_months',
       monthly_rate: 1 // Malicious client attempt to pay ₹1/month
     }, {
-      Authorization: `Bearer ${customerToken}`
+      Authorization: `Bearer ${customerTokenA}`
     });
     assert(res.status === 201, `Expected 201, got ${res.status}`);
     assert(res.body.rental.monthly_rate > 100, `Rate should be verified DB rate, got ₹${res.body.rental.monthly_rate}`);
     testRentalId = res.body.rental._id;
+    if (testRentalId) createdRentalIds.push(testRentalId);
   });
 
-  // ── 5. CUSTOMER END-TO-END WORKFLOWS ─────────────────────────────────
-  console.log('\n--- 5. Corporate Customer Full Workflows ---');
+  // ── 5. CORPORATE CUSTOMER WORKFLOWS & IDOR TESTS ──────────────────────
+  console.log('\n--- 5. Corporate Customer Workflows & IDOR Protection ---');
 
-  await test('CUSTOMER: Create Corporate Purchase Order (Net-30 PO)', async () => {
+  await test('CUSTOMER A: Create Corporate Purchase Order (Net-30 PO)', async () => {
     const res = await request('POST', '/api/orders', {
       items: [{ product_id: testProductId, quantity: 1 }],
       shipping_address: {
-        company_name: '[TEST-AUDIT] Global FinTech Ltd',
-        contact_person: 'Audit Lead',
-        phone: '+91 98765 00000',
-        street: 'Building 4, Tech Park, Gurugram',
+        company_name: '[TEST-AUDIT] Client Alpha Corp',
+        contact_person: 'Alpha Lead',
+        phone: '+91 98765 00001',
+        street: 'Tower A, Cyber City',
         city: 'Gurugram',
         state: 'Haryana',
         pincode: '122002',
@@ -275,53 +325,76 @@ async function runAllTests() {
       },
       payment_method: 'po'
     }, {
-      Authorization: `Bearer ${customerToken}`
+      Authorization: `Bearer ${customerTokenA}`
     });
     assert(res.status === 201, `Expected 201, got ${res.status}`);
     assert(res.body.order._id, 'Expected order._id');
     assert(res.body.order.order_status === 'placed', 'Expected order_status: placed');
     testOrderId = res.body.order._id;
+    if (testOrderId) createdOrderIds.push(testOrderId);
+
+    // Verify GST 18% math accuracy down to the exact rupee
+    const o = res.body.order;
+    const expectedGst = Math.round((o.subtotal * 18) / 100);
+    assert(o.total_gst === expectedGst, `Expected GST ${expectedGst}, got ${o.total_gst}`);
+    assert(o.grand_total === o.subtotal + o.total_gst + o.delivery_charges, 'Grand total must equal subtotal + gst + delivery');
   });
 
-  await test('CUSTOMER: Fetch My Orders (/dashboard/orders)', async () => {
+  await test('IDOR PROTECTION: Customer B attempting GET /api/orders/:id of Customer A must return 403', async () => {
+    const res = await request('GET', `/api/orders/${testOrderId}`, null, {
+      Authorization: `Bearer ${customerTokenB}`
+    });
+    assert(res.status === 403, `Expected 403 Forbidden for unauthorized customer, got ${res.status}`);
+  });
+
+  await test('CUSTOMER A: Allowed GET /api/orders/:id of own order should return 200', async () => {
+    const res = await request('GET', `/api/orders/${testOrderId}`, null, {
+      Authorization: `Bearer ${customerTokenA}`
+    });
+    assert(res.status === 200, `Expected 200, got ${res.status}`);
+    assert(res.body.order._id === testOrderId, 'Order ID must match');
+  });
+
+  await test('CUSTOMER A: Fetch My Orders (/dashboard/orders)', async () => {
     const res = await request('GET', '/api/orders/my-orders', null, {
-      Authorization: `Bearer ${customerToken}`
+      Authorization: `Bearer ${customerTokenA}`
     });
     assert(res.status === 200, `Expected 200, got ${res.status}`);
     assert(res.body.orders.length > 0, 'Expected at least 1 order');
   });
 
-  await test('CUSTOMER: Fetch My Rentals (/dashboard/rentals)', async () => {
+  await test('CUSTOMER A: Fetch My Rentals (/dashboard/rentals)', async () => {
     const res = await request('GET', '/api/rentals/my-rentals', null, {
-      Authorization: `Bearer ${customerToken}`
+      Authorization: `Bearer ${customerTokenA}`
     });
     assert(res.status === 200, `Expected 200, got ${res.status}`);
     assert(res.body.rentals.length > 0, 'Expected at least 1 rental');
   });
 
-  // ── 6. ADMIN WORKFLOWS & MANAGEMENT ──────────────────────────────────
-  console.log('\n--- 6. Super Admin Operations & Management ---');
+  // ── 6. ADMIN OPERATIONS & INVENTORY SEGREGATION ───────────────────────
+  console.log('\n--- 6. Super Admin Operations & Inventory Segregation ---');
 
-  await test('ADMIN: GET /api/admin/analytics should return dashboard metrics', async () => {
+  await test('ADMIN: GET /api/admin/analytics should return operational metrics', async () => {
     const res = await request('GET', '/api/admin/analytics', null, {
       Authorization: `Bearer ${adminToken}`
     });
     assert(res.status === 200, `Expected 200, got ${res.status}`);
     assert(res.body.stats, 'Expected stats object');
-    assert(typeof res.body.stats.totalProducts === 'number', 'Expected totalProducts');
+    assert(typeof res.body.stats.totalProducts === 'number', 'Expected totalProducts count');
   });
 
-  await test('ADMIN: Create new hardware product with segregated stock', async () => {
+  let createdAuditProduct = null;
+  await test('ADMIN: Create hardware product with segregated stock pools', async () => {
     const res = await request('POST', '/api/products', {
-      title: `[TEST-AUDIT] Dell Precision 7550 Workstation ${Date.now()}`,
+      title: `[TEST-AUDIT] Dell Precision Workstation ${Date.now()}`,
       brand: 'Dell',
       category: 'laptop',
       condition: 'grade_a_plus',
       available_for: 'both',
       sale_price: 68500,
       rental_price_monthly: 3200,
-      sale_stock: 8,
-      rental_stock: 4,
+      sale_stock: 10,
+      rental_stock: 5,
       gst_rate: 18,
       specs: {
         processor: 'Intel Xeon W-10855M',
@@ -334,30 +407,71 @@ async function runAllTests() {
       Authorization: `Bearer ${adminToken}`
     });
     assert(res.status === 201, `Expected 201, got ${res.status}`);
-    assert(res.body.product.sale_stock === 8, 'Expected sale_stock 8');
-    assert(res.body.product.rental_stock === 4, 'Expected rental_stock 4');
+    assert(res.body.product.sale_stock === 10, 'Expected sale_stock 10');
+    assert(res.body.product.rental_stock === 5, 'Expected rental_stock 5');
+    createdAuditProduct = res.body.product;
+    createdProductIds.push(createdAuditProduct._id);
   });
 
-  await test('ADMIN: Update customer PO status to shipped', async () => {
+  await test('DUAL-STOCK SEGREGATION: Purchase order decrements sale_stock WITHOUT affecting rental_stock', async () => {
+    const res = await request('POST', '/api/orders', {
+      items: [{ product_id: createdAuditProduct._id, quantity: 2 }],
+      shipping_address: { street: 'Main St', phone: '+919810000000' },
+      payment_method: 'po'
+    }, {
+      Authorization: `Bearer ${customerTokenA}`
+    });
+    assert(res.status === 201, `Expected 201, got ${res.status}`);
+    if (res.body.order?._id) createdOrderIds.push(res.body.order._id);
+
+    // Verify stock counters via admin fetch
+    const prodRes = await request('GET', `/api/products/${createdAuditProduct.slug}`);
+    assert(prodRes.status === 200, 'Expected 200 fetching product');
+    const p = prodRes.body.product;
+    assert(p.sale_stock === 8, `Expected sale_stock to be 8 (10-2), got ${p.sale_stock}`);
+    assert(p.rental_stock === 5, `Expected rental_stock to remain 5, got ${p.rental_stock}`);
+  });
+
+  await test('DUAL-STOCK SEGREGATION: Rental lease decrements rental_stock WITHOUT affecting sale_stock', async () => {
+    const res = await request('POST', '/api/rentals', {
+      product_id: createdAuditProduct._id,
+      quantity: 1,
+      tenure: '6_months'
+    }, {
+      Authorization: `Bearer ${customerTokenA}`
+    });
+    assert(res.status === 201, `Expected 201, got ${res.status}`);
+    if (res.body.rental?._id) createdRentalIds.push(res.body.rental._id);
+
+    const prodRes = await request('GET', `/api/products/${createdAuditProduct.slug}`);
+    assert(prodRes.status === 200, 'Expected 200 fetching product');
+    const p = prodRes.body.product;
+    assert(p.rental_stock === 4, `Expected rental_stock to be 4 (5-1), got ${p.rental_stock}`);
+    assert(p.sale_stock === 8, `Expected sale_stock to remain 8, got ${p.sale_stock}`);
+  });
+
+  await test('ADMIN: Update customer PO status to shipped with tracking number', async () => {
     const res = await request('PUT', `/api/orders/${testOrderId}/status`, {
-      order_status: 'shipped'
+      order_status: 'shipped',
+      tracking_number: 'BLUEDART-EXP-992011'
     }, {
       Authorization: `Bearer ${adminToken}`
     });
     assert(res.status === 200, `Expected 200, got ${res.status}`);
-    assert(res.body.order.order_status === 'shipped', 'Expected shipped');
+    assert(res.body.order.order_status === 'shipped', 'Expected shipped status');
   });
 
-  await test('ADMIN: Update rental status to active', async () => {
+  await test('ADMIN: Update rental status to active with contract note', async () => {
     const res = await request('PUT', `/api/rentals/${testRentalId}/status`, {
-      status: 'active'
+      status: 'active',
+      admin_notes: 'Enterprise SLA 24h replacement active.'
     }, {
       Authorization: `Bearer ${adminToken}`
     });
     assert(res.status === 200, `Expected 200, got ${res.status}`);
   });
 
-  await test('ADMIN: Update inquiry status to contacted', async () => {
+  await test('ADMIN: Update RFQ inquiry status to contacted', async () => {
     const res = await request('PUT', `/api/inquiries/${testInquiryId}`, {
       status: 'contacted'
     }, {
@@ -367,13 +481,49 @@ async function runAllTests() {
     assert(res.body.inquiry.status === 'contacted', 'Expected contacted');
   });
 
+  // ── 7. POST-AUDIT CLEAN TEARDOWN ──────────────────────────────────────
+  console.log('\n--- 7. Post-Audit Database Teardown & Sanitization ---');
+
+  await test('TEARDOWN: Clean up temporary test products, orders, rentals, users & inquiries', async () => {
+    await mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/al-tooba-ecommerce');
+    const db = mongoose.connection.db;
+
+    if (createdProductIds.length > 0) {
+      await db.collection('products').deleteMany({
+        $or: [{ _id: { $in: createdProductIds.map(id => new mongoose.Types.ObjectId(id)) } }, { title: /TEST-AUDIT/i }]
+      });
+    }
+    if (createdOrderIds.length > 0) {
+      await db.collection('orders').deleteMany({
+        _id: { $in: createdOrderIds.map(id => new mongoose.Types.ObjectId(id)) }
+      });
+    }
+    if (createdRentalIds.length > 0) {
+      await db.collection('rentals').deleteMany({
+        _id: { $in: createdRentalIds.map(id => new mongoose.Types.ObjectId(id)) }
+      });
+    }
+    if (createdUserIds.length > 0) {
+      await db.collection('users').deleteMany({
+        _id: { $in: createdUserIds.map(id => new mongoose.Types.ObjectId(id)) }
+      });
+    }
+    if (createdInquiryIds.length > 0) {
+      await db.collection('inquiries').deleteMany({
+        _id: { $in: createdInquiryIds.map(id => new mongoose.Types.ObjectId(id)) }
+      });
+    }
+    await mongoose.disconnect();
+    console.log('    ✓ All test records safely sanitized from MongoDB');
+  });
+
   // ── FINAL SUMMARY ────────────────────────────────────────────────────
-  console.log('\n======================================================');
+  console.log('\n================================================================');
   const total = results.length;
   const passed = results.filter((r) => r.passed).length;
   const failed = results.filter((r) => !r.passed).length;
-  console.log(`AUDIT RESULT: ${passed}/${total} TESTS PASSED (${failed} FAILED)`);
-  console.log('======================================================\n');
+  console.log(`MASTER AUDIT RESULT: ${passed}/${total} TESTS PASSED (${failed} FAILED)`);
+  console.log('================================================================\n');
 
   if (failed > 0) {
     process.exit(1);
