@@ -191,10 +191,23 @@ export default function Home() {
 
   return (
     <div className="space-y-20 pb-20 bg-[#FAF7F2] text-[#111827]">
-      {/* 1. HERO SECTION - AL-TOOBA LUXURY SACRED HERITAGE STYLE */}
-      <section className="relative pt-12 pb-20 px-4 sm:px-8 border-b border-[#D4A24C]/20 bg-[#FAF7F2] overflow-hidden">
-        {/* Subtle Rosette Pattern Background Tint */}
-        <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(#D4A24C_1px,transparent_1px)] [background-size:24px_24px] pointer-events-auto"></div>
+      {/* 1. HERO SECTION - AL-TOOBA CINEMATIC AMBIENT VIDEO BACKGROUND */}
+      <section className="relative pt-16 pb-24 px-4 sm:px-8 border-b border-[#D4A24C]/20 bg-[#FAF7F2] overflow-hidden min-h-[640px] flex items-center">
+        {/* Ambient Video Background - Exact Al-Tooba Technique */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          poster="https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=1600&auto=format&fit=crop&q=80"
+          className="absolute inset-0 w-full h-full object-cover object-center z-0 opacity-20 filter contrast-125 pointer-events-none"
+        >
+          <source src="https://assets.mixkit.co/videos/preview/mixkit-circuit-board-and-electronic-components-43184-large.mp4" type="video/mp4" />
+        </video>
+
+        {/* Ambient Video Overlay Gradient for Text Crispness */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#FAF7F2] via-[#FAF7F2]/90 to-[#FAF7F2]/75 backdrop-blur-[0.5px] z-[1]"></div>
+        <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(#D4A24C_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none z-[1]"></div>
 
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
           {/* Left Column: Typography & CTAs */}
@@ -213,22 +226,30 @@ export default function Home() {
               Equip your workforce with Grade A+ certified commercial laptops, high-performance workstation GPUs, and frameless IPS displays. Available for <strong className="text-[#0D3B2A]">immediate bulk purchase</strong> or <strong className="text-[#0D3B2A]">flexible monthly rental</strong> with guaranteed same-day replacement SLA.
             </p>
 
-            {/* Dual Al-Tooba Pill Action Buttons */}
-            <div className="pt-2 flex flex-wrap items-center gap-4">
+            {/* Action Buttons including Watch Reels Link */}
+            <div className="pt-2 flex flex-wrap items-center gap-3">
               <button
                 onClick={() => openRFQ('Priority Bulk Requirement')}
-                className="px-8 py-3.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-[#FAF7F2] font-bold text-xs uppercase tracking-widest shadow-xl border border-[#D4A24C]/40 transition flex items-center gap-2 transform hover:-translate-y-0.5"
+                className="px-7 py-3.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-[#FAF7F2] font-bold text-xs uppercase tracking-widest shadow-xl border border-[#D4A24C]/40 transition flex items-center gap-2 transform hover:-translate-y-0.5"
               >
                 <FileCheck2 className="w-4 h-4 text-[#D4A24C]" />
-                <span>Get Instant Bulk Quote</span>
+                <span>Get Instant Quote</span>
               </button>
 
               <a
                 href="#rental-calculator"
-                className="px-8 py-3.5 rounded-full bg-transparent hover:bg-[#D4A24C]/10 border-2 border-[#D4A24C] text-[#0D3B2A] font-bold text-xs uppercase tracking-widest transition flex items-center gap-2 shadow-sm"
+                className="px-6 py-3.5 rounded-full bg-transparent hover:bg-[#D4A24C]/10 border-2 border-[#D4A24C] text-[#0D3B2A] font-bold text-xs uppercase tracking-widest transition flex items-center gap-2 shadow-sm"
               >
                 <Calculator className="w-4 h-4 text-[#D4A24C]" />
-                <span>Calculate Rental Rates</span>
+                <span>Calculate Rental</span>
+              </a>
+
+              <a
+                href="#video-reels"
+                className="px-6 py-3.5 rounded-full bg-white/90 hover:bg-white text-[#0D3B2A] border border-[#D4A24C]/60 font-bold text-xs uppercase tracking-widest transition flex items-center gap-2 shadow-md hover:border-[#0D3B2A]"
+              >
+                <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></span>
+                <span>▶ Watch Video Reels</span>
               </a>
             </div>
 

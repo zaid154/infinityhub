@@ -69,7 +69,7 @@ export default function VideoReels() {
   };
 
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-8 space-y-8 py-8">
+    <section id="video-reels" className="max-w-7xl mx-auto px-4 sm:px-8 space-y-8 py-12 scroll-mt-24">
       {/* Header */}
       <div className="text-center max-w-2xl mx-auto space-y-2">
         <span className="text-[11px] uppercase tracking-[0.25em] text-[#D4A24C] font-semibold block">
