@@ -240,20 +240,24 @@ export default function Products() {
               Available For
             </label>
             <div className="grid grid-cols-3 gap-1">
-              {['all', 'sale', 'rent'].map((opt) => (
+              {[
+                { id: 'all', label: 'All Items' },
+                { id: 'sale', label: 'Buy Only' },
+                { id: 'rent', label: 'Rent Only' }
+              ].map((opt) => (
                 <button
-                  key={opt}
+                  key={opt.id}
                   onClick={() => {
-                    setAvailableFor(opt);
+                    setAvailableFor(opt.id);
                     setPage(1);
                   }}
-                  className={`py-1.5 rounded-lg font-semibold capitalize transition text-center ${
-                    availableFor === opt
+                  className={`py-1.5 px-1 rounded-lg font-semibold transition text-center text-[10px] uppercase tracking-wider ${
+                    availableFor === opt.id
                       ? 'bg-[#0D3B2A] text-white shadow-sm'
                       : 'bg-[#FAF7F2] text-[#5A6B63] hover:bg-[#F3E8D2] hover:text-[#0D3B2A] border border-[#D4A24C]/20'
                   }`}
                 >
-                  {opt}
+                  {opt.label}
                 </button>
               ))}
             </div>
@@ -324,11 +328,28 @@ export default function Products() {
                   className="bg-white rounded-3xl p-6 border border-[#0D3B2A]/10 shadow-[0_10px_30px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_40px_rgba(13,59,42,0.08)] transition-all duration-300 flex flex-col justify-between group"
                 >
                   <div>
-                    <div className="flex justify-between items-start mb-3">
-                      <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-[#F3E8D2] text-[#0D3B2A] tracking-wider uppercase">
-                        {p.condition.replace(/_/g, ' ')}
-                      </span>
-                      <span className="text-[11px] font-mono text-[#5A6B63] font-semibold">
+                    <div className="flex justify-between items-center mb-3 gap-2">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#F3E8D2] text-[#0D3B2A] tracking-wider uppercase">
+                          {p.condition.replace(/_/g, ' ')}
+                        </span>
+                        {p.available_for === 'both' ? (
+                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#0D3B2A] text-[#FAF7F2] tracking-wider uppercase flex items-center gap-1 shadow-sm">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#D4A24C]" />
+                            Buy & Rent
+                          </span>
+                        ) : p.available_for === 'rent' ? (
+                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#D4A24C] text-[#072117] tracking-wider uppercase flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#0D3B2A]" />
+                            Rental Only
+                          </span>
+                        ) : (
+                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 tracking-wider uppercase border border-slate-200">
+                            Buy Only
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-[11px] font-mono text-[#5A6B63] font-semibold shrink-0">
                         Stock: {p.stock_quantity}
                       </span>
                     </div>
@@ -352,38 +373,51 @@ export default function Products() {
                     </p>
                   </div>
 
-                  <div className="pt-4 mt-4 border-t border-[#D4A24C]/20 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <span className="text-[10px] text-[#5A6B63] uppercase tracking-wider block font-semibold">
-                          Pricing
-                        </span>
-                        <span className="text-base font-bold text-[#0D3B2A] font-serif">
-                          ₹{p.sale_price.toLocaleString('en-IN')}{' '}
-                          {p.rental_price_monthly > 0 && (
-                            <span className="text-xs text-[#D4A24C] font-normal font-sans">
-                              or ₹{p.rental_price_monthly.toLocaleString('en-IN')}/mo
-                            </span>
-                          )}
+                  <div className="pt-3 mt-3 border-t border-[#D4A24C]/20 space-y-2.5">
+                    {p.available_for === 'both' ? (
+                      <div className="grid grid-cols-2 gap-2 bg-[#FAF7F2] p-2.5 rounded-xl border border-[#D4A24C]/20">
+                        <div>
+                          <span className="text-[9px] font-bold uppercase tracking-wider text-[#5A6B63] block">Buy Price</span>
+                          <span className="text-sm font-bold text-[#0D3B2A] font-serif block">₹{p.sale_price.toLocaleString('en-IN')}</span>
+                        </div>
+                        <div className="border-l border-[#D4A24C]/30 pl-2">
+                          <span className="text-[9px] font-bold uppercase tracking-wider text-[#D4A24C] block">Rent Monthly</span>
+                          <span className="text-sm font-bold text-[#0D3B2A] font-serif block">
+                            ₹{p.rental_price_monthly.toLocaleString('en-IN')}<span className="text-[10px] font-normal font-sans text-[#5A6B63]">/mo</span>
+                          </span>
+                        </div>
+                      </div>
+                    ) : p.available_for === 'rent' ? (
+                      <div className="bg-[#FAF7F2] p-2.5 rounded-xl border border-[#D4A24C]/20">
+                        <span className="text-[9px] font-bold uppercase tracking-wider text-[#D4A24C] block">Corporate Rental Lease</span>
+                        <span className="text-sm font-bold text-[#0D3B2A] font-serif block">
+                          ₹{p.rental_price_monthly.toLocaleString('en-IN')}<span className="text-[10px] font-normal font-sans text-[#5A6B63]">/mo</span>
                         </span>
                       </div>
-                    </div>
+                    ) : (
+                      <div className="bg-[#FAF7F2] p-2.5 rounded-xl border border-[#D4A24C]/20">
+                        <span className="text-[9px] font-bold uppercase tracking-wider text-[#5A6B63] block">Direct Purchase Price</span>
+                        <span className="text-sm font-bold text-[#0D3B2A] font-serif block">
+                          ₹{p.sale_price.toLocaleString('en-IN')}
+                        </span>
+                      </div>
+                    )}
 
                     <div className="grid grid-cols-2 gap-2 pt-1">
                       <button
-                        onClick={() => openRFQ(`${p.title} (${p.stock_quantity} in stock)`)}
-                        className="w-full py-2.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow border border-[#D4A24C]/40"
+                        onClick={() => openRFQ(`${p.title} (${p.stock_quantity} in stock) - ${p.available_for === 'both' ? 'Rental / Bulk Purchase Inquiry' : 'Bulk Purchase'}`)}
+                        className="w-full py-2.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-[11px] font-bold uppercase tracking-wider transition shadow border border-[#D4A24C]/40 text-center"
                       >
                         Inquire Bulk
                       </button>
 
                       <button
                         onClick={() => addToCart(p, 1)}
-                        className="w-full py-2.5 rounded-full bg-[#F3E8D2] hover:bg-[#E6D5B8] text-[#0D3B2A] text-xs font-bold uppercase tracking-wider transition flex items-center justify-center gap-1 border border-[#D4A24C]/40"
-                        title="Add to Quotation Cart"
+                        className="w-full py-2.5 rounded-full bg-[#F3E8D2] hover:bg-[#E6D5B8] text-[#0D3B2A] text-[11px] font-bold uppercase tracking-wider transition flex items-center justify-center gap-1 border border-[#D4A24C]/40 shadow-sm"
+                        title="Add to Shopping Cart for Purchase"
                       >
                         <ShoppingCart className="w-3.5 h-3.5 text-[#0D3B2A]" />
-                        <span>Add Quote</span>
+                        <span>Add to Cart</span>
                       </button>
                     </div>
                   </div>

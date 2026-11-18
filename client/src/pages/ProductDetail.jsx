@@ -202,11 +202,28 @@ export default function ProductDetail() {
         {/* Right Column: Title, Pricing, Trust Grid, Stepper & 1-Click Buy Now */}
         <div className="lg:col-span-5 space-y-3.5 sm:space-y-4">
           
-          {/* Category Kicker & Title */}
+          {/* Category Kicker & Availability Badge */}
           <div>
-            <span className="text-[10px] sm:text-[11px] font-sans font-bold uppercase tracking-[0.2em] text-[#8A5E12] block mb-1">
-              — {categoryKicker}
-            </span>
+            <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+              <span className="text-[10px] sm:text-[11px] font-sans font-bold uppercase tracking-[0.2em] text-[#8A5E12]">
+                — {categoryKicker}
+              </span>
+              {product.available_for === 'both' ? (
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#0D3B2A] text-[#FAF7F2] tracking-wider uppercase flex items-center gap-1 shadow-sm">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#D4A24C]" />
+                  Buy & Rent Available
+                </span>
+              ) : product.available_for === 'rent' ? (
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#D4A24C] text-[#072117] tracking-wider uppercase flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0D3B2A]" />
+                  Corporate Rental Only
+                </span>
+              ) : (
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 tracking-wider uppercase border border-slate-200">
+                  Direct Sale Only
+                </span>
+              )}
+            </div>
             
             {/* Product Title (Playfair Serif, Deep Emerald, Compact leading) */}
             <h1 className="text-xl sm:text-2xl lg:text-[26px] font-serif text-[#0D3B2A] font-bold tracking-tight leading-snug">
