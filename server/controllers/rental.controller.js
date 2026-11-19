@@ -107,12 +107,13 @@ export const getAllRentalsAdmin = async (req, res, next) => {
 
 export const updateRentalStatus = async (req, res, next) => {
   try {
-    const { status, admin_notes } = req.body;
+    const { status, admin_notes, payment_status } = req.body;
     const rental = await Rental.findById(req.params.id);
     if (!rental) return res.status(404).json({ success: false, message: 'Rental record not found' });
 
     if (status) rental.status = status;
     if (admin_notes !== undefined) rental.admin_notes = admin_notes;
+    if (payment_status) rental.payment_status = payment_status;
 
     await rental.save();
     res.status(200).json({ success: true, message: 'Rental status updated', rental });
