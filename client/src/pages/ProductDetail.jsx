@@ -31,6 +31,11 @@ export default function ProductDetail() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    try {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    } catch {
+      window.scrollTo(0, 0);
+    }
     const fetchProduct = async () => {
       setLoading(true);
       try {

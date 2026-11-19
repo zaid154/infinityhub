@@ -49,9 +49,13 @@ import AdminBuyback from './pages/admin/AdminBuyback';
 import AdminDeliveryZones from './pages/admin/AdminDeliveryZones';
 import AdminSettings from './pages/admin/AdminSettings';
 
+// Global Scroll Restoration
+import ScrollToTop from './components/ScrollToTop';
+
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <AuthProvider>
         <CartProvider>
           <Toaster
