@@ -75,7 +75,8 @@ export const CartProvider = ({ children }) => {
         duration: 5000
       });
     } else {
-      toast.success(`Added ${product.title} to Purchase Order Cart`);
+      const shortTitle = product.title?.length > 36 ? product.title.slice(0, 36) + '...' : product.title;
+      toast.success(`Added ${shortTitle} to Purchase Cart`);
     }
     return true;
   };
@@ -115,7 +116,8 @@ export const CartProvider = ({ children }) => {
         duration: 5000
       });
     } else {
-      toast.success(`Added ${product.title} to Corporate Rental Fleet Lease Cart`);
+      const shortTitle = product.title?.length > 36 ? product.title.slice(0, 36) + '...' : product.title;
+      toast.success(`Added ${shortTitle} to Rental Fleet Cart`);
     }
     return true;
   };

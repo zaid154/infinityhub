@@ -57,12 +57,41 @@ export default function App() {
           <Toaster
             position="top-right"
             toastOptions={{
-              duration: 4000,
+              duration: 3500,
               style: {
-                background: '#0f172a',
-                color: '#fff',
-                fontSize: '12px',
-                borderRadius: '12px'
+                background: '#0D3B2A',
+                color: '#FAF7F2',
+                border: '1.5px solid rgba(212, 162, 76, 0.45)',
+                boxShadow: '0 16px 36px rgba(13, 59, 42, 0.3), 0 4px 12px rgba(0, 0, 0, 0.12)',
+                borderRadius: '16px',
+                padding: '12px 18px',
+                fontSize: '12.5px',
+                fontWeight: '600',
+                letterSpacing: '0.01em',
+                maxWidth: '420px',
+                fontFamily: 'Inter, system-ui, -apple-system, sans-serif'
+              },
+              success: {
+                iconTheme: {
+                  primary: '#D4A24C',
+                  secondary: '#0D3B2A'
+                },
+                style: {
+                  background: '#0D3B2A',
+                  color: '#FAF7F2',
+                  border: '1.5px solid #D4A24C'
+                }
+              },
+              error: {
+                iconTheme: {
+                  primary: '#EF4444',
+                  secondary: '#FAF7F2'
+                },
+                style: {
+                  background: '#1F1414',
+                  color: '#FAF7F2',
+                  border: '1.5px solid rgba(239, 68, 68, 0.5)'
+                }
               }
             }}
           />
