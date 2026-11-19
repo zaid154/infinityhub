@@ -14,7 +14,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative bg-[#072117] text-[#90b09a] pt-16 pb-8 border-t border-[#FAF7F2]/10 overflow-hidden select-none">
+    <footer className="relative bg-[#072117] text-[#90b09a] pt-16 pb-8 border-t border-[#FAF7F2]/10 overflow-hidden">
       {/* Top Ambient Subtle Glow */}
       <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#FAF7F2]/5 to-transparent pointer-events-none" />
 

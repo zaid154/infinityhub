@@ -62,7 +62,7 @@ export default function CompleteCollectionSection({ onOpenRFQ }) {
   };
 
   return (
-    <section className="relative bg-[#f4efe6] py-12 sm:py-16 md:py-20 overflow-hidden border-t border-[#e8dece] select-none">
+    <section className="relative bg-[#f4efe6] py-12 sm:py-16 md:py-20 overflow-hidden border-t border-[#e8dece]">
       <div className="max-w-7xl mx-auto px-4 sm:px-8 relative z-10">
         
         {/* Al-Tooba Exact Section Header Structure */}

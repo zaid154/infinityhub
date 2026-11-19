@@ -124,7 +124,7 @@ export default function RentalCalculator({ onOpenRFQ, rentalProducts }) {
   };
 
   return (
-    <section id="rental-calculator" className="max-w-5xl mx-auto px-4 sm:px-6 select-none">
+    <section id="rental-calculator" className="max-w-5xl mx-auto px-4 sm:px-6">
       <div className="bg-[#072117] rounded-2xl sm:rounded-3xl border border-[#D4A24C]/30 shadow-2xl p-4 sm:p-5 lg:p-6 relative overflow-hidden">
         
         {/* Subtle Ambient Accent */}

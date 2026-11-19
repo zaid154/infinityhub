@@ -111,7 +111,7 @@ export default function ProductDetail() {
     : product.category?.toUpperCase() || 'ENTERPRISE HARDWARE';
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-8 pt-3 sm:pt-4 pb-14 select-none">
+    <div className="max-w-7xl mx-auto px-4 sm:px-8 pt-3 sm:pt-4 pb-14">
       
       {/* Al-Tooba Exact 1:1 Product Section Grid (Compact Above-The-Fold Architecture) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-start">
@@ -183,7 +183,7 @@ export default function ProductDetail() {
                   Corporate Rental Fleet
                 </span>
               ) : (
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-900 tracking-wider uppercase border border-emerald-300">
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#FAF7F2] text-[#0D3B2A] tracking-wider uppercase border border-[#D4A24C]/40">
                   Direct Sale Only
                 </span>
               )}
@@ -202,7 +202,7 @@ export default function ProductDetail() {
                 <span className="text-2xl sm:text-3xl font-bold font-serif text-[#0D3B2A]">
                   ₹{product.rental_price_monthly.toLocaleString('en-IN')}<span className="text-sm font-sans text-[#5A6B63]">/month</span>
                 </span>
-                <span className="px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[11px] font-bold uppercase tracking-wider">
+                <span className="px-2.5 py-0.5 rounded-md bg-[#FAF7F2] text-[#0D3B2A] text-[11px] font-bold uppercase tracking-wider border border-[#D4A24C]/40">
                   Zero CAPEX Fleet
                 </span>
               </>

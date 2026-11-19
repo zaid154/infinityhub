@@ -283,7 +283,7 @@ export default function Cart() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-8 py-10 space-y-8 select-none">
+    <div className="max-w-6xl mx-auto px-4 sm:px-8 py-10 space-y-8">
       {/* Page Title & Luxury Dual-Cart Tabs */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#D4A24C]/20 pb-5">
         <div>

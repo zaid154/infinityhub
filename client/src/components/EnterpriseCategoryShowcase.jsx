@@ -74,7 +74,7 @@ export default function EnterpriseCategoryShowcase() {
   }, []);
 
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 select-none">
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* ── AL-TOOBA MOORISH ARCH SECTION HEADER ─────────────────────── */}
       <div className="relative text-center mb-6 sm:mb-8">
         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-[#0D3B2A] tracking-tight">

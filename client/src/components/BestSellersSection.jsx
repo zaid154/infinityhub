@@ -63,7 +63,7 @@ export default function BestSellersSection({ onOpenRFQ }) {
   };
 
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-8 select-none">
+    <section className="max-w-7xl mx-auto px-4 sm:px-8">
       {/* Al-Tooba Exact Centered Typography Header */}
       <div className="text-center mb-8 sm:mb-10 relative z-10">
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif text-[#0D3B2A] font-bold mb-2 sm:mb-3 tracking-tight">

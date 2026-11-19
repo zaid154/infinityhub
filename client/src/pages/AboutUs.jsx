@@ -16,7 +16,7 @@ export default function AboutUs() {
   const [activeTab, setActiveTab] = useState('overview');
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-8 py-10 space-y-14 select-none">
+    <div className="max-w-6xl mx-auto px-4 sm:px-8 py-10 space-y-14">
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto space-y-3">
         <span className="text-[11px] font-sans uppercase tracking-[0.22em] text-[#8A5E12] font-bold block">

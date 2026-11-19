@@ -49,7 +49,7 @@ export default function AdminBuyback() {
   };
 
   return (
-    <div className="space-y-6 text-xs select-none">
+    <div className="space-y-6 text-xs ">
       <div>
         <span className="text-[10px] font-sans uppercase tracking-[0.2em] text-[#8A5E12] font-bold block">
           — ITAD ASSET DISPOSITION

@@ -20,31 +20,54 @@ export const getProducts = async (req, res, next) => {
       maxPrice
     } = req.query;
 
-    const query = { is_active: true };
+    const andConditions = [{ is_active: true }];
 
     if (category && category !== 'all') {
       const singular = category.replace(/s$/, '');
-      query.category = { $in: [category, singular, `${singular}s`] };
+      andConditions.push({ category: { $in: [category, singular, `${singular}s`] } });
     }
     if (brand && brand !== 'all') {
-      query.brand = new RegExp(`^${brand}$`, 'i');
+      andConditions.push({ brand: new RegExp(`^${brand}$`, 'i') });
     }
     if (condition && condition !== 'all') {
-      query.condition = condition;
+      andConditions.push({ condition });
     }
     if (available_for && available_for !== 'all') {
-      query.$or = [{ available_for }, { available_for: 'both' }];
+      andConditions.push({
+        $or: [{ available_for }, { available_for: 'both' }]
+      });
     }
 
     if (minPrice || maxPrice) {
-      query.sale_price = {};
-      if (minPrice) query.sale_price.$gte = Number(minPrice);
-      if (maxPrice) query.sale_price.$lte = Number(maxPrice);
+      const priceFilter = {};
+      if (minPrice) priceFilter.$gte = Number(minPrice);
+      if (maxPrice) priceFilter.$lte = Number(maxPrice);
+      andConditions.push({ sale_price: priceFilter });
     }
 
-    if (search) {
-      query.$text = { $search: search };
+    if (search && search.trim()) {
+      const cleanSearch = search.trim();
+      const escaped = cleanSearch.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const searchRegex = new RegExp(escaped, 'i');
+      andConditions.push({
+        $or: [
+          { title: searchRegex },
+          { brand: searchRegex },
+          { model: searchRegex },
+          { category: searchRegex },
+          { description: searchRegex },
+          { 'specs.processor': searchRegex },
+          { 'specs.ram': searchRegex },
+          { 'specs.storage': searchRegex },
+          { 'specs.screen_size': searchRegex },
+          { 'specs.gpu_model': searchRegex },
+          { 'specs.generation': searchRegex },
+          { 'specs.operating_system': searchRegex }
+        ]
+      });
     }
+
+    const query = andConditions.length > 1 ? { $and: andConditions } : andConditions[0];
 
     // Sorting
     let sortQuery = { createdAt: -1 };

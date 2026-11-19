@@ -331,7 +331,7 @@ export default function RentalPlans() {
   ];
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-10 sm:space-y-12 select-none">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-10 sm:space-y-12">
       
       {/* ======================================================== */}
       {/* SECTION 1: TRI-PILLAR HERO SECTION (RENT + BUY + PROCURE)*/}

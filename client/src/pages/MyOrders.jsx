@@ -26,7 +26,7 @@ export default function MyOrders() {
   }, []);
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-8 py-10 space-y-8 select-none">
+    <div className="max-w-5xl mx-auto px-4 sm:px-8 py-10 space-y-8">
       <Link
         to="/dashboard"
         className="inline-flex items-center gap-1.5 text-xs font-bold text-[#8A5E12] hover:text-[#0D3B2A] transition"

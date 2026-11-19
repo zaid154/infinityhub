@@ -177,7 +177,7 @@ export default function Home() {
           {/* Left Column: Al-Tooba Style Typography & Responsive CTAs */}
           <div className="lg:col-span-7 space-y-4">
             {/* Majestic Heading - Responsive across mobile, laptop, desktop */}
-            <h1 className="text-[1.85rem] sm:text-4xl md:text-5xl lg:text-[3.25rem] xl:text-[3.65rem] font-normal tracking-tight text-white font-serif leading-[1.14] sm:leading-[1.12] drop-shadow-[0_12px_24px_rgba(0,0,0,0.85)] select-none">
+            <h1 className="text-[1.85rem] sm:text-4xl md:text-5xl lg:text-[3.25rem] xl:text-[3.65rem] font-normal tracking-tight text-white font-serif leading-[1.14] sm:leading-[1.12] drop-shadow-[0_12px_24px_rgba(0,0,0,0.85)]">
               Authentic <span className="text-[#F59E0B] italic font-serif font-extrabold drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">IT Fleets,</span> <br />
               proven <span className="text-[#F59E0B] italic font-serif font-extrabold drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">performance.</span>
             </h1>
@@ -215,7 +215,7 @@ export default function Home() {
       </section>
 
       {/* 2. AL-TOOBA RUNNING GOLD TICKER MARQUEE STRIP */}
-      <div className="w-full bg-[#183623] border-b border-[#D4A24C]/30 py-3.5 sm:py-4 overflow-hidden relative z-10 select-none [contain:paint]">
+      <div className="w-full bg-[#183623] border-b border-[#D4A24C]/30 py-3.5 sm:py-4 overflow-hidden relative z-10 [contain:paint]">
         <div className="animate-marquee">
           <div className="flex shrink-0 items-center gap-10 sm:gap-14 text-white/90 font-serif italic text-sm sm:text-base pr-10 sm:pr-14">
             {[...Array(3)].map((_, i) => (

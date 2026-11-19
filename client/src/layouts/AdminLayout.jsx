@@ -36,7 +36,7 @@ export default function AdminLayout() {
   return (
     <div className="min-h-screen flex bg-[#FAF7F2] text-[#111827]">
       {/* Sidebar */}
-      <aside className="w-64 bg-[#072117] text-[#90b09a] flex flex-col shrink-0 border-r border-[#D4A24C]/20 select-none">
+      <aside className="w-64 bg-[#072117] text-[#90b09a] flex flex-col shrink-0 border-r border-[#D4A24C]/20 ">
         <div className="p-4 border-b border-[#FAF7F2]/10 flex items-center justify-between">
           <BrandLogo theme="dark" size="sm" showSubtitle={false} />
           <Link to="/" target="_blank" title="View Public Site" className="text-[#90b09a] hover:text-[#FAF7F2] transition">
