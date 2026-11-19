@@ -56,7 +56,7 @@ export default function EnterpriseCategoryShowcase() {
           return {
             id: cat._id,
             name: cat.name,
-            badge: totalStock > 0 ? `${totalStock}+ in fleet` : 'Available to Order',
+            badge: totalStock > 0 ? `${totalStock}+ in stock` : 'Available to Order',
             image,
             link: `/products?category=${cat.slug}`
           };

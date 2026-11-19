@@ -391,9 +391,7 @@ export default function Products() {
                             }`}
                           />
                           <span className="whitespace-nowrap font-bold text-[11px] text-[#0D3B2A]">
-                            {isRental
-                              ? inStock ? `${stockQty} in fleet` : 'Fleet Reserved'
-                              : inStock ? `${stockQty} in stock` : 'Out of Stock'}
+                            {inStock ? `${stockQty} in stock` : 'Out of Stock'}
                           </span>
                         </div>
                       </div>

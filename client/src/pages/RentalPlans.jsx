@@ -590,7 +590,7 @@ export default function RentalPlans() {
                   <div>
                     <div className="flex justify-between items-center mb-2">
                       <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#FAF7F2] text-[#8A5E12] uppercase border border-[#D4A24C]/30">
-                        • {maxRental} in fleet
+                        • {maxRental} in stock
                       </span>
                       <span className="text-[9px] font-bold uppercase tracking-wider text-[#0D3B2A] bg-[#FAF7F2] border border-[#D4A24C]/25 px-2 py-0.5 rounded-full">
                         24h Swap SLA
@@ -631,7 +631,7 @@ export default function RentalPlans() {
 
                     <div className="grid grid-cols-2 gap-2">
                       <button
-                        onClick={() => openRFQ(`Fleet Lease Inquiry: ${p.title} (${maxRental} units in fleet)`)}
+                        onClick={() => openRFQ(`Fleet Lease Inquiry: ${p.title} (${maxRental} units in stock)`)}
                         className="w-full h-8 rounded-full bg-[#FAF7F2] hover:bg-[#F3E8D2] text-[#0D3B2A] text-[10px] sm:text-[11px] font-bold uppercase tracking-wider transition border border-[#D4A24C]/30 text-center cursor-pointer"
                       >
                         Inquire RFQ
