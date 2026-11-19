@@ -181,18 +181,18 @@ export default function RentalPlans() {
     }
   ];
 
-  // 2. 4 Standardized Operational Rental Packages (Explicit Hardware Specs, Transparent & Compact)
+  // 2. 4 Standardized Operational Rental Packages (Compact, Harmonized & Balanced)
   const standardizedPlans = [
     {
       id: 'short-term',
       badge: 'Trial / Project',
       name: 'Short-Term Project Rental',
       duration: '1 – 3 Months',
-      target: 'Temporary projects, software testing, events & surge hiring',
+      target: 'Agile sprint delivery, software testing, events & surge hiring.',
       hardware: 'ThinkPad T490 / Latitude 7490',
       icon: Laptop,
       specs: [
-        'Core i5 Quad-Core (8th Gen)',
+        'Core i5 Quad (8th Gen)',
         '16GB DDR4 High-Speed RAM',
         '256GB Fast NVMe M.2 SSD',
         '14" FHD IPS • Win 11 Pro'
@@ -200,7 +200,7 @@ export default function RentalPlans() {
       included: [
         'Pre-configured OS & corporate app stack',
         'Guaranteed 24–48h standby swap SLA',
-        'Zero long-term financial lock-in'
+        'Zero long-term financial commitment'
       ],
       price: '₹1,500',
       period: '/mo per unit',
@@ -211,14 +211,14 @@ export default function RentalPlans() {
       badge: '★ Best Value (OPEX)',
       name: 'Long-Term Corporate Leasing',
       duration: '6 – 36 Months',
-      target: 'Full enterprise workforce workstations with 100% tax benefit',
+      target: 'Full enterprise workforce deployment with 100% tax benefits.',
       hardware: 'HP EliteBook 840 / Latitude 7490',
       icon: Laptop,
       specs: [
-        'Core i5 / i7 Quad vPro (8th Gen)',
-        '16GB / 32GB DDR4 High-Speed RAM',
+        'Core i5 / i7 Quad vPro',
+        '16GB / 32GB DDR4 RAM',
         '512GB Fast NVMe M.2 SSD',
-        '14" FHD Anti-Glare • Win 11 Pro'
+        '14" FHD Anti-Glare Display'
       ],
       included: [
         '100% Tax-deductible OPEX & 18% GSTR-2B',
@@ -234,18 +234,18 @@ export default function RentalPlans() {
       badge: 'Volume Discount',
       name: 'Bulk Fleet Deployment',
       duration: '12 – 24 Months',
-      target: 'Scaling startups, BPOs, MNC offshore centers & developer teams',
+      target: 'Scaling startups, BPOs, MNC centers & developer teams.',
       hardware: 'Standardized Multi-Tier Fleet Mix',
       icon: Layers,
       specs: [
         'Core i5 / i7 Corporate Editions',
-        '16GB / 32GB DDR4 High-Speed RAM',
+        '16GB / 32GB DDR4 RAM',
         '512GB Fast NVMe M.2 SSD',
-        'Custom OS & VPN Image Pre-Loaded'
+        'Custom VPN Image Pre-Loaded'
       ],
       included: [
         '5% to 15% tiered bulk volume rebate',
-        'Dedicated standby buffer units on-site',
+        'Dedicated on-site standby buffer units',
         'Direct Pan-India employee WFH courier'
       ],
       price: 'Custom Tier',
@@ -255,14 +255,14 @@ export default function RentalPlans() {
     {
       id: 'workstation',
       badge: 'Heavy Compute',
-      name: 'Custom Enterprise Workstations',
+      name: 'Custom Heavy Workstations',
       duration: '3 – 24 Months',
-      target: 'CAD/3D modeling, deep learning, AI & high-performance rigs',
+      target: 'High-compute rigs for CAD, 3D rendering, machine learning & AI.',
       hardware: 'Dell Precision & HP Z-Series',
       icon: Cpu,
       specs: [
         'NVIDIA RTX 3060 12GB GDDR6',
-        '32GB / 64GB DDR4 High-Speed RAM',
+        '32GB / 64GB High-Speed RAM',
         '1TB Fast Gen4 NVMe M.2 SSD',
         'Dual 24" Frameless IPS Displays'
       ],
@@ -481,8 +481,8 @@ export default function RentalPlans() {
       {/* ======================================================== */}
       {/* SECTION 3: 4 STANDARDIZED OPERATIONAL RENTAL PACKAGES   */}
       {/* ======================================================== */}
-      <section className="space-y-6">
-        <div className="text-center max-w-2xl mx-auto space-y-1.5">
+      <section className="space-y-5">
+        <div className="text-center max-w-2xl mx-auto space-y-1">
           <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#8A5E12] font-bold">
             — STRUCTURED CORPORATE LEASING
           </span>
@@ -494,11 +494,11 @@ export default function RentalPlans() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch pt-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 items-stretch pt-1">
           {standardizedPlans.map((plan) => (
             <div
               key={plan.id}
-              className={`rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-200 relative ${
+              className={`rounded-2xl p-4 flex flex-col justify-between transition-all duration-200 relative ${
                 plan.popular
                   ? 'bg-white border-2 border-[#D4A24C] shadow-md ring-1 ring-[#D4A24C]/25'
                   : 'bg-white border border-[#D4A24C]/30 shadow-2xs hover:shadow-sm hover:border-[#0D3B2A]/40'
@@ -512,53 +512,54 @@ export default function RentalPlans() {
 
               <div>
                 {/* Header row: Badge & Duration */}
-                <div className="flex items-center justify-between gap-2 mb-1.5">
+                <div className="flex items-center justify-between gap-2 mb-1">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-[#8A5E12] truncate">
                     {plan.badge}
                   </span>
-                  <span className="text-[10px] font-mono font-medium text-[#0D3B2A] bg-[#FAF7F2] border border-[#D4A24C]/25 px-2 py-0.5 rounded-full whitespace-nowrap shrink-0">
+                  <span className="text-[10px] font-mono font-bold text-[#0D3B2A] bg-[#FAF7F2] border border-[#D4A24C]/30 px-2 py-0.5 rounded-full whitespace-nowrap shrink-0">
                     {plan.duration}
                   </span>
                 </div>
 
-                <h3 className="text-sm sm:text-base font-bold font-serif text-[#0D3B2A] tracking-tight">
+                {/* Plan Name with fixed height so 1-line and 2-line titles match perfectly */}
+                <h3 className="text-sm font-bold font-serif text-[#0D3B2A] tracking-tight h-10 flex items-center leading-snug">
                   {plan.name}
                 </h3>
-                <p className="text-[11px] text-[#5A6B63] mt-0.5 leading-snug line-clamp-2 min-h-[30px]">
+
+                {/* Target Audience with fixed height */}
+                <p className="text-[11px] text-[#5A6B63] leading-snug h-8 line-clamp-2 mt-0.5">
                   {plan.target}
                 </p>
 
-                {/* Hardware Fleet Model Banner */}
-                <div className="flex items-center gap-1.5 px-2.5 py-1.5 mt-2 rounded-lg bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] text-[11px] font-semibold">
-                  <plan.icon className="w-3.5 h-3.5 text-[#D4A24C] shrink-0" />
-                  <span className="truncate">{plan.hardware}</span>
+                {/* Consolidated Hardware Model & Spec Capsule */}
+                <div className="bg-[#FAF7F2] rounded-xl p-2.5 border border-[#D4A24C]/25 my-2">
+                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#0D3B2A] pb-1.5 border-b border-[#D4A24C]/20">
+                    <plan.icon className="w-3.5 h-3.5 text-[#D4A24C] shrink-0" />
+                    <span className="truncate">{plan.hardware}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-x-2 gap-y-1 pt-1.5 text-[10px] text-slate-700 font-mono">
+                    {plan.specs.map((spec, sIdx) => (
+                      <div key={sIdx} className="flex items-center gap-1 truncate" title={spec}>
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#D4A24C] shrink-0" />
+                        <span className="truncate">{spec}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
-                {/* 2x2 Explicit Technical Hardware Specifications Grid */}
-                <div className="grid grid-cols-2 gap-1.5 my-2.5">
-                  {plan.specs.map((spec, sIdx) => (
-                    <div
-                      key={sIdx}
-                      className="px-2 py-1.5 rounded-lg bg-[#FAF7F2] text-[#0D3B2A] text-[10px] font-medium border border-[#D4A24C]/20 flex items-center justify-center text-center leading-tight min-h-[34px]"
-                    >
-                      <span>{spec}</span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Included Corporate SLA & Financial Benefits */}
-                <div className="space-y-1.5 my-2.5 pt-2 border-t border-[#D4A24C]/15 text-[11px] text-[#0D3B2A]">
+                {/* Standardized Included Corporate Deliverables (Fixed height to eliminate blank voids) */}
+                <div className="space-y-1.5 my-2 text-[11px] text-[#0D3B2A] h-[66px]">
                   {plan.included.map((inc, iIdx) => (
                     <div key={iIdx} className="flex items-start gap-1.5 leading-tight">
                       <Check className="w-3.5 h-3.5 text-[#D4A24C] shrink-0 mt-0.5" />
-                      <span className="leading-snug">{inc}</span>
+                      <span className="leading-snug truncate" title={inc}>{inc}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Pricing & Inquire Button */}
-              <div className="pt-2.5 mt-auto border-t border-[#D4A24C]/20 space-y-2">
+              {/* Pricing & CTA Button */}
+              <div className="pt-2 mt-2 border-t border-[#D4A24C]/20 space-y-2">
                 <div className="flex items-end justify-between gap-1.5">
                   <div>
                     <span className="text-[9px] uppercase tracking-wider font-bold text-[#8A5E12] block">
@@ -580,7 +581,7 @@ export default function RentalPlans() {
 
                 <button
                   onClick={() => openRFQ(`Plan Inquiry: ${plan.name} (${plan.duration})`)}
-                  className="w-full h-8 sm:h-9 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-[11px] font-bold uppercase tracking-wider transition shadow-xs flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
+                  className="w-full h-8 sm:h-8.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-[11px] font-bold uppercase tracking-wider transition shadow-2xs flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
                 >
                   <Repeat className="w-3 h-3 text-[#D4A24C]" />
                   <span>Inquire Fleet Plan</span>
