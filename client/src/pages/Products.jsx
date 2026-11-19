@@ -7,8 +7,6 @@ import {
   ChevronLeft,
   ChevronRight,
   ShoppingCart,
-  Eye,
-  CheckCircle2,
   X,
   Repeat
 } from 'lucide-react';
@@ -37,7 +35,65 @@ export default function Products() {
     }
     const laptopParts = [p.specs?.processor, p.specs?.ram, p.specs?.storage].filter(Boolean);
     if (laptopParts.length > 0) return laptopParts.join(' • ');
-    return p.description || 'Enterprise Grade A+ Hardware';
+    return p.description || 'Enterprise Grade Hardware';
+  };
+
+  // Helper to get real condition badge (no invented certifications)
+  const getConditionBadge = (cond) => {
+    if (!cond) return null;
+    switch (cond) {
+      case 'brand_new':
+        return { label: '★ Brand New', className: 'bg-amber-50 text-amber-900 border-amber-300' };
+      case 'open_box':
+        return { label: 'Open Box', className: 'bg-sky-50 text-sky-900 border-sky-300' };
+      case 'grade_a_plus':
+        return { label: 'Grade A+', className: 'bg-[#FAF7F2] text-[#8A5E12] border-[#D4A24C]/40' };
+      case 'grade_a':
+        return { label: 'Grade A', className: 'bg-[#FAF7F2] text-[#8A5E12] border-[#D4A24C]/40' };
+      case 'grade_b':
+        return { label: 'Grade B', className: 'bg-[#FAF7F2] text-[#5A6B63] border-[#5A6B63]/30' };
+      default:
+        return { label: cond.replace(/_/g, ' ').toUpperCase(), className: 'bg-[#FAF7F2] text-[#8A5E12] border-[#D4A24C]/30' };
+    }
+  };
+
+  // Helper for dynamic stock info based on actual DB numbers
+  const getStockInfo = (p, currentFilter) => {
+    if (currentFilter === 'rent' || p.available_for === 'rent') {
+      const fleet = typeof p.rental_stock === 'number' ? p.rental_stock : 0;
+      if (fleet > 0) {
+        return { text: `${fleet} in fleet`, inStock: true };
+      }
+      return { text: 'Fleet Reserved', inStock: false };
+    }
+
+    if (currentFilter === 'sale' || p.available_for === 'sale') {
+      const saleStock = typeof p.sale_stock === 'number' ? p.sale_stock : (typeof p.stock_quantity === 'number' ? p.stock_quantity : 0);
+      if (saleStock > 0) {
+        return { text: `${saleStock} in stock`, inStock: true };
+      }
+      return { text: 'Out of Stock', inStock: false };
+    }
+
+    // Combined view ('all' filter & product is 'both')
+    const saleStock = typeof p.sale_stock === 'number' ? p.sale_stock : (typeof p.stock_quantity === 'number' ? p.stock_quantity : 0);
+    const rentalStock = typeof p.rental_stock === 'number' ? p.rental_stock : 0;
+
+    if (saleStock > 0) {
+      return { text: `${saleStock} in stock`, inStock: true };
+    }
+    if (rentalStock > 0) {
+      return { text: `${rentalStock} in fleet`, inStock: true };
+    }
+    return { text: 'Out of Stock', inStock: false };
+  };
+
+  // Helper for deployment badge
+  const getDeploymentBadge = (p) => {
+    if (p.available_for === 'rent') return 'LEASE ONLY';
+    if (p.available_for === 'sale') return 'DIRECT BUY';
+    if (p.available_for === 'both') return 'BUY & LEASE';
+    return null;
   };
 
   const [products, setProducts] = useState([]);
@@ -161,36 +217,56 @@ export default function Products() {
           <button
             onClick={() => setMobileFilterOpen(!mobileFilterOpen)}
             className="md:hidden p-2 bg-white border border-[#D4A24C]/30 rounded-xl text-[#0D3B2A] hover:bg-[#FAF7F2]"
+            aria-label="Toggle Filters"
           >
             <SlidersHorizontal className="w-5 h-5" />
           </button>
         </div>
       </div>
 
+      {/* Mobile Backdrop */}
+      {mobileFilterOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 backdrop-blur-xs z-40 md:hidden"
+          onClick={() => setMobileFilterOpen(false)}
+        />
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
         {/* Left Sidebar Filters */}
         <aside
           className={`${
-            mobileFilterOpen ? 'block' : 'hidden'
-          } md:block md:col-span-3 bg-white p-5 rounded-2xl border border-[#D4A24C]/25 shadow-sm space-y-6 text-xs`}
+            mobileFilterOpen
+              ? 'fixed inset-y-0 left-0 z-50 w-72 bg-white shadow-2xl p-5 overflow-y-auto'
+              : 'hidden'
+          } md:relative md:inset-auto md:z-auto md:w-auto md:block md:col-span-3 bg-white p-5 rounded-2xl border border-[#D4A24C]/25 shadow-sm space-y-6 text-xs md:sticky md:top-24 self-start`}
         >
           <div className="flex items-center justify-between font-bold text-[#0D3B2A] border-b border-[#D4A24C]/15 pb-3">
             <span className="flex items-center gap-1.5 font-serif text-sm">
               <Filter className="w-4 h-4 text-[#D4A24C]" />
               Filter Inventory
             </span>
-            <button
-              onClick={() => {
-                setCategory('all');
-                setCondition('all');
-                setAvailableFor('all');
-                setSearch('');
-                setPage(1);
-              }}
-              className="text-[11px] text-[#D4A24C] hover:text-[#0D3B2A] font-medium"
-            >
-              Reset All
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  setCategory('all');
+                  setCondition('all');
+                  setAvailableFor('all');
+                  setSearch('');
+                  setPage(1);
+                }}
+                className="text-[11px] text-[#D4A24C] hover:text-[#0D3B2A] font-medium transition cursor-pointer"
+              >
+                Reset All
+              </button>
+              <button
+                onClick={() => setMobileFilterOpen(false)}
+                className="md:hidden p-1 text-[#5A6B63] hover:text-[#0D3B2A] transition"
+                aria-label="Close Filter Drawer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
           {/* Category Filter */}
@@ -205,8 +281,9 @@ export default function Products() {
                   onClick={() => {
                     setCategory(c.id);
                     setPage(1);
+                    if (mobileFilterOpen) setMobileFilterOpen(false);
                   }}
-                  className={`w-full text-left px-3 py-2 rounded-xl font-semibold transition flex items-center justify-between ${
+                  className={`w-full text-left px-3 py-2 rounded-xl font-semibold transition flex items-center justify-between cursor-pointer ${
                     category === c.id
                       ? 'bg-[#0D3B2A] text-white shadow-sm'
                       : 'text-[#5A6B63] hover:bg-[#FAF7F2] hover:text-[#0D3B2A]'
@@ -235,7 +312,7 @@ export default function Products() {
                     setAvailableFor(opt.id);
                     setPage(1);
                   }}
-                  className={`py-1.5 px-1 rounded-lg font-semibold transition text-center text-[10px] uppercase tracking-wider ${
+                  className={`py-1.5 px-1 rounded-lg font-semibold transition text-center text-[10px] uppercase tracking-wider cursor-pointer ${
                     availableFor === opt.id
                       ? 'bg-[#0D3B2A] text-white shadow-sm'
                       : 'bg-[#FAF7F2] text-[#5A6B63] hover:bg-[#F3E8D2] hover:text-[#0D3B2A] border border-[#D4A24C]/20'
@@ -286,7 +363,7 @@ export default function Products() {
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="h-80 bg-white rounded-3xl border border-[#D4A24C]/20 animate-pulse"></div>
+                <div key={i} className="h-96 bg-white rounded-3xl border border-[#D4A24C]/20 animate-pulse"></div>
               ))}
             </div>
           ) : products.length === 0 ? (
@@ -300,169 +377,192 @@ export default function Products() {
                   setAvailableFor('all');
                   setSearch('');
                 }}
-                className="px-5 py-2.5 rounded-full bg-[#0D3B2A] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#153423] transition"
+                className="px-5 py-2.5 rounded-full bg-[#0D3B2A] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#153423] transition cursor-pointer"
               >
                 Clear All Filters
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {products.map((p) => (
-                <div
-                  key={p._id}
-                  className="bg-white rounded-3xl p-4 sm:p-5 border border-[#D4A24C]/25 hover:border-[#D4A24C] shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_16px_36px_rgba(13,59,42,0.1)] transition-all duration-300 flex flex-col justify-between group"
-                >
-                  <div>
-                    {/* Top Row: Clean Condition Pill (Left) & Stock Status (Right) - Zero Wrapping */}
-                    <div className="flex items-center justify-between gap-2 mb-3">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold tracking-wider uppercase border shadow-xs ${
-                        p.condition === 'brand_new'
-                          ? 'bg-amber-50 text-amber-900 border-amber-300'
-                          : p.condition === 'open_box'
-                          ? 'bg-sky-50 text-sky-900 border-sky-300'
-                          : 'bg-[#FAF7F2] text-[#8A5E12] border-[#D4A24C]/40'
-                      }`}>
-                        {p.condition === 'brand_new' ? '★ Brand New' : p.condition === 'open_box' ? 'Open Box' : 'Grade A+ Certified'}
-                      </span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+              {products.map((p) => {
+                const condBadge = getConditionBadge(p.condition);
+                const stockInfo = getStockInfo(p, availableFor);
+                const deployBadge = getDeploymentBadge(p);
 
-                      {/* Stock availability: Clean, single-line indicator that NEVER wraps */}
-                      <div className="flex items-center gap-1.5 text-[11px] font-mono font-medium text-emerald-800 shrink-0">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
-                        <span>
-                          {availableFor === 'rent' || p.available_for === 'rent'
-                            ? `${p.rental_stock !== undefined ? p.rental_stock : 3} in fleet`
-                            : `${p.sale_stock !== undefined ? p.sale_stock : (p.stock_quantity || 1)} in stock`}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Image Pedestal Stage Container */}
-                    <Link to={`/products/${p.slug}`} className="block">
-                      <div className="h-44 sm:h-48 rounded-2xl bg-gradient-to-b from-[#FAF7F2] via-[#F6F0E7] to-[#EFE7DC] flex items-center justify-center p-3 mb-3.5 overflow-hidden border border-[#D4A24C]/20 cursor-pointer group-hover:border-[#D4A24C]/60 transition-all duration-300 relative">
-                        {/* Deployment badge floating inside stage top-right */}
-                        <div className="absolute top-2.5 right-2.5 z-10">
-                          <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold tracking-wider uppercase bg-white/90 text-[#0D3B2A] border border-[#D4A24C]/30 shadow-xs backdrop-blur-xs">
-                            {p.available_for === 'rent' ? 'Lease Only' : p.available_for === 'sale' ? 'Direct Buy' : 'Buy & Lease'}
+                return (
+                  <div
+                    key={p._id}
+                    className="bg-white rounded-3xl p-5 border border-[#D4A24C]/25 hover:border-[#D4A24C] shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_16px_36px_rgba(13,59,42,0.1)] transition-all duration-300 flex flex-col justify-between group h-full"
+                  >
+                    <div>
+                      {/* Top Row: Clean Condition Pill (Left) & Real Stock Status (Right) */}
+                      <div className="flex items-center justify-between gap-2 mb-3 h-6">
+                        {condBadge ? (
+                          <span
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold tracking-wider uppercase border shadow-xs whitespace-nowrap ${condBadge.className}`}
+                          >
+                            {condBadge.label}
                           </span>
-                        </div>
+                        ) : (
+                          <span />
+                        )}
 
-                        {/* Pedestal surface shadow */}
-                        <div className="absolute bottom-2 w-32 h-4 bg-black/10 rounded-full blur-xs pointer-events-none" />
-
-                        <img
-                          src={getSafeImageUrl(p)}
-                          alt={p.title}
-                          className="relative z-10 max-h-36 max-w-[88%] object-contain group-hover:scale-108 transition-transform duration-500 ease-out filter drop-shadow-[0_8px_14px_rgba(0,0,0,0.14)]"
-                        />
-                      </div>
-                    </Link>
-
-                    {/* Brand / Category Micro Tag */}
-                    <div className="text-[10px] font-mono uppercase tracking-widest text-[#8A5E12] font-semibold mb-1">
-                      {p.brand || (p.category === 'laptop' ? 'Enterprise Laptop' : p.category === 'gpu' ? 'Workstation GPU' : p.category === 'monitor' ? 'Business Display' : 'Enterprise PC')}
-                    </div>
-
-                    {/* Product Title */}
-                    <Link to={`/products/${p.slug}`} className="hover:text-[#B8860B] transition block">
-                      <h3 className="text-[14px] sm:text-[15px] font-serif font-bold text-[#0D3B2A] group-hover:text-[#B8860B] transition-colors leading-snug line-clamp-2 min-h-[40px]">
-                        {p.title}
-                      </h3>
-                    </Link>
-
-                    {/* Spec Summary */}
-                    <p className="text-[11px] text-[#5A6B63] font-mono mt-1 leading-normal line-clamp-1">
-                      {getProductSpecSummary(p)}
-                    </p>
-                  </div>
-
-                  {/* Context-Aware Bottom Section (Different Cards for Rent vs Buy vs All) */}
-                  <div className="pt-3.5 mt-3 border-t border-[#D4A24C]/20 space-y-3">
-                    {availableFor === 'rent' || p.available_for === 'rent' ? (
-                      /* DEDICATED RENTAL CARD */
-                      <>
-                        <div className="flex items-baseline justify-between">
-                          <div>
-                            <span className="text-[9px] font-bold uppercase tracking-wider text-[#8A5E12] block">Monthly Fleet Lease</span>
-                            <span className="text-base sm:text-lg font-bold text-[#0D3B2A] font-serif">
-                              ₹{(p.rental_price_monthly || 1350).toLocaleString('en-IN')}<span className="text-xs font-normal text-[#5A6B63] font-sans">/mo</span>
-                            </span>
-                          </div>
-                          <span className="text-[10px] font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                            24h Swap SLA
-                          </span>
-                        </div>
-
-                        <button
-                          onClick={() => addToRentalCart(p, 1, '6_months')}
-                          className="w-full py-2.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-sm flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
+                        {/* Stock availability: Clean, single-line indicator that NEVER wraps */}
+                        <div
+                          className={`flex items-center gap-1.5 text-[11px] font-mono font-medium shrink-0 ${
+                            stockInfo.inStock ? 'text-emerald-800' : 'text-[#8A5E12]'
+                          }`}
                         >
-                          <Repeat className="w-3.5 h-3.5 text-[#D4A24C]" />
-                          <span>Rent Fleet (Add to Cart)</span>
-                        </button>
-                      </>
-                    ) : availableFor === 'sale' || p.available_for === 'sale' ? (
-                      /* DEDICATED BUY CARD */
-                      <>
-                        <div className="flex items-baseline justify-between">
-                          <div>
-                            <span className="text-[9px] font-bold uppercase tracking-wider text-[#5A6B63] block">Direct Purchase Price</span>
-                            <span className="text-base sm:text-lg font-bold text-[#0D3B2A] font-serif">
-                              ₹{p.sale_price.toLocaleString('en-IN')}
-                            </span>
-                          </div>
-                          <span className="text-[10px] font-semibold text-[#8A5E12] bg-[#FAF7F2] px-2 py-0.5 rounded-full border border-[#D4A24C]/30">
-                            100% Tax Invoiced
-                          </span>
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full ${
+                              stockInfo.inStock ? 'bg-emerald-600 animate-pulse' : 'bg-[#D4A24C]'
+                            }`}
+                          />
+                          <span className="whitespace-nowrap">{stockInfo.text}</span>
                         </div>
+                      </div>
 
-                        <button
-                          onClick={() => addToBuyCart(p, 1)}
-                          className="w-full py-2.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-sm flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
-                        >
-                          <ShoppingCart className="w-3.5 h-3.5 text-[#D4A24C]" />
-                          <span>Add to Cart (Buy)</span>
-                        </button>
-                      </>
-                    ) : (
-                      /* BALANCED ALL ITEMS VIEW (Available for Both) */
-                      <>
-                        <div className="flex items-baseline justify-between">
-                          <div>
-                            <span className="text-[9px] font-bold uppercase tracking-wider text-[#5A6B63] block">Purchase Price</span>
-                            <span className="text-base sm:text-lg font-bold text-[#0D3B2A] font-serif">
-                              ₹{p.sale_price.toLocaleString('en-IN')}
-                            </span>
-                          </div>
-                          {p.rental_price_monthly > 0 && (
-                            <span className="text-[11px] font-bold text-[#8A5E12] bg-[#FAF7F2] px-2.5 py-0.5 rounded-full border border-[#D4A24C]/35">
-                              or ₹{p.rental_price_monthly.toLocaleString('en-IN')}/mo
-                            </span>
+                      {/* Image Pedestal Stage Container */}
+                      <Link to={`/products/${p.slug}`} className="block">
+                        <div className="h-48 sm:h-52 rounded-2xl bg-gradient-to-b from-[#FAF7F2] via-[#F6F0E7] to-[#EFE7DC] flex items-center justify-center p-4 mb-3.5 overflow-hidden border border-[#D4A24C]/20 cursor-pointer group-hover:border-[#D4A24C]/60 transition-all duration-300 relative">
+                          {/* Deployment badge floating inside stage top-right */}
+                          {deployBadge && (
+                            <div className="absolute top-3 right-3 z-20 pointer-events-none">
+                              <span className="inline-flex items-center px-2.5 py-1 rounded-md text-[10px] font-mono font-bold tracking-wider uppercase whitespace-nowrap bg-white/95 text-[#0D3B2A] border border-[#D4A24C]/40 shadow-xs backdrop-blur-sm">
+                                {deployBadge}
+                              </span>
+                            </div>
                           )}
-                        </div>
 
-                        <div className="grid grid-cols-2 gap-2">
+                          {/* Pedestal surface shadow */}
+                          <div className="absolute bottom-2.5 w-32 h-3.5 bg-black/10 rounded-full blur-xs pointer-events-none" />
+
+                          <img
+                            src={getSafeImageUrl(p)}
+                            alt={p.title}
+                            className="relative z-10 max-h-36 sm:max-h-40 max-w-[82%] object-contain group-hover:scale-105 transition-transform duration-300 ease-out filter drop-shadow-[0_8px_14px_rgba(0,0,0,0.12)]"
+                          />
+                        </div>
+                      </Link>
+
+                      {/* Brand / Category Micro Tag */}
+                      <div className="text-[10px] font-mono uppercase tracking-widest text-[#8A5E12] font-semibold mb-1 h-4 truncate">
+                        {p.brand || 'Enterprise Hardware'}
+                      </div>
+
+                      {/* Product Title */}
+                      <Link to={`/products/${p.slug}`} className="hover:text-[#B8860B] transition block">
+                        <h3 className="text-[14px] sm:text-[15px] font-serif font-bold text-[#0D3B2A] group-hover:text-[#B8860B] transition-colors leading-snug line-clamp-2 min-h-[44px]">
+                          {p.title}
+                        </h3>
+                      </Link>
+
+                      {/* Spec Summary */}
+                      <p className="text-[11px] text-[#5A6B63] font-mono mt-1 leading-normal line-clamp-1 h-5">
+                        {getProductSpecSummary(p)}
+                      </p>
+                    </div>
+
+                    {/* Context-Aware Bottom Section (Strictly Equalized Heights Across All Cards) */}
+                    <div className="pt-3.5 mt-3 border-t border-[#D4A24C]/20 space-y-3">
+                      {availableFor === 'rent' || p.available_for === 'rent' ? (
+                        /* DEDICATED RENTAL CARD */
+                        <>
+                          <div className="min-h-[46px] flex items-baseline justify-between">
+                            <div>
+                              <span className="text-[9px] font-bold uppercase tracking-wider text-[#8A5E12] block">
+                                Monthly Fleet Lease
+                              </span>
+                              <span className="text-base sm:text-lg font-bold text-[#0D3B2A] font-serif">
+                                ₹{(p.rental_price_monthly || 0).toLocaleString('en-IN')}
+                                <span className="text-xs font-normal text-[#5A6B63] font-sans">/mo</span>
+                              </span>
+                            </div>
+                            <span className="text-[10px] font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 whitespace-nowrap">
+                              24h Swap SLA
+                            </span>
+                          </div>
+
                           <button
                             onClick={() => addToRentalCart(p, 1, '6_months')}
-                            className="w-full py-2 px-2 rounded-full bg-[#FAF7F2] hover:bg-[#F3ECE1] text-[#8A5E12] text-xs font-bold uppercase tracking-wider transition border border-[#D4A24C]/40 flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
-                            title="Add to Rental Fleet Cart"
+                            className="h-10 w-full rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-sm flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
                           >
                             <Repeat className="w-3.5 h-3.5 text-[#D4A24C]" />
-                            <span>Rent</span>
+                            <span>Rent Fleet (Add to Cart)</span>
                           </button>
+                        </>
+                      ) : availableFor === 'sale' || p.available_for === 'sale' ? (
+                        /* DEDICATED BUY CARD */
+                        <>
+                          <div className="min-h-[46px] flex items-baseline justify-between">
+                            <div>
+                              <span className="text-[9px] font-bold uppercase tracking-wider text-[#5A6B63] block">
+                                Direct Purchase Price
+                              </span>
+                              <span className="text-base sm:text-lg font-bold text-[#0D3B2A] font-serif">
+                                ₹{(p.sale_price || 0).toLocaleString('en-IN')}
+                              </span>
+                            </div>
+                            <span className="text-[10px] font-semibold text-[#8A5E12] bg-[#FAF7F2] px-2 py-0.5 rounded-full border border-[#D4A24C]/30 whitespace-nowrap">
+                              100% Tax Invoiced
+                            </span>
+                          </div>
+
                           <button
                             onClick={() => addToBuyCart(p, 1)}
-                            className="w-full py-2 px-2 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-sm border border-[#D4A24C]/40 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
-                            title="Add to Direct Purchase Cart"
+                            className="h-10 w-full rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-sm flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
                           >
                             <ShoppingCart className="w-3.5 h-3.5 text-[#D4A24C]" />
-                            <span>Buy</span>
+                            <span>Add to Cart (Buy)</span>
                           </button>
-                        </div>
-                      </>
-                    )}
+                        </>
+                      ) : (
+                        /* BALANCED ALL ITEMS VIEW (Available for Both) */
+                        <>
+                          <div className="min-h-[46px] flex items-baseline justify-between">
+                            <div>
+                              <span className="text-[9px] font-bold uppercase tracking-wider text-[#5A6B63] block">
+                                Purchase Price
+                              </span>
+                              <span className="text-base sm:text-lg font-bold text-[#0D3B2A] font-serif">
+                                ₹{(p.sale_price || 0).toLocaleString('en-IN')}
+                              </span>
+                            </div>
+                            {p.rental_price_monthly > 0 ? (
+                              <span className="text-[11px] font-bold text-[#8A5E12] bg-[#FAF7F2] px-2.5 py-0.5 rounded-full border border-[#D4A24C]/35 whitespace-nowrap">
+                                or ₹{p.rental_price_monthly.toLocaleString('en-IN')}/mo
+                              </span>
+                            ) : (
+                              <span className="text-[10px] font-semibold text-[#8A5E12] bg-[#FAF7F2] px-2 py-0.5 rounded-full border border-[#D4A24C]/30 whitespace-nowrap">
+                                Enterprise Fleet
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-2 h-10">
+                            <button
+                              onClick={() => addToRentalCart(p, 1, '6_months')}
+                              className="h-10 w-full py-2 px-2 rounded-full bg-[#FAF7F2] hover:bg-[#F3ECE1] text-[#8A5E12] text-xs font-bold uppercase tracking-wider transition border border-[#D4A24C]/40 flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
+                              title="Add to Rental Fleet Cart"
+                            >
+                              <Repeat className="w-3.5 h-3.5 text-[#D4A24C]" />
+                              <span>Rent</span>
+                            </button>
+                            <button
+                              onClick={() => addToBuyCart(p, 1)}
+                              className="h-10 w-full py-2 px-2 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-sm border border-[#D4A24C]/40 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
+                              title="Add to Direct Purchase Cart"
+                            >
+                              <ShoppingCart className="w-3.5 h-3.5 text-[#D4A24C]" />
+                              <span>Buy</span>
+                            </button>
+                          </div>
+                        </>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
 
@@ -472,7 +572,8 @@ export default function Products() {
               <button
                 disabled={page <= 1}
                 onClick={() => setPage(page - 1)}
-                className="p-2 rounded-lg border border-[#D4A24C]/30 disabled:opacity-40 hover:bg-[#FAF7F2] text-[#0D3B2A] transition"
+                className="p-2 rounded-lg border border-[#D4A24C]/30 disabled:opacity-40 hover:bg-[#FAF7F2] text-[#0D3B2A] transition cursor-pointer"
+                aria-label="Previous Page"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
@@ -482,7 +583,8 @@ export default function Products() {
               <button
                 disabled={page >= totalPages}
                 onClick={() => setPage(page + 1)}
-                className="p-2 rounded-lg border border-[#D4A24C]/30 disabled:opacity-40 hover:bg-[#FAF7F2] text-[#0D3B2A] transition"
+                className="p-2 rounded-lg border border-[#D4A24C]/30 disabled:opacity-40 hover:bg-[#FAF7F2] text-[#0D3B2A] transition cursor-pointer"
+                aria-label="Next Page"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
