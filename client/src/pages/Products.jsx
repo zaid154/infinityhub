@@ -379,18 +379,18 @@ export default function Products() {
                           </span>
                         )}
 
-                        {/* Real dynamic stock: completely distinct between Fleet vs Stock */}
+                        {/* Real dynamic stock: completely distinct between Fleet vs Stock (Brand Themed) */}
                         <div
                           className={`flex items-center gap-1 font-medium shrink-0 ${
-                            inStock ? 'text-emerald-800' : 'text-[#8A5E12]'
+                            inStock ? 'text-[#0D3B2A]' : 'text-[#8A5E12]'
                           }`}
                         >
                           <span
                             className={`w-1.5 h-1.5 rounded-full ${
-                              inStock ? 'bg-emerald-600 animate-pulse' : 'bg-[#D4A24C]'
+                              inStock ? 'bg-[#0D3B2A]' : 'bg-[#D4A24C]'
                             }`}
                           />
-                          <span className="whitespace-nowrap font-semibold">
+                          <span className="whitespace-nowrap font-bold text-[11px] text-[#0D3B2A]">
                             {isRental
                               ? inStock ? `${stockQty} in fleet` : 'Fleet Reserved'
                               : inStock ? `${stockQty} in stock` : 'Out of Stock'}
@@ -457,7 +457,7 @@ export default function Products() {
                                 <span className="text-[11px] font-normal text-[#5A6B63] font-sans">/mo</span>
                               </span>
                             </div>
-                            <span className="text-[9px] font-semibold text-emerald-800 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 whitespace-nowrap">
+                            <span className="text-[9px] font-bold uppercase tracking-wider text-[#0D3B2A] bg-[#FAF7F2] px-2 py-0.5 rounded border border-[#D4A24C]/35 whitespace-nowrap">
                               24h Swap SLA
                             </span>
                           </div>

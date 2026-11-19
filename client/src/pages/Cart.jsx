@@ -679,7 +679,7 @@ export default function Cart() {
                                 Active Rental Fleet: {maxRental} Available
                               </span>
                               {discount > 0 && (
-                                <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-300">
+                                <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-[#FAF7F2] text-[#0D3B2A] border border-[#D4A24C]/40">
                                   Save {Math.round(discount * 100)}%
                                 </span>
                               )}
