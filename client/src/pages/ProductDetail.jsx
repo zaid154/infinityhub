@@ -407,10 +407,11 @@ export default function ProductDetail() {
                 {/* ADD TO CART (BUY) Pill Button */}
                 <button
                   type="button"
+                  disabled={maxSale <= 0}
                   onClick={handleAddToCart}
-                  className="flex-1 py-2 sm:py-2.5 px-4 sm:px-5 rounded-full border-2 border-[#0D3B2A] bg-transparent text-[#0D3B2A] hover:bg-[#0D3B2A] hover:text-[#FAF7F2] font-sans font-bold text-[11px] sm:text-xs uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
+                  className="flex-1 py-2 sm:py-2.5 px-4 sm:px-5 rounded-full border-2 border-[#0D3B2A] bg-transparent text-[#0D3B2A] hover:bg-[#0D3B2A] hover:text-[#FAF7F2] disabled:opacity-40 disabled:cursor-not-allowed font-sans font-bold text-[11px] sm:text-xs uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
                 >
-                  <span>ADD TO CART (BUY)</span>
+                  <span>{maxSale > 0 ? 'ADD TO CART (BUY)' : 'SALE STOCK OUT'}</span>
                   <ShoppingBag className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -419,22 +420,28 @@ export default function ProductDetail() {
               {product.available_for === 'both' && product.rental_price_monthly > 0 && (
                 <button
                   type="button"
+                  disabled={maxRental <= 0}
                   onClick={handleAddRental}
-                  className="w-full py-2.5 sm:py-3 rounded-full bg-[#FAF7F2] hover:bg-[#F3E8D2] text-[#0D3B2A] border border-[#D4A24C]/40 font-sans font-bold text-xs uppercase tracking-[0.15em] shadow-sm flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95"
+                  className="w-full py-2.5 sm:py-3 rounded-full bg-[#FAF7F2] hover:bg-[#F3E8D2] text-[#0D3B2A] border border-[#D4A24C]/40 disabled:opacity-50 disabled:cursor-not-allowed font-sans font-bold text-xs uppercase tracking-[0.15em] shadow-sm flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95"
                 >
                   <Repeat className="w-4 h-4 text-[#D4A24C]" />
-                  <span>RENT THIS FLEET (₹{product.rental_price_monthly.toLocaleString('en-IN')}/mo)</span>
+                  <span>
+                    {maxRental > 0
+                      ? `RENT THIS FLEET (₹${product.rental_price_monthly.toLocaleString('en-IN')}/mo)`
+                      : 'RENTAL POOL CURRENTLY OUT OF STOCK'}
+                  </span>
                 </button>
               )}
 
               {/* Main Full-Width Instant 1-Click Buy Now Pill Button */}
               <button
                 type="button"
+                disabled={maxSale <= 0}
                 onClick={handleInstantBuy}
-                className="w-full py-3 sm:py-3.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-sans font-bold text-xs sm:text-sm uppercase tracking-[0.2em] shadow-lg flex items-center justify-center gap-2 cursor-pointer transition-all hover:brightness-105 active:scale-95 group"
+                className="w-full py-3 sm:py-3.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white disabled:opacity-40 disabled:cursor-not-allowed font-sans font-bold text-xs sm:text-sm uppercase tracking-[0.2em] shadow-lg flex items-center justify-center gap-2 cursor-pointer transition-all hover:brightness-105 active:scale-95 group"
               >
                 <Zap className="w-4 h-4 text-[#D4A24C] fill-[#D4A24C]" />
-                <span>INSTANT 1-CLICK BUY NOW</span>
+                <span>{maxSale > 0 ? 'INSTANT 1-CLICK BUY NOW' : 'OUT OF PURCHASE STOCK'}</span>
                 <ArrowRight className="w-4 h-4 text-[#D4A24C] group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
