@@ -15,6 +15,7 @@ export const getDashboardAnalytics = async (req, res, next) => {
       activeRentals,
       totalCustomers,
       pendingBuybacks,
+      inventoryAgg,
       recentInquiries,
       recentOrders
     ] = await Promise.all([
@@ -28,11 +29,23 @@ export const getDashboardAnalytics = async (req, res, next) => {
       Rental.countDocuments({ status: 'active' }),
       User.countDocuments({ role: 'customer' }),
       BuybackRequest.countDocuments({ status: 'new' }),
+      Product.aggregate([
+        { $match: { is_active: true } },
+        {
+          $group: {
+            _id: null,
+            totalSaleStock: { $sum: '$sale_stock' },
+            totalRentalStock: { $sum: '$rental_stock' },
+            totalStock: { $sum: '$stock_quantity' }
+          }
+        }
+      ]),
       Inquiry.find().sort({ createdAt: -1 }).limit(5),
       Order.find().populate('user', 'name email phone company_name').sort({ createdAt: -1 }).limit(5)
     ]);
 
     const totalRevenue = ordersAgg.length > 0 ? ordersAgg[0].totalRevenue : 0;
+    const stockStats = inventoryAgg.length > 0 ? inventoryAgg[0] : { totalSaleStock: 0, totalRentalStock: 0, totalStock: 0 };
 
     res.status(200).json({
       success: true,
@@ -43,7 +56,10 @@ export const getDashboardAnalytics = async (req, res, next) => {
         newInquiries,
         activeRentals,
         totalCustomers,
-        pendingBuybacks
+        pendingBuybacks,
+        totalSaleStock: stockStats.totalSaleStock || 0,
+        totalRentalStock: stockStats.totalRentalStock || 0,
+        totalOperationalUnits: (stockStats.totalSaleStock || 0) + (stockStats.totalRentalStock || 0)
       },
       recentInquiries,
       recentOrders
