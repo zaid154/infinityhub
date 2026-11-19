@@ -117,19 +117,40 @@ export default function Products() {
     fetchDBCategories();
   }, []);
 
+  // Dynamic Category Title & Subtitle (Option 3: Smart Dynamic Header)
+  const getDynamicHeading = () => {
+    if (search.trim()) {
+      return `Search: "${search.trim()}"`;
+    }
+    const catLabels = {
+      all: availableFor === 'rent' ? 'Corporate Rental Fleets' : availableFor === 'sale' ? 'Direct Purchase Hardware' : 'Hardware Catalog',
+      laptop: availableFor === 'rent' ? 'Corporate Rental Laptops' : 'Corporate Laptops',
+      desktop: availableFor === 'rent' ? 'Rental Desktop Fleets' : 'Commercial Desktops',
+      monitor: 'Business Monitors',
+      ram: 'RAM Modules (DDR4 / DDR5)',
+      gpu: 'Workstation GPUs',
+      cpu: 'CPUs & Processors',
+      accessory: 'Peripherals & Accessories',
+      other: 'Peripherals & Accessories'
+    };
+    return catLabels[category] || 'Hardware Catalog';
+  };
+
+  const getDynamicSubtitle = () => {
+    if (total === 0) return 'No matching hardware units currently found in this filter.';
+    return `Showing ${total} certified ${total === 1 ? 'unit' : 'units'} available for dispatch.`;
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
-      {/* Top Header & Search Bar (Compact Height) */}
+      {/* Top Header & Search Bar (Clean Dynamic Header - Zero Jargon) */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-[#D4A24C]/20">
         <div>
-          <span className="text-[10px] uppercase font-mono tracking-[0.2em] text-[#D4A24C] font-semibold block">
-            — VERIFIED COMMERCIAL INVENTORY
-          </span>
-          <h1 className="text-xl sm:text-2xl font-serif text-[#0D3B2A] font-normal tracking-tight">
-            Commercial Hardware Catalog
+          <h1 className="text-2xl sm:text-3xl font-serif text-[#0D3B2A] font-bold tracking-tight">
+            {getDynamicHeading()}
           </h1>
-          <p className="text-xs text-[#5A6B63] mt-0.5">
-            Showing {total} enterprise tested machines & components available for dispatch.
+          <p className="text-xs text-[#5A6B63] mt-1 font-medium">
+            {getDynamicSubtitle()}
           </p>
         </div>
 
