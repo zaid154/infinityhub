@@ -13,9 +13,26 @@ const deliveryZoneSchema = new mongoose.Schema(
         trim: true
       }
     ],
+    states: [
+      {
+        type: String,
+        trim: true
+      }
+    ],
+    pincode_prefixes: [
+      {
+        type: String,
+        trim: true
+      }
+    ],
     delivery_charge: {
       type: Number,
       default: 0
+    },
+    estimated_days: {
+      type: String,
+      default: '2-3 Business Days',
+      trim: true
     },
     is_active: {
       type: Boolean,

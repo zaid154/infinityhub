@@ -251,7 +251,7 @@ export default function AdminDashboard() {
 
             <div className="mt-3 flex items-baseline gap-1">
               <span className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight font-sans tabular-nums">
-                ₹{(stats?.totalRevenue || 0).toLocaleString('en-IN')}
+                ₹{Number(stats?.totalRevenue || 0).toLocaleString('en-IN')}
               </span>
             </div>
           </div>
@@ -364,9 +364,17 @@ export default function AdminDashboard() {
                             {inq.status}
                           </span>
                         </div>
-                        <p className="text-[11px] text-slate-500 truncate mt-0.5">
+                        <p
+                          className="text-[11px] text-slate-500 truncate mt-0.5"
+                          title={`${inq.contact_person || ''} • ${inq.phone || ''} • ${inq.quantity || ''} ${inq.requirement ? '— ' + inq.requirement : ''}`}
+                        >
                           {inq.contact_person} • {inq.phone} •{' '}
-                          <span className="font-mono font-semibold text-slate-700">{inq.quantity}</span>
+                          <span className="font-mono font-semibold text-slate-700" title={inq.quantity}>{inq.quantity}</span>
+                          {inq.requirement && (
+                            <span className="text-slate-400 font-sans ml-1 truncate" title={inq.requirement}>
+                              ({inq.requirement})
+                            </span>
+                          )}
                         </p>
                       </div>
                     </div>

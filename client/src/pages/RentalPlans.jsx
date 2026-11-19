@@ -40,6 +40,7 @@ import { useCart } from '../context/CartContext';
 import toast from 'react-hot-toast';
 import { getSafeImageUrl } from '../utils/imageHelper';
 import { useCompany } from '../context/SettingsContext';
+import { AnimatedAccordion } from '../animations';
 
 export default function RentalPlans() {
   const { company } = useCompany();
@@ -1115,11 +1116,11 @@ export default function RentalPlans() {
                 />
               </button>
 
-              {openFaq === fIdx && (
+              <AnimatedAccordion isOpen={openFaq === fIdx}>
                 <div className="px-4.5 pb-4 pt-1 text-xs text-[#5A6B63] leading-relaxed border-t border-[#D4A24C]/15 font-sans">
                   {faq.a}
                 </div>
-              )}
+              </AnimatedAccordion>
             </div>
           ))}
         </div>
@@ -1149,7 +1150,7 @@ export default function RentalPlans() {
             Request Fleet Proposal
           </button>
           <a
-            href="tel:+919876543210"
+            href={`tel:${company?.phone?.replace(/[^0-9+]/g, '') || '+919876543210'}`}
             className="p-3.5 rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/20 transition cursor-pointer"
             title="Call Procurement Desk"
           >

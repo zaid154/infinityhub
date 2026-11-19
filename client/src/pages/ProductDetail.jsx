@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useParams, Link, useOutletContext } from 'react-router-dom';
 import {
   ShieldCheck,
@@ -15,13 +16,14 @@ import {
 } from 'lucide-react';
 import api from '../services/api';
 import { useCart } from '../context/CartContext';
+import { APPLE_EASE } from '../animations';
 import { getGalleryUrls, getGalleryMedia, getSafeImageUrl } from '../utils/imageHelper';
 import toast from 'react-hot-toast';
 
 export default function ProductDetail() {
   const { slug } = useParams();
   const { openRFQ } = useOutletContext();
-  const { addToBuyCart, addToRentalCart } = useCart();
+  const { addToBuyCart, addToRentalCart, buyCart, rentalCart } = useCart();
 
   const [product, setProduct] = useState(null);
   const [related, setRelated] = useState([]);
@@ -58,8 +60,24 @@ export default function ProductDetail() {
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-20 flex justify-center">
-        <div className="w-8 h-8 border-4 border-[#0D3B2A] border-t-transparent rounded-full animate-spin"></div>
+      <div className="max-w-7xl mx-auto px-4 py-10 space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div className="lg:col-span-7 space-y-4">
+            <div className="w-full h-[380px] bg-slate-200/70 rounded-3xl animate-pulse" />
+            <div className="flex gap-2">
+              <div className="w-16 h-16 bg-slate-200/70 rounded-xl animate-pulse" />
+              <div className="w-16 h-16 bg-slate-200/70 rounded-xl animate-pulse" />
+              <div className="w-16 h-16 bg-slate-200/70 rounded-xl animate-pulse" />
+            </div>
+          </div>
+          <div className="lg:col-span-5 space-y-4">
+            <div className="h-4 bg-slate-200/70 rounded-md w-32 animate-pulse" />
+            <div className="h-8 bg-slate-200/70 rounded-md w-full animate-pulse" />
+            <div className="h-6 bg-slate-200/70 rounded-md w-48 animate-pulse" />
+            <div className="h-20 bg-slate-200/70 rounded-md w-full animate-pulse" />
+            <div className="h-12 bg-slate-200/70 rounded-full w-full animate-pulse" />
+          </div>
+        </div>
       </div>
     );
   }
@@ -86,6 +104,9 @@ export default function ProductDetail() {
 
   const maxSale = product.sale_stock !== undefined ? product.sale_stock : product.stock_quantity || 10;
   const maxRental = product.rental_stock !== undefined ? product.rental_stock : 5;
+
+  const inRentalItem = rentalCart?.find((item) => item.product._id === product._id);
+  const inBuyItem = buyCart?.find((item) => item.product._id === product._id);
 
   const handleAddToCart = () => {
     addToBuyCart(product, qty);
@@ -184,10 +205,14 @@ export default function ProductDetail() {
                 className="max-h-full max-w-full rounded-2xl object-contain shadow-lg bg-black/10"
               />
             ) : (
-              <img
+              <motion.img
+                key={currentMedia?.url}
+                initial={{ opacity: 0.5, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.28, ease: APPLE_EASE }}
                 src={currentMedia?.url}
                 alt={product.title}
-                className="max-h-full max-w-full object-contain transition-all duration-300 filter drop-shadow-[0_15px_20px_rgba(0,0,0,0.12)] hover:scale-105"
+                className="max-h-full max-w-full object-contain filter drop-shadow-[0_15px_20px_rgba(0,0,0,0.12)] hover:scale-105"
               />
             )}
           </div>
@@ -221,6 +246,16 @@ export default function ProductDetail() {
               ) : (
                 <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#FAF7F2] text-[#0D3B2A] tracking-wider uppercase border border-[#D4A24C]/40">
                   Direct Sale Only
+                </span>
+              )}
+              {inRentalItem && (
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#0D3B2A] text-[#D4A24C] border border-[#D4A24C]/60 tracking-wider uppercase flex items-center gap-1 shadow-sm">
+                  ✓ {inRentalItem.quantity} in Lease Cart
+                </span>
+              )}
+              {inBuyItem && (
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#0D3B2A] text-[#FAF7F2] border border-[#D4A24C]/40 tracking-wider uppercase flex items-center gap-1 shadow-sm">
+                  ✓ {inBuyItem.quantity} in Cart
                 </span>
               )}
             </div>
@@ -363,7 +398,7 @@ export default function ProductDetail() {
             <div className="space-y-3 pt-1">
               <button
                 type="button"
-                onClick={handleAddRental}
+                onClick={(e) => handleAddRental(e)}
                 className="w-full py-3 sm:py-3.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-sans font-bold text-xs sm:text-sm uppercase tracking-[0.2em] shadow-lg flex items-center justify-center gap-2 cursor-pointer transition-all hover:brightness-105 active:scale-95 group"
               >
                 <Repeat className="w-4 h-4 text-[#D4A24C]" />
@@ -408,10 +443,16 @@ export default function ProductDetail() {
                 <button
                   type="button"
                   disabled={maxSale <= 0}
-                  onClick={handleAddToCart}
+                  onClick={(e) => handleAddToCart(e)}
                   className="flex-1 py-2 sm:py-2.5 px-4 sm:px-5 rounded-full border-2 border-[#0D3B2A] bg-transparent text-[#0D3B2A] hover:bg-[#0D3B2A] hover:text-[#FAF7F2] disabled:opacity-40 disabled:cursor-not-allowed font-sans font-bold text-[11px] sm:text-xs uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
                 >
-                  <span>{maxSale > 0 ? 'ADD TO CART (BUY)' : 'SALE STOCK OUT'}</span>
+                  <span>
+                    {maxSale > 0
+                      ? inBuyItem
+                        ? `ADD MORE (HAVE ${inBuyItem.quantity} IN CART)`
+                        : 'ADD TO CART (BUY)'
+                      : 'SALE STOCK OUT'}
+                  </span>
                   <ShoppingBag className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -421,13 +462,15 @@ export default function ProductDetail() {
                 <button
                   type="button"
                   disabled={maxRental <= 0}
-                  onClick={handleAddRental}
+                  onClick={(e) => handleAddRental(e)}
                   className="w-full py-2.5 sm:py-3 rounded-full bg-[#FAF7F2] hover:bg-[#F3E8D2] text-[#0D3B2A] border border-[#D4A24C]/40 disabled:opacity-50 disabled:cursor-not-allowed font-sans font-bold text-xs uppercase tracking-[0.15em] shadow-sm flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95"
                 >
                   <Repeat className="w-4 h-4 text-[#D4A24C]" />
                   <span>
                     {maxRental > 0
-                      ? `RENT THIS FLEET (₹${product.rental_price_monthly.toLocaleString('en-IN')}/mo)`
+                      ? inRentalItem
+                        ? `ADD MORE TO LEASE (HAVE ${inRentalItem.quantity} IN CART)`
+                        : `RENT THIS FLEET (₹${product.rental_price_monthly.toLocaleString('en-IN')}/mo)`
                       : 'RENTAL POOL CURRENTLY OUT OF STOCK'}
                   </span>
                 </button>
@@ -437,7 +480,7 @@ export default function ProductDetail() {
               <button
                 type="button"
                 disabled={maxSale <= 0}
-                onClick={handleInstantBuy}
+                onClick={(e) => handleInstantBuy(e)}
                 className="w-full py-3 sm:py-3.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white disabled:opacity-40 disabled:cursor-not-allowed font-sans font-bold text-xs sm:text-sm uppercase tracking-[0.2em] shadow-lg flex items-center justify-center gap-2 cursor-pointer transition-all hover:brightness-105 active:scale-95 group"
               >
                 <Zap className="w-4 h-4 text-[#D4A24C] fill-[#D4A24C]" />

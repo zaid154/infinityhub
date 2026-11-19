@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Shield, Cookie, X, Check } from 'lucide-react';
 import { useCompany } from '../context/SettingsContext';
+import { useReducedMotionSafe } from '../animations';
 
 const COOKIE_STORAGE_KEY = 'demo_cookie_consent';
 
@@ -38,11 +40,19 @@ export default function CookieConsentBanner() {
     setVisible(false);
   };
 
-  if (!visible) return null;
+  const shouldReduce = useReducedMotionSafe();
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 sm:left-6 sm:right-auto sm:max-w-md z-50 animate-in fade-in slide-in-from-bottom duration-300">
-      <div className="bg-[#072117]/95 backdrop-blur-xl border border-[#D4A24C]/40 rounded-3xl p-5 sm:p-6 text-white shadow-[0_20px_50px_rgba(0,0,0,0.45)] space-y-4">
+    <AnimatePresence>
+      {visible && (
+        <motion.div
+          initial={shouldReduce ? { opacity: 0 } : { opacity: 0, y: 24, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={shouldReduce ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.95 }}
+          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          className="fixed bottom-4 left-4 right-4 sm:left-6 sm:right-auto sm:max-w-md z-40"
+        >
+          <div className="bg-[#072117]/95 backdrop-blur-xl border border-[#D4A24C]/40 rounded-3xl p-5 sm:p-6 text-white shadow-[0_20px_50px_rgba(0,0,0,0.45)] space-y-4">
         {/* Header */}
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-2.5">
@@ -146,6 +156,8 @@ export default function CookieConsentBanner() {
           )}
         </div>
       </div>
-    </div>
+    </motion.div>
+  )}
+</AnimatePresence>
   );
 }

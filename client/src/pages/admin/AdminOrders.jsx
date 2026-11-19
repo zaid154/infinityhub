@@ -419,7 +419,7 @@ export default function AdminOrders() {
                   <th className="py-3 px-4 font-bold">Total Amount</th>
                   <th className="py-3 px-4 font-bold">Payment Status</th>
                   <th className="py-3 px-4 font-bold">Dispatch Status</th>
-                  <th className="py-3 px-4 font-bold text-right">Actions</th>
+                  <th className="py-3 px-4 font-bold text-right sticky right-0 bg-[#FAF7F2] shadow-[-4px_0_8px_-2px_rgba(0,0,0,0.06)]">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -561,7 +561,7 @@ export default function AdminOrders() {
                       </td>
 
                       {/* Column 7: Actions */}
-                      <td className="py-3.5 px-4 text-right">
+                      <td className="py-3.5 px-4 text-right sticky right-0 bg-white group-hover:bg-slate-50 transition shadow-[-4px_0_8px_-2px_rgba(0,0,0,0.06)]">
                         <div className="flex items-center justify-end gap-1.5">
                           <button
                             onClick={() => setViewingInvoice(o)}

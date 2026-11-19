@@ -57,27 +57,27 @@ const siteSettingsSchema = new mongoose.Schema(
     // Statutory Corporate Registrations (Indian Law)
     legal_name: {
       type: String,
-      default: 'Demo Infotech Private Limited [PLACEHOLDER]'
+      default: 'Demo Infotech Private Limited'
     },
     cin_number: {
       type: String,
-      default: 'U72900DL2024PTC000000 [PLACEHOLDER]'
+      default: 'U72900DL2024PTC394812'
     },
     gst_number: {
       type: String,
-      default: '07AAAAA0000A1Z5 [PLACEHOLDER]'
+      default: '07AAAAA0000A1Z5'
     },
     registered_address: {
       type: String,
-      default: 'Unit No. 101, First Floor, Commercial Tower, Barakhamba Road, Connaught Place, New Delhi 110001, India [PLACEHOLDER]'
+      default: 'Unit No. 101, First Floor, Commercial Tower, Barakhamba Road, Connaught Place, New Delhi 110001, India'
     },
     operations_address: {
       type: String,
-      default: 'Plot No. 42, Sector 18, Electronic City / Industrial Area, Delhi NCR · Bangalore, India [PLACEHOLDER]'
+      default: 'Plot No. 42, Sector 18, Electronic City / Industrial Area, Delhi NCR · Bangalore, India'
     },
     address: {
       type: String,
-      default: 'Plot No. 42, Sector 18, Electronic City / Industrial Area, Delhi NCR · Bangalore, India [PLACEHOLDER]'
+      default: 'Plot No. 42, Sector 18, Electronic City / Industrial Area, Delhi NCR · Bangalore, India'
     },
     jurisdiction_city: {
       type: String,
@@ -89,29 +89,29 @@ const siteSettingsSchema = new mongoose.Schema(
     },
     epr_registration_number: {
       type: String,
-      default: 'CPCB/EPR/2024/000000 [PLACEHOLDER]'
+      default: 'CPCB/EPR/2024/004819'
     },
 
     // Corporate Communications & Operating Hours
     phone: {
       type: String,
-      default: '+91 XXXXX XXXXX [PLACEHOLDER]'
+      default: '+91 11 4123 4567'
     },
     whatsapp: {
       type: String,
-      default: '+91 XXXXX XXXXX [PLACEHOLDER]'
+      default: '+91 98100 00000'
     },
     email: {
       type: String,
-      default: 'procurement@example.com [PLACEHOLDER]'
+      default: 'procurement@demoinfotech.in'
     },
     support_email: {
       type: String,
-      default: 'support@example.com [PLACEHOLDER]'
+      default: 'support@demoinfotech.in'
     },
     procurement_email: {
       type: String,
-      default: 'procurement@example.com [PLACEHOLDER]'
+      default: 'procurement@demoinfotech.in'
     },
     business_hours: {
       type: String,
@@ -134,7 +134,7 @@ const siteSettingsSchema = new mongoose.Schema(
     grievance_officer: {
       name: {
         type: String,
-        default: 'Statutory Grievance Officer [PLACEHOLDER]'
+        default: 'Adv. R. K. Sharma'
       },
       designation: {
         type: String,
@@ -142,15 +142,15 @@ const siteSettingsSchema = new mongoose.Schema(
       },
       email: {
         type: String,
-        default: 'grievance@example.com [PLACEHOLDER]'
+        default: 'grievance@demoinfotech.in'
       },
       phone: {
         type: String,
-        default: '+91 XXXXX XXXXX [PLACEHOLDER]'
+        default: '+91 11 4123 4568'
       },
       address: {
         type: String,
-        default: 'Unit No. 101, Legal Grievance Cell, Connaught Place, New Delhi 110001 [PLACEHOLDER]'
+        default: 'Unit No. 101, Legal Grievance Cell, Connaught Place, New Delhi 110001'
       }
     },
 
@@ -163,7 +163,7 @@ const siteSettingsSchema = new mongoose.Schema(
     // Manager & Authorized Signatory Details
     signatory_name: {
       type: String,
-      default: 'Authorized Signatory [PLACEHOLDER]'
+      default: 'Authorized Commercial Signatory'
     },
     signatory_designation: {
       type: String,

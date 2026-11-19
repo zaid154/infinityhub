@@ -102,7 +102,7 @@ export default function RentalCalculator({ onOpenRFQ, rentalProducts }) {
     onOpenRFQ?.(`Rental Fleet Quote: ${summary}`);
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e) => {
     const tenureKey = duration.id === '3m' ? '3_months' : duration.id === '12m' ? '12_months' : '6_months';
 
     if (selectedTier.product) {
@@ -358,7 +358,7 @@ export default function RentalCalculator({ onOpenRFQ, rentalProducts }) {
 
               <button
                 type="button"
-                onClick={handleAddToCart}
+                onClick={(e) => handleAddToCart(e)}
                 className="w-full py-2 rounded-xl bg-white/10 hover:bg-white/15 text-[#FAF7F2] font-sans font-semibold text-[11px] sm:text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <ShoppingBag className="w-3.5 h-3.5 text-[#D4A24C]" />

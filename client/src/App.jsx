@@ -78,30 +78,35 @@ export default function App() {
           <CartProvider>
           <Toaster
             position="top-right"
+            gutter={8}
+            containerStyle={{
+              top: 76,
+              right: 18
+            }}
             toastOptions={{
-              duration: 3500,
+              duration: 2800,
               style: {
-                background: '#0D3B2A',
+                background: '#0A261B',
                 color: '#FAF7F2',
-                border: '1.5px solid rgba(212, 162, 76, 0.45)',
-                boxShadow: '0 16px 36px rgba(13, 59, 42, 0.3), 0 4px 12px rgba(0, 0, 0, 0.12)',
-                borderRadius: '16px',
-                padding: '12px 18px',
-                fontSize: '12.5px',
-                fontWeight: '600',
-                letterSpacing: '0.01em',
-                maxWidth: '420px',
+                border: '1px solid rgba(212, 162, 76, 0.35)',
+                boxShadow: '0 8px 24px -4px rgba(0, 0, 0, 0.45)',
+                borderRadius: '10px',
+                padding: '8px 14px',
+                fontSize: '12px',
+                fontWeight: '500',
+                lineHeight: '1.35',
+                maxWidth: '310px',
                 fontFamily: 'Inter, system-ui, -apple-system, sans-serif'
               },
               success: {
                 iconTheme: {
                   primary: '#D4A24C',
-                  secondary: '#0D3B2A'
+                  secondary: '#072117'
                 },
                 style: {
-                  background: '#0D3B2A',
+                  background: '#0A261B',
                   color: '#FAF7F2',
-                  border: '1.5px solid #D4A24C'
+                  border: '1px solid #D4A24C'
                 }
               },
               error: {
@@ -110,9 +115,10 @@ export default function App() {
                   secondary: '#FAF7F2'
                 },
                 style: {
-                  background: '#1F1414',
+                  background: '#1A0E0E',
                   color: '#FAF7F2',
-                  border: '1.5px solid rgba(239, 68, 68, 0.5)'
+                  border: '1px solid rgba(239, 68, 68, 0.4)',
+                  maxWidth: '310px'
                 }
               }
             }}
@@ -225,8 +231,8 @@ export default function App() {
               <Route path="*" element={<Navigate to="/admin" replace />} />
             </Route>
           </Routes>
-        </CartProvider>
-      </AuthProvider>
+          </CartProvider>
+        </AuthProvider>
       </SettingsProvider>
     </BrowserRouter>
   );

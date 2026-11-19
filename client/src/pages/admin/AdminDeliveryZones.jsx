@@ -12,6 +12,9 @@ export default function AdminDeliveryZones() {
   const [formData, setFormData] = useState({
     zone_name: '',
     cities: '',
+    states: '',
+    pincode_prefixes: '',
+    estimated_days: '2-3 Business Days',
     delivery_charge: 0,
     is_active: true
   });
@@ -19,7 +22,7 @@ export default function AdminDeliveryZones() {
   const fetchZones = async () => {
     setLoading(true);
     try {
-      const res = await api.get('/settings/delivery-zones/all');
+      const res = await api.get('/settings/delivery-zones');
       if (res.data.success) {
         setZones(res.data.zones);
       }
@@ -36,7 +39,15 @@ export default function AdminDeliveryZones() {
 
   const handleOpenAdd = () => {
     setEditingId(null);
-    setFormData({ zone_name: '', cities: '', delivery_charge: 0, is_active: true });
+    setFormData({
+      zone_name: '',
+      cities: '',
+      states: '',
+      pincode_prefixes: '',
+      estimated_days: '2-3 Business Days',
+      delivery_charge: 0,
+      is_active: true
+    });
     setShowModal(true);
   };
 
@@ -44,7 +55,10 @@ export default function AdminDeliveryZones() {
     setEditingId(zone._id);
     setFormData({
       zone_name: zone.zone_name,
-      cities: zone.cities.join(', '),
+      cities: (zone.cities || []).join(', '),
+      states: (zone.states || []).join(', '),
+      pincode_prefixes: (zone.pincode_prefixes || []).join(', '),
+      estimated_days: zone.estimated_days || '2-3 Business Days',
       delivery_charge: zone.delivery_charge,
       is_active: zone.is_active
     });
@@ -190,14 +204,48 @@ export default function AdminDeliveryZones() {
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Delivery Charge (₹) *</label>
+                <label className="block font-semibold text-slate-700 mb-1">States (Comma Separated)</label>
                 <input
-                  type="number"
-                  min="0"
-                  value={formData.delivery_charge}
-                  onChange={(e) => setFormData({ ...formData, delivery_charge: Number(e.target.value) })}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-mono"
+                  type="text"
+                  placeholder="e.g. Delhi, NCR, Haryana, Uttar Pradesh"
+                  value={formData.states}
+                  onChange={(e) => setFormData({ ...formData, states: e.target.value })}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl"
                 />
+              </div>
+
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">Pincode Prefixes (Comma Separated)</label>
+                <input
+                  type="text"
+                  placeholder="e.g. 110, 11, 201, 121, 122"
+                  value={formData.pincode_prefixes}
+                  onChange={(e) => setFormData({ ...formData, pincode_prefixes: e.target.value })}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-mono text-xs"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Delivery Charge (₹) *</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={formData.delivery_charge}
+                    onChange={(e) => setFormData({ ...formData, delivery_charge: Number(e.target.value) })}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Transit SLA</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Same-Day / 24 Hours"
+                    value={formData.estimated_days}
+                    onChange={(e) => setFormData({ ...formData, estimated_days: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs"
+                  />
+                </div>
               </div>
 
               <div className="flex items-center gap-2">

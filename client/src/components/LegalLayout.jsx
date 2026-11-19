@@ -1,5 +1,5 @@
 /* DRAFT – to be reviewed by a practising advocate/CA before publishing */
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import {
@@ -24,6 +24,38 @@ export default function LegalLayout({
   const { company, renderToken } = useCompany();
   const brandName = company?.brand_name || 'Demo Infotech';
   const legalVersion = company?.legal_version || '1.0';
+  const [activeSection, setActiveSection] = useState(toc[0]?.id || '');
+
+  useEffect(() => {
+    if (!toc || toc.length === 0) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      { rootMargin: '-10% 0px -65% 0px' }
+    );
+
+    toc.forEach((item) => {
+      const el = document.getElementById(item.id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, [toc]);
+
+  const scrollToSection = (e, id) => {
+    e.preventDefault();
+    const target = document.getElementById(id);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setActiveSection(id);
+    }
+  };
+
   const formattedDate = company?.legal_last_updated
     ? new Date(company.legal_last_updated).toLocaleDateString('en-IN', {
         day: 'numeric',
@@ -119,16 +151,24 @@ export default function LegalLayout({
               </h2>
             </div>
             <nav className="space-y-1 text-xs">
-              {toc.map((item, idx) => (
-                <a
-                  key={idx}
-                  href={`#${item.id}`}
-                  className="block py-1.5 px-2.5 rounded-lg text-slate-600 hover:text-[#0D3B2A] hover:bg-[#FAF7F2] transition line-clamp-1"
-                >
-                  <span className="font-mono text-[#8A5E12] mr-1.5">{idx + 1}.</span>
-                  {item.title}
-                </a>
-              ))}
+              {toc.map((item, idx) => {
+                const isActive = activeSection === item.id;
+                return (
+                  <a
+                    key={idx}
+                    href={`#${item.id}`}
+                    onClick={(e) => scrollToSection(e, item.id)}
+                    className={`block py-1.5 px-2.5 rounded-lg transition line-clamp-1 border-l-2 ${
+                      isActive
+                        ? 'bg-[#FAF7F2] text-[#0D3B2A] font-bold border-[#D4A24C]'
+                        : 'border-transparent text-slate-600 hover:text-[#0D3B2A] hover:bg-[#FAF7F2]'
+                    }`}
+                  >
+                    <span className="font-mono text-[#8A5E12] mr-1.5">{idx + 1}.</span>
+                    {item.title}
+                  </a>
+                );
+              })}
             </nav>
 
             <div className="pt-3 border-t border-[#D4A24C]/15 text-[11px] text-slate-500 space-y-1">

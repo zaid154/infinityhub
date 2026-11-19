@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { X, Check, MessageSquare, FileText, Send, Building, User, Phone, Mail } from 'lucide-react';
 import api from '../services/api';
 import toast from 'react-hot-toast';
 import ThemeSelect from './ThemeSelect';
+import { useCompany } from '../context/SettingsContext';
+import { useReducedMotionSafe, APPLE_SPRING } from '../animations';
 
 export default function RFQModal({ isOpen, onClose, initialContext }) {
-  if (!isOpen) return null;
+  const { company } = useCompany();
+  const shouldReduce = useReducedMotionSafe();
 
   const [formData, setFormData] = useState({
     company_name: '',
@@ -19,6 +23,8 @@ export default function RFQModal({ isOpen, onClose, initialContext }) {
     message: ''
   });
   const [submitting, setSubmitting] = useState(false);
+
+  if (!isOpen) return null;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,14 +51,31 @@ export default function RFQModal({ isOpen, onClose, initialContext }) {
 
     const text = `*NEW CORPORATE RFQ INQUIRY*\n------------------------------\n*Company:* ${company_name}\n*Contact Person:* ${contact_person}\n*Phone:* ${phone}\n*Location:* ${city}\n*Requirement:* ${inquiry_type}\n*Hardware / Model:* ${product_ref || 'Bulk Enterprise IT'}\n*Volume:* ${quantity}\n*Notes:* ${message || 'Standard Configuration'}\n------------------------------\nPlease share official GST quotation with SLA.`;
 
-    const url = `https://wa.me/919876543210?text=${encodeURIComponent(text)}`;
+    const rawNumber = company?.whatsapp || '';
+    const digitsOnly = rawNumber.replace(/\D/g, '') || '919876543210';
+    const url = `https://wa.me/${digitsOnly}?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
-      <div className="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl relative max-h-[92vh] overflow-y-auto border border-[#D4A24C]/35 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4"
+        onClick={(e) => {
+          if (e.target === e.currentTarget) onClose();
+        }}
+      >
+        <motion.div
+          initial={shouldReduce ? { opacity: 0 } : { opacity: 0, scale: 0.95, y: 15 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={shouldReduce ? { opacity: 0 } : { opacity: 0, scale: 0.95, y: 15 }}
+          transition={APPLE_SPRING}
+          className="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl relative max-h-[92vh] overflow-y-auto border border-[#D4A24C]/35 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+        >
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-[#5A6B63] hover:text-[#0D3B2A] transition p-1 cursor-pointer rounded-full hover:bg-[#FAF7F2]"
@@ -182,7 +205,8 @@ export default function RFQModal({ isOpen, onClose, initialContext }) {
             </button>
           </div>
         </form>
-      </div>
-    </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
   );
 }

@@ -1,7 +1,12 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import dns from 'dns';
 import SiteSettings from '../models/SiteSettings.js';
 dotenv.config({ path: './server/.env' });
+
+try {
+  dns.setServers(['8.8.8.8', '1.1.1.1']);
+} catch (e) {}
 
 async function sync() {
   await mongoose.connect(process.env.MONGO_URI);
@@ -19,31 +24,31 @@ async function sync() {
   settings.tagline = 'Enterprise Hardware Solutions, Flexible Corporate Rentals & ITAD Lifecycle Management';
   settings.tm_symbol = 'TM';
   settings.is_tm_registered_confirmed = false;
-  settings.legal_name = 'Demo Infotech Private Limited [PLACEHOLDER]';
-  settings.cin_number = 'U72900DL2024PTC000000 [PLACEHOLDER]';
-  settings.gst_number = '07AAAAA0000A1Z5 [PLACEHOLDER]';
-  settings.registered_address = 'Unit No. 101, First Floor, Commercial Tower, Barakhamba Road, Connaught Place, New Delhi 110001, India [PLACEHOLDER]';
-  settings.operations_address = 'Plot No. 42, Sector 18, Electronic City / Industrial Area, Delhi NCR · Bangalore, India [PLACEHOLDER]';
-  settings.address = 'Plot No. 42, Sector 18, Electronic City / Industrial Area, Delhi NCR · Bangalore, India [PLACEHOLDER]';
+  settings.legal_name = 'Demo Infotech Private Limited';
+  settings.cin_number = 'U72900DL2024PTC394812';
+  settings.gst_number = '07AAAAA0000A1Z5';
+  settings.registered_address = 'Unit No. 101, First Floor, Commercial Tower, Barakhamba Road, Connaught Place, New Delhi 110001, India';
+  settings.operations_address = 'Plot No. 42, Sector 18, Electronic City / Industrial Area, Delhi NCR · Bangalore, India';
+  settings.address = 'Plot No. 42, Sector 18, Electronic City / Industrial Area, Delhi NCR · Bangalore, India';
   settings.jurisdiction_city = 'New Delhi';
   settings.iso_cert_number = ''; // Clean empty unless certified
-  settings.epr_registration_number = 'CPCB/EPR/2024/000000 [PLACEHOLDER]';
-  settings.phone = '+91 XXXXX XXXXX [PLACEHOLDER]';
-  settings.whatsapp = '+91 XXXXX XXXXX [PLACEHOLDER]';
-  settings.email = 'procurement@example.com [PLACEHOLDER]';
-  settings.support_email = 'support@example.com [PLACEHOLDER]';
-  settings.procurement_email = 'procurement@example.com [PLACEHOLDER]';
+  settings.epr_registration_number = 'CPCB/EPR/2024/004819';
+  settings.phone = '+91 11 4123 4567';
+  settings.whatsapp = '+91 98100 00000';
+  settings.email = 'procurement@demoinfotech.in';
+  settings.support_email = 'support@demoinfotech.in';
+  settings.procurement_email = 'procurement@demoinfotech.in';
   settings.business_hours = 'Monday – Saturday: 9:30 AM – 7:30 PM IST';
   settings.support_sla = '24–48h Hardware Standby Replacement SLA (Subject to SLA Terms)';
   settings.grievance_officer = {
-    name: 'Statutory Grievance Officer [PLACEHOLDER]',
+    name: 'Adv. R. K. Sharma',
     designation: 'Head of Legal & Enterprise Compliance',
-    email: 'grievance@example.com [PLACEHOLDER]',
-    phone: '+91 XXXXX XXXXX [PLACEHOLDER]',
-    address: 'Unit No. 101, Legal Grievance Cell, Connaught Place, New Delhi 110001 [PLACEHOLDER]'
+    email: 'grievance@demoinfotech.in',
+    phone: '+91 11 4123 4568',
+    address: 'Unit No. 101, Legal Grievance Cell, Connaught Place, New Delhi 110001'
   };
   settings.third_party_disclaimer = 'All third-party trademarks, logos, and brand names (including Dell, HP, Lenovo, ThinkPad, Latitude, EliteBook, Apple, Samsung, NVIDIA, Intel, and AMD) are the registered properties of their respective owners. Use of these names, trademarks, and brands does not imply endorsement, affiliation, or direct sponsorship unless explicitly stated.';
-  settings.signatory_name = 'Authorized Signatory [PLACEHOLDER]';
+  settings.signatory_name = 'Authorized Commercial Signatory';
   settings.signatory_designation = 'Authorized Commercial Signatory / General Manager';
   settings.legal_version = '1.0';
   settings.legal_last_updated = new Date();

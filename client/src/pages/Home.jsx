@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 import { Link, useOutletContext } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import {
@@ -30,9 +31,11 @@ import BestSellersSection from '../components/BestSellersSection';
 import CompleteCollectionSection from '../components/CompleteCollectionSection';
 import RentalCalculator from '../components/RentalCalculator';
 import { useCompany } from '../context/SettingsContext';
+import { AnimatedAccordion, AppleReveal, useReducedMotionSafe, APPLE_EASE } from '../animations';
 
 export default function Home() {
   const { company } = useCompany();
+  const shouldReduce = useReducedMotionSafe();
   const brandName = company?.brand_name || 'Demo Infotech';
   const brandShort = company?.brand_name_short || 'Demo';
   const brandTagline = company?.tagline || 'Enterprise Hardware Solutions';
@@ -208,17 +211,32 @@ export default function Home() {
           {/* Left Column: Al-Tooba Style Typography & Responsive CTAs */}
           <div className="lg:col-span-7 space-y-4">
             {/* Majestic Heading - Responsive across mobile, laptop, desktop */}
-            <h1 className="text-[1.85rem] sm:text-4xl md:text-5xl lg:text-[3.25rem] xl:text-[3.65rem] font-normal tracking-tight text-white font-serif leading-[1.14] sm:leading-[1.12] drop-shadow-[0_12px_24px_rgba(0,0,0,0.85)]">
+            <motion.h1
+              initial={{ opacity: 0, y: shouldReduce ? 0 : 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: APPLE_EASE }}
+              className="text-[1.85rem] sm:text-4xl md:text-5xl lg:text-[3.25rem] xl:text-[3.65rem] font-normal tracking-tight text-white font-serif leading-[1.14] sm:leading-[1.12] drop-shadow-[0_12px_24px_rgba(0,0,0,0.85)]"
+            >
               Authentic <span className="text-[#F59E0B] italic font-serif font-extrabold drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">IT Fleets,</span> <br />
               proven <span className="text-[#F59E0B] italic font-serif font-extrabold drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">performance.</span>
-            </h1>
+            </motion.h1>
 
-            <p className="text-xs sm:text-sm text-white/95 leading-relaxed font-sans drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)] font-medium max-w-lg">
+            <motion.p
+              initial={{ opacity: 0, y: shouldReduce ? 0 : 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.12, ease: APPLE_EASE }}
+              className="text-xs sm:text-sm text-white/95 leading-relaxed font-sans drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)] font-medium max-w-lg"
+            >
               Equip your enterprise workforce with certified Grade A+ commercial fleets, workstation graphics, and pivot displays. Available for immediate bulk dispatch or flexible monthly leasing with guaranteed 24-48h replacement SLA.
-            </p>
+            </motion.p>
 
             {/* Action Buttons */}
-            <div className="pt-2 flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-3">
+            <motion.div
+              initial={{ opacity: 0, y: shouldReduce ? 0 : 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.22, ease: APPLE_EASE }}
+              className="pt-2 flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-3"
+            >
               <Link
                 to="/products"
                 className="group relative overflow-hidden rounded-full px-6 sm:px-7 py-3 text-xs font-sans font-extrabold uppercase tracking-[0.12em] sm:tracking-[0.15em] bg-gradient-to-r from-[#eec373] via-[#D4A24C] to-[#eec373] text-[#072117] shadow-[0_8px_25px_rgba(212,162,76,0.45)] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2 text-center"
@@ -237,7 +255,7 @@ export default function Home() {
                 <Calculator className="w-4 h-4 text-[#D4A24C]" />
                 <span>Rental Calculator</span>
               </a>
-            </div>
+            </motion.div>
           </div>
 
           {/* Right Column: Completely unobstructed for full ambient video visibility */}
@@ -574,7 +592,7 @@ export default function Home() {
       </section>
 
       {/* 10. PROCUREMENT FAQ ACCORDION */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-8 space-y-8">
+      <AppleReveal className="max-w-4xl mx-auto px-4 sm:px-8 space-y-8">
         <div className="text-center space-y-2">
           <span className="text-[11px] uppercase tracking-[0.25em] text-[#D4A24C] font-semibold block">
             — TRANSPARENCY & CLARITY
@@ -601,16 +619,16 @@ export default function Home() {
                     }`}
                   />
                 </div>
-                {isExpanded && (
+                <AnimatedAccordion isOpen={isExpanded}>
                   <p className="text-xs text-[#5A6B63] mt-3 leading-relaxed border-t border-[#FAF7F2] pt-3">
                     {faq.a}
                   </p>
-                )}
+                </AnimatedAccordion>
               </div>
             );
           })}
         </div>
-      </section>
+      </AppleReveal>
       </div>
     </div>
   );

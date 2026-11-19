@@ -71,12 +71,16 @@ export const CartProvider = ({ children }) => {
     });
 
     if (clamped) {
-      toast.error(`Direct purchase stock limit reached! Clamped to max ${maxAvailable} units. For larger fleets, submit an Inquire Bulk RFQ.`, {
-        duration: 5000
+      toast.error(`Max stock limit (${maxAvailable} units) reached.`, {
+        id: `buy-limit-${product._id}`,
+        duration: 3000
       });
     } else {
-      const shortTitle = product.title?.length > 36 ? product.title.slice(0, 36) + '...' : product.title;
-      toast.success(`Added ${shortTitle} to Purchase Cart`);
+      const shortTitle = product.title?.length > 28 ? product.title.slice(0, 28) + '...' : product.title;
+      toast.success(`Added ${shortTitle} to Purchase Cart`, {
+        id: `cart-action-${product._id}`,
+        duration: 2500
+      });
     }
     return true;
   };
@@ -85,7 +89,10 @@ export const CartProvider = ({ children }) => {
   const addToRentalCart = (product, quantity = 1, tenure = '6_months') => {
     const maxRental = product.rental_stock !== undefined ? product.rental_stock : 5;
     if (maxRental <= 0) {
-      toast.error(`Sorry, ${product.title} has no units currently available in the active rental fleet.`);
+      toast.error(`Sorry, ${product.title} has no units in active rental fleet.`, {
+        id: `rental-empty-${product._id}`,
+        duration: 3000
+      });
       return false;
     }
 
@@ -112,12 +119,16 @@ export const CartProvider = ({ children }) => {
     });
 
     if (clamped) {
-      toast.error(`Rental fleet limit reached! Clamped to max ${maxRental} units. For larger teams, please request a custom fleet lease quote.`, {
-        duration: 5000
+      toast.error(`Fleet lease limit reached (${maxRental} units max). Request custom RFQ for larger fleet.`, {
+        id: `rental-limit-${product._id}`,
+        duration: 3000
       });
     } else {
-      const shortTitle = product.title?.length > 36 ? product.title.slice(0, 36) + '...' : product.title;
-      toast.success(`Added ${shortTitle} to Rental Fleet Cart`);
+      const shortTitle = product.title?.length > 28 ? product.title.slice(0, 28) + '...' : product.title;
+      toast.success(`Added ${shortTitle} to Rental Fleet`, {
+        id: `cart-action-${product._id}`,
+        duration: 2500
+      });
     }
     return true;
   };

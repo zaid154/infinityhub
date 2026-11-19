@@ -99,12 +99,12 @@ export default function AdminInquiries() {
                   <th className="py-3.5 px-4 font-bold">Location</th>
                   <th className="py-3.5 px-4 font-bold">Status</th>
                   <th className="py-3.5 px-4 font-bold">Date</th>
-                  <th className="py-3.5 px-4 font-bold text-right">Actions</th>
+                  <th className="py-3.5 px-4 font-bold text-right sticky right-0 bg-slate-50 shadow-[-4px_0_8px_-2px_rgba(0,0,0,0.06)]">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {inquiries.map((inq) => (
-                  <tr key={inq._id} className="hover:bg-slate-50 transition">
+                  <tr key={inq._id} className="hover:bg-slate-50 transition group">
                     <td className="py-3.5 px-4">
                       <strong className="text-slate-900 block">{inq.company_name}</strong>
                       <span className="text-[11px] text-slate-500">
@@ -148,7 +148,7 @@ export default function AdminInquiries() {
                       })}
                     </td>
 
-                    <td className="py-3.5 px-4 text-right">
+                    <td className="py-3.5 px-4 text-right sticky right-0 bg-white group-hover:bg-slate-50 transition shadow-[-4px_0_8px_-2px_rgba(0,0,0,0.06)]">
                       <div className="flex items-center justify-end gap-2">
                         <a
                           href={`https://wa.me/${inq.phone.replace(/[^0-9]/g, '')}`}

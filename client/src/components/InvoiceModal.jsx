@@ -433,7 +433,7 @@ export default function InvoiceModal({ order, onClose }) {
               <span className="font-bold text-slate-700 block uppercase font-mono text-[10px]">
                 Terms & Conditions:
               </span>
-              <p>1. Certified enterprise hardware backed by {settings?.support_sla || '24–48h Standby SLA'} (subject to SLA terms).</p>
+              <p>1. Certified enterprise hardware backed by {(settings?.support_sla || '24–48h Standby SLA').replace(/\s*\(subject to sla terms\)/gi, '')} (subject to SLA terms).</p>
               <p>2. Payment due strictly under agreed corporate master service terms.</p>
               <p>3. Input Tax Credit under Section 16(2) of CGST Act subject to portal reflection on GSTR-2B.</p>
               <p>4. All disputes subject to exclusive jurisdiction of courts in {settings?.jurisdiction_city || 'New Delhi'}, India.</p>

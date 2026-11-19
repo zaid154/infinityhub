@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   Phone,
@@ -14,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { APPLE_SPRING } from '../animations';
 import BrandLogo from './BrandLogo';
 
 export default function Navbar({ onOpenRFQ }) {
@@ -26,6 +28,15 @@ export default function Navbar({ onOpenRFQ }) {
 
   const isHome = location.pathname === '/';
   const isSolidNav = !isHome || scrolled;
+
+  const navLinks = [
+    { path: '/', label: 'Home' },
+    { path: '/products', label: 'Products' },
+    { path: '/rental', label: 'Rental' },
+    { path: '/buyback', label: 'Liquidation' },
+    { path: '/about', label: 'About' },
+    { path: '/contact', label: 'Contact Us' }
+  ];
 
   // Scroll detection for seamless transparent-to-frosted glass transition on Home
   useEffect(() => {
@@ -53,24 +64,31 @@ export default function Navbar({ onOpenRFQ }) {
         <nav className={`hidden lg:flex items-center gap-3 xl:gap-6 text-[11px] xl:text-[12px] uppercase font-bold tracking-[0.10em] xl:tracking-[0.15em] transition-colors whitespace-nowrap shrink-0 ${
           isSolidNav ? 'text-[#072117]' : 'text-white'
         }`}>
-          <Link to="/" className={`transition-colors ${isSolidNav ? 'hover:text-[#D4A24C]' : 'hover:text-[#F59E0B] drop-shadow-sm'}`}>
-            Home
-          </Link>
-          <Link to="/products" className={`transition-colors ${isSolidNav ? 'hover:text-[#D4A24C]' : 'hover:text-[#F59E0B] drop-shadow-sm'}`}>
-            Products
-          </Link>
-          <Link to="/rental" className={`transition-colors ${isSolidNav ? 'hover:text-[#D4A24C]' : 'hover:text-[#F59E0B] drop-shadow-sm'}`}>
-            Rental
-          </Link>
-          <Link to="/buyback" className={`transition-colors ${isSolidNav ? 'hover:text-[#D4A24C]' : 'hover:text-[#F59E0B] drop-shadow-sm'}`}>
-            Liquidation
-          </Link>
-          <Link to="/about" className={`transition-colors ${isSolidNav ? 'hover:text-[#D4A24C]' : 'hover:text-[#F59E0B] drop-shadow-sm'}`}>
-            About
-          </Link>
-          <Link to="/contact" className={`transition-colors ${isSolidNav ? 'hover:text-[#D4A24C]' : 'hover:text-[#F59E0B] drop-shadow-sm'}`}>
-            Contact Us
-          </Link>
+          {navLinks.map((link) => {
+            const isActive = location.pathname === link.path;
+            return (
+              <Link
+                key={link.path}
+                to={link.path}
+                className={`relative py-1 transition-colors ${
+                  isActive
+                    ? 'text-[#D4A24C]'
+                    : isSolidNav
+                    ? 'hover:text-[#D4A24C]'
+                    : 'hover:text-[#F59E0B] drop-shadow-sm'
+                }`}
+              >
+                <span>{link.label}</span>
+                {isActive && (
+                  <motion.span
+                    layoutId="navbarActiveUnderline"
+                    className="absolute -bottom-1 left-0 right-0 h-[2px] bg-[#D4A24C] rounded-full"
+                    transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                  />
+                )}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* Right CTA Actions - User, Cart, RFQ Button */}
@@ -148,6 +166,8 @@ export default function Navbar({ onOpenRFQ }) {
           {/* Cart Icon - Al-Tooba Bag Style */}
           <Link
             to="/cart"
+            id="navbar-cart-icon"
+            data-cart-icon="true"
             className={`relative p-2 transition rounded-full shrink-0 ${
               isSolidNav
                 ? 'text-[#072117] hover:text-[#D4A24C] hover:bg-black/5'
@@ -157,9 +177,15 @@ export default function Navbar({ onOpenRFQ }) {
           >
             <ShoppingCart className="w-5 h-5" />
             {cartCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 bg-[#D4A24C] text-[#072117] rounded-full text-[9.5px] font-extrabold flex items-center justify-center shadow-md">
+              <motion.span
+                key={cartCount}
+                initial={{ scale: 0.6 }}
+                animate={{ scale: [1, 1.25, 1] }}
+                transition={APPLE_SPRING}
+                className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 bg-[#D4A24C] text-[#072117] rounded-full text-[9.5px] font-extrabold flex items-center justify-center shadow-md"
+              >
                 {cartCount}
-              </span>
+              </motion.span>
             )}
           </Link>
 
@@ -188,15 +214,22 @@ export default function Navbar({ onOpenRFQ }) {
       </div>
 
       {/* Mobile Drawer Navigation - Al-Tooba Sacred Forest Style */}
-      {mobileMenuOpen && (
-        <div className="lg:hidden bg-[#072117]/95 backdrop-blur-2xl text-white border-b border-[#D4A24C]/30 px-6 pt-6 pb-8 space-y-4 animate-in slide-in-from-top duration-300">
-          <Link
-            to="/"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 font-serif italic text-xl text-white hover:text-[#F59E0B] border-b border-white/10"
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+            className="lg:hidden overflow-hidden bg-[#072117]/95 backdrop-blur-2xl text-white border-b border-[#D4A24C]/30 px-6 pt-6 pb-8 space-y-4"
           >
-            Home
-          </Link>
+            <Link
+              to="/"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block py-2 font-serif italic text-xl text-white hover:text-[#F59E0B] border-b border-white/10"
+            >
+              Home
+            </Link>
           <Link
             to="/products"
             onClick={() => setMobileMenuOpen(false)}
@@ -297,8 +330,9 @@ export default function Navbar({ onOpenRFQ }) {
               </div>
             )}
           </div>
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </header>
   );
 }

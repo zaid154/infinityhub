@@ -303,7 +303,7 @@ export default function AdminRentals() {
                   <th className="py-3 px-4 font-bold">Lease Timeline & Renewal</th>
                   <th className="py-3 px-4 font-bold text-right">Monthly OPEX</th>
                   <th className="py-3 px-4 font-bold text-center">Status</th>
-                  <th className="py-3 px-4 font-bold text-right">Actions</th>
+                  <th className="py-3 px-4 font-bold text-right sticky right-0 bg-[#FAF7F2] shadow-[-4px_0_8px_-2px_rgba(0,0,0,0.06)]">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -415,7 +415,7 @@ export default function AdminRentals() {
                       </td>
 
                       {/* Column 7: Actions */}
-                      <td className="py-3 px-4 text-right">
+                      <td className="py-3 px-4 text-right sticky right-0 bg-white group-hover:bg-[#FAF7F2]/60 transition shadow-[-4px_0_8px_-2px_rgba(0,0,0,0.06)]">
                         <button
                           onClick={() => {
                             setSelectedRental(r);

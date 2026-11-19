@@ -6,7 +6,6 @@ import RFQModal from '../components/RFQModal';
 import CookieConsentBanner from '../components/CookieConsentBanner';
 import ChatbotWidget from '../components/ChatbotWidget';
 import WhatsAppFloat from '../components/WhatsAppFloat';
-
 export default function MainLayout() {
   const [rfqModalOpen, setRfqModalOpen] = useState(false);
   const [rfqContext, setRfqContext] = useState('');

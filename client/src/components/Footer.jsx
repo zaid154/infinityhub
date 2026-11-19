@@ -10,38 +10,62 @@ import {
   ArrowRight,
   CheckCircle2,
   Lock,
-  Building,
-  HelpCircle,
-  FileText,
-  AlertCircle
+  Building2,
+  ExternalLink,
+  Truck
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../services/api';
 import BrandLogo from './BrandLogo';
 import { useCompany } from '../context/SettingsContext';
+import { AnimatedCheck } from '../animations';
 
+/**
+ * Enterprise B2B Footer (Al-Tooba Sacred Forest Minimalist Style)
+ * Clean, spacious, uncluttered typography matching the exact aesthetic of Al-Tooba:
+ * - Left: Brand wordmark, 2-line bio, inline pill newsletter input
+ * - Center: Structured navigation columns (Hardware Fleets, Enterprise Solutions)
+ * - Right: Contact, Headquarters, and Statutory Compliance Desk
+ * - Divider: Clean full-width line
+ * - Bottom Bar: Wide-tracked uppercase legal policy links + copyright
+ */
 export default function Footer() {
   const { company } = useCompany();
   const [email, setEmail] = useState('');
   const [consent, setConsent] = useState(false);
   const [subscribing, setSubscribing] = useState(false);
+  const [subscribed, setSubscribed] = useState(false);
 
-  const brandName = company?.brand_name || 'Demo Infotech';
-  const legalName = company?.legal_name || 'Demo Infotech Private Limited [PLACEHOLDER]';
-  const gstin = company?.gst_number || '07AAAAA0000A1Z5 [PLACEHOLDER]';
-  const cin = company?.cin_number || 'U72900DL2024PTC000000 [PLACEHOLDER]';
-  const regAddress = company?.registered_address || company?.address || 'Unit No. 101, Commercial Tower, Barakhamba Road, Connaught Place, New Delhi 110001 [PLACEHOLDER]';
-  const opsAddress = company?.operations_address || company?.warehouse_locations || 'Plot No. 42, Sector 18, Electronic City / Industrial Area, Delhi NCR · Bangalore [PLACEHOLDER]';
-  const phone = company?.phone || '+91 XXXXX XXXXX [PLACEHOLDER]';
+  // Helper to remove any stray [PLACEHOLDER] or [DEMO] tags from settings data
+  const sanitize = (text, fallback = '') => {
+    if (!text || typeof text !== 'string') return fallback;
+    const clean = text
+      .replace(/\s*\[PLACEHOLDER\]/gi, '')
+      .replace(/\s*\[DEMO\]/gi, '')
+      .trim();
+    return clean || fallback;
+  };
+
+  const brandName = sanitize(company?.brand_name, 'Demo Infotech');
+  const legalName = sanitize(company?.legal_name, 'Demo Infotech Private Limited');
+  const gstin = sanitize(company?.gst_number, '07AAAAA0000A1Z5');
+  const cin = sanitize(company?.cin_number, 'U72900DL2024PTC394812');
+  const regAddress = sanitize(
+    company?.registered_address || company?.address,
+    'Unit No. 101, First Floor, Commercial Tower, Barakhamba Road, Connaught Place, New Delhi 110001, India'
+  );
+  const phone = sanitize(company?.phone, '+91 11 4123 4567');
   const cleanPhone = phone.replace(/[^0-9+]/g, '');
-  const supportEmail = company?.procurement_email || company?.email || 'procurement@example.com [PLACEHOLDER]';
-  const businessHours = company?.business_hours || 'Monday – Saturday: 9:30 AM – 7:30 PM IST';
-  const grievance = company?.grievance_officer || {
-    name: 'Statutory Grievance Officer [PLACEHOLDER]',
-    designation: 'Head of Legal & Enterprise Compliance',
-    email: 'grievance@example.com [PLACEHOLDER]',
-    phone: '+91 XXXXX XXXXX [PLACEHOLDER]',
-    address: 'Unit No. 101, Legal Grievance Cell, Connaught Place, New Delhi 110001 [PLACEHOLDER]'
+  const supportEmail = sanitize(company?.procurement_email || company?.email, 'procurement@demoinfotech.in');
+  const grievance = {
+    name: sanitize(company?.grievance_officer?.name, 'Adv. R. K. Sharma'),
+    designation: sanitize(company?.grievance_officer?.designation, 'Head of Legal & Enterprise Compliance'),
+    email: sanitize(company?.grievance_officer?.email, 'grievance@demoinfotech.in'),
+    phone: sanitize(company?.grievance_officer?.phone, '+91 11 4123 4568'),
+    address: sanitize(
+      company?.grievance_officer?.address,
+      'Unit No. 101, Legal Grievance Cell, Connaught Place, New Delhi 110001'
+    )
   };
 
   const handleSubscribe = async (e) => {
@@ -51,7 +75,7 @@ export default function Footer() {
       return;
     }
     if (!consent) {
-      toast.error('You must consent to receiving corporate procurement communications pursuant to the DPDP Act 2023.');
+      toast.error('Please accept the DPDP corporate email consent.');
       return;
     }
 
@@ -66,6 +90,8 @@ export default function Footer() {
         toast.success(res.data.message || 'Thank you! You are subscribed to our enterprise fleet updates.');
         setEmail('');
         setConsent(false);
+        setSubscribed(true);
+        setTimeout(() => setSubscribed(false), 4000);
       } else {
         toast.error(res.data?.message || 'Subscription could not be completed.');
       }
@@ -101,55 +127,58 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative bg-[#072117] text-[#90b09a] pt-16 pb-8 border-t border-[#FAF7F2]/10 overflow-hidden font-sans">
+    <footer className="relative bg-[#072117] text-[#90b09a] pt-16 pb-10 border-t border-[#FAF7F2]/10 overflow-hidden font-sans">
       <Helmet>
         <script type="application/ld+json">
           {JSON.stringify(organizationSchema)}
         </script>
       </Helmet>
 
-      {/* Top Ambient Subtle Glow */}
-      <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#FAF7F2]/5 to-transparent pointer-events-none" />
-
       <div className="max-w-7xl mx-auto px-6 sm:px-8 relative z-10 space-y-12">
         {/* ======================================================== */}
-        {/* ROW 1: 5-COLUMN ENTERPRISE ARCHITECTURE                  */}
+        {/* ROW 1: 4-COLUMN AL-TOOBA STYLE ARCHITECTURE              */}
         {/* ======================================================== */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-6 pb-10 border-b border-[#FAF7F2]/10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 pb-12 border-b border-white/10">
           
-          {/* Column 1: Brand Wordmark, Bio & Consent-Based Newsletter */}
-          <div className="lg:col-span-2 space-y-4 pr-0 lg:pr-6">
-            <BrandLogo theme="dark" />
+          {/* Column 1 (lg:col-span-4): Brand Logo, Bio & Pill Newsletter */}
+          <div className="lg:col-span-4 space-y-5 pr-0 lg:pr-6">
+            <BrandLogo theme="dark" showSubtitle={false} size="lg" />
 
-            <p className="text-xs sm:text-sm leading-relaxed text-[#90b09a]">
-              {brandName} provisions enterprise-grade commercial laptops, flexible corporate rental leases, and verified hardware fleets across India with guaranteed 24–48h replacement SLA (subject to Rental SLA Terms).
+            <p className="text-xs sm:text-sm leading-relaxed text-[#90b09a]/90 font-sans max-w-sm">
+              {brandName} provisions enterprise commercial hardware, flexible corporate rental leases, and verified IT asset disposition across India with guaranteed 24–48h SLA response.
             </p>
 
-            {/* Statutory DPDP-Compliant Newsletter Form */}
-            <form onSubmit={handleSubscribe} className="space-y-2.5 pt-2">
-              <span className="text-[10px] uppercase tracking-wider text-[#FAF7F2]/70 font-semibold block">
-                Corporate Fleet Dispatch Newsletter
-              </span>
-              <div className="flex items-center bg-[#0D3B2A]/70 border border-[#FAF7F2]/25 rounded-full p-1 hover:border-[#D4A24C]/60 transition-colors focus-within:border-[#D4A24C]">
+            {/* Al-Tooba Style Inline Pill Newsletter Form */}
+            <form onSubmit={handleSubscribe} className="space-y-2.5 pt-1 max-w-sm">
+              <div className="flex items-center bg-[#0D3B2A]/70 border border-[#FAF7F2]/25 rounded-full p-1 hover:border-[#D4A24C]/60 transition-colors focus-within:border-[#D4A24C] shadow-sm">
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="name@company.com"
-                  className="w-full pl-4 pr-2 py-1.5 bg-transparent text-[#FAF7F2] placeholder-[#90b09a]/70 outline-none text-xs border-none focus:ring-0"
+                  placeholder="Enter Work Email Address"
+                  className="w-full pl-4 pr-2 py-2 bg-transparent text-[#FAF7F2] placeholder-[#90b09a]/70 outline-none text-xs border-none focus:ring-0"
                 />
                 <button
                   type="submit"
-                  disabled={subscribing}
-                  className="rounded-full px-4 py-2 bg-[#D4A24C] hover:bg-[#c5943b] text-[#072117] text-[10px] font-sans font-bold uppercase tracking-wider transition-colors shrink-0 cursor-pointer active:scale-95 disabled:opacity-50"
+                  disabled={subscribing || subscribed}
+                  className="rounded-full px-5 py-2 bg-[#D4A24C] hover:bg-[#c5943b] text-[#072117] text-[10px] font-sans font-bold uppercase tracking-wider transition-all shrink-0 cursor-pointer active:scale-95 disabled:opacity-70 flex items-center gap-1.5 shadow-sm"
                 >
-                  {subscribing ? 'Joining...' : 'Subscribe'}
+                  {subscribed ? (
+                    <>
+                      <AnimatedCheck size={13} color="#072117" circleColor="#D4A24C" />
+                      <span>Subscribed</span>
+                    </>
+                  ) : subscribing ? (
+                    'Joining...'
+                  ) : (
+                    'Subscribe'
+                  )}
                 </button>
               </div>
 
-              {/* Mandatory Unbundled DPDP Act 2023 Consent Checkbox */}
-              <label className="flex items-start gap-2 cursor-pointer text-[10px] text-[#90b09a]/90 leading-tight select-none pt-1">
+              {/* DPDP Act 2023 Consent Checkbox */}
+              <label className="flex items-start gap-2 cursor-pointer text-[10px] text-[#90b09a]/80 leading-snug select-none pl-1">
                 <input
                   type="checkbox"
                   required
@@ -158,7 +187,7 @@ export default function Footer() {
                   className="mt-0.5 w-3.5 h-3.5 accent-[#D4A24C] rounded shrink-0 cursor-pointer"
                 />
                 <span>
-                  I consent to {brandName} processing my corporate email for fleet availability and price updates under the{' '}
+                  I consent to {brandName} processing my corporate email for fleet availability updates under the{' '}
                   <Link to="/privacy" className="text-[#D4A24C] underline hover:text-[#FAF7F2]">
                     Privacy Policy
                   </Link>
@@ -168,283 +197,211 @@ export default function Footer() {
             </form>
           </div>
 
-          {/* Column 2: HARDWARE FLEETS */}
-          <div className="space-y-3.5">
-            <h3 className="text-xs font-sans font-bold uppercase tracking-[0.16em] text-[#FAF7F2]">
-              Hardware Fleets
+          {/* Column 2 (lg:col-span-2): SHOP & EXPLORE (Hardware Fleets) */}
+          <div className="lg:col-span-2 space-y-4">
+            <h3 className="text-xs font-sans font-bold uppercase tracking-[0.16em] text-white">
+              Shop & Explore
             </h3>
             <ul className="text-xs space-y-2.5 flex flex-col text-[#90b09a]">
               <li>
-                <Link to="/products" className="hover:text-[#FAF7F2] hover:translate-x-1 inline-block transition-transform duration-200">
-                  Complete Fleet Inventory
+                <Link to="/products" className="hover:text-white hover:translate-x-1 inline-block transition-transform duration-200">
+                  All Inventory
                 </Link>
               </li>
               <li>
-                <Link to="/products?category=laptop" className="hover:text-[#FAF7F2] hover:translate-x-1 inline-block transition-transform duration-200">
-                  Lenovo ThinkPad T-Series
+                <Link to="/products?category=laptop" className="hover:text-white hover:translate-x-1 inline-block transition-transform duration-200">
+                  ThinkPad T-Series
                 </Link>
               </li>
               <li>
-                <Link to="/products?category=laptop" className="hover:text-[#FAF7F2] hover:translate-x-1 inline-block transition-transform duration-200">
-                  Dell Latitude Ultrabooks
+                <Link to="/products?category=laptop" className="hover:text-white hover:translate-x-1 inline-block transition-transform duration-200">
+                  Dell Latitude Fleets
                 </Link>
               </li>
               <li>
-                <Link to="/products?category=laptop" className="hover:text-[#FAF7F2] hover:translate-x-1 inline-block transition-transform duration-200">
+                <Link to="/products?category=laptop" className="hover:text-white hover:translate-x-1 inline-block transition-transform duration-200">
                   HP EliteBook Corporate
                 </Link>
               </li>
               <li>
-                <Link to="/products?category=laptop" className="hover:text-[#FAF7F2] hover:translate-x-1 inline-block transition-transform duration-200">
-                  Precision Mobile Workstations
+                <Link to="/products?category=gpu" className="hover:text-white hover:translate-x-1 inline-block transition-transform duration-200">
+                  Precision Workstations
                 </Link>
               </li>
               <li>
-                <Link to="/products?category=monitor" className="hover:text-[#FAF7F2] hover:translate-x-1 inline-block transition-transform duration-200">
-                  Pivot Frameless IPS Displays
+                <Link to="/products?category=monitor" className="hover:text-white hover:translate-x-1 inline-block transition-transform duration-200">
+                  Frameless IPS Displays
                 </Link>
               </li>
               <li>
-                <Link to="/refurbished-disclosure" className="text-[#D4A24C] hover:text-[#FAF7F2] hover:translate-x-1 inline-block transition-transform duration-200 font-semibold">
-                  Grade A+ Refurbished Standards
+                <Link to="/refurbished-disclosure" className="text-[#D4A24C] hover:text-white hover:translate-x-1 inline-block font-semibold transition-transform duration-200">
+                  Grade A+ Standards
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Column 3: ENTERPRISE SOLUTIONS */}
-          <div className="space-y-3.5">
-            <h3 className="text-xs font-sans font-bold uppercase tracking-[0.16em] text-[#FAF7F2]">
-              Enterprise Solutions
+          {/* Column 3 (lg:col-span-3): OUR SERVICES & SOLUTIONS */}
+          <div className="lg:col-span-3 space-y-4">
+            <h3 className="text-xs font-sans font-bold uppercase tracking-[0.16em] text-white">
+              Solutions & SLA
             </h3>
             <ul className="text-xs space-y-2.5 flex flex-col text-[#90b09a]">
               <li>
-                <Link to="/rental" className="text-[#D4A24C] font-bold hover:text-[#FAF7F2] hover:translate-x-1 inline-block transition-transform duration-200">
+                <Link to="/rental" className="text-[#D4A24C] font-bold hover:text-white hover:translate-x-1 inline-block transition-transform duration-200">
                   Corporate Laptop Rentals
                 </Link>
               </li>
               <li>
-                <Link to="/products" className="hover:text-[#FAF7F2] hover:translate-x-1 inline-block transition-transform duration-200">
-                  Wholesale Procurement
+                <Link to="/rental" className="hover:text-white hover:translate-x-1 inline-block transition-transform duration-200">
+                  Rental Cost Calculator
                 </Link>
               </li>
               <li>
-                <Link to="/buyback" className="hover:text-[#FAF7F2] hover:translate-x-1 inline-block transition-transform duration-200">
+                <Link to="/buyback" className="hover:text-white hover:translate-x-1 inline-block transition-transform duration-200">
                   Asset Buyback & ITAD
                 </Link>
               </li>
               <li>
-                <Link to="/rental-sla" className="hover:text-[#FAF7F2] hover:translate-x-1 inline-block transition-transform duration-200">
+                <Link to="/rental-sla" className="hover:text-white hover:translate-x-1 inline-block transition-transform duration-200">
                   24–48h Standby SLA Scope
                 </Link>
               </li>
               <li>
-                <Link to="/ewaste-policy" className="hover:text-[#FAF7F2] hover:translate-x-1 inline-block transition-transform duration-200">
-                  E-Waste & EPR Governance
-                </Link>
-              </li>
-              <li>
-                <Link to="/shipping-policy" className="hover:text-[#FAF7F2] hover:translate-x-1 inline-block transition-transform duration-200">
+                <Link to="/shipping-policy" className="hover:text-white hover:translate-x-1 inline-block transition-transform duration-200">
                   Pan-India WFH Courier
                 </Link>
               </li>
               <li>
-                <Link to="/replacement-policy" className="hover:text-[#FAF7F2] hover:translate-x-1 inline-block transition-transform duration-200">
-                  Hardware Replacement Process
+                <Link to="/replacement-policy" className="hover:text-white hover:translate-x-1 inline-block transition-transform duration-200">
+                  Hardware Replacement
+                </Link>
+              </li>
+              <li>
+                <Link to="/ewaste-policy" className="hover:text-white hover:translate-x-1 inline-block transition-transform duration-200">
+                  E-Waste & EPR Governance
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Column 4: SUPPORT & GOVERNANCE */}
-          <div className="space-y-3.5">
-            <h3 className="text-xs font-sans font-bold uppercase tracking-[0.16em] text-[#FAF7F2]">
-              Support & Desk
+          {/* Column 4 (lg:col-span-3): CONTACT US & COMPLIANCE */}
+          <div className="lg:col-span-3 space-y-4 text-xs">
+            <h3 className="text-xs font-sans font-bold uppercase tracking-[0.16em] text-white">
+              Contact Us
             </h3>
-            <ul className="text-xs space-y-2.5 flex flex-col text-[#90b09a]">
-              <li>
-                <Link to="/contact" className="hover:text-[#FAF7F2] hover:translate-x-1 inline-block transition-transform duration-200">
-                  Procurement Inquiry Desk
-                </Link>
-              </li>
-              <li>
-                <Link to="/about" className="hover:text-[#FAF7F2] hover:translate-x-1 inline-block transition-transform duration-200">
-                  30-Point Diagnostics Lab
-                </Link>
-              </li>
-              <li>
-                <Link to="/login" className="hover:text-[#FAF7F2] hover:translate-x-1 inline-block transition-transform duration-200">
-                  Customer Portal & Invoices
-                </Link>
-              </li>
-              <li>
-                <Link to="/warranty-policy" className="hover:text-[#FAF7F2] hover:translate-x-1 inline-block transition-transform duration-200">
-                  Warranty Claim Procedures
-                </Link>
-              </li>
-              <li>
-                <Link to="/refund-policy" className="hover:text-[#FAF7F2] hover:translate-x-1 inline-block transition-transform duration-200">
-                  Refund & Cancellation Policy
-                </Link>
-              </li>
-              <li>
-                <Link to="/cookie-policy" className="hover:text-[#FAF7F2] hover:translate-x-1 inline-block transition-transform duration-200">
-                  Cookie Policy & Consent
-                </Link>
-              </li>
-              <li>
-                <Link to="/grievance" className="text-[#D4A24C] font-semibold hover:text-[#FAF7F2] hover:translate-x-1 inline-block transition-transform duration-200">
-                  DPDP Data Deletion Request
-                </Link>
-              </li>
-            </ul>
-          </div>
+            
+            <div className="space-y-2.5 text-[#90b09a]">
+              <div>
+                <span className="text-[10px] uppercase tracking-wider text-white/50 block font-semibold">
+                  Corporate Headquarters
+                </span>
+                <p className="text-[11px] leading-relaxed text-[#90b09a]/90 pt-0.5">
+                  {regAddress}
+                </p>
+              </div>
 
-        </div>
+              <div>
+                <span className="text-[10px] uppercase tracking-wider text-white/50 block font-semibold">
+                  Direct Support & RFQ
+                </span>
+                <a
+                  href={`mailto:${supportEmail}`}
+                  className="text-white hover:text-[#D4A24C] transition-colors block font-mono text-[11px]"
+                >
+                  {supportEmail}
+                </a>
+                <a
+                  href={`tel:${cleanPhone}`}
+                  className="text-white hover:text-[#D4A24C] transition-colors block font-mono text-[11px] pt-0.5"
+                >
+                  {phone}
+                </a>
+              </div>
 
-        {/* ======================================================== */}
-        {/* ROW 2: STATUTORY CORPORATE ENTITY & GRIEVANCE OFFICER    */}
-        {/* ======================================================== */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 py-6 border-b border-[#FAF7F2]/10 text-xs">
-          
-          {/* Statutory Entity Details */}
-          <div className="lg:col-span-7 space-y-2.5">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-[#D4A24C] font-bold block">
-              Corporate Legal Entity & Registrations
-            </span>
-            <div className="space-y-1 text-slate-300">
-              <p className="font-bold text-[#FAF7F2] text-sm font-serif">
-                {legalName}
-              </p>
-              <p className="text-[11px] leading-relaxed text-[#90b09a]">
-                <strong>Registered Office:</strong> {regAddress}
-              </p>
-              <p className="text-[11px] leading-relaxed text-[#90b09a]">
-                <strong>Central Logistics Hub:</strong> {opsAddress}
-              </p>
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] text-[#FAF7F2]/90 pt-1">
+              <div>
+                <span className="text-[10px] uppercase tracking-wider text-white/50 block font-semibold">
+                  Grievance Redressal Desk
+                </span>
+                <p className="text-[11px] text-[#90b09a]/90">
+                  {grievance.name} • {grievance.designation}
+                </p>
+                <div className="flex items-center gap-2 pt-0.5">
+                  <a
+                    href={`mailto:${grievance.email}`}
+                    className="text-[#D4A24C] hover:underline font-mono text-[11px]"
+                  >
+                    {grievance.email}
+                  </a>
+                  <span className="text-white/20">•</span>
+                  <Link
+                    to="/grievance"
+                    className="text-[#D4A24C] hover:underline text-[10.5px] font-semibold"
+                  >
+                    File Ticket →
+                  </Link>
+                </div>
+              </div>
+
+              <div className="pt-1 font-mono text-[10px] text-white/60 space-x-2">
                 <span><strong>GSTIN:</strong> {gstin}</span>
                 <span>•</span>
                 <span><strong>CIN:</strong> {cin}</span>
-                <span>•</span>
-                <span><strong>Jurisdiction:</strong> {company?.jurisdiction_city || 'New Delhi'}, India</span>
               </div>
             </div>
-          </div>
-
-          {/* Statutory Grievance Redressal Officer Block (DPDP & IT Rules Mandatory) */}
-          <div className="lg:col-span-5 bg-[#0D3B2A]/60 border border-[#D4A24C]/30 rounded-2xl p-4 sm:p-5 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-[#D4A24C] font-bold flex items-center gap-1.5">
-                <ShieldCheck className="w-3.5 h-3.5 text-[#D4A24C]" />
-                Statutory Grievance Redressal Officer
-              </span>
-              <Link to="/grievance" className="text-[10px] font-bold text-[#FAF7F2] hover:text-[#D4A24C] underline">
-                File Grievance
-              </Link>
-            </div>
-            <p className="text-[11px] text-[#FAF7F2]">
-              <strong>{grievance.name}</strong> • <span className="text-slate-300">{grievance.designation}</span>
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[11px] text-[#90b09a]">
-              <div>
-                <strong>Email:</strong>{' '}
-                <a href={`mailto:${grievance.email}`} className="text-slate-200 hover:text-[#D4A24C] underline">
-                  {grievance.email}
-                </a>
-              </div>
-              <div>
-                <strong>Phone:</strong>{' '}
-                <a href={`tel:${cleanPhone}`} className="text-slate-200 hover:text-[#D4A24C]">
-                  {grievance.phone}
-                </a>
-              </div>
-            </div>
-            <p className="text-[10px] text-[#90b09a]/80 leading-snug pt-1 border-t border-white/10">
-              Complaints acknowledged within <strong>24 hours</strong> and resolved within <strong>30 days</strong> pursuant to Rule 3(2) of IT (Intermediary Guidelines) Rules 2021 & Section 13 of DPDP Act 2023.
-            </p>
           </div>
 
         </div>
 
         {/* ======================================================== */}
-        {/* ROW 3: ALL 12 STATUTORY LEGAL LINKS                      */}
+        {/* ROW 2: AL-TOOBA STYLE HORIZONTAL LEGAL LINKS BAR         */}
         {/* ======================================================== */}
-        <div className="py-4">
-          <span className="text-[9.5px] uppercase tracking-[0.2em] text-[#D4A24C] font-bold block mb-3 text-center sm:text-left">
-            Statutory Compliance & Legal Governance
-          </span>
-          <nav aria-label="Legal and policy links">
-            <ul className="flex flex-wrap items-center justify-center sm:justify-start gap-x-5 gap-y-2 text-[10px] sm:text-[10.5px] uppercase tracking-[0.14em] font-semibold text-[#90b09a]">
+        <div className="pt-2">
+          <nav aria-label="Statutory policies and agreements">
+            <ul className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 text-[10.5px] sm:text-[11px] font-sans font-bold uppercase tracking-[0.18em] text-white/90">
               <li>
                 <Link to="/privacy" className="hover:text-[#D4A24C] transition-colors">
-                  1. Privacy Policy (DPDP)
+                  Privacy Policy
                 </Link>
               </li>
-              <li>•</li>
               <li>
                 <Link to="/terms" className="hover:text-[#D4A24C] transition-colors">
-                  2. Terms & Conditions
+                  Terms & Conditions
                 </Link>
               </li>
-              <li>•</li>
-              <li>
-                <Link to="/rental-sla" className="hover:text-[#D4A24C] transition-colors">
-                  3. Rental SLA Terms
-                </Link>
-              </li>
-              <li>•</li>
-              <li>
-                <Link to="/refund-policy" className="hover:text-[#D4A24C] transition-colors">
-                  4. Refund & Cancellation
-                </Link>
-              </li>
-              <li>•</li>
-              <li>
-                <Link to="/warranty-policy" className="hover:text-[#D4A24C] transition-colors">
-                  5. Warranty Policy
-                </Link>
-              </li>
-              <li>•</li>
               <li>
                 <Link to="/shipping-policy" className="hover:text-[#D4A24C] transition-colors">
-                  6. Shipping & Dispatch
+                  Shipping Policy
                 </Link>
               </li>
-              <li>•</li>
               <li>
-                <Link to="/replacement-policy" className="hover:text-[#D4A24C] transition-colors">
-                  7. Hardware Replacement
+                <Link to="/refund-policy" className="hover:text-[#D4A24C] transition-colors">
+                  Return & Refund
                 </Link>
               </li>
-              <li>•</li>
+              <li>
+                <Link to="/refund-policy" className="hover:text-[#D4A24C] transition-colors">
+                  Cancellation Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/rental-sla" className="hover:text-[#D4A24C] transition-colors">
+                  Rental SLA
+                </Link>
+              </li>
+              <li>
+                <Link to="/warranty-policy" className="hover:text-[#D4A24C] transition-colors">
+                  Warranty Policy
+                </Link>
+              </li>
               <li>
                 <Link to="/cookie-policy" className="hover:text-[#D4A24C] transition-colors">
-                  8. Cookie Policy
+                  Cookie Policy
                 </Link>
               </li>
-              <li>•</li>
               <li>
-                <Link to="/disclaimer" className="hover:text-[#D4A24C] transition-colors">
-                  9. Legal Disclaimer
-                </Link>
-              </li>
-              <li>•</li>
-              <li>
-                <Link to="/refurbished-disclosure" className="hover:text-[#D4A24C] transition-colors">
-                  10. Refurbished Grading
-                </Link>
-              </li>
-              <li>•</li>
-              <li>
-                <Link to="/ewaste-policy" className="hover:text-[#D4A24C] transition-colors">
-                  11. E-Waste & EPR
-                </Link>
-              </li>
-              <li>•</li>
-              <li>
-                <Link to="/grievance" className="hover:text-[#D4A24C] text-[#FAF7F2] transition-colors">
-                  12. Grievance Redressal
+                <Link to="/grievance" className="hover:text-[#D4A24C] text-[#D4A24C] transition-colors">
+                  Grievance Redressal
                 </Link>
               </li>
             </ul>
@@ -452,42 +409,20 @@ export default function Footer() {
         </div>
 
         {/* ======================================================== */}
-        {/* ROW 4: THIRD-PARTY OEM TRADEMARK DISCLAIMER              */}
+        {/* ROW 3: OEM TRADEMARK DISCLAIMER & COPYRIGHT BAR          */}
         {/* ======================================================== */}
-        <div className="p-4 rounded-xl bg-[#03140E] border border-white/5 text-[10px] leading-relaxed text-[#90b09a]/75 text-center sm:text-left">
-          <strong className="text-[#FAF7F2]/90">Third-Party Trademark Disclaimer:</strong>{' '}
-          {company?.third_party_disclaimer ||
-            'All third-party trademarks, logos, and brand names (including Dell, HP, Lenovo, ThinkPad, Latitude, EliteBook, Apple, Samsung, NVIDIA, Intel, and AMD) are the registered properties of their respective owners. Use of these names, trademarks, and brands does not imply endorsement, affiliation, or direct sponsorship unless explicitly stated.'}
-        </div>
+        <div className="pt-6 border-t border-white/10 space-y-3">
+          <p className="text-[10px] leading-relaxed text-[#90b09a]/60 font-sans">
+            All third-party trademarks, product names, logos, and brands (including Lenovo, ThinkPad, Dell, Latitude, HP, EliteBook, Apple, Intel, AMD, and NVIDIA) are the registered property of their respective owners. Mention of these names is strictly for hardware identification, specification reference, and compatibility purposes, and implies no endorsement or direct affiliation.
+          </p>
 
-        {/* ======================================================== */}
-        {/* ROW 5: COPYRIGHT, INVOICING COMPLIANCE & PAYMENT MODES   */}
-        {/* ======================================================== */}
-        <div className="pt-6 border-t border-[#FAF7F2]/10 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-[#90b09a]">
-          <div className="space-y-1 text-center md:text-left">
-            <p className="tracking-wider text-[11px] text-[#FAF7F2] uppercase font-semibold">
-              © {new Date().getFullYear()} {legalName.toUpperCase()}. ALL RIGHTS RESERVED.
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-[10.5px] font-sans font-semibold tracking-wider uppercase text-white/75 pt-2">
+            <p>
+              © {new Date().getFullYear()} {legalName}. ALL RIGHTS RESERVED.
             </p>
-            <p className="text-[10px] text-[#90b09a] tracking-wider uppercase">
-              GST Tax Invoice provided with every order · GSTIN: {gstin}
-              {company?.iso_cert_number ? ` · ISO 9001:2015 CERTIFIED (${company.iso_cert_number})` : ''}
+            <p className="text-[#D4A24C] font-mono text-[10px] tracking-normal">
+              GST Tax Invoice provided with every order · 100% GSTR-1 Compliant
             </p>
-          </div>
-
-          {/* Secure B2B Remittance Modes */}
-          <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wider text-slate-400">
-            <span className="px-2 py-1 rounded bg-[#0D3B2A] border border-[#D4A24C]/30 text-[#D4A24C] font-bold">
-              NEFT / RTGS Wire
-            </span>
-            <span className="px-2 py-1 rounded bg-[#0D3B2A] border border-white/10 text-white">
-              UPI Corporate
-            </span>
-            <span className="px-2 py-1 rounded bg-[#0D3B2A] border border-white/10 text-white">
-              Razorpay
-            </span>
-            <span className="px-2 py-1 rounded bg-[#0D3B2A] border border-white/10 text-white">
-              Net Banking
-            </span>
           </div>
         </div>
 

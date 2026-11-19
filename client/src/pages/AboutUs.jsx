@@ -9,6 +9,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { useCompany } from '../context/SettingsContext';
+import { AppleReveal } from '../animations';
 
 export default function AboutUs() {
   const { company } = useCompany();
@@ -41,13 +42,17 @@ export default function AboutUs() {
       </div>
 
       {/* Stats Counter */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 p-8 bg-white rounded-3xl border border-[#D4A24C]/25 shadow-sm text-center">
+      <AppleReveal className="grid grid-cols-2 sm:grid-cols-4 gap-6 p-8 bg-white rounded-3xl border border-[#D4A24C]/25 shadow-sm text-center">
         <div>
-          <div className="text-3xl sm:text-4xl font-serif font-bold text-[#0D3B2A]">1,450+</div>
+          <div className="text-3xl sm:text-4xl font-serif font-bold text-[#0D3B2A]">
+            1,450+
+          </div>
           <div className="text-xs text-[#5A6B63] font-semibold mt-1 uppercase tracking-wider">Ready Fleets</div>
         </div>
         <div>
-          <div className="text-3xl sm:text-4xl font-serif font-bold text-[#8A5E12]">120+</div>
+          <div className="text-3xl sm:text-4xl font-serif font-bold text-[#8A5E12]">
+            120+
+          </div>
           <div className="text-xs text-[#5A6B63] font-semibold mt-1 uppercase tracking-wider">Corporate Clients</div>
         </div>
         <div>
@@ -55,10 +60,12 @@ export default function AboutUs() {
           <div className="text-xs text-[#5A6B63] font-semibold mt-1 uppercase tracking-wider">Replacement SLA</div>
         </div>
         <div>
-          <div className="text-3xl sm:text-4xl font-serif font-bold text-[#8A5E12]">100%</div>
+          <div className="text-3xl sm:text-4xl font-serif font-bold text-[#8A5E12]">
+            100%
+          </div>
           <div className="text-xs text-[#5A6B63] font-semibold mt-1 uppercase tracking-wider">GST Tax Invoiced</div>
         </div>
-      </div>
+      </AppleReveal>
 
       {/* Navigation Pills for Policies & Background */}
       <div className="flex flex-wrap items-center justify-center gap-2 border-b border-[#D4A24C]/20 pb-4">

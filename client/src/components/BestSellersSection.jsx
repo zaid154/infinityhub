@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Star, ShoppingBag, Repeat } from 'lucide-react';
+import { Star, ShoppingBag, Repeat, Check } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { AppleSpotlightCard } from '../animations';
 import api from '../services/api';
 import { getSafeImageUrl } from '../utils/imageHelper';
 import toast from 'react-hot-toast';
 
 export default function BestSellersSection({ onOpenRFQ }) {
-  const { addToCart, addToRentalCart } = useCart();
+  const { addToCart, addToRentalCart, buyCart, rentalCart } = useCart();
   const [bestSellers, setBestSellers] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -39,7 +40,7 @@ export default function BestSellersSection({ onOpenRFQ }) {
     fetchBestSellers();
   }, []);
 
-  const handleAction = (item) => {
+  const handleAction = (e, item) => {
     const inStock = (item.sale_stock || item.stock_quantity || 0) > 0 || (item.rental_stock || 0) > 0;
     if (!inStock) {
       toast.error(`${item.title} is currently fully booked. Requesting priority dispatch!`);
@@ -49,10 +50,8 @@ export default function BestSellersSection({ onOpenRFQ }) {
 
     if (item.available_for === 'rent') {
       addToRentalCart(item, 1, '6_months');
-      toast.success(`${item.title} added to Rental Cart!`);
     } else {
       addToCart(item, 1);
-      toast.success(`${item.title} added to Purchase Cart!`);
     }
   };
 
@@ -93,10 +92,14 @@ export default function BestSellersSection({ onOpenRFQ }) {
               ? `₹${(item.rental_price_monthly || 1350).toLocaleString('en-IN')}`
               : `₹${(item.sale_price || 0).toLocaleString('en-IN')}`;
 
+            const inCartQty = isRental
+              ? rentalCart.find((c) => c.product._id === item._id)?.quantity || 0
+              : buyCart.find((c) => c.product._id === item._id)?.quantity || 0;
+
             return (
-              <div
+              <AppleSpotlightCard
                 key={item._id}
-                className="group bg-[#FAF7F2] rounded-[16px] sm:rounded-[20px] p-2.5 sm:p-3 flex flex-col justify-between h-full border border-[#D4A24C]/15 hover:border-[#D4A24C]/40 shadow-[0_8px_30px_rgba(13,59,42,0.03)] hover:shadow-[0_20px_40px_rgba(13,59,42,0.1)] transition-all duration-500 relative overflow-hidden min-w-[240px] sm:min-w-[260px] lg:min-w-0 snap-center"
+                className="bg-[#FAF7F2] rounded-[16px] sm:rounded-[20px] p-2.5 sm:p-3 flex flex-col justify-between h-full border border-[#D4A24C]/15 hover:border-[#D4A24C]/40 shadow-[0_8px_30px_rgba(13,59,42,0.03)] hover:shadow-[0_20px_40px_rgba(13,59,42,0.1)] relative min-w-[240px] sm:min-w-[260px] lg:min-w-0 snap-center"
               >
                 <div>
                   {/* White Product Image Stage Box */}
@@ -104,6 +107,12 @@ export default function BestSellersSection({ onOpenRFQ }) {
                     to={`/products/${item.slug}`}
                     className="relative w-full shrink-0 aspect-[1/1] rounded-[12px] sm:rounded-[14px] overflow-hidden bg-white mb-2 md:mb-3 z-10 shadow-inner border border-gray-100 group/img flex items-center justify-center p-3 block"
                   >
+                    {inCartQty > 0 && (
+                      <span className="absolute top-2 left-2 px-2 py-0.5 rounded text-[8.5px] font-mono font-bold tracking-wider uppercase bg-[#0D3B2A] text-[#D4A24C] border border-[#D4A24C]/60 shadow-md z-20 flex items-center gap-1">
+                        <Check className="w-2.5 h-2.5 text-[#D4A24C]" />
+                        In Cart ({inCartQty})
+                      </span>
+                    )}
                     <img
                       src={getSafeImageUrl(item)}
                       alt={item.title}
@@ -151,16 +160,26 @@ export default function BestSellersSection({ onOpenRFQ }) {
                     </span>
                   </div>
 
-                  <button
-                    onClick={() => handleAction(item)}
-                    className="px-3.5 py-2 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-[11px] font-bold uppercase tracking-wider transition shadow-sm flex items-center gap-1.5 cursor-pointer active:scale-95"
-                    title={isRental ? 'Rent Fleet' : 'Add to Cart'}
-                  >
-                    {isRental ? <Repeat className="w-3.5 h-3.5 text-[#D4A24C]" /> : <ShoppingBag className="w-3.5 h-3.5 text-[#D4A24C]" />}
-                    <span>{isRental ? 'Rent' : 'Buy'}</span>
-                  </button>
+                  {inCartQty > 0 ? (
+                    <Link
+                      to="/cart"
+                      className="px-3 py-1.5 rounded-full bg-[#0D3B2A] text-white text-[11px] font-bold uppercase tracking-wider transition shadow-sm flex items-center gap-1.5 border border-[#D4A24C]/50 hover:bg-[#153423] cursor-pointer"
+                    >
+                      <Check className="w-3.5 h-3.5 text-[#D4A24C]" />
+                      <span>In Cart ({inCartQty})</span>
+                    </Link>
+                  ) : (
+                    <button
+                      onClick={(e) => handleAction(e, item)}
+                      className="px-3.5 py-2 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-[11px] font-bold uppercase tracking-wider transition shadow-sm flex items-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
+                      title={isRental ? 'Rent Fleet' : 'Add to Cart'}
+                    >
+                      {isRental ? <Repeat className="w-3.5 h-3.5 text-[#D4A24C]" /> : <ShoppingBag className="w-3.5 h-3.5 text-[#D4A24C]" />}
+                      <span>{isRental ? 'Rent' : 'Buy'}</span>
+                    </button>
+                  )}
                 </div>
-              </div>
+              </AppleSpotlightCard>
             );
           })
         )}

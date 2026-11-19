@@ -320,7 +320,7 @@ export const revertSettings = async (req, res, next) => {
 // Delivery Zones
 export const getDeliveryZones = async (req, res, next) => {
   try {
-    const zones = await DeliveryZone.find().sort({ state: 1, city: 1 });
+    const zones = await DeliveryZone.find({ is_active: true }).sort({ delivery_charge: 1 });
     res.status(200).json({ success: true, count: zones.length, zones });
   } catch (error) {
     next(error);
@@ -364,9 +364,23 @@ export const checkPincodeDelivery = async (req, res, next) => {
   }
 };
 
+const sanitizeZoneBody = (body) => {
+  const data = { ...body };
+  if (typeof data.cities === 'string') {
+    data.cities = data.cities.split(',').map((c) => c.trim()).filter(Boolean);
+  }
+  if (typeof data.states === 'string') {
+    data.states = data.states.split(',').map((s) => s.trim()).filter(Boolean);
+  }
+  if (typeof data.pincode_prefixes === 'string') {
+    data.pincode_prefixes = data.pincode_prefixes.split(',').map((p) => p.trim()).filter(Boolean);
+  }
+  return data;
+};
+
 export const addDeliveryZone = async (req, res, next) => {
   try {
-    const zone = await DeliveryZone.create(req.body);
+    const zone = await DeliveryZone.create(sanitizeZoneBody(req.body));
     res.status(201).json({ success: true, zone });
   } catch (error) {
     next(error);
@@ -375,7 +389,7 @@ export const addDeliveryZone = async (req, res, next) => {
 
 export const updateDeliveryZone = async (req, res, next) => {
   try {
-    const zone = await DeliveryZone.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const zone = await DeliveryZone.findByIdAndUpdate(req.params.id, sanitizeZoneBody(req.body), { new: true, runValidators: true });
     if (!zone) {
       return res.status(404).json({ success: false, message: 'Delivery zone not found' });
     }

@@ -133,12 +133,12 @@ export default function AdminProducts() {
                   <th className="py-3.5 px-4 font-bold min-w-[130px] whitespace-nowrap">Sale / Rent Price</th>
                   <th className="py-3.5 px-4 font-bold min-w-[110px] whitespace-nowrap">Stock</th>
                   <th className="py-3.5 px-4 font-bold min-w-[65px] whitespace-nowrap">GST</th>
-                  <th className="py-3.5 px-4 font-bold min-w-[100px] text-right whitespace-nowrap">Actions</th>
+                  <th className="py-3.5 px-4 font-bold min-w-[100px] text-right whitespace-nowrap sticky right-0 bg-slate-50 shadow-[-4px_0_8px_-2px_rgba(0,0,0,0.06)]">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {products.map((p) => (
-                  <tr key={p._id} className="hover:bg-slate-50 transition">
+                  <tr key={p._id} className="hover:bg-slate-50 transition group">
                     <td className="py-3.5 px-4">
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded-lg bg-slate-100 p-1 flex items-center justify-center shrink-0 border border-slate-200">
@@ -199,7 +199,7 @@ export default function AdminProducts() {
 
                     <td className="py-3.5 px-4 font-mono font-semibold text-slate-600 whitespace-nowrap">{p.gst_rate}%</td>
 
-                    <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                    <td className="py-3.5 px-4 text-right whitespace-nowrap sticky right-0 bg-white group-hover:bg-slate-50 transition shadow-[-4px_0_8px_-2px_rgba(0,0,0,0.06)]">
                       <div className="flex items-center justify-end gap-2">
                         <Link
                           to={`/products/${p.slug}`}
