@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { Lock, ArrowRight } from 'lucide-react';
 import api from '../services/api';
 import toast from 'react-hot-toast';
 import BrandLogo from '../components/BrandLogo';
+import { useCompany } from '../context/SettingsContext';
 
 export default function ResetPassword() {
   const { token } = useParams();
   const navigate = useNavigate();
+  const { company } = useCompany();
+  const brandName = company?.brand_name || 'Demo Infotech';
 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -23,7 +27,7 @@ export default function ResetPassword() {
     setSubmitting(true);
     try {
       const res = await api.post(`/auth/reset-password/${token}`, { password });
-      if (res.data.success) {
+      if (res.data?.success) {
         toast.success('Password updated successfully! Please sign in.');
         navigate('/login');
       }
@@ -36,6 +40,10 @@ export default function ResetPassword() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
+      <Helmet>
+        <title>Reset Password | {brandName}</title>
+      </Helmet>
+
       <div className="bg-white p-8 sm:p-10 rounded-3xl border border-[#D4A24C]/25 shadow-xl max-w-md w-full space-y-6">
         <div className="text-center space-y-3">
           <div className="flex justify-center mb-1">
@@ -45,7 +53,7 @@ export default function ResetPassword() {
             Create New Password
           </h1>
           <p className="text-xs text-[#5A6B63]">
-            Set a new secure password for your Nova Infotech corporate account.
+            Set a new secure password for your {brandName} corporate account.
           </p>
         </div>
 
@@ -58,10 +66,10 @@ export default function ResetPassword() {
                 type="password"
                 required
                 minLength={6}
-                placeholder="••••••••"
+                placeholder="At least 6 characters"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] transition"
+                className="w-full pl-9 pr-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] transition"
               />
             </div>
           </div>
@@ -74,10 +82,10 @@ export default function ResetPassword() {
                 type="password"
                 required
                 minLength={6}
-                placeholder="••••••••"
+                placeholder="Re-enter new password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] transition"
+                className="w-full pl-9 pr-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] transition"
               />
             </div>
           </div>
@@ -85,12 +93,18 @@ export default function ResetPassword() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full py-3 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs uppercase tracking-wider transition shadow-lg flex items-center justify-center gap-2 border border-[#D4A24C]/40"
+            className="w-full py-3 rounded-xl bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg transition active:scale-98 disabled:opacity-50 cursor-pointer border border-[#D4A24C]/40"
           >
-            <span>{submitting ? 'Updating...' : 'Set New Password'}</span>
-            <ArrowRight className="w-4 h-4 text-[#D4A24C]" />
+            <span>{submitting ? 'Updating...' : 'Save New Password'}</span>
+            <ArrowRight className="w-3.5 h-3.5 text-[#D4A24C]" />
           </button>
         </form>
+
+        <div className="pt-4 border-t border-slate-100 text-center text-xs text-[#5A6B63]">
+          <Link to="/login" className="text-[#8A5E12] font-bold hover:underline">
+            Back to Sign In
+          </Link>
+        </div>
       </div>
     </div>
   );

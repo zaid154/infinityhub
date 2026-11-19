@@ -15,7 +15,7 @@ const transporter = nodemailer.createTransport({
 export const sendTransactionalEmail = async ({ to, subject, html, text }) => {
   try {
     const info = await transporter.sendMail({
-      from: process.env.SMTP_FROM || `TechNova IT Solutions <${process.env.SMTP_USER}>`,
+      from: process.env.SMTP_FROM || `Corporate IT Desk <${process.env.SMTP_USER}>`,
       to,
       subject,
       text: text || '',

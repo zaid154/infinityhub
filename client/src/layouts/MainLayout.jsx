@@ -3,6 +3,9 @@ import { Outlet, useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import RFQModal from '../components/RFQModal';
+import CookieConsentBanner from '../components/CookieConsentBanner';
+import ChatbotWidget from '../components/ChatbotWidget';
+import WhatsAppFloat from '../components/WhatsAppFloat';
 
 export default function MainLayout() {
   const [rfqModalOpen, setRfqModalOpen] = useState(false);
@@ -30,6 +33,10 @@ export default function MainLayout() {
         onClose={() => setRfqModalOpen(false)}
         initialContext={rfqContext}
       />
+
+      <CookieConsentBanner />
+      <ChatbotWidget />
+      <WhatsAppFloat />
     </div>
   );
 }

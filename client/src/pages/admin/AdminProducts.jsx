@@ -5,6 +5,16 @@ import api from '../../services/api';
 import toast from 'react-hot-toast';
 import ThemeSelect from '../../components/ThemeSelect';
 
+const formatCondition = (cond) => {
+  if (!cond) return 'Grade A+';
+  if (cond === 'grade_a_plus') return 'Grade A+';
+  if (cond === 'grade_a') return 'Grade A';
+  if (cond === 'grade_b') return 'Grade B';
+  if (cond === 'brand_new') return 'Brand New';
+  if (cond === 'open_box') return 'Open Box';
+  return cond.replace(/_/g, ' ');
+};
+
 export default function AdminProducts() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -114,16 +124,16 @@ export default function AdminProducts() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-xs">
+            <table className="w-full min-w-[860px] text-left border-collapse text-xs">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 font-mono uppercase tracking-wider text-[10px]">
-                  <th className="py-3.5 px-4 font-bold">Item</th>
-                  <th className="py-3.5 px-4 font-bold">Category</th>
-                  <th className="py-3.5 px-4 font-bold">Condition</th>
-                  <th className="py-3.5 px-4 font-bold">Sale / Rent Price</th>
-                  <th className="py-3.5 px-4 font-bold">Stock</th>
-                  <th className="py-3.5 px-4 font-bold">GST</th>
-                  <th className="py-3.5 px-4 font-bold text-right">Actions</th>
+                  <th className="py-3.5 px-4 font-bold min-w-[260px]">Item</th>
+                  <th className="py-3.5 px-4 font-bold min-w-[90px] whitespace-nowrap">Category</th>
+                  <th className="py-3.5 px-4 font-bold min-w-[110px] whitespace-nowrap">Condition</th>
+                  <th className="py-3.5 px-4 font-bold min-w-[130px] whitespace-nowrap">Sale / Rent Price</th>
+                  <th className="py-3.5 px-4 font-bold min-w-[110px] whitespace-nowrap">Stock</th>
+                  <th className="py-3.5 px-4 font-bold min-w-[65px] whitespace-nowrap">GST</th>
+                  <th className="py-3.5 px-4 font-bold min-w-[100px] text-right whitespace-nowrap">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -145,45 +155,51 @@ export default function AdminProducts() {
                       </div>
                     </td>
 
-                    <td className="py-3.5 px-4 capitalize font-semibold text-slate-700">{p.category}</td>
+                    <td className="py-3.5 px-4 capitalize font-semibold text-slate-700 whitespace-nowrap">{p.category}</td>
 
-                    <td className="py-3.5 px-4">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                    <td className="py-3.5 px-4 whitespace-nowrap">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10.5px] font-bold uppercase tracking-wider whitespace-nowrap shrink-0 ${
                         p.condition === 'brand_new'
                           ? 'bg-amber-100 text-amber-900 border border-amber-300'
+                          : p.condition === 'grade_a_plus' || p.condition === 'grade_a'
+                          ? 'bg-emerald-100 text-emerald-900 border border-emerald-300'
                           : p.condition === 'open_box'
-                          ? 'bg-blue-100 text-blue-900'
-                          : 'bg-slate-100 text-slate-700'
+                          ? 'bg-blue-100 text-blue-900 border border-blue-200'
+                          : 'bg-slate-100 text-slate-700 border border-slate-200'
                       }`}>
-                        {p.condition.replace(/_/g, ' ')}
+                        {formatCondition(p.condition)}
                       </span>
                     </td>
 
-                    <td className="py-3.5 px-4 font-mono">
+                    <td className="py-3.5 px-4 font-mono whitespace-nowrap">
                       {p.available_for !== 'rent' && (
-                        <span className="font-bold text-slate-900 block">₹{p.sale_price.toLocaleString('en-IN')}</span>
+                        <span className="font-bold text-slate-900 block whitespace-nowrap">₹{Number(p.sale_price || 0).toLocaleString('en-IN')}</span>
                       )}
                       {p.available_for !== 'sale' && p.rental_price_monthly > 0 && (
-                        <span className="text-[10px] text-[#0D3B2A] font-semibold block">Rent: ₹{p.rental_price_monthly}/mo</span>
+                        <span className="text-[10px] text-[#0D3B2A] font-semibold block whitespace-nowrap">Rent: ₹{Number(p.rental_price_monthly || 0).toLocaleString('en-IN')}/mo</span>
                       )}
                     </td>
 
-                    <td className="py-3.5 px-4 font-mono text-[11px]">
+                    <td className="py-3.5 px-4 font-mono text-[11px] whitespace-nowrap">
                       {p.available_for === 'both' ? (
-                        <div>
-                          <span className="text-slate-800 font-bold block">Sale: {p.sale_stock !== undefined ? p.sale_stock : p.stock_quantity}</span>
-                          <span className="text-[#8A5E12] font-semibold block">Fleet: {p.rental_stock || 0}</span>
+                        <div className="space-y-0.5 whitespace-nowrap">
+                          <span className="text-slate-800 font-bold block whitespace-nowrap">Sale: {p.sale_stock !== undefined ? p.sale_stock : p.stock_quantity}</span>
+                          <span className="text-[#8A5E12] font-semibold block whitespace-nowrap">Fleet: {p.rental_stock || 0}</span>
                         </div>
                       ) : p.available_for === 'rent' ? (
-                        <span className="text-[#8A5E12] font-bold">Fleet: {p.rental_stock || 0}</span>
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-amber-50 text-[#8A5E12] border border-[#D4A24C]/30 font-bold whitespace-nowrap">
+                          Fleet: {p.rental_stock || 0}
+                        </span>
                       ) : (
-                        <span className="text-slate-800 font-bold">Sale: {p.sale_stock !== undefined ? p.sale_stock : p.stock_quantity}</span>
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-800 border border-slate-200 font-bold whitespace-nowrap">
+                          Sale: {p.sale_stock !== undefined ? p.sale_stock : p.stock_quantity}
+                        </span>
                       )}
                     </td>
 
-                    <td className="py-3.5 px-4 font-mono font-semibold text-slate-600">{p.gst_rate}%</td>
+                    <td className="py-3.5 px-4 font-mono font-semibold text-slate-600 whitespace-nowrap">{p.gst_rate}%</td>
 
-                    <td className="py-3.5 px-4 text-right">
+                    <td className="py-3.5 px-4 text-right whitespace-nowrap">
                       <div className="flex items-center justify-end gap-2">
                         <Link
                           to={`/products/${p.slug}`}

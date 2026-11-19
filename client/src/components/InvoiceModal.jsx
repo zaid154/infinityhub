@@ -143,7 +143,7 @@ export default function InvoiceModal({ order, onClose }) {
                 </div>
                 <div>
                   <h1 className="text-base font-serif font-extrabold text-[#0D3B2A] tracking-tight leading-none">
-                    {settings?.company_name?.toUpperCase() || 'NOVA INFOTECH SOLUTIONS PVT. LTD.'}
+                    {settings?.legal_name?.toUpperCase() || settings?.company_name?.toUpperCase() || 'DEMO INFOTECH'}
                   </h1>
                   <span className="text-[10px] text-[#8A5E12] font-semibold tracking-wide uppercase">
                     {settings?.tagline || 'Enterprise IT Infrastructure & Refurbished Fleets'}
@@ -152,13 +152,13 @@ export default function InvoiceModal({ order, onClose }) {
               </div>
 
               <p className="text-[11px] text-slate-600 leading-snug">
-                <strong>Registered Facility:</strong> {settings?.address || 'Plot No. 42, Sector 18, Electronic City Phase 1, Bangalore · Okhla, Delhi NCR, India'}
+                <strong>Registered Facility:</strong> {settings?.registered_address || settings?.address || 'Corporate Headquarters [PLACEHOLDER]'}
               </p>
               <p className="text-[11px] font-mono text-slate-700 pt-0.5">
-                <strong>GSTIN:</strong> {settings?.gst_number || '07AAACN8412K1Z9'} • <strong>PAN:</strong> {(settings?.gst_number || '07AAACN8412K1Z9').slice(2, 12)} • <strong>State:</strong> Delhi (07)
+                <strong>GSTIN:</strong> {settings?.gst_number || '07AAAAA0000A1Z5 [PLACEHOLDER]'} • <strong>State:</strong> {settings?.jurisdiction_city || 'Delhi NCR'}
               </p>
               <p className="text-[11px] text-slate-600">
-                <strong>Email:</strong> {settings?.email || 'billing@novainfotech.in'} • <strong>Desk:</strong> {settings?.phone || '+91 98765 43210'}
+                <strong>Email:</strong> {settings?.email || 'procurement@example.com [PLACEHOLDER]'} • <strong>Desk:</strong> {settings?.phone || '+91 XXXXX XXXXX [PLACEHOLDER]'}
               </p>
             </div>
 
@@ -359,27 +359,27 @@ export default function InvoiceModal({ order, onClose }) {
                 <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-[11px] font-mono pt-1 text-slate-700">
                   <div>
                     <span className="text-slate-500 block text-[9.5px]">Beneficiary Name:</span>
-                    <strong>{settings?.bank_details?.account_name || settings?.company_name || 'Nova Infotech Solutions Pvt Ltd'}</strong>
+                    <strong>{settings?.bank_details?.account_name || settings?.legal_name || settings?.company_name || 'Demo Infotech Private Limited [PLACEHOLDER]'}</strong>
                   </div>
                   <div>
                     <span className="text-slate-500 block text-[9.5px]">Bank Name:</span>
-                    <strong>{settings?.bank_details?.bank_name || 'HDFC Bank Ltd.'}</strong>
+                    <strong>{settings?.bank_details?.bank_name || 'Bank Name [PLACEHOLDER]'}</strong>
                   </div>
                   <div>
                     <span className="text-slate-500 block text-[9.5px]">Account Number:</span>
-                    <strong className="text-[#0D3B2A]">{settings?.bank_details?.account_number || '50200084129031'}</strong> (Current)
+                    <strong className="text-[#0D3B2A]">{settings?.bank_details?.account_number || '00000000000000 [PLACEHOLDER]'}</strong> (Current)
                   </div>
                   <div>
                     <span className="text-slate-500 block text-[9.5px]">IFSC Code:</span>
-                    <strong className="text-[#0D3B2A]">{settings?.bank_details?.ifsc_code || 'HDFC0001234'}</strong>
+                    <strong className="text-[#0D3B2A]">{settings?.bank_details?.ifsc_code || 'BANK0000000 [PLACEHOLDER]'}</strong>
                   </div>
                   <div>
                     <span className="text-slate-500 block text-[9.5px]">Branch:</span>
-                    <span>{settings?.bank_details?.branch || 'Okhla Industrial Area, New Delhi'}</span>
+                    <span>{settings?.bank_details?.branch || 'Corporate Branch [PLACEHOLDER]'}</span>
                   </div>
                   <div>
                     <span className="text-slate-500 block text-[9.5px]">UPI ID:</span>
-                    <span>{settings?.bank_details?.upi_id || 'novainfotech@hdfcbank'}</span>
+                    <span>{settings?.bank_details?.upi_id || 'demoinfotech@bank'}</span>
                   </div>
                 </div>
               </div>
@@ -421,7 +421,7 @@ export default function InvoiceModal({ order, onClose }) {
 
               <div className="pt-2 border-t border-slate-200 flex items-center gap-1.5 text-[10px] text-emerald-800">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                <span>100% GSTR-2B Input Tax Credit Verified</span>
+                <span>GST Tax Invoice provided with every order</span>
               </div>
             </div>
           </div>
@@ -433,16 +433,16 @@ export default function InvoiceModal({ order, onClose }) {
               <span className="font-bold text-slate-700 block uppercase font-mono text-[10px]">
                 Terms & Conditions:
               </span>
-              <p>1. Certified hardware backed by standard 24–48h Standby SLA and 30-point diagnostics protocol.</p>
+              <p>1. Certified enterprise hardware backed by {settings?.support_sla || '24–48h Standby SLA'} (subject to SLA terms).</p>
               <p>2. Payment due strictly under agreed corporate master service terms.</p>
               <p>3. Input Tax Credit under Section 16(2) of CGST Act subject to portal reflection on GSTR-2B.</p>
-              <p>4. All disputes subject to jurisdiction of courts in Delhi NCR / Bengaluru.</p>
+              <p>4. All disputes subject to exclusive jurisdiction of courts in {settings?.jurisdiction_city || 'New Delhi'}, India.</p>
             </div>
 
             {/* Official Stamp & Authorized Signatory */}
             <div className="border border-slate-300 rounded-xl p-4 flex flex-col justify-between text-right bg-white relative overflow-hidden">
               <span className="text-[10px] font-bold text-slate-700 block">
-                For {settings?.company_name?.toUpperCase() || 'NOVA INFOTECH SOLUTIONS PVT. LTD.'}
+                For {settings?.legal_name?.toUpperCase() || settings?.company_name?.toUpperCase() || 'DEMO INFOTECH'}
               </span>
 
               {/* Digital Seal & Manager Signature Block */}
@@ -470,14 +470,14 @@ export default function InvoiceModal({ order, onClose }) {
                   />
                 ) : (
                   <div className="font-serif italic font-bold text-base text-[#0D3B2A] tracking-wider pr-1">
-                    {settings?.signatory_name || 'Mohd Zaid'}
+                    {settings?.signatory_name || 'Authorized Signatory [PLACEHOLDER]'}
                   </div>
                 )}
               </div>
 
               <div className="border-t border-slate-200 pt-1">
                 <span className="text-[10.5px] font-bold text-slate-800 block">
-                  {settings?.signatory_name || 'Mohd Zaid'}
+                  {settings?.signatory_name || 'Authorized Signatory [PLACEHOLDER]'}
                 </span>
                 <span className="text-[9px] text-[#8A5E12] block font-semibold">
                   {settings?.signatory_designation || 'Authorized Signatory / Commercial Manager'}

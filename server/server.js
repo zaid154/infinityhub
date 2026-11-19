@@ -18,6 +18,8 @@ import uploadRoutes from './routes/upload.routes.js';
 import settingsRoutes from './routes/settings.routes.js';
 import adminRoutes from './routes/admin.routes.js';
 import aiRoutes from './routes/ai.routes.js';
+import grievanceRoutes from './routes/grievance.routes.js';
+import newsletterRoutes from './routes/newsletter.routes.js';
 
 // Load environment variables
 dotenv.config();
@@ -58,7 +60,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     status: 'online',
-    service: 'TechNova B2B IT Hardware API',
+    service: 'B2B Enterprise IT Hardware API',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development'
   });
@@ -75,8 +77,11 @@ app.use('/api/rentals', rentalRoutes);
 app.use('/api/buyback', buybackRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/admin/settings', settingsRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/grievance', grievanceRoutes);
+app.use('/api/newsletter', newsletterRoutes);
 
 // 404 Route Handler
 app.use('*', (req, res) => {
@@ -92,5 +97,5 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`[TechNova Server] 🚀 Running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
+  console.log(`[Enterprise Server] 🚀 Running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
 });

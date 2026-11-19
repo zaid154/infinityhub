@@ -1,5 +1,5 @@
 /**
- * Universal Image Helper for Nova Infotech
+ * Universal Image Helper for Enterprise Hardware Platform
  * Authoritative Single Source of Truth: MongoDB Database & Cloudinary CDN
  */
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useOutletContext } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import {
   Laptop,
   Monitor,
@@ -28,8 +29,13 @@ import EnterpriseCategoryShowcase from '../components/EnterpriseCategoryShowcase
 import BestSellersSection from '../components/BestSellersSection';
 import CompleteCollectionSection from '../components/CompleteCollectionSection';
 import RentalCalculator from '../components/RentalCalculator';
+import { useCompany } from '../context/SettingsContext';
 
 export default function Home() {
+  const { company } = useCompany();
+  const brandName = company?.brand_name || 'Demo Infotech';
+  const brandShort = company?.brand_name_short || 'Demo';
+  const brandTagline = company?.tagline || 'Enterprise Hardware Solutions';
   const { openRFQ } = useOutletContext();
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
@@ -170,6 +176,13 @@ export default function Home() {
 
   return (
     <div className="bg-[#FAF7F2] text-[#111827]">
+      <Helmet>
+        <title>{brandName} | {brandTagline}</title>
+        <meta
+          name="description"
+          content={`${brandName} - Corporate IT hardware partner in India. Grade A+ enterprise refurbished laptops, flexible rental leases, and asset liquidation with 24-48h standby replacement SLA.`}
+        />
+      </Helmet>
       {/* 1. HERO SECTION - ULTRA-RESPONSIVE FULL VIEWPORT LAYOUT */}
       <section className="relative w-full min-h-[100svh] sm:h-screen sm:min-h-[640px] flex flex-col justify-center overflow-hidden bg-[#072117] text-white pt-24 pb-16 sm:py-0 px-5 sm:px-8 border-b border-[#D4A24C]/30">
         {/* Ambient Video Background - Dedicated Enterprise Corporate Suite */}
@@ -240,11 +253,11 @@ export default function Home() {
               <span key={i} className="flex items-center gap-4 sm:gap-6 shrink-0">
                 <span>Enterprise Refurbished Hardware to Perfection</span>
                 <span className="text-[#F59E0B] font-sans font-bold text-[10px] sm:text-xs uppercase tracking-widest">
-                  • NOVA INFOTECH
+                  • {brandName.toUpperCase()}
                 </span>
-                <span>24-48h Pan-India Replacement SLA</span>
+                <span>24-48h Standby Replacement SLA</span>
                 <span className="text-[#F59E0B] font-sans font-bold text-[10px] sm:text-xs uppercase tracking-widest">
-                  • 100% GSTR-2B TAX CREDIT
+                  • GST TAX INVOICED
                 </span>
                 <span>Grade A+ 30-Point Rigorously Certified</span>
                 <span className="text-[#F59E0B] font-sans font-bold text-[10px] sm:text-xs uppercase tracking-widest">
@@ -258,11 +271,11 @@ export default function Home() {
               <span key={`dup-${i}`} className="flex items-center gap-4 sm:gap-6 shrink-0">
                 <span>Enterprise Refurbished Hardware to Perfection</span>
                 <span className="text-[#F59E0B] font-sans font-bold text-[10px] sm:text-xs uppercase tracking-widest">
-                  • NOVA INFOTECH
+                  • {brandName.toUpperCase()}
                 </span>
-                <span>24-48h Pan-India Replacement SLA</span>
+                <span>24-48h Standby Replacement SLA</span>
                 <span className="text-[#F59E0B] font-sans font-bold text-[10px] sm:text-xs uppercase tracking-widest">
-                  • 100% GSTR-2B TAX CREDIT
+                  • GST TAX INVOICED
                 </span>
                 <span>Grade A+ 30-Point Rigorously Certified</span>
                 <span className="text-[#F59E0B] font-sans font-bold text-[10px] sm:text-xs uppercase tracking-widest">
@@ -314,7 +327,7 @@ export default function Home() {
                   <Check className="w-4 h-4 text-[#D4A24C]" /> Standby Backup Laptops Included
                 </div>
                 <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-[#D4A24C]" /> 18% GST Input Credit on GSTR-2B
+                  <Check className="w-4 h-4 text-[#D4A24C]" /> 18% GST Input Credit with Tax Invoices
                 </div>
                 <div className="flex items-center gap-2">
                   <Check className="w-4 h-4 text-[#D4A24C]" /> Minimum Tenure: 1 to 36 Months

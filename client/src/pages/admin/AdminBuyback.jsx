@@ -22,8 +22,11 @@ import {
 import api from '../../services/api';
 import toast from 'react-hot-toast';
 import ThemeSelect from '../../components/ThemeSelect';
+import { useCompany } from '../../context/SettingsContext';
 
 export default function AdminBuyback() {
+  const { company } = useCompany();
+  const brandName = company?.brand_name || 'Demo Infotech';
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -482,7 +485,7 @@ export default function AdminBuyback() {
                           {cleanPhone && (
                             <a
                               href={`https://wa.me/${cleanPhone}?text=${encodeURIComponent(
-                                `Hello ${item.contact_person}, Nova Infotech Enterprise ITAD desk is reaching out regarding your asset liquidation lot (${item.asset_type}, ${item.approx_quantity} Units).`
+                                `Hello ${item.contact_person}, ${brandName} Enterprise ITAD desk is reaching out regarding your asset liquidation lot (${item.asset_type}, ${item.approx_quantity} Units).`
                               )}`}
                               target="_blank"
                               rel="noopener noreferrer"
@@ -717,7 +720,7 @@ export default function AdminBuyback() {
                 </div>
                 <a
                   href={`https://wa.me/${selectedItem.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
-                    `Hello ${selectedItem.contact_person}, Nova Infotech Enterprise ITAD desk has completed valuation for your liquidation lot (${selectedItem.asset_type}, ${selectedItem.approx_quantity} Units). Our certified enterprise offer is ₹${Number(offeredPrice).toLocaleString('en-IN')}. Please reply to confirm logistics pickup.`
+                    `Hello ${selectedItem.contact_person}, ${brandName} Enterprise ITAD desk has completed valuation for your liquidation lot (${selectedItem.asset_type}, ${selectedItem.approx_quantity} Units). Our certified enterprise offer is ₹${Number(offeredPrice).toLocaleString('en-IN')}. Please reply to confirm logistics pickup.`
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"

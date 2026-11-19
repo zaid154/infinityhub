@@ -29,8 +29,12 @@ import api from '../../services/api';
 import toast from 'react-hot-toast';
 import InvoiceModal from '../../components/InvoiceModal';
 import { getSafeImageUrl } from '../../utils/imageHelper';
+import { useCompany } from '../../context/SettingsContext';
 
 export default function AdminOrders() {
+  const { company: siteCompany } = useCompany();
+  const brandName = siteCompany?.brand_name || 'Demo Infotech';
+  const brandPhone = siteCompany?.phone || '+91 XXXXX XXXXX';
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -143,7 +147,7 @@ export default function AdminOrders() {
     const tracking = drawerTracking || order.tracking_number || 'In-House Courier Handover';
 
     const msg =
-      `*NOVA INFOTECH | DISPATCH ADVICE*\n\n` +
+      `*${brandName.toUpperCase()} | DISPATCH ADVICE*\n\n` +
       `Dear ${company},\n` +
       `Your enterprise hardware order *${order.invoice_number}* status is updated:\n\n` +
       `• *Carrier Partner:* ${courier}\n` +
@@ -151,7 +155,7 @@ export default function AdminOrders() {
       `• *Dispatch Status:* ${(drawerDispatchStatus || order.order_status).toUpperCase()}\n` +
       `• *Hardware Items:* ${order.items?.length || 1} item(s)\n` +
       `• *Total Value:* ₹${(order.grand_total || 0).toLocaleString('en-IN')}\n\n` +
-      `For tracking support, contact our Central Operations Desk at +91 98765 43210.\n` +
+      `For tracking support, contact our Central Operations Desk at ${brandPhone}.\n` +
       `Official Proforma / Tax Invoice is available on your corporate dashboard.`;
 
     const dest = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;

@@ -2,8 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Check } from 'lucide-react';
 
 /**
- * Nova Infotech Enterprise Themed Select / Dropdown
- * Replaces ugly browser-native <select> elements with an executive Deep Emerald & Gold themed dropdown.
+ * Enterprise Themed Select / Dropdown
+ * Executive Deep Emerald & Gold themed dropdown.
  */
 export default function ThemeSelect({
   options = [],

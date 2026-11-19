@@ -1,13 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Bot, X, Send, Sparkles, MessageSquare, Loader2 } from 'lucide-react';
 import api from '../services/api';
+import { useCompany } from '../context/SettingsContext';
 
 export default function ChatbotWidget() {
+  const { company } = useCompany();
+  const brandName = company?.brand_name || 'Demo Infotech';
+  const brandPhone = company?.phone || '+91 XXXXX XXXXX';
+
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
     {
       sender: 'bot',
-      text: 'Welcome to Nova Infotech Corporate Desk! How can I assist you with bulk hardware procurement, rental fleets, or component specifications today?'
+      text: `Welcome to ${brandName} Corporate Desk! How can I assist you with bulk hardware procurement, rental fleets, or component specifications today?`
     }
   ]);
   const [input, setInput] = useState('');
@@ -39,14 +44,14 @@ export default function ChatbotWidget() {
 
     try {
       const res = await api.post('/ai/chat', { message: text });
-      if (res.data.success) {
+      if (res.data?.success) {
         setMessages((prev) => [...prev, { sender: 'bot', text: res.data.reply }]);
       } else {
         setMessages((prev) => [
           ...prev,
           {
             sender: 'bot',
-            text: 'Our desk is currently busy. Please reach our direct line at +91 98765 43210 or ping us on WhatsApp.'
+            text: `Our desk is currently busy. Please reach our direct line at ${brandPhone} or ping us on WhatsApp.`
           }
         ]);
       }
@@ -65,12 +70,12 @@ export default function ChatbotWidget() {
 
   return (
     <div className="fixed bottom-5 left-5 z-40">
-      {/* Minimized Toggle Round Button - Sleek & Non-Intrusive */}
+      {/* Minimized Toggle Round Button */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
           className="relative w-12 h-12 rounded-full bg-[#072117]/90 border border-[#D4A24C]/60 text-[#D4A24C] shadow-[0_8px_25px_rgba(0,0,0,0.5)] hover:scale-110 active:scale-95 transition-all duration-300 flex items-center justify-center group cursor-pointer backdrop-blur-md"
-          title="Nova IT Consultant AI"
+          title={`${brandName} AI Consultant`}
         >
           <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-[#10B981] animate-ping" />
           <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-[#10B981]" />
@@ -89,7 +94,7 @@ export default function ChatbotWidget() {
               </div>
               <div>
                 <h4 className="text-xs font-bold flex items-center gap-1.5 font-serif">
-                  Nova IT Desk
+                  {brandName} Desk
                   <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-[#D4A24C]/20 text-[#D4A24C] border border-[#D4A24C]/40 font-mono">
                     Online
                   </span>
@@ -99,7 +104,7 @@ export default function ChatbotWidget() {
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="text-slate-400 hover:text-white transition p-1"
+              className="text-slate-400 hover:text-white transition p-1 cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -111,7 +116,7 @@ export default function ChatbotWidget() {
               <button
                 key={idx}
                 onClick={() => handleSend(q)}
-                className="whitespace-nowrap px-2.5 py-1 rounded-full bg-white border border-[#D4A24C]/30 text-slate-700 hover:border-[#0D3B2A] hover:text-[#0D3B2A] transition"
+                className="whitespace-nowrap px-2.5 py-1 rounded-full bg-white border border-[#D4A24C]/30 text-slate-700 hover:border-[#0D3B2A] hover:text-[#0D3B2A] transition cursor-pointer"
               >
                 {q}
               </button>
@@ -165,7 +170,7 @@ export default function ChatbotWidget() {
             <button
               type="submit"
               disabled={loading || !input.trim()}
-              className="p-2.5 rounded-xl bg-[#0D3B2A] hover:bg-[#124e38] disabled:opacity-50 text-white transition shadow"
+              className="p-2.5 rounded-xl bg-[#0D3B2A] hover:bg-[#124e38] disabled:opacity-50 text-white transition shadow cursor-pointer"
             >
               <Send className="w-3.5 h-3.5 text-[#D4A24C]" />
             </button>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import {
   Recycle,
   CheckCircle2,
@@ -14,8 +15,11 @@ import {
 import api from '../services/api';
 import toast from 'react-hot-toast';
 import ThemeSelect from '../components/ThemeSelect';
+import { useCompany } from '../context/SettingsContext';
 
 export default function Buyback() {
+  const { company } = useCompany();
+  const brandName = company?.brand_name || 'Demo Infotech';
   const [formData, setFormData] = useState({
     company_name: '',
     contact_person: '',
@@ -55,6 +59,14 @@ export default function Buyback() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-8 py-12 space-y-16">
+      <Helmet>
+        <title>Corporate Asset Liquidation & ITAD | {brandName}</title>
+        <meta
+          name="description"
+          content={`Liquidate corporate IT assets and decommissioned office hardware with ${brandName}. Certified NIST 800-88 data sanitization and pan-India doorstep pickup.`}
+        />
+      </Helmet>
+
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto space-y-4">
         <span className="text-xs font-mono uppercase tracking-wider text-[#8A5E12] font-bold bg-[#FAF7F2] px-3 py-1 rounded-full border border-[#D4A24C]/30 inline-block mb-3">
@@ -64,7 +76,7 @@ export default function Buyback() {
           Turn Depreciated Office Hardware Into Liquid Capital
         </h1>
         <p className="text-sm sm:text-base text-[#5A6B63] leading-relaxed">
-          Upgrading your office IT fleet? Nova Infotech buys back used, outdated, or surplus laptops, desktops, servers, and monitors from companies across India with immediate wire payout and certified data destruction.
+          Upgrading your office IT fleet? {brandName} buys back used, outdated, or surplus laptops, desktops, servers, and monitors from companies across India with immediate wire payout and certified data destruction.
         </p>
       </div>
 

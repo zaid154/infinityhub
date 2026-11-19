@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Settings,
   Save,
@@ -17,11 +17,18 @@ import {
   ExternalLink,
   Upload,
   Check,
-  AlertCircle
+  AlertCircle,
+  AlertTriangle,
+  RotateCcw,
+  Eye,
+  History,
+  Lock,
+  Scale
 } from 'lucide-react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
-import { useSettings } from '../../context/SettingsContext';
+import { useCompany } from '../../context/SettingsContext';
+import BrandLogo from '../../components/BrandLogo';
 
 const DEFAULT_CATEGORY_GST_RATES = [
   { category_key: 'laptop', category_name: 'Corporate Laptops', hsn_sac: '8471 30 10', gst_rate: 18, description: 'Standard commercial notebooks & ultrabooks' },
@@ -37,35 +44,66 @@ const DEFAULT_CATEGORY_GST_RATES = [
 ];
 
 export default function AdminSettings() {
-  const { refreshSettings } = useSettings();
-  const [activeTab, setActiveTab] = useState('branding'); // branding | contact | signatory | gst | banking | warehouse
+  const { refreshSettings } = useCompany();
+  const [activeTab, setActiveTab] = useState('branding'); // branding | legal | contact | grievance | gst | banking | audit
+  const [showLivePreview, setShowLivePreview] = useState(true);
 
   const [settings, setSettings] = useState({
+    brand_name: '',
+    brand_name_short: '',
     company_name: '',
     tagline: '',
+    tm_symbol: 'TM',
+    is_tm_registered_confirmed: false,
+    logo_url: '',
+    favicon_url: '',
+    website_url: '',
+
+    // Legal Registrations
+    legal_name: '',
+    cin_number: '',
+    gst_number: '',
+    registered_address: '',
+    operations_address: '',
+    address: '',
+    jurisdiction_city: 'New Delhi',
+    iso_cert_number: '',
+    epr_registration_number: '',
+
+    // Contact & Hours
     phone: '',
     whatsapp: '',
     email: '',
-    address: '',
-    google_maps_embed_url: '',
-    logo_url: '',
-    gst_number: '',
-    invoice_prefix: 'INV',
+    support_email: '',
+    procurement_email: '',
     business_hours: '',
     warehouse_locations: '',
     support_sla: '',
+    google_maps_embed_url: '',
 
-    // Manager Sign & Seal
+    // Grievance Officer
+    grievance_officer: {
+      name: '',
+      designation: '',
+      email: '',
+      phone: '',
+      address: ''
+    },
+
+    third_party_disclaimer: '',
+
+    // Signatory
     signatory_name: '',
     signatory_designation: '',
     signature_url: '',
     company_seal_url: '',
 
-    // Category GST
-    category_gst_rates: DEFAULT_CATEGORY_GST_RATES,
+    // Tax & Invoicing
+    invoice_prefix: 'INV',
     default_gst_rate: 18,
+    category_gst_rates: DEFAULT_CATEGORY_GST_RATES,
 
-    // Banking
+    // Bank Account
     bank_details: {
       bank_name: '',
       account_name: '',
@@ -73,579 +111,831 @@ export default function AdminSettings() {
       ifsc_code: '',
       branch: '',
       upi_id: ''
-    }
+    },
+
+    legal_version: '1.0',
+    settings_version: 1
   });
 
+  const [auditLogs, setAuditLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [reverting, setReverting] = useState(false);
+
+  // Load current settings & audit history from server
+  const loadServerSettings = async () => {
+    try {
+      setLoading(true);
+      const res = await api.get('/settings');
+      if (res.data?.success && res.data?.settings) {
+        const s = res.data.settings;
+        setSettings({
+          brand_name: s.brand_name || s.company_name || 'Demo Infotech',
+          brand_name_short: s.brand_name_short || 'Demo',
+          company_name: s.company_name || s.brand_name || 'Demo Infotech',
+          tagline: s.tagline || 'Enterprise Hardware Solutions, Flexible Corporate Rentals & ITAD Lifecycle Management',
+          tm_symbol: s.tm_symbol || 'TM',
+          is_tm_registered_confirmed: Boolean(s.is_tm_registered_confirmed),
+          logo_url: s.logo_url || '',
+          favicon_url: s.favicon_url || '',
+          website_url: s.website_url || 'http://localhost:5173',
+
+          legal_name: s.legal_name || 'Demo Infotech Private Limited [PLACEHOLDER]',
+          cin_number: s.cin_number || 'U72900DL2024PTC000000 [PLACEHOLDER]',
+          gst_number: s.gst_number || '07AAAAA0000A1Z5 [PLACEHOLDER]',
+          registered_address: s.registered_address || s.address || 'Unit No. 101, Commercial Tower, Barakhamba Road, Connaught Place, New Delhi 110001 [PLACEHOLDER]',
+          operations_address: s.operations_address || s.address || 'Plot No. 42, Sector 18, Electronic City / Industrial Area, Delhi NCR · Bangalore [PLACEHOLDER]',
+          address: s.address || s.operations_address || 'Plot No. 42, Sector 18, Electronic City / Industrial Area, Delhi NCR · Bangalore [PLACEHOLDER]',
+          jurisdiction_city: s.jurisdiction_city || 'New Delhi',
+          iso_cert_number: s.iso_cert_number || '',
+          epr_registration_number: s.epr_registration_number || 'CPCB/EPR/2024/000000 [PLACEHOLDER]',
+
+          phone: s.phone || '+91 XXXXX XXXXX [PLACEHOLDER]',
+          whatsapp: s.whatsapp || '+91 XXXXX XXXXX [PLACEHOLDER]',
+          email: s.email || 'procurement@example.com [PLACEHOLDER]',
+          support_email: s.support_email || 'support@example.com [PLACEHOLDER]',
+          procurement_email: s.procurement_email || 'procurement@example.com [PLACEHOLDER]',
+          business_hours: s.business_hours || 'Monday – Saturday: 9:30 AM – 7:30 PM IST',
+          warehouse_locations: s.warehouse_locations || 'Electronic City Phase 1, Bangalore · Okhla Industrial Area, Delhi NCR · Mumbai, India',
+          support_sla: s.support_sla || '24–48h Hardware Standby Replacement SLA (Subject to SLA Terms)',
+          google_maps_embed_url: s.google_maps_embed_url || '',
+
+          grievance_officer: {
+            name: s.grievance_officer?.name || 'Statutory Grievance Officer [PLACEHOLDER]',
+            designation: s.grievance_officer?.designation || 'Head of Legal & Enterprise Compliance',
+            email: s.grievance_officer?.email || 'grievance@example.com [PLACEHOLDER]',
+            phone: s.grievance_officer?.phone || '+91 XXXXX XXXXX [PLACEHOLDER]',
+            address: s.grievance_officer?.address || s.registered_address || 'Unit No. 101, Legal Grievance Cell, Connaught Place, New Delhi 110001 [PLACEHOLDER]'
+          },
+
+          third_party_disclaimer: s.third_party_disclaimer || '',
+
+          signatory_name: s.signatory_name || 'Authorized Signatory [PLACEHOLDER]',
+          signatory_designation: s.signatory_designation || 'Authorized Commercial Signatory / General Manager',
+          signature_url: s.signature_url || '',
+          company_seal_url: s.company_seal_url || '',
+
+          invoice_prefix: s.invoice_prefix || 'INV',
+          default_gst_rate: s.default_gst_rate || 18,
+          category_gst_rates: s.category_gst_rates && s.category_gst_rates.length > 0 ? s.category_gst_rates : DEFAULT_CATEGORY_GST_RATES,
+
+          bank_details: {
+            bank_name: s.bank_details?.bank_name || 'HDFC Bank Ltd',
+            account_name: s.bank_details?.account_name || 'Demo Infotech Private Limited [PLACEHOLDER]',
+            account_number: s.bank_details?.account_number || '50200000000000',
+            ifsc_code: s.bank_details?.ifsc_code || 'HDFC0000000',
+            branch: s.bank_details?.branch || 'Connaught Place / Electronic City',
+            upi_id: s.bank_details?.upi_id || 'demoinfotech@hdfcbank'
+          },
+
+          legal_version: s.legal_version || '1.0',
+          settings_version: s.settings_version || 1
+        });
+
+        if (res.data.auditLogs) {
+          setAuditLogs(res.data.auditLogs);
+        }
+      }
+    } catch (err) {
+      console.error('[Admin Settings Error]', err);
+      toast.error('Failed to load settings from server');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchSettings = async () => {
-      try {
-        const res = await api.get('/settings');
-        if (res.data.success && res.data.settings) {
-          const s = res.data.settings;
-          setSettings({
-            company_name: s.company_name || 'NOVA INFOTECH',
-            tagline: s.tagline || 'Certified Enterprise Hardware, Corporate Fleet Rentals & ITAD Solutions',
-            phone: s.phone || '+91 98765 43210',
-            whatsapp: s.whatsapp || '+91 98765 43210',
-            email: s.email || 'procurement@novainfotech.in',
-            address: s.address || 'Plot No. 42, Sector 18, Electronic City / Industrial Area, Delhi NCR',
-            google_maps_embed_url: s.google_maps_embed_url || '',
-            logo_url: s.logo_url || '',
-            gst_number: s.gst_number || '07AAACN8412K1Z9',
-            invoice_prefix: s.invoice_prefix || 'INV',
-            business_hours: s.business_hours || 'Monday – Saturday: 9:30 AM – 7:30 PM IST',
-            warehouse_locations: s.warehouse_locations || 'Electronic City Phase 1, Bangalore · Okhla Industrial Area, Delhi NCR · Mumbai, India',
-            support_sla: s.support_sla || 'Standard 24–48h Hardware Standby Replacement SLA',
-            signatory_name: s.signatory_name || 'Mohd Zaid',
-            signatory_designation: s.signatory_designation || 'Authorized Commercial Signatory / General Manager',
-            signature_url: s.signature_url || '',
-            company_seal_url: s.company_seal_url || '',
-            category_gst_rates: s.category_gst_rates && s.category_gst_rates.length > 0 ? s.category_gst_rates : DEFAULT_CATEGORY_GST_RATES,
-            default_gst_rate: s.default_gst_rate || 18,
-            bank_details: {
-              bank_name: s.bank_details?.bank_name || 'HDFC Bank Ltd',
-              account_name: s.bank_details?.account_name || 'Nova Infotech Solutions Pvt. Ltd.',
-              account_number: s.bank_details?.account_number || '50200084920194',
-              ifsc_code: s.bank_details?.ifsc_code || 'HDFC0000123',
-              branch: s.bank_details?.branch || 'Okhla Industrial Area, New Delhi',
-              upi_id: s.bank_details?.upi_id || 'novainfotech@hdfcbank'
-            }
-          });
-        }
-      } catch (err) {
-        console.error('[Admin Settings Error]', err);
-        toast.error('Failed to load settings');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchSettings();
+    loadServerSettings();
   }, []);
 
+  // Demo / Placeholder status detection
+  const isDemoMode = useMemo(() => {
+    if (!settings) return false;
+    const checks = [
+      settings.brand_name === 'Demo Infotech',
+      settings.legal_name?.includes('[PLACEHOLDER]'),
+      settings.gst_number?.includes('[PLACEHOLDER]'),
+      settings.cin_number?.includes('[PLACEHOLDER]'),
+      settings.phone?.includes('XXXXX'),
+      settings.email?.includes('example.com')
+    ];
+    return checks.some(Boolean);
+  }, [settings]);
+
+  // Form Save
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
+
+    // Verification check for (R) registered mark
+    if (settings.tm_symbol === 'R' && !settings.is_tm_registered_confirmed) {
+      toast.error('Under Section 107 of the Trade Marks Act 1999, you must legally confirm registration before displaying the ® symbol.');
+      setActiveTab('branding');
+      return;
+    }
+
     setSaving(true);
     try {
-      const res = await api.put('/settings', settings);
-      if (res.data.success) {
+      const payload = {
+        ...settings,
+        company_name: settings.brand_name || settings.company_name
+      };
+
+      const res = await api.put('/settings', payload);
+      if (res.data?.success) {
         await refreshSettings();
-        toast.success('Settings saved! All changes are now live across the entire website.');
+        toast.success('Corporate identity saved! All changes are now live across the website without redeployment.');
+        loadServerSettings();
+      } else {
+        toast.error(res.data?.message || 'Failed to save settings.');
       }
     } catch (err) {
       console.error('[Admin Settings Update Error]', err);
-      toast.error('Failed to save settings');
+      toast.error(err.response?.data?.message || 'Failed to save settings');
     } finally {
       setSaving(false);
     }
   };
 
-  const handleGstRateChange = (index, field, value) => {
-    setSettings((prev) => {
-      const updated = [...prev.category_gst_rates];
-      updated[index] = {
-        ...updated[index],
-        [field]: field === 'gst_rate' ? Number(value) : value
-      };
-      return { ...prev, category_gst_rates: updated };
-    });
-  };
+  // One-click Revert Handler
+  const handleRevert = async (logId) => {
+    if (!window.confirm('Are you sure you want to revert company settings to this previous snapshot? This action will immediately update all public pages.')) {
+      return;
+    }
 
-  const resetGstRatesToDefaults = () => {
-    setSettings((prev) => ({
-      ...prev,
-      category_gst_rates: DEFAULT_CATEGORY_GST_RATES
-    }));
-    toast.success('Category GST rates reset to standard Indian accounting slabs.');
+    setReverting(true);
+    try {
+      const res = await api.post('/settings/revert', { log_id: logId });
+      if (res.data?.success) {
+        toast.success('Successfully reverted to previous snapshot!');
+        await refreshSettings();
+        loadServerSettings();
+      } else {
+        toast.error(res.data?.message || 'Revert failed.');
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to revert snapshot.');
+    } finally {
+      setReverting(false);
+    }
   };
 
   if (loading) {
     return (
-      <div className="text-center py-24 text-slate-400 flex flex-col items-center justify-center gap-2">
-        <RefreshCw className="w-6 h-6 animate-spin text-[#D4A24C]" />
-        <span>Loading enterprise governance settings...</span>
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="text-center space-y-3">
+          <RefreshCw className="w-8 h-8 animate-spin text-[#0D3B2A] mx-auto" />
+          <p className="text-xs text-[#5A6B63] font-semibold">Loading enterprise company configuration...</p>
+        </div>
       </div>
     );
   }
 
-  const tabs = [
-    { id: 'branding', label: 'Company & Branding', icon: Building },
-    { id: 'contact', label: 'Contact & WhatsApp', icon: Phone },
-    { id: 'signatory', label: 'Manager Sign & Seal', icon: FileText },
-    { id: 'gst', label: 'Category GST Rates', icon: Percent },
-    { id: 'banking', label: 'Banking & Remittance', icon: CreditCard },
-    { id: 'warehouse', label: 'Warehouse & Maps', icon: MapPin }
-  ];
-
   return (
-    <div className="max-w-5xl mx-auto space-y-6 pb-20 text-xs">
-      
-      {/* ======================================================== */}
-      {/* 1. HEADER & LIVE PROPAGATION BADGE                       */}
-      {/* ======================================================== */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-200 pb-4">
+    <div className="max-w-7xl mx-auto space-y-6">
+      {/* Page Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[#D4A24C]/20">
         <div>
-          <span className="text-[10px] font-sans uppercase tracking-[0.2em] text-[#8A5E12] font-bold block">
-            — GLOBAL SYSTEM PREFERENCES
+          <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#8A5E12] font-bold block">
+            — SINGLE SOURCE OF TRUTH (ZERO CODE CHANGES)
           </span>
-          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#0D3B2A] tracking-tight mt-0.5">
-            Enterprise Site & Governance Settings
+          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#0D3B2A]">
+            Corporate Settings & Legal Governance
           </h1>
-          <p className="text-[#5A6B63] mt-1 text-xs">
-            Manage corporate legal identity, manager signatures, category-wise GST compliance, communication channels, and logistics hubs. All updates propagate live across the storefront, invoices, and public desks.
+          <p className="text-xs text-[#5A6B63] mt-0.5">
+            Configure dynamic brand wordmarks, statutory GSTIN/CIN credentials, grievance officer, and policy versions.
           </p>
         </div>
 
-        <button
-          onClick={handleSubmit}
-          disabled={saving}
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0D3B2A] hover:bg-[#124e38] text-[#FAF7F2] font-bold text-xs rounded-xl shadow border border-[#D4A24C]/40 transition cursor-pointer self-start sm:self-auto shrink-0"
-        >
-          {saving ? (
-            <>
-              <RefreshCw className="w-4 h-4 animate-spin text-[#D4A24C]" />
-              <span>Saving Changes...</span>
-            </>
-          ) : (
-            <>
-              <Save className="w-4 h-4 text-[#D4A24C]" />
-              <span>Save & Publish Live</span>
-            </>
-          )}
-        </button>
-      </div>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setShowLivePreview(!showLivePreview)}
+            className="px-4 py-2 rounded-xl border border-[#D4A24C]/40 text-[#0D3B2A] hover:bg-white text-xs font-bold flex items-center gap-2 transition cursor-pointer"
+          >
+            <Eye className="w-3.5 h-3.5 text-[#8A5E12]" />
+            <span>{showLivePreview ? 'Hide Live Preview' : 'Show Live Preview'}</span>
+          </button>
 
-      {/* Global Propagation Alert */}
-      <div className="p-3.5 bg-[#FAF7F2] border border-[#D4A24C]/35 rounded-2xl flex items-center justify-between gap-3 text-xs">
-        <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-[#0D3B2A] text-[#D4A24C] flex items-center justify-center shrink-0">
-            <CheckCircle2 className="w-4 h-4" />
-          </div>
-          <div>
-            <strong className="text-[#0D3B2A] block font-bold text-xs">Live Multi-Surface Sync Active</strong>
-            <span className="text-slate-600 text-[11px]">
-              Settings saved here automatically update the <strong>Navbar, Footer, Contact Page, About Page, Invoice Generator, and WhatsApp links</strong> in real time.
-            </span>
-          </div>
+          <button
+            onClick={handleSubmit}
+            disabled={saving}
+            className="px-6 py-2.5 rounded-xl bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs flex items-center gap-2 shadow-lg transition active:scale-95 disabled:opacity-50 cursor-pointer border border-[#D4A24C]/40"
+          >
+            <Save className="w-4 h-4 text-[#D4A24C]" />
+            <span>{saving ? 'Publishing...' : 'Save & Publish Live'}</span>
+          </button>
         </div>
       </div>
 
-      {/* ======================================================== */}
-      {/* 2. SECTION NAVIGATION TABS                               */}
-      {/* ======================================================== */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 border-b border-slate-200">
-        {tabs.map((tab) => {
+      {/* Warning Banner: Active Demo / Placeholder Mode */}
+      {isDemoMode && (
+        <div className="bg-amber-50 border-2 border-amber-400 rounded-2xl p-4 flex items-start gap-3 text-xs text-amber-900 shadow-sm animate-in fade-in duration-300">
+          <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <strong className="font-bold text-sm block">
+              Demo / Specimen Mode Active
+            </strong>
+            <p className="leading-relaxed">
+              The platform is currently rendering placeholder credentials (<strong>"{settings.brand_name}"</strong>, <strong>"{settings.legal_name}"</strong>, placeholder GSTIN/CIN, and placeholder grievance details). Enter your legitimate corporate registrations below and click <strong>"Save & Publish Live"</strong> before public launch.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Live Preview Drawer (If Toggled) */}
+      {showLivePreview && (
+        <div className="p-5 bg-white rounded-3xl border border-[#D4A24C]/35 shadow-sm space-y-4">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+            <span className="text-[10.5px] font-mono uppercase tracking-wider text-[#8A5E12] font-bold flex items-center gap-1.5">
+              <Eye className="w-3.5 h-3.5" /> Real-Time Public Header & Footer Simulation
+            </span>
+            <span className="text-[10px] text-slate-400 font-mono">Updates live as you type</span>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {/* Header Wordmark Preview */}
+            <div className="p-4 rounded-2xl bg-[#FAF7F2] border border-slate-200 space-y-2">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
+                Header Wordmark (Desktop)
+              </span>
+              <div className="flex items-center gap-3 py-1">
+                <div className="w-9 h-9 rounded-full bg-[#0D3B2A] border border-[#D4A24C]/70 flex items-center justify-center text-[#D4A24C] shadow-md font-serif font-bold text-sm">
+                  {settings.brand_name ? settings.brand_name.charAt(0).toUpperCase() : 'D'}
+                </div>
+                <div>
+                  <div className="font-serif font-bold text-xl text-[#072117] flex items-center gap-1 leading-none">
+                    <span>{(settings.brand_name || 'Demo Infotech').toUpperCase()}</span>
+                    {settings.tm_symbol !== 'none' && (
+                      <sup className="text-[10px] text-[#D4A24C]">
+                        {settings.tm_symbol === 'R' ? '®' : '™'}
+                      </sup>
+                    )}
+                  </div>
+                  <p className="text-[9px] uppercase tracking-[0.2em] font-semibold text-[#5A6B63] mt-0.5">
+                    {settings.tagline || 'Enterprise Hardware Solutions'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer Legal Block Preview */}
+            <div className="p-4 rounded-2xl bg-[#072117] text-white border border-[#D4A24C]/30 space-y-1.5 text-xs">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#D4A24C] block font-mono">
+                Footer Registration Block
+              </span>
+              <p className="font-bold text-[#FAF7F2] text-xs">
+                {settings.legal_name || 'Demo Infotech Private Limited'}
+              </p>
+              <p className="text-[10px] text-[#90b09a] truncate">
+                CIN: {settings.cin_number} • GSTIN: {settings.gst_number}
+              </p>
+              <p className="text-[10px] text-[#90b09a] truncate">
+                Registered Office: {settings.registered_address}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tabs Bar */}
+      <div className="flex flex-wrap items-center gap-2 border-b border-[#D4A24C]/25 pb-3">
+        {[
+          { id: 'branding', label: '1. Brand Identity', icon: Building },
+          { id: 'legal', label: '2. Legal & Registrations', icon: Scale },
+          { id: 'contact', label: '3. Contact & Hours', icon: Phone },
+          { id: 'grievance', label: '4. Grievance Officer', icon: ShieldCheck },
+          { id: 'gst', label: '5. Category GST Rates', icon: Percent },
+          { id: 'banking', label: '6. Banking & Signatory', icon: CreditCard },
+          { id: 'audit', label: '7. Version History', icon: History }
+        ].map((tab) => {
           const Icon = tab.icon;
-          const isActive = activeTab === tab.id;
           return (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-3.5 py-2 rounded-xl font-bold text-xs whitespace-nowrap transition cursor-pointer flex items-center gap-2 ${
-                isActive
-                  ? 'bg-[#0D3B2A] text-[#FAF7F2] shadow-xs'
-                  : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer ${
+                activeTab === tab.id
+                  ? 'bg-[#0D3B2A] text-white shadow-md'
+                  : 'bg-white text-[#5A6B63] hover:text-[#0D3B2A] border border-[#D4A24C]/20'
               }`}
             >
-              <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#D4A24C]' : 'text-slate-400'}`} />
+              <Icon className={`w-3.5 h-3.5 ${activeTab === tab.id ? 'text-[#D4A24C]' : 'text-slate-400'}`} />
               <span>{tab.label}</span>
             </button>
           );
         })}
       </div>
 
-      {/* ======================================================== */}
-      {/* 3. SETTINGS CONTENT PANELS                               */}
-      {/* ======================================================== */}
-      <form onSubmit={handleSubmit} className="space-y-6">
-
-        {/* -------------------------------------------------------- */}
-        {/* TAB 1: COMPANY & BRANDING                                */}
-        {/* -------------------------------------------------------- */}
+      {/* Form Content Area */}
+      <form onSubmit={handleSubmit} className="bg-white rounded-3xl border border-[#D4A24C]/30 p-7 sm:p-9 shadow-sm space-y-6">
+        
+        {/* TAB 1: BRAND IDENTITY */}
         {activeTab === 'branding' && (
-          <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-5 animate-in fade-in duration-100">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h2 className="text-sm font-bold text-[#0D3B2A] flex items-center gap-2">
-                <Building className="w-4 h-4 text-[#D4A24C]" />
-                Company Identity & Commercial Branding
+          <div className="space-y-6 animate-in fade-in duration-300">
+            <div>
+              <h2 className="text-lg font-serif font-bold text-[#0D3B2A]">
+                Brand Identity & Public Wordmark
               </h2>
-              <span className="text-[10px] text-slate-400 font-mono">Appears on Navbar, Footer & GST Invoices</span>
+              <p className="text-xs text-[#5A6B63]">
+                Changes here dynamically alter header logos, browser tab titles, and invoice headings.
+              </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs">
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Company / Entity Legal Name *</label>
+                <label className="block font-semibold text-[#0D3B2A] mb-1">
+                  Brand Name (Customer Facing) *
+                </label>
                 <input
                   type="text"
                   required
-                  value={settings.company_name}
-                  onChange={(e) => setSettings({ ...settings, company_name: e.target.value })}
-                  placeholder="e.g. Nova Infotech Solutions Pvt. Ltd."
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] font-semibold text-slate-900"
+                  value={settings.brand_name}
+                  onChange={(e) => setSettings({ ...settings, brand_name: e.target.value })}
+                  placeholder="e.g. Apex Infra or Demo Infotech"
+                  className="w-full px-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A]"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Company Tagline / Subtitle</label>
+                <label className="block font-semibold text-[#0D3B2A] mb-1">
+                  Brand Short Name (Monogram / Mobile)
+                </label>
                 <input
                   type="text"
-                  value={settings.tagline}
-                  onChange={(e) => setSettings({ ...settings, tagline: e.target.value })}
-                  placeholder="e.g. Certified Enterprise Hardware, Corporate Fleet Rentals & ITAD Solutions"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A]"
-                />
-              </div>
-
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Official GSTIN (Goods & Services Tax ID) *</label>
-                <input
-                  type="text"
-                  required
-                  value={settings.gst_number}
-                  onChange={(e) => setSettings({ ...settings, gst_number: e.target.value.toUpperCase() })}
-                  placeholder="e.g. 07AAACN8412K1Z9"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] font-mono font-bold text-[#0D3B2A]"
-                />
-              </div>
-
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Invoice Number Prefix</label>
-                <input
-                  type="text"
-                  value={settings.invoice_prefix}
-                  onChange={(e) => setSettings({ ...settings, invoice_prefix: e.target.value.toUpperCase() })}
-                  placeholder="e.g. INV or NOVA"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] font-mono"
+                  value={settings.brand_name_short}
+                  onChange={(e) => setSettings({ ...settings, brand_name_short: e.target.value })}
+                  placeholder="e.g. Apex or Demo"
+                  className="w-full px-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A]"
                 />
               </div>
 
               <div className="md:col-span-2">
-                <label className="block font-semibold text-slate-700 mb-1">Logo Image URL (Optional)</label>
+                <label className="block font-semibold text-[#0D3B2A] mb-1">
+                  Brand Tagline *
+                </label>
                 <input
                   type="text"
+                  required
+                  value={settings.tagline}
+                  onChange={(e) => setSettings({ ...settings, tagline: e.target.value })}
+                  placeholder="e.g. Enterprise Hardware Solutions, Corporate Fleet Rentals & ITAD"
+                  className="w-full px-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A]"
+                />
+              </div>
+
+              {/* Trademark Symbol Selection (Legal Safe under Section 107 Trade Marks Act 1999) */}
+              <div className="md:col-span-2 p-4 bg-[#FAF7F2] rounded-2xl border border-[#D4A24C]/30 space-y-3">
+                <label className="block font-bold text-[#0D3B2A]">
+                  Trademark Symbol Affiliation (Trade Marks Act, 1999)
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {[
+                    { value: 'none', label: 'None (Clean Name)', desc: 'No symbol displayed' },
+                    { value: 'TM', label: '™ (Unregistered / Common Law)', desc: 'Claim of trademark use (Default)' },
+                    { value: 'R', label: '® (Registered Trademark)', desc: 'Requires active CGPDTM registration' }
+                  ].map((opt) => (
+                    <label
+                      key={opt.value}
+                      className={`p-3 rounded-xl border flex flex-col justify-between cursor-pointer transition ${
+                        settings.tm_symbol === opt.value
+                          ? 'bg-[#0D3B2A] text-white border-[#D4A24C]'
+                          : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-xs">{opt.label}</span>
+                        <input
+                          type="radio"
+                          name="tm_symbol"
+                          value={opt.value}
+                          checked={settings.tm_symbol === opt.value}
+                          onChange={(e) => setSettings({ ...settings, tm_symbol: e.target.value })}
+                          className="accent-[#D4A24C]"
+                        />
+                      </div>
+                      <span className={`text-[10px] mt-1 ${settings.tm_symbol === opt.value ? 'text-slate-300' : 'text-slate-500'}`}>
+                        {opt.desc}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+
+                {settings.tm_symbol === 'R' && (
+                  <div className="p-3 bg-red-50 border border-red-300 rounded-xl space-y-2 text-[11px] text-red-900 animate-in fade-in">
+                    <div className="flex items-center gap-1.5 font-bold">
+                      <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+                      <span>Statutory Caution: Section 107 of the Trade Marks Act, 1999</span>
+                    </div>
+                    <p>
+                      It is a punishable offense with imprisonment up to 3 years and/or fine to represent that a trademark is registered when it is not.
+                    </p>
+                    <label className="flex items-start gap-2 cursor-pointer font-semibold pt-1 text-red-950">
+                      <input
+                        type="checkbox"
+                        checked={settings.is_tm_registered_confirmed}
+                        onChange={(e) => setSettings({ ...settings, is_tm_registered_confirmed: e.target.checked })}
+                        className="mt-0.5 w-4 h-4 accent-red-600 rounded"
+                      />
+                      <span>
+                        I confirm this trademark is officially registered with the Controller General of Patents, Designs and Trade Marks (CGPDTM) and possess a valid Trademark Registration Certificate.
+                      </span>
+                    </label>
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <label className="block font-semibold text-[#0D3B2A] mb-1">Custom Logo URL (Optional)</label>
+                <input
+                  type="url"
                   value={settings.logo_url}
                   onChange={(e) => setSettings({ ...settings, logo_url: e.target.value })}
-                  placeholder="https://res.cloudinary.com/.../logo.png (Leave blank to use default Star Emblem)"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] font-mono text-xs"
+                  placeholder="https://res.cloudinary.com/... or leave blank for gold serif monogram"
+                  className="w-full px-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A]"
                 />
-                <span className="text-[10px] text-slate-400 mt-1 block">
-                  If left empty, the official Deep Emerald & Gold star emblem is automatically displayed.
-                </span>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-[#0D3B2A] mb-1">Production Website Domain</label>
+                <input
+                  type="url"
+                  value={settings.website_url}
+                  onChange={(e) => setSettings({ ...settings, website_url: e.target.value })}
+                  placeholder="https://demoinfotech.in"
+                  className="w-full px-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A]"
+                />
               </div>
             </div>
           </div>
         )}
 
-        {/* -------------------------------------------------------- */}
-        {/* TAB 2: CONTACT & WHATSAPP                                */}
-        {/* -------------------------------------------------------- */}
-        {activeTab === 'contact' && (
-          <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-5 animate-in fade-in duration-100">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h2 className="text-sm font-bold text-[#0D3B2A] flex items-center gap-2">
-                <Phone className="w-4 h-4 text-[#D4A24C]" />
-                Direct Communication & WhatsApp Channels
+        {/* TAB 2: LEGAL & REGISTRATIONS */}
+        {activeTab === 'legal' && (
+          <div className="space-y-6 animate-in fade-in duration-300">
+            <div>
+              <h2 className="text-lg font-serif font-bold text-[#0D3B2A]">
+                Statutory Corporate Registrations
               </h2>
-              <span className="text-[10px] text-slate-400 font-mono">Powers Footer, Contact Page & Quote CTAs</span>
+              <p className="text-xs text-[#5A6B63]">
+                Mandatory under the Consumer Protection (E-Commerce) Rules 2020 & Companies Act 2013.
+              </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs">
+              <div className="md:col-span-2">
+                <label className="block font-semibold text-[#0D3B2A] mb-1">
+                  Full Corporate Legal Entity Name *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={settings.legal_name}
+                  onChange={(e) => setSettings({ ...settings, legal_name: e.target.value })}
+                  placeholder="e.g. Demo Infotech Private Limited or Apex Solutions LLP"
+                  className="w-full px-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A]"
+                />
+              </div>
+
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Central Phone (B2B Desk) *</label>
+                <label className="block font-semibold text-[#0D3B2A] mb-1">
+                  Corporate Identification Number (CIN / LLPIN) *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={settings.cin_number}
+                  onChange={(e) => setSettings({ ...settings, cin_number: e.target.value })}
+                  placeholder="e.g. U72900DL2024PTC000000"
+                  className="w-full px-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="block font-semibold text-[#0D3B2A] mb-1">
+                  GSTIN (15-Character Tax ID) *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={settings.gst_number}
+                  onChange={(e) => setSettings({ ...settings, gst_number: e.target.value })}
+                  placeholder="e.g. 07AAAAA0000A1Z5"
+                  className="w-full px-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] font-mono"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block font-semibold text-[#0D3B2A] mb-1">
+                  Statutory Registered Office Address *
+                </label>
+                <textarea
+                  rows={2}
+                  required
+                  value={settings.registered_address}
+                  onChange={(e) => setSettings({ ...settings, registered_address: e.target.value })}
+                  placeholder="As registered with Ministry of Corporate Affairs (MCA)..."
+                  className="w-full p-3 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A]"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block font-semibold text-[#0D3B2A] mb-1">
+                  Central Operations / Warehouse Facility Address *
+                </label>
+                <textarea
+                  rows={2}
+                  required
+                  value={settings.operations_address}
+                  onChange={(e) => setSettings({ ...settings, operations_address: e.target.value, address: e.target.value })}
+                  placeholder="Electronic City, Bangalore · Okhla, Delhi NCR..."
+                  className="w-full p-3 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A]"
+                />
+              </div>
+
+              <div>
+                <label className="block font-semibold text-[#0D3B2A] mb-1">
+                  Arbitration & Judicial Jurisdiction City *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={settings.jurisdiction_city}
+                  onChange={(e) => setSettings({ ...settings, jurisdiction_city: e.target.value })}
+                  placeholder="e.g. New Delhi, Bengaluru, Mumbai"
+                  className="w-full px-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A]"
+                />
+              </div>
+
+              <div>
+                <label className="block font-semibold text-[#0D3B2A] mb-1">
+                  ISO 9001:2015 Certificate No. (Optional)
+                </label>
+                <input
+                  type="text"
+                  value={settings.iso_cert_number}
+                  onChange={(e) => setSettings({ ...settings, iso_cert_number: e.target.value })}
+                  placeholder="Leave empty unless certified under ISO 9001:2015"
+                  className="w-full px-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A]"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block font-semibold text-[#0D3B2A] mb-1">
+                  CPCB E-Waste EPR Registration Number (Optional)
+                </label>
+                <input
+                  type="text"
+                  value={settings.epr_registration_number}
+                  onChange={(e) => setSettings({ ...settings, epr_registration_number: e.target.value })}
+                  placeholder="e.g. CPCB/EPR/2024/000000"
+                  className="w-full px-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] font-mono"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 3: CONTACT & HOURS */}
+        {activeTab === 'contact' && (
+          <div className="space-y-6 animate-in fade-in duration-300">
+            <div>
+              <h2 className="text-lg font-serif font-bold text-[#0D3B2A]">
+                Corporate Communications & Operating Hours
+              </h2>
+              <p className="text-xs text-[#5A6B63]">
+                Displayed in Contact Desk, Footer, and automated transaction advisories.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs">
+              <div>
+                <label className="block font-semibold text-[#0D3B2A] mb-1">Primary Calling Line *</label>
                 <input
                   type="text"
                   required
                   value={settings.phone}
                   onChange={(e) => setSettings({ ...settings, phone: e.target.value })}
-                  placeholder="e.g. +91 98765 43210"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] font-mono"
+                  placeholder="+91 98100 00000"
+                  className="w-full px-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A]"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Direct WhatsApp Number *</label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    required
-                    value={settings.whatsapp}
-                    onChange={(e) => setSettings({ ...settings, whatsapp: e.target.value })}
-                    placeholder="e.g. +91 98765 43210"
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] font-mono"
-                  />
-                  {settings.whatsapp && (
-                    <a
-                      href={`https://wa.me/${settings.whatsapp.replace(/[^0-9]/g, '')}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-3 py-2 bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 rounded-xl font-bold flex items-center gap-1 shrink-0 transition"
-                      title="Test WhatsApp Link"
-                    >
-                      <MessageSquare className="w-3.5 h-3.5" />
-                      <span>Test</span>
-                    </a>
-                  )}
-                </div>
+                <label className="block font-semibold text-[#0D3B2A] mb-1">WhatsApp Procurement Desk *</label>
+                <input
+                  type="text"
+                  required
+                  value={settings.whatsapp}
+                  onChange={(e) => setSettings({ ...settings, whatsapp: e.target.value })}
+                  placeholder="+91 98100 00000"
+                  className="w-full px-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A]"
+                />
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Procurement / Billing Email *</label>
+                <label className="block font-semibold text-[#0D3B2A] mb-1">Procurement Email *</label>
                 <input
                   type="email"
                   required
-                  value={settings.email}
-                  onChange={(e) => setSettings({ ...settings, email: e.target.value })}
-                  placeholder="e.g. procurement@novainfotech.in"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] font-mono"
+                  value={settings.procurement_email}
+                  onChange={(e) => setSettings({ ...settings, procurement_email: e.target.value, email: e.target.value })}
+                  placeholder="procurement@company.com"
+                  className="w-full px-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A]"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Commercial Business Hours</label>
+                <label className="block font-semibold text-[#0D3B2A] mb-1">Support / SLA Email *</label>
                 <input
-                  type="text"
-                  value={settings.business_hours}
-                  onChange={(e) => setSettings({ ...settings, business_hours: e.target.value })}
-                  placeholder="e.g. Monday – Saturday: 9:30 AM – 7:30 PM IST"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A]"
+                  type="email"
+                  required
+                  value={settings.support_email}
+                  onChange={(e) => setSettings({ ...settings, support_email: e.target.value })}
+                  placeholder="support@company.com"
+                  className="w-full px-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A]"
                 />
               </div>
 
               <div className="md:col-span-2">
-                <label className="block font-semibold text-slate-700 mb-1">Hardware Standby SLA Guarantee Text</label>
+                <label className="block font-semibold text-[#0D3B2A] mb-1">Commercial Business Hours *</label>
                 <input
                   type="text"
+                  required
+                  value={settings.business_hours}
+                  onChange={(e) => setSettings({ ...settings, business_hours: e.target.value })}
+                  placeholder="Monday – Saturday: 9:30 AM – 7:30 PM IST"
+                  className="w-full px-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A]"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block font-semibold text-[#0D3B2A] mb-1">Standby SLA Guarantee Text *</label>
+                <input
+                  type="text"
+                  required
                   value={settings.support_sla}
                   onChange={(e) => setSettings({ ...settings, support_sla: e.target.value })}
-                  placeholder="e.g. Guaranteed 24–48h Hardware Standby Replacement SLA"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A]"
+                  placeholder="24–48h Hardware Standby Replacement SLA (Subject to SLA Terms)"
+                  className="w-full px-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A]"
                 />
               </div>
             </div>
           </div>
         )}
 
-        {/* -------------------------------------------------------- */}
-        {/* TAB 3: MANAGER SIGN & SEAL ("Manager ke Sign")           */}
-        {/* -------------------------------------------------------- */}
-        {activeTab === 'signatory' && (
-          <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6 animate-in fade-in duration-100">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div>
-                <h2 className="text-sm font-bold text-[#0D3B2A] flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-[#D4A24C]" />
-                  Authorized Signatory & Manager Signature ("Manager ke Sign")
-                </h2>
-                <p className="text-[11px] text-slate-500 mt-0.5">
-                  Appears at the bottom of all B2B GST Invoices, Proformas, and Corporate Rental Agreements.
-                </p>
-              </div>
-              <span className="text-[10px] text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full font-bold border border-emerald-200">
-                GST Tax Invoice Compliant
-              </span>
+        {/* TAB 4: GRIEVANCE REDRESSAL OFFICER */}
+        {activeTab === 'grievance' && (
+          <div className="space-y-6 animate-in fade-in duration-300">
+            <div>
+              <h2 className="text-lg font-serif font-bold text-[#0D3B2A]">
+                Statutory Grievance Redressal Officer
+              </h2>
+              <p className="text-xs text-[#5A6B63]">
+                Mandatory under Rule 3(2) of IT Rules 2021 & Section 13 of DPDP Act 2023. Turnaround: 24h ack · 30-day resolution.
+              </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs">
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Authorized Signatory Name *</label>
+                <label className="block font-semibold text-[#0D3B2A] mb-1">Officer Name *</label>
                 <input
                   type="text"
                   required
-                  value={settings.signatory_name}
-                  onChange={(e) => setSettings({ ...settings, signatory_name: e.target.value })}
-                  placeholder="e.g. Mohd Zaid"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] font-bold text-slate-900"
+                  value={settings.grievance_officer?.name || ''}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      grievance_officer: { ...settings.grievance_officer, name: e.target.value }
+                    })
+                  }
+                  placeholder="e.g. Adv. Amit Singhal"
+                  className="w-full px-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A]"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Signatory Designation / Role *</label>
+                <label className="block font-semibold text-[#0D3B2A] mb-1">Designation *</label>
                 <input
                   type="text"
                   required
-                  value={settings.signatory_designation}
-                  onChange={(e) => setSettings({ ...settings, signatory_designation: e.target.value })}
-                  placeholder="e.g. General Manager / Authorized Commercial Signatory"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A]"
+                  value={settings.grievance_officer?.designation || ''}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      grievance_officer: { ...settings.grievance_officer, designation: e.target.value }
+                    })
+                  }
+                  placeholder="Head of Legal & Enterprise Compliance"
+                  className="w-full px-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A]"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">
-                  Manager Signature Image URL (Optional)
-                </label>
+                <label className="block font-semibold text-[#0D3B2A] mb-1">Statutory Email *</label>
                 <input
-                  type="text"
-                  value={settings.signature_url}
-                  onChange={(e) => setSettings({ ...settings, signature_url: e.target.value })}
-                  placeholder="https://res.cloudinary.com/.../signature.png"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] font-mono text-xs"
+                  type="email"
+                  required
+                  value={settings.grievance_officer?.email || ''}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      grievance_officer: { ...settings.grievance_officer, email: e.target.value }
+                    })
+                  }
+                  placeholder="grievance@company.com"
+                  className="w-full px-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A]"
                 />
-                <span className="text-[10px] text-slate-400 mt-1 block">
-                  Paste transparent PNG signature URL. If left empty, an elegant digital cursive e-signature of the manager name is rendered.
-                </span>
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">
-                  Company Rubber Seal / Stamp Image URL (Optional)
-                </label>
+                <label className="block font-semibold text-[#0D3B2A] mb-1">Calling Line *</label>
                 <input
                   type="text"
-                  value={settings.company_seal_url}
-                  onChange={(e) => setSettings({ ...settings, company_seal_url: e.target.value })}
-                  placeholder="https://res.cloudinary.com/.../stamp.png"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] font-mono text-xs"
+                  required
+                  value={settings.grievance_officer?.phone || ''}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      grievance_officer: { ...settings.grievance_officer, phone: e.target.value }
+                    })
+                  }
+                  placeholder="+91 98100 00000"
+                  className="w-full px-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A]"
                 />
-                <span className="text-[10px] text-slate-400 mt-1 block">
-                  Optional company seal graphic. If empty, the official digital security seal badge is stamped.
-                </span>
               </div>
-            </div>
 
-            {/* LIVE INVOICE SIGNATURE PREVIEW */}
-            <div className="mt-4 pt-4 border-t border-slate-100">
-              <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider block font-semibold mb-2">
-                Live Tax Invoice Signatory Preview:
-              </span>
-              <div className="max-w-md ml-auto border border-slate-300 rounded-2xl p-4 bg-white shadow-xs text-right space-y-2">
-                <span className="text-[10px] font-bold text-slate-700 block">
-                  For {settings.company_name?.toUpperCase() || 'NOVA INFOTECH SOLUTIONS PVT. LTD.'}
-                </span>
-
-                <div className="py-2 flex items-center justify-end gap-3 min-h-[50px]">
-                  {/* Seal */}
-                  {settings.company_seal_url ? (
-                    <img src={settings.company_seal_url} alt="Company Seal" className="w-12 h-12 object-contain" />
-                  ) : (
-                    <div className="border border-dashed border-[#D4A24C] text-[#8A5E12] rounded-lg px-2 py-0.5 text-[8.5px] font-mono font-bold tracking-wider inline-flex items-center gap-1 rotate-[-2deg] bg-[#FAF7F2]">
-                      <CheckCircle2 className="w-3 h-3 text-[#0D3B2A]" />
-                      <span>DIGITALLY VERIFIED</span>
-                    </div>
-                  )}
-
-                  {/* Signature */}
-                  {settings.signature_url ? (
-                    <img src={settings.signature_url} alt="Signature" className="h-10 max-w-[130px] object-contain" />
-                  ) : (
-                    <div className="font-serif italic font-bold text-base text-[#0D3B2A] tracking-wider pr-1">
-                      {settings.signatory_name || 'Mohd Zaid'}
-                    </div>
-                  )}
-                </div>
-
-                <div className="border-t border-slate-200 pt-1">
-                  <strong className="text-[11px] font-bold text-slate-900 block">
-                    {settings.signatory_name || 'Mohd Zaid'}
-                  </strong>
-                  <span className="text-[9.5px] text-[#8A5E12] block font-semibold">
-                    {settings.signatory_designation || 'Authorized Commercial Signatory / General Manager'}
-                  </span>
-                </div>
+              <div className="md:col-span-2">
+                <label className="block font-semibold text-[#0D3B2A] mb-1">Legal Redressal Cell Address *</label>
+                <textarea
+                  rows={2}
+                  required
+                  value={settings.grievance_officer?.address || ''}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      grievance_officer: { ...settings.grievance_officer, address: e.target.value }
+                    })
+                  }
+                  placeholder="Unit No. 101, Legal Grievance Cell, Connaught Place, New Delhi 110001..."
+                  className="w-full p-3 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A]"
+                />
               </div>
             </div>
           </div>
         )}
 
-        {/* -------------------------------------------------------- */}
-        {/* TAB 4: CATEGORY GST RATES ("GST Rate according to Cat")   */}
-        {/* -------------------------------------------------------- */}
+        {/* TAB 5: CATEGORY GST RATES */}
         {activeTab === 'gst' && (
-          <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-5 animate-in fade-in duration-100">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
-              <div>
-                <h2 className="text-sm font-bold text-[#0D3B2A] flex items-center gap-2">
-                  <Percent className="w-4 h-4 text-[#D4A24C]" />
-                  Category-Wise GST Tax Slabs & HSN / SAC Codes
-                </h2>
-                <p className="text-[11px] text-slate-500 mt-0.5">
-                  Configure Indian GST tax slabs and official Harmonized System Nomenclature (HSN / SAC) per product category.
-                </p>
-              </div>
-
-              <button
-                type="button"
-                onClick={resetGstRatesToDefaults}
-                className="px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs transition cursor-pointer self-start sm:self-auto"
-              >
-                Reset to Standard Indian GST Slabs
-              </button>
+          <div className="space-y-6 animate-in fade-in duration-300">
+            <div>
+              <h2 className="text-lg font-serif font-bold text-[#0D3B2A]">
+                Category-Wise GST & HSN Architecture
+              </h2>
+              <p className="text-xs text-[#5A6B63]">
+                Official HSN/SAC codes and tax percentages applied automatically to invoices and proforma quotes.
+              </p>
             </div>
 
-            {/* Default Global GST */}
-            <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between gap-4">
-              <div>
-                <strong className="text-slate-900 block text-xs">Standard Default Hardware GST Rate</strong>
-                <span className="text-slate-500 text-[11px]">Applied when no category-specific override is found</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <input
-                  type="number"
-                  min="0"
-                  max="40"
-                  value={settings.default_gst_rate}
-                  onChange={(e) => setSettings({ ...settings, default_gst_rate: Number(e.target.value) })}
-                  className="w-16 px-2.5 py-1 bg-white border border-slate-300 rounded-lg text-center font-mono font-bold text-xs text-[#0D3B2A]"
-                />
-                <span className="font-bold text-slate-600">%</span>
-              </div>
-            </div>
-
-            {/* Category Rates Table */}
-            <div className="overflow-x-auto rounded-2xl border border-slate-200">
-              <table className="w-full text-left border-collapse text-xs">
-                <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200 text-[#0D3B2A] font-semibold text-[11px] uppercase tracking-wider">
-                    <th className="py-2.5 px-3.5 font-bold">Category</th>
-                    <th className="py-2.5 px-3.5 font-bold">HSN / SAC Code</th>
-                    <th className="py-2.5 px-3.5 font-bold text-center">GST Rate (%)</th>
-                    <th className="py-2.5 px-3.5 font-bold">Tax Slab Breakdown</th>
+            <div className="overflow-x-auto border border-[#D4A24C]/25 rounded-2xl">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-[#072117] text-[#FAF7F2] font-mono uppercase text-[10px] tracking-wider">
+                  <tr>
+                    <th className="p-3">Category</th>
+                    <th className="p-3">HSN / SAC Code</th>
+                    <th className="p-3">GST Rate (%)</th>
+                    <th className="p-3">Statutory Description</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {settings.category_gst_rates.map((cat, idx) => (
-                    <tr key={cat.category_key} className="hover:bg-slate-50/70 transition">
-                      
-                      {/* Category Name */}
-                      <td className="py-2.5 px-3.5">
-                        <strong className="text-slate-900 block">{cat.category_name}</strong>
-                        <span className="text-[10px] text-slate-400 font-mono">{cat.category_key}</span>
-                      </td>
-
-                      {/* HSN Code Input */}
-                      <td className="py-2.5 px-3.5">
+                <tbody className="divide-y divide-slate-100 font-sans">
+                  {settings.category_gst_rates.map((rate, idx) => (
+                    <tr key={idx} className="hover:bg-[#FAF7F2]">
+                      <td className="p-3 font-bold text-[#0D3B2A]">{rate.category_name}</td>
+                      <td className="p-3 font-mono">
                         <input
                           type="text"
-                          value={cat.hsn_sac}
-                          onChange={(e) => handleGstRateChange(idx, 'hsn_sac', e.target.value)}
-                          placeholder="e.g. 8471 30 10"
-                          className="w-32 px-2.5 py-1 bg-slate-50 border border-slate-300 rounded-lg font-mono text-xs focus:outline-none focus:border-[#0D3B2A]"
+                          value={rate.hsn_sac}
+                          onChange={(e) => {
+                            const updated = [...settings.category_gst_rates];
+                            updated[idx].hsn_sac = e.target.value;
+                            setSettings({ ...settings, category_gst_rates: updated });
+                          }}
+                          className="px-2 py-1 bg-white border border-slate-300 rounded font-mono text-xs w-28"
                         />
                       </td>
-
-                      {/* GST Rate Input */}
-                      <td className="py-2.5 px-3.5 text-center">
-                        <div className="inline-flex items-center gap-1">
-                          <select
-                            value={cat.gst_rate}
-                            onChange={(e) => handleGstRateChange(idx, 'gst_rate', e.target.value)}
-                            className="bg-slate-50 border border-slate-300 rounded-lg px-2 py-1 font-mono font-bold text-xs text-[#0D3B2A] cursor-pointer"
-                          >
-                            <option value={0}>0% (Exempt)</option>
-                            <option value={5}>5% (E-Waste / Scrap)</option>
-                            <option value={12}>12% (Concessional)</option>
-                            <option value={18}>18% (Standard Hardware)</option>
-                            <option value={28}>28% (Specialized Display)</option>
-                          </select>
-                        </div>
+                      <td className="p-3">
+                        <input
+                          type="number"
+                          value={rate.gst_rate}
+                          onChange={(e) => {
+                            const updated = [...settings.category_gst_rates];
+                            updated[idx].gst_rate = Number(e.target.value);
+                            setSettings({ ...settings, category_gst_rates: updated });
+                          }}
+                          className="px-2 py-1 bg-white border border-slate-300 rounded font-mono text-xs w-16"
+                        />
+                        <span className="ml-1 text-slate-500">%</span>
                       </td>
-
-                      {/* Tax Breakdown Preview */}
-                      <td className="py-2.5 px-3.5 text-slate-500 font-mono text-[11px]">
-                        CGST {cat.gst_rate / 2}% + SGST {cat.gst_rate / 2}%
-                      </td>
+                      <td className="p-3 text-slate-500 text-[11px]">{rate.description}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -654,33 +944,48 @@ export default function AdminSettings() {
           </div>
         )}
 
-        {/* -------------------------------------------------------- */}
-        {/* TAB 5: BANKING & REMITTANCE                              */}
-        {/* -------------------------------------------------------- */}
+        {/* TAB 6: BANKING & SIGNATORY */}
         {activeTab === 'banking' && (
-          <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-5 animate-in fade-in duration-100">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div>
-                <h2 className="text-sm font-bold text-[#0D3B2A] flex items-center gap-2">
-                  <CreditCard className="w-4 h-4 text-[#D4A24C]" />
-                  Corporate Bank Account & RTGS / NEFT Remittance Details
-                </h2>
-                <p className="text-[11px] text-slate-500 mt-0.5">
-                  Printed directly on Proforma & Tax Invoices for corporate client wire payments.
-                </p>
-              </div>
-              <span className="text-[10px] text-[#8A5E12] bg-[#FAF7F2] border border-[#D4A24C]/40 px-2 py-0.5 rounded-full font-bold">
-                Printed on B2B Bills
-              </span>
+          <div className="space-y-6 animate-in fade-in duration-300">
+            <div>
+              <h2 className="text-lg font-serif font-bold text-[#0D3B2A]">
+                Authorized Signatory & Bank Wire Remittance
+              </h2>
+              <p className="text-xs text-[#5A6B63]">
+                Printed on formal Tax Invoices, quotation PDFs, and B2B wire remittance instructions.
+              </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs">
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Bank Name *</label>
+                <label className="block font-semibold text-[#0D3B2A] mb-1">Authorized Commercial Signatory *</label>
                 <input
                   type="text"
                   required
-                  value={settings.bank_details?.bank_name}
+                  value={settings.signatory_name}
+                  onChange={(e) => setSettings({ ...settings, signatory_name: e.target.value })}
+                  placeholder="e.g. Vikramaditya Menta"
+                  className="w-full px-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A]"
+                />
+              </div>
+
+              <div>
+                <label className="block font-semibold text-[#0D3B2A] mb-1">Signatory Designation *</label>
+                <input
+                  type="text"
+                  required
+                  value={settings.signatory_designation}
+                  onChange={(e) => setSettings({ ...settings, signatory_designation: e.target.value })}
+                  placeholder="Authorized Commercial Signatory / General Manager"
+                  className="w-full px-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A]"
+                />
+              </div>
+
+              <div>
+                <label className="block font-semibold text-[#0D3B2A] mb-1">Bank Name</label>
+                <input
+                  type="text"
+                  value={settings.bank_details.bank_name}
                   onChange={(e) =>
                     setSettings({
                       ...settings,
@@ -688,196 +993,148 @@ export default function AdminSettings() {
                     })
                   }
                   placeholder="e.g. HDFC Bank Ltd"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] font-semibold text-slate-900"
+                  className="w-full px-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A]"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Beneficiary Account Name *</label>
+                <label className="block font-semibold text-[#0D3B2A] mb-1">Beneficiary Account Name</label>
                 <input
                   type="text"
-                  required
-                  value={settings.bank_details?.account_name}
+                  value={settings.bank_details.account_name}
                   onChange={(e) =>
                     setSettings({
                       ...settings,
                       bank_details: { ...settings.bank_details, account_name: e.target.value }
                     })
                   }
-                  placeholder="e.g. Nova Infotech Solutions Pvt. Ltd."
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A]"
+                  placeholder="e.g. Demo Infotech Private Limited"
+                  className="w-full px-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A]"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Corporate Current Account Number *</label>
+                <label className="block font-semibold text-[#0D3B2A] mb-1">Current Account Number</label>
                 <input
                   type="text"
-                  required
-                  value={settings.bank_details?.account_number}
+                  value={settings.bank_details.account_number}
                   onChange={(e) =>
                     setSettings({
                       ...settings,
                       bank_details: { ...settings.bank_details, account_number: e.target.value }
                     })
                   }
-                  placeholder="e.g. 50200084920194"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] font-mono font-bold text-[#0D3B2A]"
+                  placeholder="50200000000000"
+                  className="w-full px-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] font-mono"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Bank IFSC Code *</label>
+                <label className="block font-semibold text-[#0D3B2A] mb-1">IFSC Code</label>
                 <input
                   type="text"
-                  required
-                  value={settings.bank_details?.ifsc_code}
+                  value={settings.bank_details.ifsc_code}
                   onChange={(e) =>
                     setSettings({
                       ...settings,
-                      bank_details: { ...settings.bank_details, ifsc_code: e.target.value.toUpperCase() }
+                      bank_details: { ...settings.bank_details, ifsc_code: e.target.value }
                     })
                   }
-                  placeholder="e.g. HDFC0000123"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] font-mono font-bold"
-                />
-              </div>
-
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Branch Location</label>
-                <input
-                  type="text"
-                  value={settings.bank_details?.branch}
-                  onChange={(e) =>
-                    setSettings({
-                      ...settings,
-                      bank_details: { ...settings.bank_details, branch: e.target.value }
-                    })
-                  }
-                  placeholder="e.g. Okhla Industrial Area Phase III, New Delhi"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A]"
-                />
-              </div>
-
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Official UPI ID</label>
-                <input
-                  type="text"
-                  value={settings.bank_details?.upi_id}
-                  onChange={(e) =>
-                    setSettings({
-                      ...settings,
-                      bank_details: { ...settings.bank_details, upi_id: e.target.value }
-                    })
-                  }
-                  placeholder="e.g. novainfotech@hdfcbank"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] font-mono"
+                  placeholder="HDFC0000000"
+                  className="w-full px-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] font-mono"
                 />
               </div>
             </div>
           </div>
         )}
 
-        {/* -------------------------------------------------------- */}
-        {/* TAB 6: WAREHOUSE & GOOGLE MAPS EMBED                     */}
-        {/* -------------------------------------------------------- */}
-        {activeTab === 'warehouse' && (
-          <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-5 animate-in fade-in duration-100">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        {/* TAB 7: AUDIT LOG & ONE-CLICK REVERT */}
+        {activeTab === 'audit' && (
+          <div className="space-y-6 animate-in fade-in duration-300">
+            <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-sm font-bold text-[#0D3B2A] flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-[#D4A24C]" />
-                  Warehouse Facility & Google Maps Embed
+                <h2 className="text-lg font-serif font-bold text-[#0D3B2A]">
+                  Settings Audit Log & Version History
                 </h2>
-                <p className="text-[11px] text-slate-500 mt-0.5">
-                  Appears in Contact Us, Pan-India Dispatch Policy, and Footer Operations Hubs.
+                <p className="text-xs text-[#5A6B63]">
+                  Immutable change ledger tracking administrator identity, timestamp, and one-click rollback snapshots.
                 </p>
               </div>
+              <div className="text-right font-mono text-xs">
+                <span className="font-bold text-[#0D3B2A]">Current Version: v{settings.settings_version || 1}</span>
+              </div>
             </div>
 
-            <div className="space-y-4">
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Primary Registered Facility Address *</label>
-                <textarea
-                  rows={2}
-                  required
-                  value={settings.address}
-                  onChange={(e) => setSettings({ ...settings, address: e.target.value })}
-                  placeholder="e.g. Plot No. 42, Sector 18, Electronic City / Industrial Area, Delhi NCR · Bangalore, India"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A]"
-                />
+            {auditLogs && auditLogs.length > 0 ? (
+              <div className="overflow-x-auto border border-[#D4A24C]/25 rounded-2xl">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-[#072117] text-[#FAF7F2] font-mono uppercase text-[10px] tracking-wider">
+                    <tr>
+                      <th className="p-3">Timestamp</th>
+                      <th className="p-3">Action</th>
+                      <th className="p-3">Modified By</th>
+                      <th className="p-3">Changed Fields</th>
+                      <th className="p-3 text-right">Rollback</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 font-sans">
+                    {auditLogs.map((log) => (
+                      <tr key={log._id} className="hover:bg-[#FAF7F2]">
+                        <td className="p-3 font-mono text-[11px] text-slate-600">
+                          {new Date(log.createdAt).toLocaleString('en-IN')}
+                        </td>
+                        <td className="p-3">
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#FAF7F2] text-[#8A5E12] border border-[#D4A24C]/30">
+                            {log.action}
+                          </span>
+                        </td>
+                        <td className="p-3 font-semibold text-[#0D3B2A]">
+                          {log.changed_by_name || 'Admin'}
+                        </td>
+                        <td className="p-3 text-slate-500 font-mono text-[10.5px]">
+                          {log.changed_fields && log.changed_fields.length > 0
+                            ? log.changed_fields.join(', ')
+                            : 'Full Sync'}
+                        </td>
+                        <td className="p-3 text-right">
+                          <button
+                            type="button"
+                            disabled={reverting}
+                            onClick={() => handleRevert(log._id)}
+                            className="px-3 py-1 rounded-lg bg-white border border-[#D4A24C]/40 hover:bg-[#FAF7F2] text-[#0D3B2A] font-bold text-[11px] flex items-center gap-1 ml-auto cursor-pointer transition active:scale-95 disabled:opacity-50"
+                          >
+                            <RotateCcw className="w-3 h-3 text-[#8A5E12]" />
+                            <span>Revert Here</span>
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Multi-City Operations Hubs (Footer)</label>
-                <input
-                  type="text"
-                  value={settings.warehouse_locations}
-                  onChange={(e) => setSettings({ ...settings, warehouse_locations: e.target.value })}
-                  placeholder="e.g. Electronic City Phase 1, Bangalore · Okhla Industrial Area, Delhi NCR · Mumbai, India"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A]"
-                />
+            ) : (
+              <div className="p-6 bg-[#FAF7F2] rounded-2xl border border-slate-200 text-center text-xs text-slate-500">
+                Initial baseline snapshot active. Future settings modifications will generate granular change diffs here.
               </div>
-
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Google Maps Embed URL *</label>
-                <input
-                  type="text"
-                  required
-                  value={settings.google_maps_embed_url}
-                  onChange={(e) => setSettings({ ...settings, google_maps_embed_url: e.target.value })}
-                  placeholder="https://www.google.com/maps/embed?pb=..."
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] font-mono text-xs"
-                />
-                <span className="text-[10px] text-slate-400 mt-1 block">
-                  Paste the "src" URL from Google Maps Share &gt; Embed a map iframe.
-                </span>
-              </div>
-
-              {/* LIVE MAP PREVIEW */}
-              {settings.google_maps_embed_url && (
-                <div className="pt-2">
-                  <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider block font-semibold mb-2">
-                    Live Google Maps Embed Preview:
-                  </span>
-                  <div className="w-full h-52 rounded-2xl overflow-hidden border border-slate-300 shadow-xs">
-                    <iframe
-                      title="Warehouse Facility Map Preview"
-                      src={settings.google_maps_embed_url}
-                      width="100%"
-                      height="100%"
-                      style={{ border: 0 }}
-                      allowFullScreen=""
-                      loading="lazy"
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
+            )}
           </div>
         )}
 
-        {/* Global Save Button at Bottom */}
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
+        {/* Bottom Save Bar */}
+        <div className="pt-6 border-t border-[#D4A24C]/20 flex items-center justify-between">
+          <span className="text-[11px] text-slate-500">
+            Changes propagate dynamically to public components via cached endpoint (60s TTL).
+          </span>
+
           <button
             type="submit"
             disabled={saving}
-            className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#0D3B2A] hover:bg-[#124e38] text-[#FAF7F2] font-bold text-xs rounded-xl shadow border border-[#D4A24C]/40 transition cursor-pointer"
+            className="px-7 py-3 rounded-xl bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs flex items-center gap-2 shadow-lg transition active:scale-95 disabled:opacity-50 cursor-pointer border border-[#D4A24C]/40"
           >
-            {saving ? (
-              <>
-                <RefreshCw className="w-4 h-4 animate-spin text-[#D4A24C]" />
-                <span>Publishing Updates...</span>
-              </>
-            ) : (
-              <>
-                <Save className="w-4 h-4 text-[#D4A24C]" />
-                <span>Save All Enterprise Settings</span>
-              </>
-            )}
+            <Save className="w-4 h-4 text-[#D4A24C]" />
+            <span>{saving ? 'Publishing...' : 'Save & Publish Live'}</span>
           </button>
         </div>
-
       </form>
     </div>
   );

@@ -24,6 +24,21 @@ import AboutUs from './pages/AboutUs';
 import Contact from './pages/Contact';
 import Cart from './pages/Cart';
 import Legal from './pages/Legal';
+import NotFound from './pages/NotFound';
+
+// Statutory Legal & Policy Pages (12 Dedicated Modules)
+import PrivacyPolicyPage from './pages/legal/PrivacyPolicyPage';
+import TermsConditionsPage from './pages/legal/TermsConditionsPage';
+import RentalSLAPage from './pages/legal/RentalSLAPage';
+import RefundCancellationPage from './pages/legal/RefundCancellationPage';
+import WarrantyPolicyPage from './pages/legal/WarrantyPolicyPage';
+import ShippingPolicyPage from './pages/legal/ShippingPolicyPage';
+import HardwareReplacementPage from './pages/legal/HardwareReplacementPage';
+import CookiePolicyPage from './pages/legal/CookiePolicyPage';
+import DisclaimerPage from './pages/legal/DisclaimerPage';
+import RefurbishedDisclosurePage from './pages/legal/RefurbishedDisclosurePage';
+import EWastePolicyPage from './pages/legal/EWastePolicyPage';
+import GrievanceRedressalPage from './pages/legal/GrievanceRedressalPage';
 
 // Auth Pages
 import Login from './pages/Login';
@@ -115,14 +130,31 @@ export default function App() {
               <Route path="about" element={<AboutUs />} />
               <Route path="contact" element={<Contact />} />
               <Route path="cart" element={<Cart />} />
-              <Route path="legal" element={<Legal defaultTab="terms" />} />
-              <Route path="terms" element={<Legal defaultTab="terms" />} />
-              <Route path="privacy" element={<Legal defaultTab="privacy" />} />
-              <Route path="rental-sla" element={<Legal defaultTab="rental-sla" />} />
-              <Route path="shipping-policy" element={<Legal defaultTab="shipping" />} />
-              <Route path="shipping" element={<Legal defaultTab="shipping" />} />
-              <Route path="warranty-policy" element={<Legal defaultTab="warranty" />} />
-              <Route path="warranty" element={<Legal defaultTab="warranty" />} />
+              
+              {/* Master Legal Index & 12 Statutory Policy Pages */}
+              <Route path="legal" element={<Legal />} />
+              <Route path="terms" element={<TermsConditionsPage />} />
+              <Route path="terms-and-conditions" element={<Navigate to="/terms" replace />} />
+              <Route path="privacy" element={<PrivacyPolicyPage />} />
+              <Route path="privacy-policy" element={<Navigate to="/privacy" replace />} />
+              <Route path="rental-sla" element={<RentalSLAPage />} />
+              <Route path="refund-policy" element={<RefundCancellationPage />} />
+              <Route path="refund" element={<Navigate to="/refund-policy" replace />} />
+              <Route path="warranty-policy" element={<WarrantyPolicyPage />} />
+              <Route path="warranty" element={<Navigate to="/warranty-policy" replace />} />
+              <Route path="shipping-policy" element={<ShippingPolicyPage />} />
+              <Route path="shipping" element={<Navigate to="/shipping-policy" replace />} />
+              <Route path="replacement-policy" element={<HardwareReplacementPage />} />
+              <Route path="replacement" element={<Navigate to="/replacement-policy" replace />} />
+              <Route path="cookie-policy" element={<CookiePolicyPage />} />
+              <Route path="cookies" element={<Navigate to="/cookie-policy" replace />} />
+              <Route path="disclaimer" element={<DisclaimerPage />} />
+              <Route path="refurbished-disclosure" element={<RefurbishedDisclosurePage />} />
+              <Route path="refurbished" element={<Navigate to="/refurbished-disclosure" replace />} />
+              <Route path="ewaste-policy" element={<EWastePolicyPage />} />
+              <Route path="ewaste" element={<Navigate to="/ewaste-policy" replace />} />
+              <Route path="grievance" element={<GrievanceRedressalPage />} />
+              <Route path="data-deletion" element={<Navigate to="/grievance" replace />} />
 
               {/* Auth Routes */}
               <Route path="login" element={<Login />} />
@@ -164,6 +196,9 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
+
+              {/* 404 Fallback within Public MainLayout */}
+              <Route path="*" element={<NotFound />} />
             </Route>
 
             {/* Admin Portal (Admin Only Protected) */}
@@ -187,10 +222,8 @@ export default function App() {
               <Route path="buyback" element={<AdminBuyback />} />
               <Route path="delivery-zones" element={<AdminDeliveryZones />} />
               <Route path="settings" element={<AdminSettings />} />
+              <Route path="*" element={<Navigate to="/admin" replace />} />
             </Route>
-
-            {/* Fallback */}
-            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </CartProvider>
       </AuthProvider>

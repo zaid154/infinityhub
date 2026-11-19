@@ -1,22 +1,32 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import {
   ShieldCheck,
-  CheckCircle2,
   Wrench,
   Award,
-  Truck,
-  FileText,
-  Lock,
-  RotateCcw,
-  Building2,
-  Check
+  Check,
+  ArrowRight
 } from 'lucide-react';
+import { useCompany } from '../context/SettingsContext';
 
 export default function AboutUs() {
+  const { company } = useCompany();
+  const brandName = company?.brand_name || 'Demo Infotech';
+  const legalName = company?.legal_name || 'Demo Infotech Private Limited';
+  const supportEmail = company?.procurement_email || company?.email || 'procurement@example.com';
   const [activeTab, setActiveTab] = useState('overview');
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-8 py-10 space-y-14">
+      <Helmet>
+        <title>About Us | {brandName} Enterprise IT Hardware Solutions</title>
+        <meta
+          name="description"
+          content={`Learn about ${brandName}'s verified enterprise hardware testing protocols, commercial IT infrastructure, corporate laptop rental fleets, and ITAD lifecycle governance.`}
+        />
+      </Helmet>
+
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto space-y-3">
         <span className="text-[11px] font-sans uppercase tracking-[0.22em] text-[#8A5E12] font-bold block">
@@ -30,7 +40,7 @@ export default function AboutUs() {
         </p>
       </div>
 
-      {/* Stats Counter - Al-Tooba Luxury Styling */}
+      {/* Stats Counter */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 p-8 bg-white rounded-3xl border border-[#D4A24C]/25 shadow-sm text-center">
         <div>
           <div className="text-3xl sm:text-4xl font-serif font-bold text-[#0D3B2A]">1,450+</div>
@@ -46,7 +56,7 @@ export default function AboutUs() {
         </div>
         <div>
           <div className="text-3xl sm:text-4xl font-serif font-bold text-[#8A5E12]">100%</div>
-          <div className="text-xs text-[#5A6B63] font-semibold mt-1 uppercase tracking-wider">GSTR-2B Tax Credit</div>
+          <div className="text-xs text-[#5A6B63] font-semibold mt-1 uppercase tracking-wider">GST Tax Invoiced</div>
         </div>
       </div>
 
@@ -147,14 +157,19 @@ export default function AboutUs() {
       {/* Tab 3: Privacy & Data Governance */}
       {activeTab === 'privacy' && (
         <div id="privacy" className="bg-white rounded-3xl border border-[#D4A24C]/25 p-8 sm:p-10 space-y-5 shadow-sm animate-in fade-in duration-300">
-          <h2 className="text-2xl font-serif font-bold text-[#0D3B2A]">Privacy & Data Governance Policy</h2>
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <h2 className="text-2xl font-serif font-bold text-[#0D3B2A]">Privacy & Data Governance Policy</h2>
+            <Link to="/privacy" className="text-xs font-bold text-[#D4A24C] hover:underline flex items-center gap-1">
+              Read Full DPDP Policy <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
           <div className="text-xs sm:text-sm text-[#5A6B63] space-y-4 leading-relaxed font-sans">
             <p>
-              Nova Infotech Solutions operates under strict enterprise data privacy compliance. We never monetize, share, or disclose client procurement records, lease contracts, or contact details to third parties.
+              {legalName} operates under strict enterprise data privacy compliance conforming to the Digital Personal Data Protection (DPDP) Act 2023 and Information Technology Act 2000. We never monetize, share, or disclose client procurement records, lease contracts, or contact details to third parties.
             </p>
             <h3 className="font-bold text-[#0D3B2A] text-sm font-serif">NIST 800-88 Data Sanitization</h3>
             <p>
-              All hardware sourced through corporate liquidation undergoes certified NIST 800-88 Rev. 1 cryptographic data wiping. Hard drives and SSDs are completely sanitized before resale or lease, and formal Certificates of Data Destruction are provided to corporate clients upon request.
+              All hardware sourced through corporate liquidation undergoes certified NIST SP 800-88 Rev. 1 cryptographic data wiping. Hard drives and SSDs are completely sanitized before resale or lease, and formal Certificates of Data Destruction are provided to corporate clients upon request.
             </p>
           </div>
         </div>
@@ -163,10 +178,15 @@ export default function AboutUs() {
       {/* Tab 4: Terms & Conditions */}
       {activeTab === 'terms' && (
         <div id="terms" className="bg-white rounded-3xl border border-[#D4A24C]/25 p-8 sm:p-10 space-y-5 shadow-sm animate-in fade-in duration-300">
-          <h2 className="text-2xl font-serif font-bold text-[#0D3B2A]">Terms of Commercial Hardware Sale</h2>
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <h2 className="text-2xl font-serif font-bold text-[#0D3B2A]">Terms of Commercial Hardware Sale</h2>
+            <Link to="/terms" className="text-xs font-bold text-[#D4A24C] hover:underline flex items-center gap-1">
+              Read Master Terms <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
           <div className="text-xs sm:text-sm text-[#5A6B63] space-y-4 leading-relaxed font-sans">
             <p>
-              All corporate orders placed via Nova Infotech are subject to formal quotation sign-off and tax invoicing. Prices shown are wholesale base rates and are subject to 18% GST with full GSTR-2B input tax credit eligibility.
+              All corporate orders placed via {brandName} are subject to formal quotation sign-off and tax invoicing. Prices shown are wholesale base rates and are subject to 18% GST with full GST Tax Invoices provided with every order.
             </p>
             <h3 className="font-bold text-[#0D3B2A] text-sm font-serif">Commercial Warranty</h3>
             <p>
@@ -179,7 +199,12 @@ export default function AboutUs() {
       {/* Tab 5: Dispatch Policy */}
       {activeTab === 'dispatch' && (
         <div id="dispatch" className="bg-white rounded-3xl border border-[#D4A24C]/25 p-8 sm:p-10 space-y-5 shadow-sm animate-in fade-in duration-300">
-          <h2 className="text-2xl font-serif font-bold text-[#0D3B2A]">Pan-India Dispatch & Logistics Policy</h2>
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <h2 className="text-2xl font-serif font-bold text-[#0D3B2A]">Pan-India Dispatch & Logistics Policy</h2>
+            <Link to="/shipping-policy" className="text-xs font-bold text-[#D4A24C] hover:underline flex items-center gap-1">
+              Read Shipping Policy <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
           <div className="text-xs sm:text-sm text-[#5A6B63] space-y-4 leading-relaxed font-sans">
             <p>
               We maintain centralized fulfillment depots in Bangalore, Delhi NCR, and Mumbai. Standard dispatches are executed within 24–48 hours of purchase order (PO) confirmation.
@@ -195,14 +220,19 @@ export default function AboutUs() {
       {/* Tab 6: Hardware Replacement Policy */}
       {activeTab === 'replacement' && (
         <div id="replacement" className="bg-white rounded-3xl border border-[#D4A24C]/25 p-8 sm:p-10 space-y-5 shadow-sm animate-in fade-in duration-300">
-          <h2 className="text-2xl font-serif font-bold text-[#0D3B2A]">Hardware Replacement SLA Guarantee</h2>
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <h2 className="text-2xl font-serif font-bold text-[#0D3B2A]">Hardware Replacement SLA Guarantee</h2>
+            <Link to="/rental-sla" className="text-xs font-bold text-[#D4A24C] hover:underline flex items-center gap-1">
+              Read Rental SLA <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
           <div className="text-xs sm:text-sm text-[#5A6B63] space-y-4 leading-relaxed font-sans">
             <p>
-              Our flagship corporate commitment: if any leased machine encounters a hardware fault, our technical team executes a 24–48 hour standby machine swap on-site, ensuring zero downtime for your workforce.
+              Our flagship corporate commitment: if any leased machine encounters a hardware fault, our technical team executes a 24–48 hour standby machine swap on-site, ensuring zero downtime for your workforce (subject to Rental SLA Terms).
             </p>
             <h3 className="font-bold text-[#0D3B2A] text-sm font-serif">Zero-Hassle Process</h3>
             <p>
-              Simply email <strong className="text-[#0D3B2A]">procurement@novainfotech.in</strong> or notify our desk. We dispatch an identical replacement laptop immediately without waiting for repairs or manufacturer RMA delays.
+              Simply email <strong className="text-[#0D3B2A]">{supportEmail}</strong> or notify our desk. We dispatch an identical replacement laptop immediately without waiting for repairs or manufacturer RMA delays.
             </p>
           </div>
         </div>

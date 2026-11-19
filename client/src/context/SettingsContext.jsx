@@ -1,78 +1,38 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import api from '../services/api';
-
-const DEFAULT_SETTINGS = {
-  company_name: 'Nova Infotech Solutions',
-  tagline: 'Certified Enterprise Hardware, Corporate Fleet Rentals & ITAD Solutions',
-  phone: '+91 98765 43210',
-  whatsapp: '+91 98765 43210',
-  email: 'procurement@novainfotech.in',
-  address: 'Plot No. 42, Sector 18, Electronic City / Industrial Area, Delhi NCR · Bangalore, India',
-  google_maps_embed_url: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d224345.83923192776!2d77.06889754725782!3d28.52758200617607!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cfd5b347eb62d%3A0x37205b715389640!2sDelhi!5e0!3m2!1sen!2sin!4v1700000000000',
-  logo_url: '',
-  gst_number: '07AAACN8412K1Z9',
-  invoice_prefix: 'INV',
-  business_hours: 'Monday – Saturday: 9:30 AM – 7:30 PM IST',
-  warehouse_locations: 'Electronic City Phase 1, Bangalore · Okhla Industrial Area, Delhi NCR · Mumbai, India',
-  support_sla: 'Guaranteed 24–48h Hardware Standby Replacement SLA',
-  
-  // Manager & Authorized Signatory Details ("Manager ke Sign")
-  signatory_name: 'Mohd Zaid',
-  signatory_designation: 'Authorized Commercial Signatory / General Manager',
-  signature_url: '',
-  company_seal_url: '',
-
-  // Category-wise GST Rates ("GST Rate according to Category")
-  category_gst_rates: [
-    { category_key: 'laptop', category_name: 'Corporate Laptops', hsn_sac: '8471 30 10', gst_rate: 18, description: 'Standard commercial notebooks & ultrabooks' },
-    { category_key: 'desktop', category_name: 'Commercial Desktops', hsn_sac: '8471 41 90', gst_rate: 18, description: 'Tower PCs, all-in-one & micro desktops' },
-    { category_key: 'server', category_name: 'Enterprise Servers', hsn_sac: '8471 49 00', gst_rate: 18, description: 'Rackmount & blade servers' },
-    { category_key: 'monitor', category_name: 'Business Monitors', hsn_sac: '8528 52 00', gst_rate: 18, description: 'Commercial IPS displays & monitors' },
-    { category_key: 'ram', category_name: 'RAM & Memory', hsn_sac: '8473 30 20', gst_rate: 18, description: 'DDR4 & DDR5 ECC / Non-ECC modules' },
-    { category_key: 'storage', category_name: 'SSD & Storage', hsn_sac: '8471 70 20', gst_rate: 18, description: 'NVMe M.2 & SATA solid state drives' },
-    { category_key: 'gpu', category_name: 'Workstation GPUs', hsn_sac: '8473 30 99', gst_rate: 18, description: 'Dedicated AI & 3D compute graphics cards' },
-    { category_key: 'peripheral', category_name: 'Peripherals & Accessories', hsn_sac: '8471 60 60', gst_rate: 18, description: 'Docks, chargers, keyboards & networking' },
-    { category_key: 'rental', category_name: 'Corporate Fleet Rentals', hsn_sac: '997311', gst_rate: 18, description: 'Operating leasing of computers & hardware' },
-    { category_key: 'buyback', category_name: 'Asset Buyback / E-Waste', hsn_sac: '8471 90 00', gst_rate: 5, description: 'ITAD decommissioned electronics disposition' }
-  ],
-  default_gst_rate: 18,
-
-  // Corporate Bank Account Details (for Invoices & Wire Transfers)
-  bank_details: {
-    bank_name: 'HDFC Bank Ltd',
-    account_name: 'Nova Infotech Solutions Pvt. Ltd.',
-    account_number: '50200084920194',
-    ifsc_code: 'HDFC0000123',
-    branch: 'Okhla Industrial Area / Electronic City',
-    upi_id: 'novainfotech@hdfcbank'
-  },
-
-  social_links: {
-    linkedin: '',
-    instagram: '',
-    twitter: ''
-  }
-};
+import { FALLBACK_COMPANY_SETTINGS } from '../config/company';
 
 const SettingsContext = createContext({
-  settings: DEFAULT_SETTINGS,
+  settings: FALLBACK_COMPANY_SETTINGS,
+  company: FALLBACK_COMPANY_SETTINGS,
   loading: true,
   error: null,
-  refreshSettings: async () => {}
+  isDemoMode: false,
+  refreshSettings: async () => {},
+  renderToken: (text) => text
 });
 
 export function SettingsProvider({ children }) {
-  const [settings, setSettings] = useState(DEFAULT_SETTINGS);
+  const [settings, setSettings] = useState(FALLBACK_COMPANY_SETTINGS);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const fetchSettings = useCallback(async () => {
     try {
-      const res = await api.get('/settings');
-      if (res.data.success && res.data.settings) {
+      // Prefer cached public settings (safe for unauthenticated visitors)
+      const res = await api.get('/settings/public').catch(() => api.get('/settings'));
+      if (res.data?.success && res.data?.settings) {
         setSettings((prev) => ({
           ...prev,
           ...res.data.settings,
+          grievance_officer: {
+            ...prev.grievance_officer,
+            ...(res.data.settings.grievance_officer || {})
+          },
+          social_links: {
+            ...prev.social_links,
+            ...(res.data.settings.social_links || {})
+          },
           bank_details: {
             ...prev.bank_details,
             ...(res.data.settings.bank_details || {})
@@ -82,9 +42,10 @@ export function SettingsProvider({ children }) {
               ? res.data.settings.category_gst_rates
               : prev.category_gst_rates
         }));
+        setError(null);
       }
     } catch (err) {
-      console.error('[SettingsContext Error]', err);
+      console.warn('[SettingsContext] Falling back to default company configuration:', err?.message);
       setError(err.message || 'Failed to fetch settings');
     } finally {
       setLoading(false);
@@ -95,11 +56,85 @@ export function SettingsProvider({ children }) {
     fetchSettings();
   }, [fetchSettings]);
 
+  // Check if critical enterprise identity fields still have demo placeholders
+  const isDemoMode = useMemo(() => {
+    if (!settings) return true;
+    const placeholderSignals = [
+      settings.brand_name === 'Demo Infotech',
+      settings.legal_name?.includes('[PLACEHOLDER]'),
+      settings.gst_number?.includes('[PLACEHOLDER]'),
+      settings.cin_number?.includes('[PLACEHOLDER]'),
+      settings.phone?.includes('XXXXX'),
+      settings.email?.includes('example.com')
+    ];
+    return placeholderSignals.some(Boolean);
+  }, [settings]);
+
+  // Safe Token Interpolator for Legal & Policy Pages
+  const renderToken = useCallback(
+    (text) => {
+      if (!text || typeof text !== 'string') return text;
+      const s = settings || FALLBACK_COMPANY_SETTINGS;
+      const tmChar = s.tm_symbol === 'R' ? '®' : s.tm_symbol === 'TM' ? '™' : '';
+      const formattedDate = s.legal_last_updated
+        ? new Date(s.legal_last_updated).toLocaleDateString('en-IN', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+          })
+        : new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+
+      const tokenMap = {
+        '{{brandName}}': s.brand_name || 'Demo Infotech',
+        '{{brandNameShort}}': s.brand_name_short || 'Demo',
+        '{{legalName}}': s.legal_name || 'Demo Infotech Private Limited',
+        '{{tagline}}': s.tagline || '',
+        '{{tmSymbol}}': tmChar,
+        '{{cin}}': s.cin_number || '',
+        '{{cinNumber}}': s.cin_number || '',
+        '{{gstin}}': s.gst_number || '',
+        '{{gstNumber}}': s.gst_number || '',
+        '{{registeredAddress}}': s.registered_address || s.address || '',
+        '{{operationsAddress}}': s.operations_address || s.address || '',
+        '{{address}}': s.address || '',
+        '{{jurisdictionCity}}': s.jurisdiction_city || 'New Delhi',
+        '{{isoCertNumber}}': s.iso_cert_number || '',
+        '{{eprNumber}}': s.epr_registration_number || '',
+        '{{phone}}': s.phone || '',
+        '{{whatsapp}}': s.whatsapp || '',
+        '{{email}}': s.email || '',
+        '{{supportEmail}}': s.support_email || s.email || '',
+        '{{procurementEmail}}': s.procurement_email || s.email || '',
+        '{{businessHours}}': s.business_hours || '',
+        '{{supportSLA}}': s.support_sla || '24–48h Hardware Standby Replacement SLA',
+        '{{grievanceName}}': s.grievance_officer?.name || 'Grievance Officer',
+        '{{grievanceDesignation}}': s.grievance_officer?.designation || 'Head of Legal & Enterprise Compliance',
+        '{{grievanceEmail}}': s.grievance_officer?.email || 'grievance@example.com',
+        '{{grievancePhone}}': s.grievance_officer?.phone || '+91 XXXXX XXXXX',
+        '{{grievanceAddress}}': s.grievance_officer?.address || s.registered_address || '',
+        '{{thirdPartyDisclaimer}}': s.third_party_disclaimer || '',
+        '{{legalVersion}}': s.legal_version || '1.0',
+        '{{lastUpdated}}': formattedDate,
+        '{{websiteUrl}}': s.website_url || 'http://localhost:5173'
+      };
+
+      let result = text;
+      for (const [key, val] of Object.entries(tokenMap)) {
+        result = result.split(key).join(val);
+      }
+      return result;
+    },
+    [settings]
+  );
+
   const value = {
     settings,
+    company: settings, // Primary alias for brand identity
     loading,
     error,
-    refreshSettings: fetchSettings
+    isDemoMode,
+    refreshSettings: fetchSettings,
+    renderToken
   };
 
   return <SettingsContext.Provider value={value}>{children}</SettingsContext.Provider>;
@@ -111,6 +146,11 @@ export function useSettings() {
     throw new Error('useSettings must be used within a SettingsProvider');
   }
   return context;
+}
+
+// Named alias useCompany for cleaner enterprise semantics
+export function useCompany() {
+  return useSettings();
 }
 
 export default SettingsContext;

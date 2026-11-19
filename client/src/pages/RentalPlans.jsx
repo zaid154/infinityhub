@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useOutletContext } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import {
   ShieldCheck,
   CheckCircle2,
@@ -38,8 +39,11 @@ import api from '../services/api';
 import { useCart } from '../context/CartContext';
 import toast from 'react-hot-toast';
 import { getSafeImageUrl } from '../utils/imageHelper';
+import { useCompany } from '../context/SettingsContext';
 
 export default function RentalPlans() {
+  const { company } = useCompany();
+  const brandName = company?.brand_name || 'Demo Infotech';
   const { openRFQ } = useOutletContext();
   const { addToRentalCart } = useCart();
 
@@ -221,7 +225,7 @@ export default function RentalPlans() {
         '14" FHD Anti-Glare Display'
       ],
       included: [
-        '100% Tax-deductible OPEX & 18% GSTR-2B',
+        '100% Tax-deductible OPEX & 18% GST Invoicing',
         'Free ongoing AMC, parts & spares',
         'Annual technology fleet refresh option'
       ],
@@ -346,15 +350,15 @@ export default function RentalPlans() {
     },
     {
       q: 'Can we purchase the hardware outright if we decide not to rent?',
-      a: 'Yes! Nova Infotech operates a dual business model: you can either lease hardware via our rental division, or purchase certified refurbished and brand-new hardware directly from our Sales Catalog with complete GST invoicing.'
+      a: `Yes! ${brandName} operates a dual business model: you can either lease hardware via our rental division, or purchase certified refurbished and brand-new hardware directly from our Sales Catalog with complete GST invoicing.`
     },
     {
-      q: 'How does Nova Infotech purchase hardware from vendors and suppliers?',
+      q: `How does ${brandName} purchase hardware from vendors and suppliers?`,
       a: 'Through our Procurement Desk, we purchase decommissioned corporate fleets, excess distributor stock, and bulk IT hardware lots directly from suppliers with rapid valuation and upfront payment.'
     },
     {
       q: 'How does the 18% GST Input Tax Credit benefit our company?',
-      a: 'Unlike capital asset purchases which tie up cash in depreciation schedules, monthly equipment rental invoices carry 100% deductible Operational Expenditure (OPEX) classification and 18% input credit verifiable directly in your GSTR-2B filing.'
+      a: 'Unlike capital asset purchases which tie up cash in depreciation schedules, monthly equipment rental invoices carry 100% deductible Operational Expenditure (OPEX) classification and GST Tax Invoices provided for full input tax credit eligibility.'
     },
     {
       q: 'Can laptops be shipped directly to remote work-from-home (WFH) employees?',
@@ -364,6 +368,13 @@ export default function RentalPlans() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-10 sm:space-y-12">
+      <Helmet>
+        <title>Corporate Laptop Rental Plans & Enterprise Leasing | {brandName}</title>
+        <meta
+          name="description"
+          content={`Explore flexible corporate laptop rentals, workstation leases, and bulk IT fleet leasing by ${brandName} with 24-48h standby replacement SLA.`}
+        />
+      </Helmet>
       
       {/* ======================================================== */}
       {/* SECTION 1: TRI-PILLAR HERO SECTION (RENT + BUY + PROCURE)*/}
@@ -412,11 +423,11 @@ export default function RentalPlans() {
           </div>
           <div className="p-2.5 bg-white rounded-xl border border-[#D4A24C]/25 shadow-2xs text-center">
             <span className="text-[9px] font-bold uppercase tracking-wider text-[#8A5E12] block">Tax Credit</span>
-            <span className="text-xs sm:text-sm font-bold text-emerald-700 font-serif">100% GSTR-2B</span>
+            <span className="text-xs sm:text-sm font-bold text-emerald-700 font-serif">GST Tax Invoiced</span>
           </div>
           <div className="p-2.5 bg-white rounded-xl border border-[#D4A24C]/25 shadow-2xs text-center">
             <span className="text-[9px] font-bold uppercase tracking-wider text-[#8A5E12] block">Standby Swap</span>
-            <span className="text-xs sm:text-sm font-bold text-[#0D3B2A] font-serif">24–48h SLA</span>
+            <Link to="/rental-sla" className="text-xs sm:text-sm font-bold text-[#0D3B2A] font-serif hover:text-[#D4A24C] transition">24–48h SLA*</Link>
           </div>
           <div className="p-2.5 bg-white rounded-xl border border-[#D4A24C]/25 shadow-2xs text-center">
             <span className="text-[9px] font-bold uppercase tracking-wider text-[#8A5E12] block">Ongoing AMC</span>
@@ -744,7 +755,7 @@ export default function RentalPlans() {
             <thead>
               <tr className="bg-[#072117] text-[#FAF7F2] font-mono uppercase tracking-wider text-[10px]">
                 <th className="py-4 px-4 sm:px-6 rounded-l-xl">Strategic Decision Metric</th>
-                <th className="py-4 px-4 sm:px-6 text-[#D4A24C] font-bold bg-[#0D3B2A]">RENT (Nova Corporate Lease)</th>
+                <th className="py-4 px-4 sm:px-6 text-[#D4A24C] font-bold bg-[#0D3B2A]">RENT ({brandName} Corporate Lease)</th>
                 <th className="py-4 px-4 sm:px-6 text-emerald-300 rounded-r-xl">BUY (Outright Direct Purchase)</th>
               </tr>
             </thead>
@@ -761,7 +772,7 @@ export default function RentalPlans() {
               </tr>
               <tr className="hover:bg-[#FAF7F2]/60 transition">
                 <td className="py-3.5 px-4 sm:px-6 font-bold text-[#0D3B2A]">GST Input Tax Credit</td>
-                <td className="py-3.5 px-4 sm:px-6 font-bold text-[#0D3B2A] bg-[#FAF7F2]">Monthly 18% GSTR-2B Input Credit on Invoices</td>
+                <td className="py-3.5 px-4 sm:px-6 font-bold text-[#0D3B2A] bg-[#FAF7F2]">Monthly 18% GST Input Credit on Tax Invoices</td>
                 <td className="py-3.5 px-4 sm:px-6 text-slate-600">One-time capital purchase ITC claim</td>
               </tr>
               <tr className="hover:bg-[#FAF7F2]/60 transition">
@@ -808,7 +819,7 @@ export default function RentalPlans() {
             — VENDOR & SUPPLIER PROCUREMENT DESK
           </span>
           <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#0D3B2A]">
-            Sell Your IT Hardware to Nova Infotech
+            Sell Your IT Hardware to {brandName}
           </h2>
           <p className="text-xs sm:text-sm text-[#5A6B63] leading-relaxed">
             We purchase decommissioned corporate fleets, surplus distributor inventory, and commercial components from enterprise suppliers, IT asset managers, and vendors across India.

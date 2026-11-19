@@ -15,45 +15,103 @@ const DEFAULT_CATEGORY_GST_RATES = [
 
 const siteSettingsSchema = new mongoose.Schema(
   {
+    // Brand & Public Identity
+    brand_name: {
+      type: String,
+      default: 'Demo Infotech'
+    },
+    brand_name_short: {
+      type: String,
+      default: 'Demo'
+    },
     company_name: {
       type: String,
-      default: 'NOVA INFOTECH'
+      default: 'Demo Infotech'
     },
     tagline: {
       type: String,
-      default: 'Certified Enterprise Hardware, Corporate Fleet Rentals & ITAD Solutions'
+      default: 'Enterprise Hardware Solutions, Flexible Corporate Rentals & ITAD Lifecycle Management'
     },
-    phone: {
+    tm_symbol: {
       type: String,
-      default: '+91 98765 43210'
+      enum: ['none', 'TM', 'R'],
+      default: 'TM'
     },
-    whatsapp: {
-      type: String,
-      default: '+91 98765 43210'
-    },
-    email: {
-      type: String,
-      default: 'procurement@novainfotech.in'
-    },
-    address: {
-      type: String,
-      default: 'Plot No. 42, Sector 18, Electronic City / Industrial Area, Delhi NCR, India'
-    },
-    google_maps_embed_url: {
-      type: String,
-      default: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d224345.83923192776!2d77.06889754725782!3d28.52758200617607!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cfd5b347eb62d%3A0x37205b715389640!2sDelhi!5e0!3m2!1sen!2sin!4v1700000000000'
+    is_tm_registered_confirmed: {
+      type: Boolean,
+      default: false
     },
     logo_url: {
       type: String,
       default: ''
     },
+    favicon_url: {
+      type: String,
+      default: ''
+    },
+    website_url: {
+      type: String,
+      default: 'http://localhost:5173'
+    },
+
+    // Statutory Corporate Registrations (Indian Law)
+    legal_name: {
+      type: String,
+      default: 'Demo Infotech Private Limited [PLACEHOLDER]'
+    },
+    cin_number: {
+      type: String,
+      default: 'U72900DL2024PTC000000 [PLACEHOLDER]'
+    },
     gst_number: {
       type: String,
-      default: '07AAACN8412K1Z9'
+      default: '07AAAAA0000A1Z5 [PLACEHOLDER]'
     },
-    invoice_prefix: {
+    registered_address: {
       type: String,
-      default: 'INV'
+      default: 'Unit No. 101, First Floor, Commercial Tower, Barakhamba Road, Connaught Place, New Delhi 110001, India [PLACEHOLDER]'
+    },
+    operations_address: {
+      type: String,
+      default: 'Plot No. 42, Sector 18, Electronic City / Industrial Area, Delhi NCR · Bangalore, India [PLACEHOLDER]'
+    },
+    address: {
+      type: String,
+      default: 'Plot No. 42, Sector 18, Electronic City / Industrial Area, Delhi NCR · Bangalore, India [PLACEHOLDER]'
+    },
+    jurisdiction_city: {
+      type: String,
+      default: 'New Delhi'
+    },
+    iso_cert_number: {
+      type: String,
+      default: '' // Empty by default! Kept only if admin explicitly provides valid certificate number
+    },
+    epr_registration_number: {
+      type: String,
+      default: 'CPCB/EPR/2024/000000 [PLACEHOLDER]'
+    },
+
+    // Corporate Communications & Operating Hours
+    phone: {
+      type: String,
+      default: '+91 XXXXX XXXXX [PLACEHOLDER]'
+    },
+    whatsapp: {
+      type: String,
+      default: '+91 XXXXX XXXXX [PLACEHOLDER]'
+    },
+    email: {
+      type: String,
+      default: 'procurement@example.com [PLACEHOLDER]'
+    },
+    support_email: {
+      type: String,
+      default: 'support@example.com [PLACEHOLDER]'
+    },
+    procurement_email: {
+      type: String,
+      default: 'procurement@example.com [PLACEHOLDER]'
     },
     business_hours: {
       type: String,
@@ -65,13 +123,47 @@ const siteSettingsSchema = new mongoose.Schema(
     },
     support_sla: {
       type: String,
-      default: 'Standard 24–48h Hardware Standby Replacement SLA'
+      default: '24–48h Hardware Standby Replacement SLA (Subject to SLA Terms)'
+    },
+    google_maps_embed_url: {
+      type: String,
+      default: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d224345.83923192776!2d77.06889754725782!3d28.52758200617607!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cfd5b347eb62d%3A0x37205b715389640!2sDelhi!5e0!3m2!1sen!2sin!4v1700000000000'
     },
 
-    // Manager & Authorized Signatory Details ("Manager ke Sign")
+    // Statutory Grievance Redressal (IT Act, IT Rules 2021 & DPDP Act 2023)
+    grievance_officer: {
+      name: {
+        type: String,
+        default: 'Statutory Grievance Officer [PLACEHOLDER]'
+      },
+      designation: {
+        type: String,
+        default: 'Head of Legal & Enterprise Compliance'
+      },
+      email: {
+        type: String,
+        default: 'grievance@example.com [PLACEHOLDER]'
+      },
+      phone: {
+        type: String,
+        default: '+91 XXXXX XXXXX [PLACEHOLDER]'
+      },
+      address: {
+        type: String,
+        default: 'Unit No. 101, Legal Grievance Cell, Connaught Place, New Delhi 110001 [PLACEHOLDER]'
+      }
+    },
+
+    // Third-Party Trademark Disclaimer
+    third_party_disclaimer: {
+      type: String,
+      default: 'All third-party trademarks, logos, and brand names (including Dell, HP, Lenovo, ThinkPad, Latitude, EliteBook, Apple, Samsung, NVIDIA, Intel, and AMD) are the registered properties of their respective owners. Use of these names, trademarks, and brands does not imply endorsement, affiliation, or direct sponsorship unless explicitly stated.'
+    },
+
+    // Manager & Authorized Signatory Details
     signatory_name: {
       type: String,
-      default: 'Mohd Zaid'
+      default: 'Authorized Signatory [PLACEHOLDER]'
     },
     signatory_designation: {
       type: String,
@@ -86,7 +178,15 @@ const siteSettingsSchema = new mongoose.Schema(
       default: ''
     },
 
-    // Category-wise GST Rates ("GST Rate according to Category")
+    // Invoicing & Tax Architecture
+    invoice_prefix: {
+      type: String,
+      default: 'INV'
+    },
+    default_gst_rate: {
+      type: Number,
+      default: 18
+    },
     category_gst_rates: {
       type: [
         {
@@ -99,25 +199,36 @@ const siteSettingsSchema = new mongoose.Schema(
       ],
       default: DEFAULT_CATEGORY_GST_RATES
     },
-    default_gst_rate: {
-      type: Number,
-      default: 18
-    },
 
-    // Corporate Bank Account Details (for Invoices & Wire Transfers)
+    // Corporate Bank Account Details (Protected for Invoices & B2B Wire)
     bank_details: {
       bank_name: { type: String, default: 'HDFC Bank Ltd' },
-      account_name: { type: String, default: 'Nova Infotech Solutions Pvt. Ltd.' },
-      account_number: { type: String, default: '50200084920194' },
-      ifsc_code: { type: String, default: 'HDFC0000123' },
-      branch: { type: String, default: 'Okhla Industrial Area / Electronic City' },
-      upi_id: { type: String, default: 'novainfotech@hdfcbank' }
+      account_name: { type: String, default: 'Demo Infotech Private Limited [PLACEHOLDER]' },
+      account_number: { type: String, default: '50200000000000' },
+      ifsc_code: { type: String, default: 'HDFC0000000' },
+      branch: { type: String, default: 'Connaught Place / Electronic City' },
+      upi_id: { type: String, default: 'demoinfotech@hdfcbank' }
     },
 
+    // Social Links
     social_links: {
-      linkedin: { type: String, default: '' },
+      linkedin: { type: String, default: 'https://linkedin.com' },
       instagram: { type: String, default: '' },
-      twitter: { type: String, default: '' }
+      twitter: { type: String, default: 'https://x.com' }
+    },
+
+    // Versioning & Policy Timestamps
+    legal_version: {
+      type: String,
+      default: '1.0'
+    },
+    legal_last_updated: {
+      type: Date,
+      default: Date.now
+    },
+    settings_version: {
+      type: Number,
+      default: 1
     }
   },
   { timestamps: true }

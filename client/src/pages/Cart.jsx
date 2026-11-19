@@ -22,8 +22,12 @@ import api from '../services/api';
 import { getSafeImageUrl, DEFAULT_HARDWARE_PLACEHOLDER } from '../utils/imageHelper';
 import toast from 'react-hot-toast';
 import ThemeSelect from '../components/ThemeSelect';
+import { useCompany } from '../context/SettingsContext';
+import { Helmet } from 'react-helmet-async';
 
 export default function Cart() {
+  const { company } = useCompany();
+  const brandName = company?.brand_name || 'Demo Infotech';
   const {
     buyCart,
     rentalCart,
@@ -134,7 +138,7 @@ export default function Cart() {
         key: razorpay_key_id,
         amount: Math.round(amount * 100),
         currency: 'INR',
-        name: 'Nova Infotech Solutions',
+        name: brandName,
         description: `Order ${order.invoice_number}`,
         order_id: razorpay_order_id,
         handler: async function (response) {

@@ -212,7 +212,7 @@ export default function VideoReels() {
                   </h4>
                   <p className="text-[10px] text-[#D4A24C] font-mono tracking-widest uppercase flex items-center gap-1">
                     <ShieldCheck className="w-3 h-3 text-[#D4A24C]" />
-                    <span>Nova Lab Verified</span>
+                    <span>Hardware Lab Verified</span>
                   </p>
                 </div>
 

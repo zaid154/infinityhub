@@ -16,11 +16,15 @@ import {
   Server
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useCompany } from '../context/SettingsContext';
 import BrandLogo from '../components/BrandLogo';
 
 export default function AdminLayout() {
   const { user, logout } = useAuth();
+  const { company } = useCompany();
   const navigate = useNavigate();
+
+  const brandTitle = company?.brand_name?.toUpperCase() || 'DEMO INFOTECH';
 
   const navItems = [
     { label: 'Overview', path: '/admin', icon: LayoutDashboard },
@@ -38,7 +42,7 @@ export default function AdminLayout() {
   return (
     <div className="min-h-screen flex bg-[#FAF7F2] text-[#111827]">
       {/* Sidebar */}
-      <aside className="w-64 bg-[#072117] text-[#90b09a] flex flex-col shrink-0 border-r border-[#D4A24C]/20 ">
+      <aside className="w-64 bg-[#072117] text-[#90b09a] flex flex-col shrink-0 border-r border-[#D4A24C]/20">
         <div className="p-4 border-b border-[#FAF7F2]/10 flex items-center justify-between">
           <BrandLogo theme="dark" size="sm" showSubtitle={false} />
           <Link to="/" target="_blank" title="View Public Site" className="text-[#90b09a] hover:text-[#FAF7F2] transition">
@@ -84,7 +88,7 @@ export default function AdminLayout() {
                 logout();
                 navigate('/login');
               }}
-              className="p-1.5 text-[#90b09a] hover:text-red-400 transition"
+              className="p-1.5 text-[#90b09a] hover:text-red-400 transition cursor-pointer"
               title="Logout"
             >
               <LogOut className="w-4 h-4" />
@@ -98,7 +102,7 @@ export default function AdminLayout() {
         <header className="h-16 bg-white border-b border-[#D4A24C]/20 px-6 sm:px-8 flex items-center justify-between shrink-0 shadow-sm">
           <div className="flex items-center gap-2">
             <span className="text-[11px] font-sans uppercase tracking-[0.2em] text-[#8A5E12] font-bold">
-              Nova Infotech Enterprise Management Suite
+              {brandTitle} ENTERPRISE MANAGEMENT SUITE
             </span>
           </div>
           <div className="flex items-center space-x-3 text-xs">
