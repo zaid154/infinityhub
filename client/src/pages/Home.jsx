@@ -405,8 +405,8 @@ export default function Home() {
       {/* 6. AL-TOOBA 1:1 OUR COMPLETE COLLECTION - RENTING & SELLING FLEETS */}
       <CompleteCollectionSection onOpenRFQ={openRFQ} />
 
-      {/* 7. AL-TOOBA STYLE 3D VIDEO REELS CAROUSEL */}
-      <VideoReels />
+      {/* 7. 3D VIDEO REELS CAROUSEL (Temporarily disabled as requested) */}
+      {/* <VideoReels /> */}
 
       {/* 7. SPIRITUAL / CORE VALUE BANNER (AL-TOOBA SIGNATURE QUOTE) */}
       <section className="max-w-5xl mx-auto px-4 sm:px-8">
