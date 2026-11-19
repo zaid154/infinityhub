@@ -5,6 +5,7 @@ import Category from '../models/Category.js';
 import SiteSettings from '../models/SiteSettings.js';
 import DeliveryZone from '../models/DeliveryZone.js';
 
+dotenv.config({ path: 'server/.env' });
 dotenv.config();
 
 const seed = async () => {
@@ -14,22 +15,29 @@ const seed = async () => {
     console.log('[Seed] Connected.');
 
     // 1. Seed Admin User
-    const adminEmail = (process.env.ADMIN_EMAIL || 'admin@technova.com').toLowerCase();
-    const existingAdmin = await User.findOne({ email: adminEmail });
+    const adminEmail = (process.env.ADMIN_EMAIL || 'zaidm1323@gmail.com').toLowerCase();
+    const adminPassword = process.env.ADMIN_PASSWORD || 'Zaid@9999201255';
+    const adminName = process.env.ADMIN_NAME || 'Nova Infotech Administrator';
+    let admin = await User.findOne({ email: adminEmail });
 
-    if (!existingAdmin) {
+    if (!admin) {
       await User.create({
-        name: process.env.ADMIN_NAME || 'TechNova Administrator',
+        name: adminName,
         email: adminEmail,
-        password: process.env.ADMIN_PASSWORD || 'Admin@123',
+        password: adminPassword,
         role: 'admin',
         email_verified: true,
         phone: process.env.DEFAULT_PHONE || '+919876543210',
-        company_name: 'TechNova IT Solutions'
+        company_name: 'Nova Infotech'
       });
       console.log(`[Seed] ✅ Admin user created: ${adminEmail}`);
     } else {
-      console.log(`[Seed] ℹ️ Admin user already exists: ${adminEmail}`);
+      admin.name = adminName;
+      admin.password = adminPassword;
+      admin.role = 'admin';
+      admin.email_verified = true;
+      await admin.save();
+      console.log(`[Seed] ✅ Admin user verified & updated: ${adminEmail}`);
     }
 
     // 2. Seed Default Categories

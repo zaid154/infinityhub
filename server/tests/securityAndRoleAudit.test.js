@@ -221,8 +221,8 @@ async function runAllTests() {
 
   await test('POST /api/auth/login as Admin should return admin JWT token', async () => {
     const res = await request('POST', '/api/auth/login', {
-      email: 'admin@technova.com',
-      password: 'Admin@123'
+      email: process.env.ADMIN_EMAIL || 'zaidm1323@gmail.com',
+      password: process.env.ADMIN_PASSWORD || 'Zaid@9999201255'
     });
     assert(res.status === 200, `Expected 200, got ${res.status}`);
     assert(res.body.user.role === 'admin', 'Expected admin role');

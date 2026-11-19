@@ -99,13 +99,6 @@ export default function Login() {
             Register Company
           </Link>
         </div>
-
-        {/* Demo credentials hint */}
-        <div className="p-3 bg-[#FAF7F2] border border-[#D4A24C]/30 rounded-xl text-[11px] text-[#5A6B63] space-y-1">
-          <p className="font-bold text-[#0D3B2A]">Initial Admin Credentials:</p>
-          <p>Email: <code className="bg-white px-1.5 py-0.5 rounded text-[#0D3B2A] font-mono border border-[#D4A24C]/30">admin@technova.com</code></p>
-          <p>Password: <code className="bg-white px-1.5 py-0.5 rounded text-[#0D3B2A] font-mono border border-[#D4A24C]/30">Admin@123</code></p>
-        </div>
       </div>
     </div>
   );
