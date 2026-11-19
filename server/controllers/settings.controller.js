@@ -31,6 +31,16 @@ export const updateSettings = async (req, res, next) => {
       'logo_url',
       'gst_number',
       'invoice_prefix',
+      'business_hours',
+      'warehouse_locations',
+      'support_sla',
+      'signatory_name',
+      'signatory_designation',
+      'signature_url',
+      'company_seal_url',
+      'category_gst_rates',
+      'default_gst_rate',
+      'bank_details',
       'social_links'
     ];
 

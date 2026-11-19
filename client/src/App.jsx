@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast';
 
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import { SettingsProvider } from './context/SettingsContext';
 
 // Layouts
 import MainLayout from './layouts/MainLayout';
@@ -56,8 +57,9 @@ export default function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
-      <AuthProvider>
-        <CartProvider>
+      <SettingsProvider>
+        <AuthProvider>
+          <CartProvider>
           <Toaster
             position="top-right"
             toastOptions={{
@@ -190,6 +192,7 @@ export default function App() {
           </Routes>
         </CartProvider>
       </AuthProvider>
+      </SettingsProvider>
     </BrowserRouter>
   );
 }

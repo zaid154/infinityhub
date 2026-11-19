@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, Printer, ArrowLeft, ShieldCheck, CheckCircle2, Building2, FileText, CreditCard } from 'lucide-react';
 import BrandLogo from './BrandLogo';
+import { useSettings } from '../context/SettingsContext';
 
 /**
  * Converts Indian Rupee number to formal Indian accounting words
@@ -71,6 +72,7 @@ function getHsnCode(item) {
 }
 
 export default function InvoiceModal({ order, onClose }) {
+  const { settings } = useSettings();
   if (!order) return null;
 
   const handlePrint = () => {
@@ -141,23 +143,22 @@ export default function InvoiceModal({ order, onClose }) {
                 </div>
                 <div>
                   <h1 className="text-base font-serif font-extrabold text-[#0D3B2A] tracking-tight leading-none">
-                    NOVA INFOTECH SOLUTIONS PVT. LTD.
+                    {settings?.company_name?.toUpperCase() || 'NOVA INFOTECH SOLUTIONS PVT. LTD.'}
                   </h1>
                   <span className="text-[10px] text-[#8A5E12] font-semibold tracking-wide uppercase">
-                    Enterprise IT Infrastructure & Refurbished Fleets
+                    {settings?.tagline || 'Enterprise IT Infrastructure & Refurbished Fleets'}
                   </span>
                 </div>
               </div>
 
               <p className="text-[11px] text-slate-600 leading-snug">
-                <strong>Reg. Office:</strong> Plot No. 42, Sector 18, Electronic City Phase 1, Bangalore, Karnataka - 560100<br />
-                <strong>Dispatch Hub:</strong> Industrial Area, Okhla Phase III, New Delhi - 110020, India
+                <strong>Registered Facility:</strong> {settings?.address || 'Plot No. 42, Sector 18, Electronic City Phase 1, Bangalore · Okhla, Delhi NCR, India'}
               </p>
               <p className="text-[11px] font-mono text-slate-700 pt-0.5">
-                <strong>GSTIN:</strong> 07AAACN8412K1Z9 • <strong>PAN:</strong> AAACN8412K • <strong>State:</strong> Delhi (07)
+                <strong>GSTIN:</strong> {settings?.gst_number || '07AAACN8412K1Z9'} • <strong>PAN:</strong> {(settings?.gst_number || '07AAACN8412K1Z9').slice(2, 12)} • <strong>State:</strong> Delhi (07)
               </p>
               <p className="text-[11px] text-slate-600">
-                <strong>Email:</strong> billing@novainfotech.in • <strong>Desk:</strong> +91 98765 43210
+                <strong>Email:</strong> {settings?.email || 'billing@novainfotech.in'} • <strong>Desk:</strong> {settings?.phone || '+91 98765 43210'}
               </p>
             </div>
 
@@ -358,27 +359,27 @@ export default function InvoiceModal({ order, onClose }) {
                 <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-[11px] font-mono pt-1 text-slate-700">
                   <div>
                     <span className="text-slate-500 block text-[9.5px]">Beneficiary Name:</span>
-                    <strong>Nova Infotech Solutions Pvt Ltd</strong>
+                    <strong>{settings?.bank_details?.account_name || settings?.company_name || 'Nova Infotech Solutions Pvt Ltd'}</strong>
                   </div>
                   <div>
                     <span className="text-slate-500 block text-[9.5px]">Bank Name:</span>
-                    <strong>HDFC Bank Ltd.</strong>
+                    <strong>{settings?.bank_details?.bank_name || 'HDFC Bank Ltd.'}</strong>
                   </div>
                   <div>
                     <span className="text-slate-500 block text-[9.5px]">Account Number:</span>
-                    <strong className="text-[#0D3B2A]">50200084129031</strong> (Current)
+                    <strong className="text-[#0D3B2A]">{settings?.bank_details?.account_number || '50200084129031'}</strong> (Current)
                   </div>
                   <div>
                     <span className="text-slate-500 block text-[9.5px]">IFSC Code:</span>
-                    <strong className="text-[#0D3B2A]">HDFC0001234</strong>
+                    <strong className="text-[#0D3B2A]">{settings?.bank_details?.ifsc_code || 'HDFC0001234'}</strong>
                   </div>
                   <div>
                     <span className="text-slate-500 block text-[9.5px]">Branch:</span>
-                    <span>Connaught Place, New Delhi</span>
+                    <span>{settings?.bank_details?.branch || 'Okhla Industrial Area, New Delhi'}</span>
                   </div>
                   <div>
                     <span className="text-slate-500 block text-[9.5px]">UPI ID:</span>
-                    <span>novainfotech@hdfcbank</span>
+                    <span>{settings?.bank_details?.upi_id || 'novainfotech@hdfcbank'}</span>
                   </div>
                 </div>
               </div>
@@ -441,21 +442,45 @@ export default function InvoiceModal({ order, onClose }) {
             {/* Official Stamp & Authorized Signatory */}
             <div className="border border-slate-300 rounded-xl p-4 flex flex-col justify-between text-right bg-white relative overflow-hidden">
               <span className="text-[10px] font-bold text-slate-700 block">
-                For NOVA INFOTECH SOLUTIONS PVT. LTD.
+                For {settings?.company_name?.toUpperCase() || 'NOVA INFOTECH SOLUTIONS PVT. LTD.'}
               </span>
 
-              {/* Digital Seal Simulation */}
-              <div className="my-3 flex items-center justify-end">
-                <div className="border-2 border-dashed border-[#D4A24C] text-[#8A5E12] rounded-lg px-3 py-1.5 text-[10px] font-mono font-bold tracking-wider inline-flex items-center gap-1.5 rotate-[-2deg] bg-[#FAF7F2]">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-[#0D3B2A]" />
-                  <span>DIGITALLY SIGNED & AUTHORIZED</span>
-                </div>
+              {/* Digital Seal & Manager Signature Block */}
+              <div className="my-2 flex items-center justify-end gap-3 min-h-[48px]">
+                {/* Official Seal Image if configured */}
+                {settings?.company_seal_url ? (
+                  <img
+                    src={settings.company_seal_url}
+                    alt="Company Seal"
+                    className="w-14 h-14 object-contain opacity-90 drop-shadow-xs"
+                  />
+                ) : (
+                  <div className="border-2 border-dashed border-[#D4A24C] text-[#8A5E12] rounded-lg px-2.5 py-1 text-[9px] font-mono font-bold tracking-wider inline-flex items-center gap-1 rotate-[-2deg] bg-[#FAF7F2]">
+                    <CheckCircle2 className="w-3 h-3 text-[#0D3B2A]" />
+                    <span>DIGITALLY SIGNED & VERIFIED</span>
+                  </div>
+                )}
+
+                {/* Manager Signature */}
+                {settings?.signature_url ? (
+                  <img
+                    src={settings.signature_url}
+                    alt="Authorized Signature"
+                    className="h-11 max-w-[140px] object-contain drop-shadow-xs"
+                  />
+                ) : (
+                  <div className="font-serif italic font-bold text-base text-[#0D3B2A] tracking-wider pr-1">
+                    {settings?.signatory_name || 'Mohd Zaid'}
+                  </div>
+                )}
               </div>
 
               <div className="border-t border-slate-200 pt-1">
-                <span className="text-[10px] font-bold text-slate-800 block">Authorized Signatory</span>
-                <span className="text-[9px] text-slate-400 block font-mono">
-                  Computer Generated Tax Invoice — No Physical Signature Required
+                <span className="text-[10.5px] font-bold text-slate-800 block">
+                  {settings?.signatory_name || 'Mohd Zaid'}
+                </span>
+                <span className="text-[9px] text-[#8A5E12] block font-semibold">
+                  {settings?.signatory_designation || 'Authorized Signatory / Commercial Manager'}
                 </span>
               </div>
             </div>

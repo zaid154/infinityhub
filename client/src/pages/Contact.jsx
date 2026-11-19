@@ -13,9 +13,10 @@ import {
 import api from '../services/api';
 import toast from 'react-hot-toast';
 import ThemeSelect from '../components/ThemeSelect';
+import { useSettings } from '../context/SettingsContext';
 
 export default function Contact() {
-  const [settings, setSettings] = useState(null);
+  const { settings } = useSettings();
   const [formData, setFormData] = useState({
     company_name: '',
     contact_person: '',

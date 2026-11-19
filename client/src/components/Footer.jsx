@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import BrandLogo from './BrandLogo';
+import { useSettings } from '../context/SettingsContext';
 
 export default function Footer() {
+  const { settings } = useSettings();
   const [email, setEmail] = useState('');
 
   const handleSubscribe = (e) => {
@@ -153,7 +155,7 @@ export default function Footer() {
                   Central Operations & Hub
                 </span>
                 <p className="leading-relaxed text-[#FAF7F2]/90">
-                  Electronic City Phase 1, Bangalore · Okhla Industrial Area, Delhi NCR · Mumbai, India
+                  {settings.warehouse_locations || settings.address || 'Electronic City Phase 1, Bangalore · Okhla Industrial Area, Delhi NCR · Mumbai, India'}
                 </p>
               </div>
 
@@ -162,16 +164,16 @@ export default function Footer() {
                   Direct B2B Desk
                 </span>
                 <a
-                  href="tel:+919876543210"
+                  href={`tel:${(settings.phone || '+91 98765 43210').replace(/[^0-9+]/g, '')}`}
                   className="text-[#FAF7F2] font-semibold hover:text-[#D4A24C] transition-colors block text-sm"
                 >
-                  +91 98765 43210
+                  {settings.phone || '+91 98765 43210'}
                 </a>
                 <a
-                  href="mailto:procurement@novainfotech.in"
+                  href={`mailto:${settings.email || 'procurement@novainfotech.in'}`}
                   className="text-[#90b09a] hover:text-[#D4A24C] transition-colors block text-xs mt-0.5"
                 >
-                  procurement@novainfotech.in
+                  {settings.email || 'procurement@novainfotech.in'}
                 </a>
               </div>
 
@@ -180,7 +182,7 @@ export default function Footer() {
                   Commercial Hours
                 </span>
                 <p className="text-xs text-[#90b09a]">
-                  Monday – Saturday: 9:30 AM – 7:30 PM IST
+                  {settings.business_hours || 'Monday – Saturday: 9:30 AM – 7:30 PM IST'}
                 </p>
               </div>
             </div>
@@ -222,10 +224,10 @@ export default function Footer() {
         {/* Copyright Row - Clean Al-Tooba Finish */}
         <div className="pt-6 border-t border-[#FAF7F2]/10 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-[#b4d6be]">
           <p className="tracking-wider text-[11px] text-[#b4d6be] uppercase">
-            © 2026 NOVA INFOTECH®. ALL RIGHTS RESERVED.
+            © {new Date().getFullYear()} {settings.company_name?.toUpperCase() || 'NOVA INFOTECH®'}. ALL RIGHTS RESERVED.
           </p>
           <p className="text-[10px] text-[#90b09a] tracking-wider uppercase">
-            100% GSTR-2B TAX COMPLIANT · ISO 9001:2015 RIGOROUS HARDWARE DIAGNOSTICS
+            100% GSTR-2B TAX COMPLIANT · GSTIN: {settings.gst_number || '07AAACN8412K1Z9'} · ISO 9001:2015 RIGOROUS HARDWARE DIAGNOSTICS
           </p>
         </div>
       </div>

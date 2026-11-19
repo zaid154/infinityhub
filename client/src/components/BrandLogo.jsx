@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useSettings } from '../context/SettingsContext';
 
 /**
  * BrandLogo - Unified Single-Source Brand Asset for Nova Infotech
@@ -13,6 +14,7 @@ export default function BrandLogo({
   asLink = true,
   className = ''
 }) {
+  const { settings } = useSettings();
   // Determine if logo should be light-colored (on dark backgrounds) or dark-colored (on light backgrounds)
   const isDarkBg = theme === 'dark' || (theme === 'auto' && !isSolidNav);
 
@@ -34,24 +36,38 @@ export default function BrandLogo({
     lg: 'text-2xl sm:text-3xl'
   };
 
+  // Split company name into first word and remaining
+  const fullCompanyName = settings?.company_name || 'NOVA INFOTECH';
+  const nameParts = fullCompanyName.trim().split(' ');
+  const firstWord = nameParts[0] || 'NOVA';
+  const remainingWords = nameParts.slice(1).join(' ') || (nameParts.length === 1 ? '' : 'INFOTECH');
+
   const content = (
     <div className={`flex items-center gap-3 group ${className}`}>
-      {/* Official Al-Tooba Style Emerald Emblem with Gold Accent Star */}
-      <div
-        className={`${emblemSizes[size]} rounded-full bg-[#0D3B2A] border border-[#D4A24C]/70 flex items-center justify-center text-[#D4A24C] shadow-md group-hover:scale-105 transition-transform duration-300 shrink-0`}
-      >
-        <svg
-          className={starSizes[size]}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+      {/* If custom logo URL exists, show image; otherwise show official Star Emblem */}
+      {settings?.logo_url ? (
+        <img
+          src={settings.logo_url}
+          alt={fullCompanyName}
+          className={`${emblemSizes[size]} object-contain rounded-xl group-hover:scale-105 transition-transform duration-300 shrink-0`}
+        />
+      ) : (
+        <div
+          className={`${emblemSizes[size]} rounded-full bg-[#0D3B2A] border border-[#D4A24C]/70 flex items-center justify-center text-[#D4A24C] shadow-md group-hover:scale-105 transition-transform duration-300 shrink-0`}
         >
-          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-        </svg>
-      </div>
+          <svg
+            className={starSizes[size]}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+          </svg>
+        </div>
+      )}
 
       {/* Brand Wordmark & Official Tagline */}
       <div className="flex flex-col">
@@ -60,10 +76,12 @@ export default function BrandLogo({
             isDarkBg ? 'text-[#FAF7F2]' : 'text-[#072117]'
           }`}
         >
-          <span>NOVA</span>
-          <span className={`${isDarkBg ? 'text-[#D4A24C]' : 'text-[#D4A24C]'} font-normal italic`}>
-            INFOTECH
-          </span>
+          <span>{firstWord.toUpperCase()}</span>
+          {remainingWords && (
+            <span className={`${isDarkBg ? 'text-[#D4A24C]' : 'text-[#D4A24C]'} font-normal italic`}>
+              {remainingWords.toUpperCase()}
+            </span>
+          )}
         </div>
 
         {showSubtitle && (
@@ -72,7 +90,7 @@ export default function BrandLogo({
               isDarkBg ? 'text-[#90b09a]' : 'text-[#5A6B63]'
             }`}
           >
-            Certified Enterprise Hardware
+            {settings?.tagline || 'Certified Enterprise Hardware'}
           </p>
         )}
       </div>
@@ -81,7 +99,7 @@ export default function BrandLogo({
 
   if (asLink) {
     return (
-      <Link to="/" className="inline-block" title="Nova Infotech - Certified Enterprise Hardware">
+      <Link to="/" className="inline-block" title={`${fullCompanyName} - Certified Enterprise Hardware`}>
         {content}
       </Link>
     );
