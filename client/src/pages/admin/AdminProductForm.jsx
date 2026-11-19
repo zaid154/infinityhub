@@ -17,12 +17,133 @@ import {
   ChevronRight,
   Play,
   Film,
-  Plus
+  Plus,
+  Sliders,
+  Sparkles,
+  RotateCcw
 } from 'lucide-react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
 import ThemeSelect from '../../components/ThemeSelect';
 import { isVideoUrl } from '../../utils/imageHelper';
+
+export const SPEC_PRESETS = {
+  laptop: [
+    { key: 'processor', label: 'Processor', placeholder: 'e.g. Intel Core i5 8th Gen Quad-Core', value: '' },
+    { key: 'ram', label: 'RAM Capacity', placeholder: 'e.g. 16GB DDR4 High-Speed', value: '' },
+    { key: 'storage', label: 'Storage Drive', placeholder: 'e.g. 512GB M.2 NVMe PCIe SSD', value: '' },
+    { key: 'screen_size', label: 'Display Screen / Resolution', placeholder: 'e.g. 14.0 inch Full HD IPS Anti-Glare', value: '' },
+    { key: 'gpu_model', label: 'GPU / Graphics Card', placeholder: 'e.g. Intel UHD 620 / NVIDIA RTX 3060 12GB', value: '' },
+    { key: 'operating_system', label: 'Operating System', placeholder: 'e.g. Windows 11 Pro Genuine', value: 'Windows 11 Pro' },
+    { key: 'battery_health', label: 'Battery Backup / Health', placeholder: 'e.g. 85%+ Health (4-6 Hours Backup)', value: '' },
+    { key: 'weight', label: 'Chassis Weight / Build', placeholder: 'e.g. 1.35 kg Ultra-Light Magnesium', value: '' }
+  ],
+  monitor: [
+    { key: 'screen_size', label: 'Screen Size & Aspect Ratio', placeholder: 'e.g. 27-inch 16:9 Borderless', value: '' },
+    { key: 'resolution', label: 'Resolution', placeholder: 'e.g. 2560 x 1440 QHD / 4K UHD', value: '' },
+    { key: 'panel_type', label: 'Panel Type & Color Gamut', placeholder: 'e.g. IPS Panel, 99% sRGB Anti-Glare', value: '' },
+    { key: 'refresh_rate', label: 'Refresh Rate & Response Time', placeholder: 'e.g. 144Hz / 1ms MPRT FreeSync', value: '' },
+    { key: 'ports', label: 'Video Ports & Hub', placeholder: 'e.g. 2x HDMI 2.0, 1x DP 1.4, USB-C 65W PD', value: '' },
+    { key: 'ergonomics', label: 'Stand & Mount Ergonomics', placeholder: 'e.g. Height Adjustable, Pivot, Swivel, VESA 100x100', value: '' }
+  ],
+  charger: [
+    { key: 'wattage', label: 'Output Wattage', placeholder: 'e.g. 65W / 90W / 135W Fast Charge', value: '' },
+    { key: 'connector_type', label: 'Connector Pin Type', placeholder: 'e.g. Type-C PD / Lenovo Slim Tip / Dell 4.5mm Barrel', value: '' },
+    { key: 'voltage', label: 'Input Voltage & Frequency', placeholder: 'e.g. 100-240V ~ 1.5A 50-60Hz Universal', value: '' },
+    { key: 'compatibility', label: 'Compatible Laptop Series', placeholder: 'e.g. ThinkPad T480/T490/X1, HP EliteBook 840', value: '' },
+    { key: 'protection', label: 'Safety Protection Suite', placeholder: 'e.g. BIS Certified, Surge, Thermal & Over-Voltage Protection', value: '' }
+  ],
+  desktop: [
+    { key: 'form_factor', label: 'Form Factor / Chassis', placeholder: 'e.g. Tiny Mini-PC / SFF / Mini Tower', value: '' },
+    { key: 'processor', label: 'Processor', placeholder: 'e.g. Intel Core i7 10th Gen 8-Core', value: '' },
+    { key: 'ram', label: 'RAM Capacity', placeholder: 'e.g. 32GB DDR4 High-Speed Dual Channel', value: '' },
+    { key: 'storage', label: 'Storage Drive', placeholder: 'e.g. 1TB NVMe PCIe Gen3 SSD', value: '' },
+    { key: 'gpu_model', label: 'Graphics Card / GPU', placeholder: 'e.g. Intel UHD 630 / Dedicated Quadro P620', value: '' },
+    { key: 'operating_system', label: 'Operating System', placeholder: 'e.g. Windows 11 Pro Enterprise', value: 'Windows 11 Pro' },
+    { key: 'power_supply', label: 'Power Supply (PSU)', placeholder: 'e.g. 260W 80 PLUS Platinum High Efficiency', value: '' }
+  ],
+  ram: [
+    { key: 'ram', label: 'RAM Capacity', placeholder: 'e.g. 16GB Single Module / 32GB Kit', value: '' },
+    { key: 'technology', label: 'Memory Technology', placeholder: 'e.g. DDR4 SDRAM / DDR5', value: '' },
+    { key: 'form_factor', label: 'Form Factor', placeholder: 'e.g. SODIMM (Laptop) / UDIMM (Desktop)', value: '' },
+    { key: 'speed', label: 'Bus Speed', placeholder: 'e.g. 3200MHz / 2666MHz PC4-25600', value: '' },
+    { key: 'voltage', label: 'Operating Voltage', placeholder: 'e.g. 1.2V Low Voltage Standard', value: '' }
+  ],
+  gpu: [
+    { key: 'vram', label: 'VRAM Capacity & Type', placeholder: 'e.g. 12GB GDDR6 Dedicated', value: '' },
+    { key: 'cuda_cores', label: 'CUDA Cores / Compute Units', placeholder: 'e.g. 3584 CUDA Cores', value: '' },
+    { key: 'bus_interface', label: 'Bus Interface', placeholder: 'e.g. PCI Express 4.0 x16', value: '' },
+    { key: 'outputs', label: 'Display Output Ports', placeholder: 'e.g. 3x DisplayPort 1.4a, 1x HDMI 2.1', value: '' },
+    { key: 'power_requirement', label: 'TDP / Power Requirement', placeholder: 'e.g. 170W TDP (1x 8-Pin PCIe Power)', value: '' }
+  ],
+  cpu: [
+    { key: 'cores_threads', label: 'Cores & Threads', placeholder: 'e.g. 8 Cores / 16 Threads', value: '' },
+    { key: 'clock_speed', label: 'Base & Boost Clock', placeholder: 'e.g. 3.80 GHz Base / 5.10 GHz Max Boost', value: '' },
+    { key: 'socket', label: 'Socket Compatibility', placeholder: 'e.g. LGA 1200 / Socket AM4', value: '' },
+    { key: 'cache', label: 'Cache Memory', placeholder: 'e.g. 16MB Intel Smart Cache', value: '' },
+    { key: 'integrated_gpu', label: 'Integrated Graphics', placeholder: 'e.g. Intel UHD Graphics 630', value: '' }
+  ],
+  other: [
+    { key: 'item_type', label: 'Accessory / Device Type', placeholder: 'e.g. Thunderbolt 4 Docking Station', value: '' },
+    { key: 'compatibility', label: 'Compatible Hardware', placeholder: 'e.g. Universal USB-C / Thunderbolt 3 & 4', value: '' },
+    { key: 'connectivity', label: 'Connectivity & Ports', placeholder: 'e.g. Dual 4K HDMI, Gigabit Ethernet, 3x USB 3.0', value: '' },
+    { key: 'warranty', label: 'Warranty & Testing', placeholder: 'e.g. 90 Days Replacement Warranty, 100% Tested', value: '' }
+  ]
+};
+
+export const PRESET_OPTIONS = [
+  { key: 'laptop', label: 'Laptop', icon: '💻' },
+  { key: 'monitor', label: 'Monitor', icon: '🖥️' },
+  { key: 'charger', label: 'Charger / Adapter', icon: '⚡' },
+  { key: 'desktop', label: 'Desktop / Mini PC', icon: '🖲️' },
+  { key: 'ram', label: 'RAM Module', icon: '💾' },
+  { key: 'gpu', label: 'Workstation GPU', icon: '🎮' },
+  { key: 'cpu', label: 'CPU Processor', icon: '⚙️' },
+  { key: 'other', label: 'Accessories', icon: '📦' }
+];
+
+export const formatSpecLabel = (k) => {
+  if (!k) return '';
+  const labelMap = {
+    processor: 'Processor',
+    ram: 'RAM Capacity',
+    storage: 'Storage Drive',
+    screen_size: 'Display Screen / Resolution',
+    gpu_model: 'GPU / Graphics Card',
+    operating_system: 'Operating System',
+    battery_health: 'Battery Backup / Health',
+    weight: 'Chassis Weight / Build',
+    resolution: 'Resolution',
+    panel_type: 'Panel Type & Color Gamut',
+    refresh_rate: 'Refresh Rate & Response Time',
+    ports: 'Video Ports & Hub',
+    ergonomics: 'Stand & Mount Ergonomics',
+    wattage: 'Output Wattage',
+    connector_type: 'Connector Pin Type',
+    voltage: 'Input Voltage & Frequency',
+    compatibility: 'Compatible Laptop Series',
+    protection: 'Safety Protection Suite',
+    form_factor: 'Form Factor / Chassis',
+    power_supply: 'Power Supply (PSU)',
+    technology: 'Memory Technology',
+    speed: 'Bus Speed',
+    vram: 'VRAM Capacity & Type',
+    cuda_cores: 'CUDA Cores / Compute Units',
+    bus_interface: 'Bus Interface',
+    outputs: 'Display Output Ports',
+    power_requirement: 'TDP / Power Requirement',
+    cores_threads: 'Cores & Threads',
+    clock_speed: 'Base & Boost Clock',
+    socket: 'Socket Compatibility',
+    cache: 'Cache Memory',
+    integrated_gpu: 'Integrated Graphics',
+    item_type: 'Accessory / Device Type',
+    connectivity: 'Connectivity & Ports',
+    warranty: 'Warranty & Testing'
+  };
+  if (labelMap[k]) return labelMap[k];
+  return k.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+};
 
 export default function AdminProductForm() {
   const { id } = useParams();
@@ -59,6 +180,20 @@ export default function AdminProductForm() {
     is_active: true
   });
 
+  const createPresetRows = (categoryKey) => {
+    const preset = SPEC_PRESETS[categoryKey] || SPEC_PRESETS.laptop;
+    return preset.map((item, index) => ({
+      id: `preset-${categoryKey}-${index}-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      key: item.key,
+      label: item.label,
+      value: item.value || '',
+      placeholder: item.placeholder || ''
+    }));
+  };
+
+  const [specRows, setSpecRows] = useState(() => createPresetRows('laptop'));
+  const [activeSpecPreset, setActiveSpecPreset] = useState('laptop');
+
   const [uploadingImages, setUploadingImages] = useState(false);
   const [generatingAI, setGeneratingAI] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -67,6 +202,7 @@ export default function AdminProductForm() {
     { value: 'laptop', label: 'Corporate Laptops' },
     { value: 'desktop', label: 'Commercial Desktops' },
     { value: 'monitor', label: 'Business Monitors' },
+    { value: 'charger', label: 'Power Adapters & Chargers' },
     { value: 'ram', label: 'RAM Modules' },
     { value: 'gpu', label: 'Workstation GPUs' },
     { value: 'cpu', label: 'CPUs & Processors' },
@@ -130,6 +266,21 @@ export default function AdminProductForm() {
                 is_hot_deal: Boolean(found.is_hot_deal),
                 is_active: Boolean(found.is_active)
               });
+
+              if (found.specs && Object.keys(found.specs).length > 0) {
+                const loadedRows = Object.entries(found.specs).map(([k, v], idx) => ({
+                  id: `spec-${idx}-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+                  key: k,
+                  label: formatSpecLabel(k),
+                  value: typeof v === 'string' ? v : String(v || ''),
+                  placeholder: ''
+                }));
+                setSpecRows(loadedRows);
+                setActiveSpecPreset(found.category || 'laptop');
+              } else {
+                setSpecRows(createPresetRows(found.category || 'laptop'));
+                setActiveSpecPreset(found.category || 'laptop');
+              }
             }
           }
         } catch (err) {
@@ -231,12 +382,92 @@ export default function AdminProductForm() {
     }));
   };
 
+  // Convert specRows to clean dictionary object { key: value }
+  const getSerializedSpecs = () => {
+    const serialized = {};
+    specRows.forEach((row) => {
+      const rawKey = row.key || row.label || '';
+      const cleanKey = rawKey
+        .trim()
+        .toLowerCase()
+        .replace(/[\s/-]+/g, '_')
+        .replace(/[^a-z0-9_]/g, '');
+      if (cleanKey && row.value && typeof row.value === 'string' && row.value.trim()) {
+        serialized[cleanKey] = row.value.trim();
+      }
+    });
+    return serialized;
+  };
+
+  // Handle category change: auto-switches template if admin has not typed custom values
+  const handleCategoryChange = (newCat) => {
+    setFormData((prev) => ({ ...prev, category: newCat }));
+
+    const hasValues = specRows.some(
+      (r) => r.value && r.value.trim().length > 0 && r.value !== 'Windows 11 Pro'
+    );
+    if (!hasValues) {
+      if (SPEC_PRESETS[newCat]) {
+        setSpecRows(createPresetRows(newCat));
+        setActiveSpecPreset(newCat);
+      }
+    }
+  };
+
+  // Preset template click handler
+  const handleSelectPreset = (presetKey) => {
+    const hasValues = specRows.some(
+      (r) => r.value && r.value.trim().length > 0 && r.value !== 'Windows 11 Pro'
+    );
+    if (hasValues) {
+      if (!window.confirm(`Switching to '${presetKey.toUpperCase()}' template will replace current fields. Continue?`)) {
+        return;
+      }
+    }
+    setSpecRows(createPresetRows(presetKey));
+    setActiveSpecPreset(presetKey);
+  };
+
+  // Add custom specification field row
+  const handleAddCustomSpec = () => {
+    setSpecRows((prev) => [
+      ...prev,
+      {
+        id: `custom-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+        key: '',
+        label: '',
+        value: '',
+        placeholder: 'e.g. 52Wh Li-ion Battery / 65W PD / USB 3.2 Gen2',
+        isCustom: true
+      }
+    ]);
+  };
+
+  // Delete specification field row
+  const handleDeleteSpecRow = (idToRemove) => {
+    setSpecRows((prev) => prev.filter((r) => r.id !== idToRemove));
+  };
+
+  // Update a specification row (label or value)
+  const handleSpecChange = (idToUpdate, field, newValue) => {
+    setSpecRows((prev) =>
+      prev.map((r) => {
+        if (r.id === idToUpdate) {
+          return { ...r, [field]: newValue };
+        }
+        return r;
+      })
+    );
+  };
+
   // Google Gemini AI Description Generator
   const handleGenerateAIDescription = async () => {
     if (!formData.title || !formData.brand) {
       toast.error('Please enter Title and Brand before generating with Gemini AI.');
       return;
     }
+
+    const currentSpecs = getSerializedSpecs();
 
     setGeneratingAI(true);
     try {
@@ -245,7 +476,7 @@ export default function AdminProductForm() {
         brand: formData.brand,
         category: formData.category,
         condition: formData.condition,
-        specs: formData.specs
+        specs: currentSpecs
       });
 
       if (res.data.success) {
@@ -263,15 +494,20 @@ export default function AdminProductForm() {
     e.preventDefault();
     setSubmitting(true);
 
+    const payload = {
+      ...formData,
+      specs: getSerializedSpecs()
+    };
+
     try {
       if (isEdit) {
-        const res = await api.put(`/products/${id}`, formData);
+        const res = await api.put(`/products/${id}`, payload);
         if (res.data.success) {
           toast.success('Product updated successfully!');
           navigate('/admin/products');
         }
       } else {
-        const res = await api.post('/products', formData);
+        const res = await api.post('/products', payload);
         if (res.data.success) {
           toast.success('Product created successfully!');
           navigate('/admin/products');
@@ -356,7 +592,7 @@ export default function AdminProductForm() {
               <label className="block font-semibold text-slate-700 mb-1">Category *</label>
               <ThemeSelect
                 value={formData.category}
-                onChange={(val) => setFormData({ ...formData, category: val })}
+                onChange={(val) => handleCategoryChange(val)}
                 options={dbCategories}
                 variant="admin"
                 fullWidth
@@ -600,112 +836,143 @@ export default function AdminProductForm() {
           </div>
         </div>
 
-        {/* Technical Specs Box */}
-        <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-          <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-            <Layers className="w-4 h-4 text-purple-600" />
-            Hardware Specifications
-          </h2>
-
-          <div className="grid grid-cols-2 gap-4">
+        {/* Technical Specs Box - Dynamic Category-Smart Specification Builder */}
+        <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
             <div>
-              <label className="block font-semibold text-slate-700 mb-1">Processor</label>
-              <input
-                type="text"
-                placeholder="e.g. Intel Core i5 8th Gen Quad-Core"
-                value={formData.specs.processor}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    specs: { ...formData.specs, processor: e.target.value }
-                  })
-                }
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
-              />
+              <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                <Layers className="w-4 h-4 text-[#D4A24C]" />
+                Hardware Technical Specifications & Attributes
+              </h2>
+              <p className="text-[11px] text-slate-500 mt-0.5">
+                Dynamic category parameters for laptops, monitors, chargers, desktops, RAM, GPUs, or accessories.
+              </p>
             </div>
-
-            <div>
-              <label className="block font-semibold text-slate-700 mb-1">RAM Capacity</label>
-              <input
-                type="text"
-                placeholder="e.g. 16GB DDR4 High-Speed"
-                value={formData.specs.ram}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    specs: { ...formData.specs, ram: e.target.value }
-                  })
-                }
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
-              />
+            <div className="flex items-center gap-2 self-start sm:self-auto">
+              <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#FAF7F2] border border-[#D4A24C]/40 text-[#0D3B2A] font-mono">
+                {specRows.length} Field{specRows.length === 1 ? '' : 's'} Active
+              </span>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block font-semibold text-slate-700 mb-1">Storage Drive</label>
-              <input
-                type="text"
-                placeholder="e.g. 512GB M.2 NVMe PCIe SSD"
-                value={formData.specs.storage}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    specs: { ...formData.specs, storage: e.target.value }
-                  })
-                }
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
-              />
+          {/* Quick-Preset Template Chips */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-[#D4A24C]" />
+                Hardware Spec Presets:
+              </span>
+              <span className="text-[10px] text-slate-400">
+                Click a preset to quickly load recommended parameters
+              </span>
             </div>
-
-            <div>
-              <label className="block font-semibold text-slate-700 mb-1">Display Screen / Resolution</label>
-              <input
-                type="text"
-                placeholder="e.g. 14.0 inch Full HD IPS Anti-Glare"
-                value={formData.specs.screen_size}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    specs: { ...formData.specs, screen_size: e.target.value }
-                  })
-                }
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
-              />
+            <div className="flex flex-wrap gap-2">
+              {PRESET_OPTIONS.map((opt) => {
+                const isActive = activeSpecPreset === opt.key;
+                return (
+                  <button
+                    key={opt.key}
+                    type="button"
+                    onClick={() => handleSelectPreset(opt.key)}
+                    className={`px-3 py-1.5 rounded-xl text-xs transition-all flex items-center gap-1.5 cursor-pointer ${
+                      isActive
+                        ? 'bg-[#0D3B2A] text-[#FAF7F2] border border-[#0D3B2A] shadow-sm font-bold'
+                        : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 hover:border-slate-300 font-medium'
+                    }`}
+                  >
+                    <span>{opt.icon}</span>
+                    <span>{opt.label}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block font-semibold text-slate-700 mb-1">GPU / Graphics Card</label>
-              <input
-                type="text"
-                placeholder="e.g. Intel UHD 620 / NVIDIA RTX 3060 12GB"
-                value={formData.specs.gpu_model}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    specs: { ...formData.specs, gpu_model: e.target.value }
-                  })
-                }
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
-              />
+          {/* Specification Rows Grid */}
+          {specRows.length === 0 ? (
+            <div className="text-center py-8 px-4 rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 space-y-2">
+              <p className="text-xs text-slate-500">No specifications defined for this product yet.</p>
+              <div className="flex items-center justify-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleSelectPreset(formData.category || 'laptop')}
+                  className="px-3 py-1.5 rounded-xl bg-[#0D3B2A] text-white text-xs font-bold cursor-pointer"
+                >
+                  Load {formData.category || 'Laptop'} Defaults
+                </button>
+                <button
+                  type="button"
+                  onClick={handleAddCustomSpec}
+                  className="px-3 py-1.5 rounded-xl bg-white border border-slate-300 text-slate-700 text-xs font-bold cursor-pointer"
+                >
+                  + Add Custom Field
+                </button>
+              </div>
             </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+              {specRows.map((row) => (
+                <div
+                  key={row.id}
+                  className="p-3.5 rounded-2xl bg-[#FAF7F2]/50 border border-slate-200/90 hover:border-[#D4A24C]/60 hover:bg-[#FAF7F2] transition-all space-y-1.5 group"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <input
+                      type="text"
+                      value={row.label}
+                      placeholder="Spec Label (e.g. Wattage, Screen Size)"
+                      onChange={(e) => handleSpecChange(row.id, 'label', e.target.value)}
+                      className="text-xs font-bold text-slate-800 bg-transparent border-b border-transparent hover:border-slate-300 focus:border-[#0D3B2A] focus:outline-none px-1 py-0.5 rounded transition w-full"
+                      title="Click to rename specification label"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteSpecRow(row.id)}
+                      title="Delete this specification field"
+                      className="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition shrink-0 cursor-pointer"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    placeholder={row.placeholder || `Enter ${row.label || 'value'}...`}
+                    value={row.value}
+                    onChange={(e) => handleSpecChange(row.id, 'value', e.target.value)}
+                    className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] text-xs font-mono text-slate-900 placeholder:text-slate-400 placeholder:font-sans"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
 
-            <div>
-              <label className="block font-semibold text-slate-700 mb-1">Operating System</label>
-              <input
-                type="text"
-                placeholder="e.g. Windows 11 Pro Genuine"
-                value={formData.specs.operating_system}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    specs: { ...formData.specs, operating_system: e.target.value }
-                  })
-                }
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
-              />
+          {/* Action Footer: Add Custom Field & Reset Template */}
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100">
+            <button
+              type="button"
+              onClick={handleAddCustomSpec}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-slate-300 hover:border-[#0D3B2A] hover:bg-[#FAF7F2] text-xs font-bold text-[#0D3B2A] transition shadow-sm active:scale-95 cursor-pointer"
+            >
+              <Plus className="w-4 h-4 text-[#D4A24C]" />
+              <span>+ Add Custom Specification Field</span>
+            </button>
+
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  if (window.confirm(`Reset specifications to default '${activeSpecPreset}' template? All custom edits will be reinitialized.`)) {
+                    setSpecRows(createPresetRows(activeSpecPreset));
+                  }
+                }}
+                className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-500 hover:text-[#0D3B2A] transition cursor-pointer"
+              >
+                <RotateCcw className="w-3 h-3" />
+                <span>Reset Template</span>
+              </button>
+              <span className="text-[10px] text-slate-400 font-sans">
+                💡 Only filled fields appear publicly on the storefront
+              </span>
             </div>
           </div>
         </div>

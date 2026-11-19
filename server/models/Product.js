@@ -75,13 +75,8 @@ const productSchema = new mongoose.Schema(
       default: 'standard'
     },
     specs: {
-      processor: { type: String, default: '' },
-      ram: { type: String, default: '' },
-      storage: { type: String, default: '' },
-      screen_size: { type: String, default: '' },
-      gpu_model: { type: String, default: '' },
-      generation: { type: String, default: '' },
-      operating_system: { type: String, default: 'Windows 11 Pro' }
+      type: mongoose.Schema.Types.Mixed,
+      default: {}
     },
     gst_rate: {
       type: Number,

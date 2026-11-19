@@ -58,6 +58,10 @@ export default function CompleteCollectionSection({ onOpenRFQ }) {
   const formatSpecs = (p) => {
     const parts = [p.specs?.processor, p.specs?.ram, p.specs?.storage].filter(Boolean);
     if (parts.length > 0) return parts.join(' • ');
+    if (p.specs && typeof p.specs === 'object') {
+      const generic = Object.values(p.specs).filter((v) => typeof v === 'string' && v.trim());
+      if (generic.length > 0) return generic.slice(0, 3).join(' • ');
+    }
     return p.description ? p.description.slice(0, 52) : 'Enterprise Grade A+ Machine';
   };
 

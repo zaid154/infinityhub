@@ -25,8 +25,16 @@ export default function Products() {
   // Helper to format specs dynamically
   const getProductSpecSummary = (p) => {
     if (p.category === 'monitor') {
-      const parts = [p.specs?.screen_size, p.specs?.ports, p.specs?.ergonomics].filter(Boolean);
+      const parts = [p.specs?.screen_size, p.specs?.resolution, p.specs?.panel_type || p.specs?.ports].filter(Boolean);
       return parts.length > 0 ? parts.join(' • ') : 'Full HD IPS Frameless Display';
+    }
+    if (p.category === 'charger') {
+      const parts = [p.specs?.wattage, p.specs?.connector_type, p.specs?.compatibility].filter(Boolean);
+      return parts.length > 0 ? parts.join(' • ') : 'Fast-Charge Power Adapter';
+    }
+    if (p.category === 'desktop') {
+      const parts = [p.specs?.processor, p.specs?.ram, p.specs?.storage || p.specs?.form_factor].filter(Boolean);
+      return parts.length > 0 ? parts.join(' • ') : 'Commercial Enterprise Desktop';
     }
     if (p.category === 'gpu') {
       const parts = [p.specs?.vram, p.specs?.cuda_cores, p.specs?.outputs].filter(Boolean);
@@ -36,8 +44,18 @@ export default function Products() {
       const parts = [p.specs?.ram, p.specs?.speed, p.specs?.form_factor].filter(Boolean);
       return parts.length > 0 ? parts.join(' • ') : 'DDR4 High-Speed Memory';
     }
+    if (p.category === 'cpu') {
+      const parts = [p.specs?.cores_threads, p.specs?.clock_speed, p.specs?.socket].filter(Boolean);
+      return parts.length > 0 ? parts.join(' • ') : 'Enterprise Multi-Core Processor';
+    }
     const laptopParts = [p.specs?.processor, p.specs?.ram, p.specs?.storage].filter(Boolean);
     if (laptopParts.length > 0) return laptopParts.join(' • ');
+
+    if (p.specs && typeof p.specs === 'object') {
+      const generic = Object.values(p.specs).filter((v) => typeof v === 'string' && v.trim());
+      if (generic.length > 0) return generic.slice(0, 3).join(' • ');
+    }
+
     return p.description || 'Enterprise Grade Hardware';
   };
 

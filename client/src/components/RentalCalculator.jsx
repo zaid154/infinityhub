@@ -57,7 +57,9 @@ export default function RentalCalculator({ onOpenRFQ, rentalProducts }) {
     .filter((p) => p.rental_price_monthly > 0 || p.available_for === 'rent' || p.available_for === 'both')
     .slice(0, 4)
     .map((p, idx) => {
+      const genericSpecs = p.specs && typeof p.specs === 'object' ? Object.values(p.specs).filter(v => typeof v === 'string' && v.trim()).slice(0, 3).join(' • ') : '';
       const subtitle = [p.specs?.processor, p.specs?.ram, p.specs?.storage].filter(Boolean).join(' • ') ||
+        genericSpecs ||
         (p.description ? p.description.slice(0, 45) : 'Enterprise Grade A+ Hardware');
 
       return {
