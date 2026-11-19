@@ -59,10 +59,65 @@ export const getCustomers = async (req, res, next) => {
       .select('-password')
       .sort({ createdAt: -1 });
 
+    // Enrich with corporate commercial counts (orders & rentals)
+    const enrichedCustomers = await Promise.all(
+      customers.map(async (c) => {
+        const [ordersCount, rentalsCount] = await Promise.all([
+          Order.countDocuments({ user: c._id }),
+          Rental.countDocuments({ user: c._id })
+        ]);
+        const obj = c.toObject();
+        obj.orders_count = ordersCount;
+        obj.rentals_count = rentalsCount;
+        return obj;
+      })
+    );
+
     res.status(200).json({
       success: true,
-      count: customers.length,
-      customers
+      count: enrichedCustomers.length,
+      customers: enrichedCustomers
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const toggleBlockCustomer = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { is_blocked, block_reason } = req.body;
+
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'Customer record not found' });
+    }
+
+    if (user.role === 'admin') {
+      return res.status(400).json({ success: false, message: 'Administrator accounts cannot be blocked.' });
+    }
+
+    user.is_blocked = typeof is_blocked === 'boolean' ? is_blocked : !user.is_blocked;
+    if (block_reason !== undefined) {
+      user.block_reason = user.is_blocked ? (block_reason || 'Administrative policy violation') : '';
+    } else if (!user.is_blocked) {
+      user.block_reason = '';
+    }
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: user.is_blocked
+        ? `Corporate account ${user.company_name || user.name} has been suspended.`
+        : `Corporate account ${user.company_name || user.name} has been reactivated.`,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        is_blocked: user.is_blocked,
+        block_reason: user.block_reason
+      }
     });
   } catch (error) {
     next(error);

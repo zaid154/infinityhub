@@ -92,6 +92,17 @@ export const login = async (req, res, next) => {
       });
     }
 
+    // Check if account has been blocked by administrator
+    if (user.is_blocked) {
+      return res.status(403).json({
+        success: false,
+        isBlocked: true,
+        message: user.block_reason
+          ? `Your corporate account has been suspended: ${user.block_reason}`
+          : 'Your account has been suspended by the administrator. Please contact enterprise support.'
+      });
+    }
+
     // Check if email is verified (Admin accounts are pre-verified)
     if (user.role === 'customer' && !user.email_verified) {
       return res.status(403).json({

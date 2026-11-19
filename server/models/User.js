@@ -41,6 +41,14 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false
     },
+    is_blocked: {
+      type: Boolean,
+      default: false
+    },
+    block_reason: {
+      type: String,
+      default: ''
+    },
     verification_token: {
       type: String,
       default: null

@@ -32,6 +32,14 @@ export const protect = async (req, res, next) => {
       });
     }
 
+    if (user.is_blocked && user.role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        isBlocked: true,
+        message: 'Your account has been suspended by the administrator.'
+      });
+    }
+
     req.user = user;
     next();
   } catch (error) {
