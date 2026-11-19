@@ -47,10 +47,10 @@ export default function Navbar({ onOpenRFQ }) {
       {/* Main Transparent / Frosted Navbar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">
         {/* Brand Logo - Unified Single Source Asset */}
-        <BrandLogo isSolidNav={isSolidNav} />
+        <BrandLogo isSolidNav={isSolidNav} className="shrink-0" />
 
         {/* Desktop Navigation Links - Switches White to Deep Emerald on Scroll */}
-        <nav className={`hidden lg:flex items-center space-x-8 text-[12px] uppercase font-bold tracking-[0.16em] transition-colors ${
+        <nav className={`hidden lg:flex items-center space-x-4 xl:space-x-7 text-[11px] xl:text-[12px] uppercase font-bold tracking-[0.12em] xl:tracking-[0.16em] transition-colors whitespace-nowrap ${
           isSolidNav ? 'text-[#072117]' : 'text-white'
         }`}>
           <Link to="/" className={`transition-colors ${isSolidNav ? 'hover:text-[#D4A24C]' : 'hover:text-[#F59E0B] drop-shadow-sm'}`}>
@@ -74,15 +74,15 @@ export default function Navbar({ onOpenRFQ }) {
         </nav>
 
         {/* Right CTA Actions - User, Cart, RFQ Button */}
-        <div className="flex items-center space-x-3 sm:space-x-4">
+        <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
           {/* User / Auth State */}
           {isAuthenticated ? (
-            <div className="flex items-center space-x-1 sm:space-x-2">
+            <div className="flex items-center space-x-1 sm:space-x-2 shrink-0">
               {isAdmin ? (
                 <>
                   <Link
                     to="/admin"
-                    className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-semibold shadow transition border border-[#D4A24C]/40"
+                    className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-semibold shadow transition border border-[#D4A24C]/40 whitespace-nowrap shrink-0"
                   >
                     <LayoutDashboard className="w-3.5 h-3.5 text-[#D4A24C]" />
                     Admin
@@ -101,7 +101,7 @@ export default function Navbar({ onOpenRFQ }) {
                 <>
                   <Link
                     to="/dashboard"
-                    className={`hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full border text-xs font-semibold transition backdrop-blur-sm ${
+                    className={`hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border text-xs font-semibold transition backdrop-blur-sm whitespace-nowrap shrink-0 ${
                       isSolidNav
                         ? 'bg-[#072117]/10 text-[#072117] border-[#072117]/20 hover:bg-[#072117]/20'
                         : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
@@ -123,7 +123,7 @@ export default function Navbar({ onOpenRFQ }) {
               )}
               <button
                 onClick={logout}
-                className={`hidden sm:inline-flex p-2 transition rounded-full ${
+                className={`hidden sm:inline-flex p-2 transition rounded-full shrink-0 ${
                   isSolidNav ? 'text-[#072117]/70 hover:text-red-500 hover:bg-black/5' : 'text-white/70 hover:text-red-400 hover:bg-white/10'
                 }`}
                 title="Logout"
@@ -134,7 +134,7 @@ export default function Navbar({ onOpenRFQ }) {
           ) : (
             <Link
               to="/login"
-              className={`p-2.5 transition rounded-full ${
+              className={`p-2.5 transition rounded-full shrink-0 ${
                 isSolidNav
                   ? 'text-[#072117] hover:text-[#D4A24C] hover:bg-black/5'
                   : 'text-white hover:text-[#F59E0B] hover:bg-white/10'
@@ -148,7 +148,7 @@ export default function Navbar({ onOpenRFQ }) {
           {/* Cart Icon - Al-Tooba Bag Style */}
           <Link
             to="/cart"
-            className={`relative p-2.5 transition rounded-full ${
+            className={`relative p-2.5 transition rounded-full shrink-0 ${
               isSolidNav
                 ? 'text-[#072117] hover:text-[#D4A24C] hover:bg-black/5'
                 : 'text-white hover:text-[#F59E0B] hover:bg-white/10'
@@ -163,10 +163,11 @@ export default function Navbar({ onOpenRFQ }) {
             )}
           </Link>
 
-          {/* Request Quote Main Button - Al-Tooba Gold Pill */}
+          {/* Request Quote Main Button - Elegant Gold Pill (Never Wraps) */}
           <button
+            type="button"
             onClick={() => onOpenRFQ?.('General Bulk RFQ')}
-            className="hidden sm:inline-flex px-5 py-2.5 rounded-full bg-gradient-to-r from-[#eec373] via-[#D4A24C] to-[#eec373] text-[#072117] text-xs font-sans font-extrabold uppercase tracking-wider shadow-[0_4px_16px_rgba(212,162,76,0.4)] hover:brightness-105 active:scale-95 transition-all items-center gap-1.5 cursor-pointer"
+            className="hidden sm:inline-flex items-center gap-1.5 px-4 sm:px-5 py-2.5 rounded-full bg-gradient-to-r from-[#e5b663] via-[#D4A24C] to-[#c99238] hover:brightness-105 text-[#072117] text-xs font-sans font-extrabold uppercase tracking-wider shadow-[0_4px_14px_rgba(212,162,76,0.35)] active:scale-95 transition-all whitespace-nowrap shrink-0 cursor-pointer"
           >
             <span>Request RFQ</span>
             <ChevronRight className="w-3.5 h-3.5 text-[#072117]" />
