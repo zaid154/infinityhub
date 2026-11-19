@@ -295,7 +295,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="space-y-20 pt-16 pb-20">
+      <div className="space-y-12 sm:space-y-16 pt-6 sm:pt-8 pb-16">
         {/* 3. ENTERPRISE HARDWARE SHOWCASE */}
         <EnterpriseCategoryShowcase />
 
