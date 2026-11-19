@@ -351,18 +351,19 @@ export default function AdminProductForm() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="min-w-0">
               <label className="block font-semibold text-slate-700 mb-1">Category *</label>
               <ThemeSelect
                 value={formData.category}
                 onChange={(val) => setFormData({ ...formData, category: val })}
                 options={dbCategories}
                 variant="admin"
+                fullWidth
               />
             </div>
 
-            <div>
+            <div className="min-w-0">
               <label className="block font-semibold text-slate-700 mb-1">Condition Grade</label>
               <ThemeSelect
                 value={formData.condition}
@@ -376,10 +377,11 @@ export default function AdminProductForm() {
                   { value: 'for_parts', label: 'For Parts / Scrap' }
                 ]}
                 variant="admin"
+                fullWidth
               />
             </div>
 
-            <div>
+            <div className="min-w-0">
               <label className="block font-semibold text-slate-700 mb-1">Available For</label>
               <ThemeSelect
                 value={formData.available_for}
@@ -390,6 +392,7 @@ export default function AdminProductForm() {
                   { value: 'rent', label: 'Rental Fleet Only' }
                 ]}
                 variant="admin"
+                fullWidth
               />
             </div>
           </div>
@@ -409,7 +412,7 @@ export default function AdminProductForm() {
 
           {/* Row 1: Commercial Pricing & GST */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div>
+            <div className="min-w-0">
               <label className="block font-semibold text-slate-700 mb-1">Sale Price (₹) *</label>
               <input
                 type="number"
@@ -422,7 +425,7 @@ export default function AdminProductForm() {
               <span className="text-[10px] text-slate-400 mt-1 block">Corporate direct purchase rate</span>
             </div>
 
-            <div>
+            <div className="min-w-0">
               <label className="block font-semibold text-slate-700 mb-1">Rental / Month (₹)</label>
               <input
                 type="number"
@@ -434,7 +437,7 @@ export default function AdminProductForm() {
               <span className="text-[10px] text-slate-400 mt-1 block">Monthly OPEX lease fee</span>
             </div>
 
-            <div>
+            <div className="min-w-0">
               <label className="block font-semibold text-slate-700 mb-1">Applicable GST</label>
               <ThemeSelect
                 value={formData.gst_rate}
@@ -447,6 +450,7 @@ export default function AdminProductForm() {
                   { value: 28, label: '28% GST (Luxury / Specialized)' }
                 ]}
                 variant="admin"
+                fullWidth
               />
               <span className="text-[10px] text-slate-400 mt-1 block">Tax invoice line item</span>
             </div>

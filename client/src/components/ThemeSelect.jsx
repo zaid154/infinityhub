@@ -15,11 +15,14 @@ export default function ThemeSelect({
   menuClassName = '',
   align = 'left',
   disabled = false,
+  fullWidth,
   id,
   name
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef(null);
+
+  const isFullWidth = fullWidth !== undefined ? fullWidth : (variant === 'form' || variant === 'admin');
 
   // Normalize options into { value, label } objects
   const normalizedOptions = options.map((opt) => {
@@ -89,7 +92,7 @@ export default function ThemeSelect({
     },
     admin: {
       button:
-        'bg-slate-50 border border-slate-300 text-slate-800 rounded-xl px-3 py-2 text-xs font-semibold hover:border-[#0D3B2A] shadow-xs flex items-center justify-between gap-2 cursor-pointer focus:outline-none focus:border-[#0D3B2A]',
+        'w-full bg-slate-50 border border-slate-300 text-slate-800 rounded-xl px-3 py-2.5 text-xs font-semibold hover:border-[#0D3B2A] shadow-xs flex items-center justify-between gap-2 cursor-pointer focus:outline-none focus:border-[#0D3B2A] min-w-0',
       menu: 'min-w-[180px] w-full rounded-xl border border-[#D4A24C]/35 bg-white shadow-xl shadow-[#0D3B2A]/10 p-1.5 max-h-60 overflow-y-auto space-y-0.5',
       item: 'px-3 py-2 text-xs font-medium rounded-lg'
     }
@@ -106,7 +109,7 @@ export default function ThemeSelect({
   return (
     <div
       ref={containerRef}
-      className={`relative inline-block ${variant === 'form' ? 'w-full' : ''}`}
+      className={`relative min-w-0 ${isFullWidth ? 'w-full block' : 'inline-block'}`}
       id={id}
     >
       {/* Hidden input for HTML form accessibility/submission if name provided */}
@@ -121,7 +124,7 @@ export default function ThemeSelect({
         aria-expanded={isOpen}
         className={`${style.button} ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
       >
-        <span className="truncate">
+        <span className="truncate min-w-0 block text-left" title={selectedOption ? selectedOption.label : placeholder}>
           {selectedOption ? selectedOption.label : placeholder}
         </span>
         <ChevronDown
