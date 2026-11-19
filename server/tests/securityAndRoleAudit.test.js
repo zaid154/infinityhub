@@ -79,6 +79,8 @@ async function runAllTests() {
   let customerTokenB = null;
   let adminToken = null;
   let testProductId = null;
+  let testSaleProductId = null;
+  let testRentalProductId = null;
   let testOrderId = null;
   let testRentalId = null;
   let testInquiryId = null;
@@ -103,8 +105,11 @@ async function runAllTests() {
     assert(res.body.success === true, 'Expected success: true');
     assert(Array.isArray(res.body.products), 'Expected products array');
     assert(res.body.products.length > 0, 'Expected at least 1 product');
-    const rentalItem = res.body.products.find((p) => (p.rental_stock || 0) > 0);
-    testProductId = rentalItem ? rentalItem._id : res.body.products[0]._id;
+    const rentalItem = res.body.products.find((p) => (p.rental_stock || 0) > 0 && p.available_for === 'rent');
+    const saleItem = res.body.products.find((p) => (p.sale_stock || 0) > 0 && p.available_for === 'sale');
+    testRentalProductId = rentalItem ? rentalItem._id : res.body.products[0]._id;
+    testSaleProductId = saleItem ? saleItem._id : res.body.products[0]._id;
+    testProductId = testSaleProductId;
   });
 
   await test('GET /api/settings should return corporate legal settings', async () => {
@@ -292,7 +297,7 @@ async function runAllTests() {
 
   await test('SECURITY: Rental with negative quantity (-2) must return 400', async () => {
     const res = await request('POST', '/api/rentals', {
-      product_id: testProductId,
+      product_id: testRentalProductId,
       quantity: -2,
       tenure: '6_months'
     }, {
@@ -303,7 +308,7 @@ async function runAllTests() {
 
   await test('SECURITY: Rental with tampered monthly_rate: 1 must be sanitized to verified DB rate', async () => {
     const res = await request('POST', '/api/rentals', {
-      product_id: testProductId,
+      product_id: testRentalProductId,
       quantity: 1,
       tenure: '6_months',
       monthly_rate: 1 // Malicious client attempt to pay ₹1/month
@@ -523,10 +528,16 @@ async function runAllTests() {
       });
     }
     // Restore seed product stock decremented during test purchase/rental orders
-    if (testProductId) {
+    if (testSaleProductId) {
       await db.collection('products').updateOne(
-        { _id: new mongoose.Types.ObjectId(testProductId) },
-        { $set: { sale_stock: 10, rental_stock: 5, stock_quantity: 15 } }
+        { _id: new mongoose.Types.ObjectId(testSaleProductId) },
+        { $set: { sale_stock: 10, stock_quantity: 10 } }
+      );
+    }
+    if (testRentalProductId) {
+      await db.collection('products').updateOne(
+        { _id: new mongoose.Types.ObjectId(testRentalProductId) },
+        { $set: { rental_stock: 5, stock_quantity: 5 } }
       );
     }
     await mongoose.disconnect();

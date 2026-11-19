@@ -8,7 +8,9 @@ import {
   ChevronRight,
   ShoppingCart,
   X,
-  Repeat
+  Repeat,
+  ShieldCheck,
+  CheckCircle2
 } from 'lucide-react';
 import api from '../services/api';
 import { useCart } from '../context/CartContext';
@@ -36,84 +38,6 @@ export default function Products() {
     const laptopParts = [p.specs?.processor, p.specs?.ram, p.specs?.storage].filter(Boolean);
     if (laptopParts.length > 0) return laptopParts.join(' • ');
     return p.description || 'Enterprise Grade Hardware';
-  };
-
-  // Only show condition badge if it's truly special (Brand New or Open Box)
-  // Standard refurbished hardware does not need a noisy "Grade A+" pill taking up space
-  const getConditionBadge = (cond) => {
-    if (!cond) return null;
-    if (cond === 'brand_new') {
-      return { label: '★ Brand New', className: 'bg-amber-50 text-amber-900 border-amber-300' };
-    }
-    if (cond === 'open_box') {
-      return { label: 'Open Box', className: 'bg-sky-50 text-sky-900 border-sky-300' };
-    }
-    return null; // Omit Grade A+ to keep cards clean and compact
-  };
-
-  // Helper for dynamic stock info: completely transparent breakdown between Buy & Rent
-  const getStockInfo = (p, currentFilter) => {
-    const saleStock = typeof p.sale_stock === 'number' ? p.sale_stock : (typeof p.stock_quantity === 'number' ? p.stock_quantity : 0);
-    const rentalStock = typeof p.rental_stock === 'number' ? p.rental_stock : 0;
-
-    // When viewing rent filter or rent-only product
-    if (currentFilter === 'rent' || p.available_for === 'rent') {
-      if (rentalStock > 0) {
-        return { text: `${rentalStock} in fleet`, inStock: true };
-      }
-      return { text: 'Fleet Reserved', inStock: false };
-    }
-
-    // When viewing sale filter or sale-only product
-    if (currentFilter === 'sale' || p.available_for === 'sale') {
-      if (saleStock > 0) {
-        return { text: `${saleStock} in stock`, inStock: true };
-      }
-      return { text: 'Out of Stock', inStock: false };
-    }
-
-    // Combined view ('all' filter)
-    if (p.available_for === 'both') {
-      if (saleStock > 0 && rentalStock > 0) {
-        return {
-          text: `Buy: ${saleStock} • Lease: ${rentalStock}`,
-          inStock: true
-        };
-      }
-      if (saleStock > 0) {
-        return { text: `${saleStock} for Sale`, inStock: true };
-      }
-      if (rentalStock > 0) {
-        return { text: `${rentalStock} in Fleet`, inStock: true };
-      }
-      return { text: 'Out of Stock', inStock: false };
-    }
-
-    if (p.available_for === 'sale') {
-      return { text: saleStock > 0 ? `${saleStock} in stock` : 'Out of Stock', inStock: saleStock > 0 };
-    }
-
-    return { text: rentalStock > 0 ? `${rentalStock} in fleet` : 'Fleet Reserved', inStock: rentalStock > 0 };
-  };
-
-  // Helper for deployment badge — smart reflection of live stock
-  const getDeploymentBadge = (p) => {
-    const hasSaleStock = (typeof p.sale_stock === 'number' ? p.sale_stock : (p.stock_quantity || 0)) > 0;
-    const hasRentalStock = (typeof p.rental_stock === 'number' ? p.rental_stock : 0) > 0;
-
-    if (p.available_for === 'both') {
-      if (hasSaleStock && hasRentalStock) return 'BUY & LEASE';
-      if (hasSaleStock && !hasRentalStock) return 'DIRECT BUY'; // Fleet currently reserved
-      if (!hasSaleStock && hasRentalStock) return 'LEASE ONLY'; // Sale inventory depleted
-      return 'OUT OF STOCK';
-    }
-    if (p.available_for === 'sale') {
-      return hasSaleStock ? 'DIRECT BUY' : 'OUT OF STOCK';
-    }
-    if (p.available_for === 'rent') {
-      return hasRentalStock ? 'LEASE ONLY' : 'FLEET RESERVED';
-    }
-    return null;
   };
 
   const [products, setProducts] = useState([]);
@@ -145,7 +69,7 @@ export default function Products() {
       try {
         const params = {
           page,
-          limit: 9,
+          limit: 12,
           sort
         };
         if (category !== 'all') params.category = category;
@@ -315,16 +239,16 @@ export default function Products() {
             </div>
           </div>
 
-          {/* Availability */}
+          {/* Availability Segmented Control */}
           <div className="space-y-1.5 pt-2 border-t border-[#D4A24C]/15">
             <label className="font-bold text-[#0D3B2A] block uppercase font-mono tracking-wider text-[10px]">
-              Available For
+              Procurement Model
             </label>
             <div className="grid grid-cols-3 gap-1">
               {[
-                { id: 'all', label: 'All' },
-                { id: 'sale', label: 'Buy' },
-                { id: 'rent', label: 'Rent' }
+                { id: 'all', label: 'All Items' },
+                { id: 'sale', label: 'Buy Only' },
+                { id: 'rent', label: 'Rent Fleet' }
               ].map((opt) => (
                 <button
                   key={opt.id}
@@ -332,7 +256,7 @@ export default function Products() {
                     setAvailableFor(opt.id);
                     setPage(1);
                   }}
-                  className={`py-1 px-1 rounded-lg font-semibold transition text-center text-[10px] uppercase tracking-wider cursor-pointer ${
+                  className={`py-1.5 px-1 rounded-lg font-semibold transition text-center text-[10px] uppercase tracking-wider cursor-pointer ${
                     availableFor === opt.id
                       ? 'bg-[#0D3B2A] text-white shadow-xs'
                       : 'bg-[#FAF7F2] text-[#5A6B63] hover:bg-[#F3E8D2] hover:text-[#0D3B2A] border border-[#D4A24C]/20'
@@ -378,7 +302,7 @@ export default function Products() {
           </div>
         </aside>
 
-        {/* Right Products Grid (Ultra-Compact Proportions) */}
+        {/* Right Products Grid (Dedicated Archetypes & Ultra-Compact Sizing) */}
         <div className="md:col-span-9 space-y-5">
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
@@ -405,12 +329,13 @@ export default function Products() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 items-stretch">
               {products.map((p) => {
-                const condBadge = getConditionBadge(p.condition);
-                const stockInfo = getStockInfo(p, availableFor);
-                const deployBadge = getDeploymentBadge(p);
+                const isRental = p.available_for === 'rent';
+                const isBrandNew = p.condition === 'brand_new';
+                const stockQty = isRental
+                  ? (typeof p.rental_stock === 'number' ? p.rental_stock : p.stock_quantity || 0)
+                  : (typeof p.sale_stock === 'number' ? p.sale_stock : p.stock_quantity || 0);
 
-                const hasSaleStock = (typeof p.sale_stock === 'number' ? p.sale_stock : (p.stock_quantity || 0)) > 0;
-                const hasRentalStock = (typeof p.rental_stock === 'number' ? p.rental_stock : 0) > 0;
+                const inStock = stockQty > 0;
 
                 return (
                   <div
@@ -418,13 +343,11 @@ export default function Products() {
                     className="bg-white rounded-2xl p-3.5 sm:p-4 border border-[#D4A24C]/25 hover:border-[#D4A24C] shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between group h-full"
                   >
                     <div>
-                      {/* Top Row: Special Condition Pill OR Brand (Left) + Real Transparent Stock (Right) */}
+                      {/* Top Row: Brand or Condition (Left) & Real Accurate Stock (Right) */}
                       <div className="flex items-center justify-between gap-1 mb-2 h-5 text-[10px] font-mono">
-                        {condBadge ? (
-                          <span
-                            className={`inline-flex items-center px-2 py-0.5 rounded-full font-bold tracking-wider uppercase border shadow-xs whitespace-nowrap ${condBadge.className}`}
-                          >
-                            {condBadge.label}
+                        {isBrandNew ? (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full font-bold tracking-wider uppercase bg-amber-50 text-amber-900 border border-amber-300 shadow-xs whitespace-nowrap">
+                            ★ Brand New Sealed
                           </span>
                         ) : (
                           <span className="font-semibold text-[#8A5E12] uppercase tracking-wider truncate max-w-[120px]">
@@ -432,32 +355,44 @@ export default function Products() {
                           </span>
                         )}
 
-                        {/* Real dynamic stock: crystal-clear separation between Sale and Rental */}
+                        {/* Real dynamic stock: completely distinct between Fleet vs Stock */}
                         <div
                           className={`flex items-center gap-1 font-medium shrink-0 ${
-                            stockInfo.inStock ? 'text-emerald-800' : 'text-[#8A5E12]'
+                            inStock ? 'text-emerald-800' : 'text-[#8A5E12]'
                           }`}
                         >
                           <span
                             className={`w-1.5 h-1.5 rounded-full ${
-                              stockInfo.inStock ? 'bg-emerald-600 animate-pulse' : 'bg-[#D4A24C]'
+                              inStock ? 'bg-emerald-600 animate-pulse' : 'bg-[#D4A24C]'
                             }`}
                           />
-                          <span className="whitespace-nowrap font-semibold">{stockInfo.text}</span>
+                          <span className="whitespace-nowrap font-semibold">
+                            {isRental
+                              ? inStock ? `${stockQty} in fleet` : 'Fleet Reserved'
+                              : inStock ? `${stockQty} in stock` : 'Out of Stock'}
+                          </span>
                         </div>
                       </div>
 
-                      {/* Compact Image Pedestal Stage Container (h-36 sm:h-38) */}
+                      {/* Image Pedestal Stage Container (Compact h-36 sm:h-38) */}
                       <Link to={`/products/${p.slug}`} className="block">
                         <div className="h-36 sm:h-38 rounded-xl bg-gradient-to-b from-[#FAF7F2] via-[#F6F0E7] to-[#EFE7DC] flex items-center justify-center p-3 mb-2.5 overflow-hidden border border-[#D4A24C]/20 cursor-pointer group-hover:border-[#D4A24C]/60 transition-all duration-300 relative">
-                          {/* Deployment badge floating inside stage top-right */}
-                          {deployBadge && (
-                            <div className="absolute top-2.5 right-2.5 z-20 pointer-events-none">
-                              <span className="inline-flex items-center px-2 py-0.5 rounded text-[9px] font-mono font-bold tracking-wider uppercase whitespace-nowrap bg-white/95 text-[#0D3B2A] border border-[#D4A24C]/40 shadow-xs backdrop-blur-sm">
-                                {deployBadge}
+                          {/* Distinct Deployment Badge (Never Buy & Lease Crammed Together) */}
+                          <div className="absolute top-2.5 right-2.5 z-20 pointer-events-none">
+                            {isRental ? (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded text-[9px] font-mono font-bold tracking-wider uppercase whitespace-nowrap bg-[#0D3B2A] text-[#FAF7F2] border border-[#D4A24C]/40 shadow-xs">
+                                Corporate Lease
                               </span>
-                            </div>
-                          )}
+                            ) : isBrandNew ? (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded text-[9px] font-mono font-bold tracking-wider uppercase whitespace-nowrap bg-white/95 text-amber-900 border border-amber-400 shadow-xs">
+                                Factory Sealed
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded text-[9px] font-mono font-bold tracking-wider uppercase whitespace-nowrap bg-white/95 text-[#0D3B2A] border border-[#D4A24C]/40 shadow-xs">
+                                Direct Purchase
+                              </span>
+                            )}
+                          </div>
 
                           {/* Pedestal surface shadow */}
                           <div className="absolute bottom-1.5 w-24 h-2.5 bg-black/10 rounded-full blur-xs pointer-events-none" />
@@ -483,10 +418,10 @@ export default function Products() {
                       </p>
                     </div>
 
-                    {/* Context-Aware Bottom Section (Clean Price Row & Bottom Buttons) */}
+                    {/* Dedicated Single-Price & Single-Action Section (Zero Dual Buttons!) */}
                     <div className="pt-2 mt-2 border-t border-[#D4A24C]/20 space-y-2">
-                      {availableFor === 'rent' || p.available_for === 'rent' ? (
-                        /* DEDICATED RENTAL CARD */
+                      {isRental ? (
+                        /* ARCHETYPE 1: CORPORATE RENTAL FLEET CARD */
                         <>
                           <div className="min-h-[38px] flex items-baseline justify-between">
                             <div>
@@ -503,13 +438,13 @@ export default function Products() {
                             </span>
                           </div>
 
-                          {hasRentalStock ? (
+                          {inStock ? (
                             <button
                               onClick={() => addToRentalCart(p, 1, '6_months')}
                               className="h-9 w-full rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-xs flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
                             >
                               <Repeat className="w-3.5 h-3.5 text-[#D4A24C]" />
-                              <span>Rent Fleet</span>
+                              <span>Rent Fleet (Add to Cart)</span>
                             </button>
                           ) : (
                             <button
@@ -520,21 +455,24 @@ export default function Products() {
                             </button>
                           )}
                         </>
-                      ) : availableFor === 'sale' || p.available_for === 'sale' ? (
-                        /* DEDICATED BUY CARD (No redundant 100% tax pill!) */
+                      ) : isBrandNew ? (
+                        /* ARCHETYPE 2: BRAND NEW FACTORY SEALED CARD */
                         <>
                           <div className="min-h-[38px] flex items-baseline justify-between">
                             <div>
-                              <span className="text-[8.5px] font-bold uppercase tracking-wider text-[#5A6B63] block">
-                                Direct Purchase Price
+                              <span className="text-[8.5px] font-bold uppercase tracking-wider text-[#8A5E12] block">
+                                Brand New Sealed Price
                               </span>
                               <span className="text-sm sm:text-base font-bold text-[#0D3B2A] font-serif">
                                 ₹{(p.sale_price || 0).toLocaleString('en-IN')}
                               </span>
                             </div>
+                            <span className="text-[9px] font-semibold text-[#8A5E12] bg-[#FAF7F2] px-1.5 py-0.5 rounded border border-[#D4A24C]/30 whitespace-nowrap">
+                              Official Warranty
+                            </span>
                           </div>
 
-                          {hasSaleStock ? (
+                          {inStock ? (
                             <button
                               onClick={() => addToBuyCart(p, 1)}
                               className="h-9 w-full rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-xs flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
@@ -552,58 +490,29 @@ export default function Products() {
                           )}
                         </>
                       ) : (
-                        /* BALANCED ALL ITEMS VIEW (Available for Both) */
+                        /* ARCHETYPE 3: CERTIFIED REFURBISHED DIRECT PURCHASE CARD */
                         <>
                           <div className="min-h-[38px] flex items-baseline justify-between">
                             <div>
                               <span className="text-[8.5px] font-bold uppercase tracking-wider text-[#5A6B63] block">
-                                Purchase Price
+                                Direct Purchase Price
                               </span>
                               <span className="text-sm sm:text-base font-bold text-[#0D3B2A] font-serif">
                                 ₹{(p.sale_price || 0).toLocaleString('en-IN')}
                               </span>
                             </div>
-                            {p.rental_price_monthly > 0 && hasRentalStock ? (
-                              <span className="text-[10.5px] font-bold text-[#8A5E12] bg-[#FAF7F2] px-2 py-0.5 rounded-full border border-[#D4A24C]/35 whitespace-nowrap">
-                                or ₹{p.rental_price_monthly.toLocaleString('en-IN')}/mo
-                              </span>
-                            ) : null}
+                            <span className="text-[9px] font-semibold text-[#5A6B63] bg-[#FAF7F2] px-1.5 py-0.5 rounded border border-[#D4A24C]/25 whitespace-nowrap">
+                              Tested & Certified
+                            </span>
                           </div>
 
-                          {hasSaleStock && hasRentalStock ? (
-                            <div className="grid grid-cols-2 gap-2 h-9">
-                              <button
-                                onClick={() => addToRentalCart(p, 1, '6_months')}
-                                className="h-9 w-full py-1 px-2 rounded-full bg-[#FAF7F2] hover:bg-[#F3ECE1] text-[#8A5E12] text-xs font-bold uppercase tracking-wider transition border border-[#D4A24C]/40 flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
-                                title="Add to Rental Fleet Cart"
-                              >
-                                <Repeat className="w-3.5 h-3.5 text-[#D4A24C]" />
-                                <span>Rent</span>
-                              </button>
-                              <button
-                                onClick={() => addToBuyCart(p, 1)}
-                                className="h-9 w-full py-1 px-2 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-xs border border-[#D4A24C]/40 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
-                                title="Add to Direct Purchase Cart"
-                              >
-                                <ShoppingCart className="w-3.5 h-3.5 text-[#D4A24C]" />
-                                <span>Buy</span>
-                              </button>
-                            </div>
-                          ) : hasSaleStock ? (
+                          {inStock ? (
                             <button
                               onClick={() => addToBuyCart(p, 1)}
                               className="h-9 w-full rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-xs flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
                             >
                               <ShoppingCart className="w-3.5 h-3.5 text-[#D4A24C]" />
                               <span>Add to Cart (Buy)</span>
-                            </button>
-                          ) : hasRentalStock ? (
-                            <button
-                              onClick={() => addToRentalCart(p, 1, '6_months')}
-                              className="h-9 w-full rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-xs flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
-                            >
-                              <Repeat className="w-3.5 h-3.5 text-[#D4A24C]" />
-                              <span>Rent Fleet</span>
                             </button>
                           ) : (
                             <button
