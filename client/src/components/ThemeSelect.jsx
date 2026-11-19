@@ -72,26 +72,26 @@ export default function ThemeSelect({
     pill: {
       button:
         'bg-white border border-[#D4A24C]/35 text-[#0D3B2A] rounded-full px-3.5 py-1.5 text-xs font-semibold hover:border-[#D4A24C] shadow-xs inline-flex items-center gap-2 justify-between cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#D4A24C]',
-      menu: 'min-w-[190px] rounded-2xl border border-[#D4A24C]/35 bg-[#FAF7F2] shadow-xl shadow-[#0D3B2A]/10 py-1.5 backdrop-blur-md',
-      item: 'px-3.5 py-2 text-xs font-medium'
+      menu: 'min-w-[195px] rounded-2xl border border-[#D4A24C]/35 bg-white shadow-2xl shadow-[#0D3B2A]/15 p-1.5 backdrop-blur-md space-y-0.5',
+      item: 'px-3 py-2 text-xs font-medium rounded-xl'
     },
     compact: {
       button:
         'bg-white border border-[#D4A24C]/35 text-[#0D3B2A] rounded-xl px-2.5 py-1 text-xs font-semibold hover:border-[#D4A24C] shadow-xs inline-flex items-center gap-1.5 justify-between cursor-pointer focus:outline-none',
-      menu: 'min-w-[160px] rounded-xl border border-[#D4A24C]/35 bg-[#FAF7F2] shadow-xl py-1 backdrop-blur-md',
-      item: 'px-3 py-1.5 text-xs font-medium'
+      menu: 'min-w-[165px] rounded-xl border border-[#D4A24C]/35 bg-white shadow-xl shadow-[#0D3B2A]/10 p-1 backdrop-blur-md space-y-0.5',
+      item: 'px-2.5 py-1.5 text-xs font-medium rounded-lg'
     },
     form: {
       button:
         'w-full bg-[#FAF7F2] border border-[#D4A24C]/35 text-[#0D3B2A] rounded-xl px-3.5 py-2.5 text-sm font-medium hover:border-[#0D3B2A] shadow-xs flex items-center justify-between cursor-pointer focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]',
-      menu: 'w-full rounded-2xl border border-[#D4A24C]/35 bg-[#FAF7F2] shadow-xl shadow-[#0D3B2A]/12 py-1.5 max-h-64 overflow-y-auto',
-      item: 'px-3.5 py-2 text-sm font-medium'
+      menu: 'w-full rounded-2xl border border-[#D4A24C]/35 bg-white shadow-2xl shadow-[#0D3B2A]/12 p-1.5 max-h-64 overflow-y-auto space-y-0.5',
+      item: 'px-3.5 py-2 text-sm font-medium rounded-xl'
     },
     admin: {
       button:
         'bg-slate-50 border border-slate-300 text-slate-800 rounded-xl px-3 py-2 text-xs font-semibold hover:border-[#0D3B2A] shadow-xs flex items-center justify-between gap-2 cursor-pointer focus:outline-none focus:border-[#0D3B2A]',
-      menu: 'min-w-[180px] w-full rounded-xl border border-[#D4A24C]/35 bg-white shadow-xl py-1.5 max-h-60 overflow-y-auto',
-      item: 'px-3 py-2 text-xs font-medium'
+      menu: 'min-w-[180px] w-full rounded-xl border border-[#D4A24C]/35 bg-white shadow-xl shadow-[#0D3B2A]/10 p-1.5 max-h-60 overflow-y-auto space-y-0.5',
+      item: 'px-3 py-2 text-xs font-medium rounded-lg'
     }
   };
 
@@ -150,14 +150,20 @@ export default function ThemeSelect({
                 onClick={() => handleSelect(opt.value)}
                 className={`${style.item} flex items-center justify-between gap-2 cursor-pointer transition select-none ${
                   isSelected
-                    ? 'bg-[#0D3B2A] text-[#FAF7F2] font-semibold'
-                    : 'text-[#0D3B2A] hover:bg-[#D4A24C]/15 hover:text-[#0D3B2A]'
+                    ? 'bg-[#0D3B2A] text-[#FAF7F2] font-semibold shadow-xs'
+                    : 'text-[#0D3B2A] hover:bg-[#FAF7F2] hover:text-[#8A5E12]'
                 }`}
               >
                 <div className="flex items-center gap-1.5 truncate">
                   <span className="truncate">{opt.label}</span>
                   {opt.badge && (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#D4A24C]/20 text-[#0D3B2A] font-bold">
+                    <span
+                      className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
+                        isSelected
+                          ? 'bg-white/20 text-[#FAF7F2]'
+                          : 'bg-[#D4A24C]/20 text-[#0D3B2A]'
+                      }`}
+                    >
                       {opt.badge}
                     </span>
                   )}
