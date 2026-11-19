@@ -522,6 +522,13 @@ async function runAllTests() {
         _id: { $in: createdInquiryIds.map(id => new mongoose.Types.ObjectId(id)) }
       });
     }
+    // Restore seed product stock decremented during test purchase/rental orders
+    if (testProductId) {
+      await db.collection('products').updateOne(
+        { _id: new mongoose.Types.ObjectId(testProductId) },
+        { $set: { sale_stock: 10, rental_stock: 5, stock_quantity: 15 } }
+      );
+    }
     await mongoose.disconnect();
     console.log('    ✓ All test records safely sanitized from MongoDB');
   });

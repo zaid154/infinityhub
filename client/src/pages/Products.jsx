@@ -88,11 +88,23 @@ export default function Products() {
     return { text: 'Out of Stock', inStock: false };
   };
 
-  // Helper for deployment badge
+  // Helper for deployment badge — smart reflection of live stock
   const getDeploymentBadge = (p) => {
-    if (p.available_for === 'rent') return 'LEASE ONLY';
-    if (p.available_for === 'sale') return 'DIRECT BUY';
-    if (p.available_for === 'both') return 'BUY & LEASE';
+    const hasSaleStock = (typeof p.sale_stock === 'number' ? p.sale_stock : (p.stock_quantity || 0)) > 0;
+    const hasRentalStock = (typeof p.rental_stock === 'number' ? p.rental_stock : 0) > 0;
+
+    if (p.available_for === 'both') {
+      if (hasSaleStock && hasRentalStock) return 'BUY & LEASE';
+      if (hasSaleStock && !hasRentalStock) return 'DIRECT BUY'; // Fleet currently reserved
+      if (!hasSaleStock && hasRentalStock) return 'LEASE ONLY'; // Sale inventory depleted
+      return 'OUT OF STOCK';
+    }
+    if (p.available_for === 'sale') {
+      return hasSaleStock ? 'DIRECT BUY' : 'OUT OF STOCK';
+    }
+    if (p.available_for === 'rent') {
+      return hasRentalStock ? 'LEASE ONLY' : 'FLEET RESERVED';
+    }
     return null;
   };
 
@@ -389,6 +401,9 @@ export default function Products() {
                 const stockInfo = getStockInfo(p, availableFor);
                 const deployBadge = getDeploymentBadge(p);
 
+                const hasSaleStock = (typeof p.sale_stock === 'number' ? p.sale_stock : (p.stock_quantity || 0)) > 0;
+                const hasRentalStock = (typeof p.rental_stock === 'number' ? p.rental_stock : 0) > 0;
+
                 return (
                   <div
                     key={p._id}
@@ -463,7 +478,7 @@ export default function Products() {
                       </p>
                     </div>
 
-                    {/* Context-Aware Bottom Section (Strictly Equalized Heights Across All Cards) */}
+                    {/* Context-Aware Bottom Section (Smart Stock-Aware Buttons & Baseline Alignment) */}
                     <div className="pt-3.5 mt-3 border-t border-[#D4A24C]/20 space-y-3">
                       {availableFor === 'rent' || p.available_for === 'rent' ? (
                         /* DEDICATED RENTAL CARD */
@@ -483,13 +498,22 @@ export default function Products() {
                             </span>
                           </div>
 
-                          <button
-                            onClick={() => addToRentalCart(p, 1, '6_months')}
-                            className="h-10 w-full rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-sm flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
-                          >
-                            <Repeat className="w-3.5 h-3.5 text-[#D4A24C]" />
-                            <span>Rent Fleet (Add to Cart)</span>
-                          </button>
+                          {hasRentalStock ? (
+                            <button
+                              onClick={() => addToRentalCart(p, 1, '6_months')}
+                              className="h-10 w-full rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-sm flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
+                            >
+                              <Repeat className="w-3.5 h-3.5 text-[#D4A24C]" />
+                              <span>Rent Fleet (Add to Cart)</span>
+                            </button>
+                          ) : (
+                            <button
+                              disabled
+                              className="h-10 w-full rounded-full bg-stone-100 text-[#8A5E12] text-xs font-bold uppercase tracking-wider cursor-not-allowed border border-[#D4A24C]/30 flex items-center justify-center gap-1.5"
+                            >
+                              <span>Fleet Reserved (Unavailable)</span>
+                            </button>
+                          )}
                         </>
                       ) : availableFor === 'sale' || p.available_for === 'sale' ? (
                         /* DEDICATED BUY CARD */
@@ -508,13 +532,22 @@ export default function Products() {
                             </span>
                           </div>
 
-                          <button
-                            onClick={() => addToBuyCart(p, 1)}
-                            className="h-10 w-full rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-sm flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
-                          >
-                            <ShoppingCart className="w-3.5 h-3.5 text-[#D4A24C]" />
-                            <span>Add to Cart (Buy)</span>
-                          </button>
+                          {hasSaleStock ? (
+                            <button
+                              onClick={() => addToBuyCart(p, 1)}
+                              className="h-10 w-full rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-sm flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
+                            >
+                              <ShoppingCart className="w-3.5 h-3.5 text-[#D4A24C]" />
+                              <span>Add to Cart (Buy)</span>
+                            </button>
+                          ) : (
+                            <button
+                              disabled
+                              className="h-10 w-full rounded-full bg-stone-100 text-stone-400 text-xs font-bold uppercase tracking-wider cursor-not-allowed border border-stone-200 flex items-center justify-center gap-1.5"
+                            >
+                              <span>Out of Stock</span>
+                            </button>
+                          )}
                         </>
                       ) : (
                         /* BALANCED ALL ITEMS VIEW (Available for Both) */
@@ -528,7 +561,7 @@ export default function Products() {
                                 ₹{(p.sale_price || 0).toLocaleString('en-IN')}
                               </span>
                             </div>
-                            {p.rental_price_monthly > 0 ? (
+                            {p.rental_price_monthly > 0 && hasRentalStock ? (
                               <span className="text-[11px] font-bold text-[#8A5E12] bg-[#FAF7F2] px-2.5 py-0.5 rounded-full border border-[#D4A24C]/35 whitespace-nowrap">
                                 or ₹{p.rental_price_monthly.toLocaleString('en-IN')}/mo
                               </span>
@@ -539,24 +572,49 @@ export default function Products() {
                             )}
                           </div>
 
-                          <div className="grid grid-cols-2 gap-2 h-10">
-                            <button
-                              onClick={() => addToRentalCart(p, 1, '6_months')}
-                              className="h-10 w-full py-2 px-2 rounded-full bg-[#FAF7F2] hover:bg-[#F3ECE1] text-[#8A5E12] text-xs font-bold uppercase tracking-wider transition border border-[#D4A24C]/40 flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
-                              title="Add to Rental Fleet Cart"
-                            >
-                              <Repeat className="w-3.5 h-3.5 text-[#D4A24C]" />
-                              <span>Rent</span>
-                            </button>
+                          {hasSaleStock && hasRentalStock ? (
+                            <div className="grid grid-cols-2 gap-2 h-10">
+                              <button
+                                onClick={() => addToRentalCart(p, 1, '6_months')}
+                                className="h-10 w-full py-2 px-2 rounded-full bg-[#FAF7F2] hover:bg-[#F3ECE1] text-[#8A5E12] text-xs font-bold uppercase tracking-wider transition border border-[#D4A24C]/40 flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
+                                title="Add to Rental Fleet Cart"
+                              >
+                                <Repeat className="w-3.5 h-3.5 text-[#D4A24C]" />
+                                <span>Rent</span>
+                              </button>
+                              <button
+                                onClick={() => addToBuyCart(p, 1)}
+                                className="h-10 w-full py-2 px-2 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-sm border border-[#D4A24C]/40 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
+                                title="Add to Direct Purchase Cart"
+                              >
+                                <ShoppingCart className="w-3.5 h-3.5 text-[#D4A24C]" />
+                                <span>Buy</span>
+                              </button>
+                            </div>
+                          ) : hasSaleStock ? (
                             <button
                               onClick={() => addToBuyCart(p, 1)}
-                              className="h-10 w-full py-2 px-2 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-sm border border-[#D4A24C]/40 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
-                              title="Add to Direct Purchase Cart"
+                              className="h-10 w-full rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-sm flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
                             >
                               <ShoppingCart className="w-3.5 h-3.5 text-[#D4A24C]" />
-                              <span>Buy</span>
+                              <span>Add to Cart (Buy)</span>
                             </button>
-                          </div>
+                          ) : hasRentalStock ? (
+                            <button
+                              onClick={() => addToRentalCart(p, 1, '6_months')}
+                              className="h-10 w-full rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-sm flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
+                            >
+                              <Repeat className="w-3.5 h-3.5 text-[#D4A24C]" />
+                              <span>Rent Fleet (Add to Cart)</span>
+                            </button>
+                          ) : (
+                            <button
+                              disabled
+                              className="h-10 w-full rounded-full bg-stone-100 text-stone-400 text-xs font-bold uppercase tracking-wider cursor-not-allowed border border-stone-200 flex items-center justify-center gap-1.5"
+                            >
+                              <span>Out of Stock</span>
+                            </button>
+                          )}
                         </>
                       )}
                     </div>
