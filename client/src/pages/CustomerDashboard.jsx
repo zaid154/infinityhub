@@ -132,11 +132,11 @@ export default function CustomerDashboard() {
         </div>
 
         {loading ? (
-          <div className="text-center py-10 text-xs text-slate-400">Loading orders...</div>
+          <div className="text-center py-10 text-xs text-[#5A6B63]">Loading orders...</div>
         ) : orders.length === 0 ? (
           <div className="text-center py-12 space-y-2">
-            <p className="text-xs text-slate-500">No hardware purchase orders placed yet.</p>
-            <Link to="/products" className="text-xs text-[#0D3B2A] font-bold hover:underline">
+            <p className="text-xs text-[#5A6B63]">No hardware purchase orders placed yet.</p>
+            <Link to="/products" className="text-xs text-[#8A5E12] font-bold hover:underline">
               Start your first order
             </Link>
           </div>
@@ -145,11 +145,11 @@ export default function CustomerDashboard() {
             {orders.slice(0, 3).map((o) => (
               <div
                 key={o._id}
-                className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
+                className="p-4 rounded-xl bg-[#FAF7F2] border border-[#D4A24C]/25 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
               >
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-slate-900 font-mono">{o.invoice_number}</span>
+                    <span className="font-bold text-[#0D3B2A] font-mono">{o.invoice_number}</span>
                     <span
                       className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
                         o.payment_status === 'paid'
@@ -160,7 +160,7 @@ export default function CustomerDashboard() {
                       {o.payment_status}
                     </span>
                   </div>
-                  <p className="text-[11px] text-slate-500 mt-1">
+                  <p className="text-[11px] text-[#5A6B63] mt-1">
                     {new Date(o.createdAt).toLocaleDateString('en-IN', {
                       day: 'numeric',
                       month: 'short',
@@ -171,12 +171,12 @@ export default function CustomerDashboard() {
                 </div>
 
                 <div className="flex items-center gap-4">
-                  <span className="text-sm font-bold text-slate-900 font-mono">
+                  <span className="text-sm font-bold text-[#0D3B2A] font-mono">
                     ₹{o.grand_total.toLocaleString('en-IN')}
                   </span>
                   <Link
                     to={`/dashboard/orders`}
-                    className="px-3 py-1.5 rounded-lg bg-white border border-slate-300 font-bold text-[11px] hover:bg-slate-100 transition"
+                    className="px-3 py-1.5 rounded-lg bg-white border border-[#D4A24C]/40 text-[#0D3B2A] font-bold text-[11px] hover:bg-[#FAF7F2] transition shadow-xs"
                   >
                     View Invoice
                   </Link>
@@ -188,15 +188,15 @@ export default function CustomerDashboard() {
       </div>
 
       {/* Active Rental Leases */}
-      <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-6 shadow-sm">
-        <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-          <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-            <Repeat className="w-4 h-4 text-emerald-600" />
+      <div className="bg-white rounded-3xl border border-[#D4A24C]/25 p-6 sm:p-8 space-y-6 shadow-sm">
+        <div className="flex items-center justify-between border-b border-[#D4A24C]/15 pb-4">
+          <h2 className="text-base font-bold font-serif text-[#0D3B2A] flex items-center gap-2">
+            <Repeat className="w-4 h-4 text-[#8A5E12]" />
             Active Laptop Rental Fleets
           </h2>
           <Link
             to="/dashboard/rentals"
-            className="text-xs font-bold text-[#0D3B2A] hover:underline flex items-center gap-1"
+            className="text-xs font-bold text-[#8A5E12] hover:text-[#0D3B2A] flex items-center gap-1 transition"
           >
             <span>View All</span>
             <ArrowRight className="w-3.5 h-3.5 text-[#D4A24C]" />
@@ -204,11 +204,11 @@ export default function CustomerDashboard() {
         </div>
 
         {loading ? (
-          <div className="text-center py-10 text-xs text-slate-400">Loading rentals...</div>
+          <div className="text-center py-10 text-xs text-[#5A6B63]">Loading rentals...</div>
         ) : rentals.length === 0 ? (
           <div className="text-center py-12 space-y-2">
-            <p className="text-xs text-slate-500">No active rental fleets currently.</p>
-            <Link to="/rental" className="text-xs text-[#0D3B2A] font-bold hover:underline">
+            <p className="text-xs text-[#5A6B63]">No active rental fleets currently.</p>
+            <Link to="/rental" className="text-xs text-[#8A5E12] font-bold hover:underline">
               Calculate rental costs for your team
             </Link>
           </div>
@@ -217,11 +217,11 @@ export default function CustomerDashboard() {
             {rentals.slice(0, 3).map((r) => (
               <div
                 key={r._id}
-                className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
+                className="p-4 rounded-xl bg-[#FAF7F2] border border-[#D4A24C]/25 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
               >
                 <div>
-                  <h4 className="font-bold text-slate-900">{r.product?.title || 'Rental Laptop'}</h4>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
+                  <h4 className="font-bold text-[#0D3B2A] font-serif">{r.product?.title || 'Rental Laptop'}</h4>
+                  <p className="text-[11px] text-[#5A6B63] mt-0.5">
                     Quantity: <strong>{r.quantity} Units</strong> • Tenure: {r.tenure.replace(/_/g, ' ')}
                   </p>
                 </div>

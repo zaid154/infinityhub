@@ -82,8 +82,8 @@ export default function EnterpriseCategoryShowcase() {
           Explore our wide range of enterprise fleets and high-performance commercial hardware.
         </p>
 
-        {/* Carousel Arrow Controls (Floating Right on Desktop / Tablet) */}
-        <div className="sm:absolute sm:right-0 sm:bottom-0 mt-3 sm:mt-0 flex items-center justify-center sm:justify-end gap-1.5">
+        {/* Carousel Arrow Controls (Mobile & Tablet only; Desktop uses full 6-col balanced grid) */}
+        <div className="lg:hidden sm:absolute sm:right-0 sm:bottom-0 mt-3 sm:mt-0 flex items-center justify-center sm:justify-end gap-1.5">
           <button
             onClick={() => scroll('left')}
             aria-label="Previous categories"

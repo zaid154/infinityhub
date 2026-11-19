@@ -108,7 +108,7 @@ export default function RentalPlans() {
       hardware: 'HP EliteBook Workstation',
       image: '/products/real-mobile-workstation-transparent.png',
       rate: '3,200',
-      specsList: ['Hexa-Core i7/i9', '32GB 3200MHz RAM', '1TB Gen4 High-IOPS', 'Dedicated RTX GPU'],
+      specsList: ['Hexa-Core i7/i9', '32GB DDR4 RAM', '1TB Gen4 NVMe', 'Dedicated RTX GPU'],
       sla: '24h VIP SLA',
       tagline: 'High-Performance Rig for 3D Modeling, Video & AI Code',
       popular: false,
@@ -285,7 +285,7 @@ export default function RentalPlans() {
                   {tier.specsList.map((spec, sIdx) => (
                     <div
                       key={sIdx}
-                      className="px-2 py-1 rounded-md bg-[#FAF7F2] text-[#0D3B2A] text-[10px] font-mono font-medium border border-[#D4A24C]/20 text-center truncate"
+                      className="px-2 py-1 rounded-md bg-[#FAF7F2] text-[#0D3B2A] text-[10px] font-mono font-medium border border-[#D4A24C]/20 text-center whitespace-normal leading-tight min-h-[28px] flex items-center justify-center"
                       title={spec}
                     >
                       {spec}

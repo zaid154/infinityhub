@@ -1,7 +1,15 @@
 import http from 'http';
+import dns from 'dns';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 dotenv.config({ path: './server/.env' });
+
+// Ensure robust DNS resolution on Windows environments for MongoDB Atlas SRV records
+try {
+  dns.setServers(['8.8.8.8', '1.1.1.1']);
+} catch {
+  // Ignore fallback
+}
 
 const BASE_URL = 'http://127.0.0.1:5001';
 

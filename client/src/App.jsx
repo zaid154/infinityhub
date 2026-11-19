@@ -75,6 +75,7 @@ export default function App() {
               <Route path="products/:slug" element={<ProductDetail />} />
               <Route path="rental" element={<RentalPlans />} />
               <Route path="buyback" element={<Buyback />} />
+              <Route path="liquidation" element={<Navigate to="/buyback" replace />} />
               <Route path="about" element={<AboutUs />} />
               <Route path="contact" element={<Contact />} />
               <Route path="cart" element={<Cart />} />

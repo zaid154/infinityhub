@@ -345,7 +345,11 @@ export default function Products() {
                       {/* Stock availability: Clean, single-line indicator that NEVER wraps */}
                       <div className="flex items-center gap-1.5 text-[11px] font-mono font-medium text-emerald-800 shrink-0">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
-                        <span>{(p.sale_stock || p.stock_quantity || 1)} in stock</span>
+                        <span>
+                          {availableFor === 'rent' || p.available_for === 'rent'
+                            ? `${p.rental_stock !== undefined ? p.rental_stock : 3} in fleet`
+                            : `${p.sale_stock !== undefined ? p.sale_stock : (p.stock_quantity || 1)} in stock`}
+                        </span>
                       </div>
                     </div>
 

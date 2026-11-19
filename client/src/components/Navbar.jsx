@@ -77,31 +77,53 @@ export default function Navbar({ onOpenRFQ }) {
         <div className="flex items-center space-x-3 sm:space-x-4">
           {/* User / Auth State */}
           {isAuthenticated ? (
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1 sm:space-x-2">
               {isAdmin ? (
-                <Link
-                  to="/admin"
-                  className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-semibold shadow transition border border-[#D4A24C]/40"
-                >
-                  <LayoutDashboard className="w-3.5 h-3.5 text-[#D4A24C]" />
-                  Admin
-                </Link>
+                <>
+                  <Link
+                    to="/admin"
+                    className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-semibold shadow transition border border-[#D4A24C]/40"
+                  >
+                    <LayoutDashboard className="w-3.5 h-3.5 text-[#D4A24C]" />
+                    Admin
+                  </Link>
+                  <Link
+                    to="/admin"
+                    className={`sm:hidden p-2 transition rounded-full ${
+                      isSolidNav ? 'text-[#072117] hover:bg-black/5' : 'text-white hover:bg-white/10'
+                    }`}
+                    title="Admin Console"
+                  >
+                    <LayoutDashboard className="w-4 h-4 text-[#D4A24C]" />
+                  </Link>
+                </>
               ) : (
-                <Link
-                  to="/dashboard"
-                  className={`hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full border text-xs font-semibold transition backdrop-blur-sm ${
-                    isSolidNav
-                      ? 'bg-[#072117]/10 text-[#072117] border-[#072117]/20 hover:bg-[#072117]/20'
-                      : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
-                  }`}
-                >
-                  <User className="w-3.5 h-3.5" />
-                  {user.name.split(' ')[0]}
-                </Link>
+                <>
+                  <Link
+                    to="/dashboard"
+                    className={`hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full border text-xs font-semibold transition backdrop-blur-sm ${
+                      isSolidNav
+                        ? 'bg-[#072117]/10 text-[#072117] border-[#072117]/20 hover:bg-[#072117]/20'
+                        : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
+                    }`}
+                  >
+                    <User className="w-3.5 h-3.5" />
+                    {user.name.split(' ')[0]}
+                  </Link>
+                  <Link
+                    to="/dashboard"
+                    className={`sm:hidden p-2 transition rounded-full ${
+                      isSolidNav ? 'text-[#072117] hover:bg-black/5' : 'text-white hover:bg-white/10'
+                    }`}
+                    title="Account Dashboard"
+                  >
+                    <User className="w-4 h-4" />
+                  </Link>
+                </>
               )}
               <button
                 onClick={logout}
-                className={`p-2 transition rounded-full ${
+                className={`hidden sm:inline-flex p-2 transition rounded-full ${
                   isSolidNav ? 'text-[#072117]/70 hover:text-red-500 hover:bg-black/5' : 'text-white/70 hover:text-red-400 hover:bg-white/10'
                 }`}
                 title="Logout"
@@ -210,16 +232,69 @@ export default function Navbar({ onOpenRFQ }) {
             Contact
           </Link>
 
-          <div className="pt-4 flex flex-col gap-3">
+          <div className="pt-2 flex flex-col gap-3">
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
                 onOpenRFQ?.('Mobile General RFQ');
               }}
-              className="w-full py-3 rounded-full bg-gradient-to-r from-[#eec373] via-[#D4A24C] to-[#eec373] text-[#072117] font-extrabold text-xs uppercase tracking-widest text-center shadow-lg"
+              className="w-full py-3 rounded-full bg-gradient-to-r from-[#eec373] via-[#D4A24C] to-[#eec373] text-[#072117] font-extrabold text-xs uppercase tracking-widest text-center shadow-lg cursor-pointer"
             >
               Request Quick RFQ
             </button>
+
+            {user ? (
+              <div className="pt-3 border-t border-white/10 space-y-2">
+                <div className="flex items-center justify-between text-xs text-white/70 px-1">
+                  <span>Signed in as <strong className="text-white">{user.name}</strong></span>
+                  {isAdmin && <span className="bg-[#D4A24C] text-[#072117] text-[10px] font-bold px-2 py-0.5 rounded">ADMIN</span>}
+                </div>
+                {isAdmin ? (
+                  <Link
+                    to="/admin"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block py-2.5 px-3 rounded-xl bg-white/10 text-white font-bold text-xs hover:bg-white/20 transition"
+                  >
+                    Admin Management Console
+                  </Link>
+                ) : (
+                  <Link
+                    to="/dashboard"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block py-2.5 px-3 rounded-xl bg-white/10 text-white font-bold text-xs hover:bg-white/20 transition"
+                  >
+                    Customer Dashboard & Orders
+                  </Link>
+                )}
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    logout();
+                  }}
+                  className="w-full text-left py-2 px-3 text-red-400 hover:text-red-300 text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  Sign Out
+                </button>
+              </div>
+            ) : (
+              <div className="pt-3 border-t border-white/10 flex gap-2">
+                <Link
+                  to="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex-1 py-2.5 text-center rounded-xl bg-white/10 text-white text-xs font-bold hover:bg-white/20 transition"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  to="/signup"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex-1 py-2.5 text-center rounded-xl bg-[#D4A24C] text-[#072117] text-xs font-bold hover:brightness-105 transition"
+                >
+                  Register
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       )}

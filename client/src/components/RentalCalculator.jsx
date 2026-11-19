@@ -126,7 +126,7 @@ export default function RentalCalculator({ onOpenRFQ }) {
                   Selected: {selectedTier.name}
                 </span>
               </div>
-              <div className="grid grid-cols-2 gap-2 sm:gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2.5">
                 {TIERS.map((tier) => (
                   <button
                     key={tier.id}
@@ -143,15 +143,15 @@ export default function RentalCalculator({ onOpenRFQ }) {
                         <tier.icon className={`w-3.5 h-3.5 shrink-0 ${
                           selectedTier.id === tier.id ? 'text-[#D4A24C]' : 'text-[#90b09a]'
                         }`} />
-                        <span className="font-bold text-[11px] sm:text-xs text-[#FAF7F2] truncate">
+                        <span className="font-bold text-[11px] sm:text-xs text-[#FAF7F2]">
                           {tier.name}
                         </span>
                       </div>
-                      <span className="text-[9.5px] sm:text-[10px] font-mono text-[#D4A24C] shrink-0 font-semibold">
+                      <span className="text-[10px] sm:text-[10.5px] font-mono text-[#D4A24C] shrink-0 font-semibold">
                         ₹{tier.price.toLocaleString('en-IN')}/mo
                       </span>
                     </div>
-                    <p className="text-[9.5px] sm:text-[10px] text-[#90b09a] leading-tight truncate">
+                    <p className="text-[9.5px] sm:text-[10px] text-[#90b09a] leading-tight">
                       {tier.subtitle}
                     </p>
                   </button>
