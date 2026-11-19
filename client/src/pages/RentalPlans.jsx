@@ -181,17 +181,19 @@ export default function RentalPlans() {
     }
   ];
 
-  // 2. 4 Standardized Operational Rental Packages
+  // 2. 4 Standardized Operational Rental Packages (Compact, Elegant, Non-wrapping)
   const standardizedPlans = [
     {
       id: 'short-term',
-      badge: 'Flexible Project',
+      badge: 'Trial / Project',
       name: 'Short-Term Project Rental',
       duration: '1 – 3 Months',
-      target: 'Temporary projects, software testing, event setups & surge hiring',
-      hardware: 'ThinkPad T490 / Dell Latitude 7490',
-      specs: ['Core i5 8th Gen Quad', '16GB DDR4 RAM', '256GB NVMe SSD', 'Win 11 Pro Imaged'],
-      included: ['Pre-Configured OS Imaging', '24–48h Standby Swap SLA', 'Zero Long-Term Lock-in'],
+      target: 'Temporary projects, software testing, events & surge hiring',
+      features: [
+        'ThinkPad T490 / Latitude (i5 • 16GB • 256GB SSD)',
+        'Clean Win 11 Pro Enterprise Image Pre-Loaded',
+        '24–48h Standby Swap SLA & Zero Long-Term Lock-in'
+      ],
       price: '₹1,500',
       period: '/mo per unit',
       popular: false
@@ -201,23 +203,27 @@ export default function RentalPlans() {
       badge: '★ Best Value (OPEX)',
       name: 'Long-Term Corporate Leasing',
       duration: '6 – 36 Months',
-      target: 'Full enterprise workforce workstations with complete OPEX tax benefit',
-      hardware: 'Dell Latitude 7490 / HP EliteBook 840',
-      specs: ['Core i5/i7 Corporate Editions', '16GB/32GB High Speed RAM', '512GB Fast SSD', 'Backlit & FHD IPS'],
-      included: ['100% GSTR-2B Tax Credit', 'Free Ongoing AMC & Spares', 'Yearly Fleet Refresh Option'],
+      target: 'Full enterprise workforce workstations with 100% tax benefit',
+      features: [
+        'Latitude 7490 / EliteBook 840 (i5/i7 • 16GB/32GB)',
+        '100% Tax Deductible OPEX & 18% GSTR-2B Credit',
+        'Free Ongoing AMC, Free Spares & Annual Refresh'
+      ],
       price: '₹1,200',
       period: '/mo per unit',
       popular: true
     },
     {
       id: 'bulk-fleet',
-      badge: 'High Volume Rebate',
+      badge: 'Volume Discount',
       name: 'Bulk Fleet Deployment',
-      duration: '12 – 24 Months (25+ Units)',
-      target: 'Scaling startups, BPOs, MNC offshore centers & developer teams',
-      hardware: 'Mix of Laptops, Desktops & Displays',
-      specs: ['Standardized Fleet Tiers', 'Batch Asset Barcoding', 'Custom Enterprise VPN', 'Dedicated Account Mgr'],
-      included: ['5% to 15% Volume Rebates', 'Dedicated Standby Unit Staged On-Site', 'Pan-India WFH Courier'],
+      duration: '12 – 24 Months',
+      target: 'Scaling startups, BPOs, MNC offshore centers & large teams',
+      features: [
+        'Standardized Fleet Mix of Laptops, Desktops & Displays',
+        '5% to 15% Volume Fleet Rebates on 25+ to 100+ Units',
+        'Dedicated Standby Buffer Units Staged On-Site'
+      ],
       price: 'Custom Tier',
       period: 'volume quotation',
       popular: false
@@ -227,10 +233,12 @@ export default function RentalPlans() {
       badge: 'Heavy Compute',
       name: 'Custom Enterprise Workstations',
       duration: '3 – 24 Months',
-      target: 'CAD/3D modeling, deep learning, video rendering & architecture rigs',
-      hardware: 'RTX 3060 / Precision Workstations',
-      specs: ['NVIDIA RTX 12GB GPUs', '32GB–64GB DDR4 Memory', '1TB NVMe Gen4 Storage', 'Dual 24" IPS Displays'],
-      included: ['ISV Certified Hardware', 'Thermal Stress Bench Tested', 'High-Bandwidth PSU'],
+      target: 'CAD/3D modeling, deep learning & high-performance rigs',
+      features: [
+        'NVIDIA RTX 12GB GPU • 32GB–64GB RAM • 1TB SSD',
+        'ISV Certified Hardware & Thermal Stress Lab Tested',
+        'Dual 24" Frameless IPS Ergonomic Displays Included'
+      ],
       price: '₹3,500',
       period: '/mo per workstation',
       popular: false
@@ -323,41 +331,41 @@ export default function RentalPlans() {
   ];
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-8 py-8 sm:py-12 space-y-16 select-none">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-10 sm:space-y-12 select-none">
       
       {/* ======================================================== */}
       {/* SECTION 1: TRI-PILLAR HERO SECTION (RENT + BUY + PROCURE)*/}
       {/* ======================================================== */}
-      <section className="text-center max-w-4xl mx-auto space-y-4">
-        <span className="text-[11px] font-sans uppercase tracking-[0.22em] text-[#8A5E12] font-bold block">
+      <section className="text-center max-w-4xl mx-auto space-y-3 pt-2">
+        <span className="text-[10px] font-sans uppercase tracking-[0.22em] text-[#8A5E12] font-bold block">
           — ENTERPRISE IT INFRASTRUCTURE PARTNER
         </span>
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-[#0D3B2A] tracking-tight leading-tight">
+        <h1 className="text-2xl sm:text-4xl lg:text-[42px] font-serif font-bold text-[#0D3B2A] tracking-tight leading-tight">
           Complete IT Hardware Solutions – Rent, Purchase & Sell
         </h1>
-        <p className="text-sm sm:text-base text-[#5A6B63] max-w-2xl mx-auto leading-relaxed">
+        <p className="text-xs sm:text-sm text-[#5A6B63] max-w-2xl mx-auto leading-relaxed">
           Your trusted partner for enterprise IT hardware. Explore flexible rental solutions, source quality hardware, and purchase reliable IT equipment for your business requirements.
         </p>
 
         {/* 3 Primary Tri-Pillar Action Buttons */}
-        <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+        <div className="flex flex-wrap items-center justify-center gap-2.5 pt-1.5">
           <a
             href="#rental-catalog"
-            className="px-5 py-2.5 rounded-full bg-[#0D3B2A] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#153423] transition shadow-sm border border-[#D4A24C]/40 flex items-center gap-1.5 cursor-pointer active:scale-95"
+            className="px-4.5 py-2 rounded-full bg-[#0D3B2A] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#153423] transition shadow-xs border border-[#D4A24C]/40 flex items-center gap-1.5 cursor-pointer active:scale-95"
           >
             <Repeat className="w-3.5 h-3.5 text-[#D4A24C]" />
             <span>Explore Rental Hardware</span>
           </a>
           <Link
             to="/products?available_for=sale"
-            className="px-5 py-2.5 rounded-full bg-[#FAF7F2] text-[#0D3B2A] text-xs font-bold uppercase tracking-wider hover:bg-[#F3E8D2] transition border border-[#D4A24C]/35 flex items-center gap-1.5 shadow-xs cursor-pointer active:scale-95"
+            className="px-4.5 py-2 rounded-full bg-[#FAF7F2] text-[#0D3B2A] text-xs font-bold uppercase tracking-wider hover:bg-[#F3E8D2] transition border border-[#D4A24C]/35 flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95"
           >
             <ShoppingBag className="w-3.5 h-3.5 text-[#8A5E12]" />
             <span>Explore Products for Sale</span>
           </Link>
           <a
             href="#procurement-enquiry"
-            className="px-5 py-2.5 rounded-full bg-white text-[#8A5E12] text-xs font-bold uppercase tracking-wider hover:bg-[#FAF7F2] transition border border-[#D4A24C]/30 flex items-center gap-1.5 shadow-xs cursor-pointer active:scale-95"
+            className="px-4.5 py-2 rounded-full bg-white text-[#8A5E12] text-xs font-bold uppercase tracking-wider hover:bg-[#FAF7F2] transition border border-[#D4A24C]/30 flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95"
           >
             <PackageCheck className="w-3.5 h-3.5 text-[#D4A24C]" />
             <span>Request Hardware Procurement</span>
@@ -365,22 +373,22 @@ export default function RentalPlans() {
         </div>
 
         {/* 4 Core Value Metric Badges */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-4">
-          <div className="p-3 bg-white rounded-2xl border border-[#D4A24C]/25 shadow-sm text-center">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#8A5E12] block">Capital Outlay</span>
-            <span className="text-sm font-bold text-[#0D3B2A] font-serif">₹0 Zero CAPEX</span>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-3">
+          <div className="p-2.5 bg-white rounded-xl border border-[#D4A24C]/25 shadow-2xs text-center">
+            <span className="text-[9px] font-bold uppercase tracking-wider text-[#8A5E12] block">Capital Outlay</span>
+            <span className="text-xs sm:text-sm font-bold text-[#0D3B2A] font-serif">₹0 Zero CAPEX</span>
           </div>
-          <div className="p-3 bg-white rounded-2xl border border-[#D4A24C]/25 shadow-sm text-center">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#8A5E12] block">Tax Credit</span>
-            <span className="text-sm font-bold text-emerald-700 font-serif">100% GSTR-2B</span>
+          <div className="p-2.5 bg-white rounded-xl border border-[#D4A24C]/25 shadow-2xs text-center">
+            <span className="text-[9px] font-bold uppercase tracking-wider text-[#8A5E12] block">Tax Credit</span>
+            <span className="text-xs sm:text-sm font-bold text-emerald-700 font-serif">100% GSTR-2B</span>
           </div>
-          <div className="p-3 bg-white rounded-2xl border border-[#D4A24C]/25 shadow-sm text-center">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#8A5E12] block">Standby Swap</span>
-            <span className="text-sm font-bold text-[#0D3B2A] font-serif">24–48h SLA</span>
+          <div className="p-2.5 bg-white rounded-xl border border-[#D4A24C]/25 shadow-2xs text-center">
+            <span className="text-[9px] font-bold uppercase tracking-wider text-[#8A5E12] block">Standby Swap</span>
+            <span className="text-xs sm:text-sm font-bold text-[#0D3B2A] font-serif">24–48h SLA</span>
           </div>
-          <div className="p-3 bg-white rounded-2xl border border-[#D4A24C]/25 shadow-sm text-center">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#8A5E12] block">Ongoing AMC</span>
-            <span className="text-sm font-bold text-[#0D3B2A] font-serif">Free Repairs</span>
+          <div className="p-2.5 bg-white rounded-xl border border-[#D4A24C]/25 shadow-2xs text-center">
+            <span className="text-[9px] font-bold uppercase tracking-wider text-[#8A5E12] block">Ongoing AMC</span>
+            <span className="text-xs sm:text-sm font-bold text-[#0D3B2A] font-serif">Free Repairs</span>
           </div>
         </div>
       </section>
@@ -454,84 +462,77 @@ export default function RentalPlans() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch pt-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch pt-2">
           {standardizedPlans.map((plan) => (
             <div
               key={plan.id}
-              className={`rounded-3xl p-5 flex flex-col justify-between transition-all duration-300 relative ${
+              className={`rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-200 relative ${
                 plan.popular
-                  ? 'bg-white border-2 border-[#D4A24C] shadow-lg ring-2 ring-[#D4A24C]/15'
-                  : 'bg-white border border-[#D4A24C]/25 shadow-sm hover:shadow-md hover:border-[#0D3B2A]/40'
+                  ? 'bg-white border-2 border-[#D4A24C] shadow-md ring-1 ring-[#D4A24C]/25'
+                  : 'bg-white border border-[#D4A24C]/30 shadow-2xs hover:shadow-sm hover:border-[#0D3B2A]/40'
               }`}
             >
               {plan.popular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#0D3B2A] text-[#D4A24C] border border-[#D4A24C] px-3 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-widest shadow-md">
+                <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-[#0D3B2A] text-[#D4A24C] border border-[#D4A24C] px-3 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-widest shadow-xs whitespace-nowrap">
                   ★ Most Popular
                 </div>
               )}
 
               <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#8A5E12]">
+                {/* Header row: Badge & Duration */}
+                <div className="flex items-center justify-between gap-2 mb-1.5">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#8A5E12] truncate">
                     {plan.badge}
                   </span>
-                  <span className="text-[10px] font-mono font-medium text-[#5A6B63] bg-[#0D3B2A]/5 px-2 py-0.5 rounded-full">
+                  <span className="text-[10px] font-mono font-medium text-[#0D3B2A] bg-[#FAF7F2] border border-[#D4A24C]/25 px-2 py-0.5 rounded-full whitespace-nowrap shrink-0">
                     {plan.duration}
                   </span>
                 </div>
 
-                <h3 className="text-base font-bold font-serif text-[#0D3B2A] tracking-tight">
+                <h3 className="text-sm sm:text-base font-bold font-serif text-[#0D3B2A] tracking-tight">
                   {plan.name}
                 </h3>
-                <p className="text-[11px] text-[#5A6B63] mt-1 leading-snug min-h-[32px]">
+                <p className="text-[11px] text-[#5A6B63] mt-0.5 leading-snug line-clamp-1">
                   {plan.target}
                 </p>
 
-                {/* Symmetrical 2x2 Specs Grid */}
-                <div className="grid grid-cols-2 gap-1.5 pt-3 my-2.5 border-t border-[#D4A24C]/15">
-                  {plan.specs.map((spec, sIdx) => (
-                    <div
-                      key={sIdx}
-                      className="px-2 py-1 rounded-md bg-[#FAF7F2] text-[#0D3B2A] text-[10px] font-mono font-medium border border-[#D4A24C]/20 text-center whitespace-normal leading-tight min-h-[28px] flex items-center justify-center"
-                    >
-                      {spec}
-                    </div>
-                  ))}
-                </div>
-
-                {/* Included Features List */}
-                <div className="space-y-1.5 pt-1 pb-3 text-[11px] text-[#0D3B2A]">
-                  {plan.included.map((inc, iIdx) => (
-                    <div key={iIdx} className="flex items-center gap-1.5">
-                      <Check className="w-3 h-3 text-emerald-700 shrink-0" />
-                      <span className="leading-tight">{inc}</span>
+                {/* 3 Core Value Features */}
+                <div className="space-y-1.5 my-3 pt-2.5 border-t border-[#D4A24C]/15 text-[11px] text-[#0D3B2A]">
+                  {plan.features.map((feat, fIdx) => (
+                    <div key={fIdx} className="flex items-start gap-1.5 leading-tight">
+                      <Check className="w-3.5 h-3.5 text-[#D4A24C] shrink-0 mt-0.5" />
+                      <span className="line-clamp-1">{feat}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Pricing & Inquire Button */}
-              <div className="pt-3 mt-auto border-t border-[#D4A24C]/20 space-y-2.5">
-                <div className="flex items-baseline justify-between">
-                  <div>
+              <div className="pt-2.5 mt-auto border-t border-[#D4A24C]/20 space-y-2">
+                <div className="flex items-baseline justify-between gap-1">
+                  <div className="truncate">
                     <span className="text-[9px] uppercase tracking-wider font-bold text-[#8A5E12] block">
                       Starting Rate
                     </span>
-                    <span className="text-lg font-bold font-serif text-[#0D3B2A]">
-                      {plan.price}
-                      <span className="text-xs font-normal text-[#5A6B63] font-sans"> {plan.period}</span>
-                    </span>
+                    <div className="flex items-baseline gap-1 truncate">
+                      <span className="text-base sm:text-lg font-bold font-serif text-[#0D3B2A] leading-tight">
+                        {plan.price}
+                      </span>
+                      <span className="text-[10px] font-normal text-[#5A6B63] truncate">
+                        {plan.period}
+                      </span>
+                    </div>
                   </div>
-                  <span className="text-[9px] font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                  <span className="text-[9px] font-bold uppercase tracking-wider text-[#0D3B2A] bg-[#FAF7F2] border border-[#D4A24C]/35 px-2 py-0.5 rounded-full whitespace-nowrap shrink-0">
                     24h Swap SLA
                   </span>
                 </div>
 
                 <button
                   onClick={() => openRFQ(`Plan Inquiry: ${plan.name} (${plan.duration})`)}
-                  className="w-full py-2.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-[11px] font-bold uppercase tracking-wider transition shadow-sm flex items-center justify-center gap-1 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
+                  className="w-full h-8 sm:h-9 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-[11px] font-bold uppercase tracking-wider transition shadow-xs flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
                 >
-                  <Repeat className="w-3.5 h-3.5 text-[#D4A24C]" />
+                  <Repeat className="w-3 h-3 text-[#D4A24C]" />
                   <span>Inquire Fleet Plan</span>
                 </button>
               </div>
@@ -567,37 +568,37 @@ export default function RentalPlans() {
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-72 bg-white rounded-3xl border border-[#D4A24C]/20 animate-pulse" />
+              <div key={i} className="h-64 bg-white rounded-2xl border border-[#D4A24C]/20 animate-pulse" />
             ))}
           </div>
         ) : rentalProducts.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-3xl border border-[#D4A24C]/20 p-6">
+          <div className="text-center py-10 bg-white rounded-2xl border border-[#D4A24C]/20 p-6">
             <p className="text-xs text-[#5A6B63]">No hardware currently marked for rental fleet.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {rentalProducts.slice(0, 6).map((p) => {
               const maxRental = p.rental_stock !== undefined ? p.rental_stock : 5;
 
               return (
                 <div
                   key={p._id}
-                  className="bg-white rounded-3xl p-5 border border-[#0D3B2A]/10 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group"
+                  className="bg-white rounded-2xl p-4 border border-[#D4A24C]/25 shadow-2xs hover:shadow-sm hover:border-[#0D3B2A]/40 transition-all flex flex-col justify-between group"
                 >
                   <div>
-                    <div className="flex justify-between items-center mb-3">
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#FAF7F2] text-[#8A5E12] uppercase border border-[#D4A24C]/30">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#FAF7F2] text-[#8A5E12] uppercase border border-[#D4A24C]/30">
                         • {maxRental} in fleet
                       </span>
-                      <span className="text-[10px] font-mono text-[#0D3B2A] font-bold">
+                      <span className="text-[9px] font-bold uppercase tracking-wider text-[#0D3B2A] bg-[#FAF7F2] border border-[#D4A24C]/25 px-2 py-0.5 rounded-full">
                         24h Swap SLA
                       </span>
                     </div>
 
                     <Link to={`/products/${p.slug}`} className="block">
-                      <div className="h-36 rounded-2xl bg-[#FAF7F2] flex items-center justify-center p-3 mb-3 border border-[#D4A24C]/20 cursor-pointer overflow-hidden">
+                      <div className="h-32 rounded-xl bg-[#FAF7F2] flex items-center justify-center p-2.5 mb-2.5 border border-[#D4A24C]/20 cursor-pointer overflow-hidden">
                         <img
                           src={getSafeImageUrl(p)}
                           alt={p.title}
@@ -607,22 +608,22 @@ export default function RentalPlans() {
                     </Link>
 
                     <Link to={`/products/${p.slug}`} className="block">
-                      <h4 className="text-sm font-bold text-[#0D3B2A] font-serif line-clamp-1 group-hover:text-[#D4A24C] transition">
+                      <h4 className="text-xs sm:text-sm font-bold text-[#0D3B2A] font-serif line-clamp-1 group-hover:text-[#D4A24C] transition">
                         {p.title}
                       </h4>
                     </Link>
 
-                    <p className="text-xs text-[#5A6B63] mt-1 line-clamp-2 min-h-[32px] font-mono text-[11px]">
+                    <p className="text-[11px] text-[#5A6B63] mt-0.5 line-clamp-1 font-mono">
                       {p.description || 'Enterprise Grade A+ certified machine with on-site warranty.'}
                     </p>
                   </div>
 
-                  <div className="pt-3 mt-3 border-t border-[#D4A24C]/20 space-y-2.5">
+                  <div className="pt-2.5 mt-2.5 border-t border-[#D4A24C]/20 space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#5A6B63]">
+                      <span className="text-[9px] font-bold uppercase tracking-wider text-[#8A5E12]">
                         Monthly Fleet Lease
                       </span>
-                      <span className="text-base font-bold text-[#0D3B2A] font-serif">
+                      <span className="text-sm sm:text-base font-bold text-[#0D3B2A] font-serif">
                         ₹{p.rental_price_monthly?.toLocaleString('en-IN') || 1200}
                         <span className="text-xs font-normal text-[#5A6B63] font-sans">/mo</span>
                       </span>
@@ -631,16 +632,16 @@ export default function RentalPlans() {
                     <div className="grid grid-cols-2 gap-2">
                       <button
                         onClick={() => openRFQ(`Fleet Lease Inquiry: ${p.title} (${maxRental} units in fleet)`)}
-                        className="w-full py-2.5 rounded-full bg-[#FAF7F2] hover:bg-[#F3E8D2] text-[#0D3B2A] text-[11px] font-bold uppercase tracking-wider transition border border-[#D4A24C]/30 text-center cursor-pointer"
+                        className="w-full h-8 rounded-full bg-[#FAF7F2] hover:bg-[#F3E8D2] text-[#0D3B2A] text-[10px] sm:text-[11px] font-bold uppercase tracking-wider transition border border-[#D4A24C]/30 text-center cursor-pointer"
                       >
                         Inquire RFQ
                       </button>
 
                       <button
                         onClick={() => addToRentalCart(p, 1, '6_months')}
-                        className="w-full py-2.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-[11px] font-bold uppercase tracking-wider transition shadow flex items-center justify-center gap-1 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
+                        className="w-full h-8 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-[10px] sm:text-[11px] font-bold uppercase tracking-wider transition shadow-2xs flex items-center justify-center gap-1 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
                       >
-                        <Repeat className="w-3.5 h-3.5 text-[#D4A24C]" />
+                        <Repeat className="w-3 h-3 text-[#D4A24C]" />
                         <span>Rent Fleet</span>
                       </button>
                     </div>
