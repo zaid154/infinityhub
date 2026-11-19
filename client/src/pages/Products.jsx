@@ -38,54 +38,62 @@ export default function Products() {
     return p.description || 'Enterprise Grade Hardware';
   };
 
-  // Helper to get real condition badge (no invented certifications)
+  // Only show condition badge if it's truly special (Brand New or Open Box)
+  // Standard refurbished hardware does not need a noisy "Grade A+" pill taking up space
   const getConditionBadge = (cond) => {
     if (!cond) return null;
-    switch (cond) {
-      case 'brand_new':
-        return { label: '★ Brand New', className: 'bg-amber-50 text-amber-900 border-amber-300' };
-      case 'open_box':
-        return { label: 'Open Box', className: 'bg-sky-50 text-sky-900 border-sky-300' };
-      case 'grade_a_plus':
-        return { label: 'Grade A+', className: 'bg-[#FAF7F2] text-[#8A5E12] border-[#D4A24C]/40' };
-      case 'grade_a':
-        return { label: 'Grade A', className: 'bg-[#FAF7F2] text-[#8A5E12] border-[#D4A24C]/40' };
-      case 'grade_b':
-        return { label: 'Grade B', className: 'bg-[#FAF7F2] text-[#5A6B63] border-[#5A6B63]/30' };
-      default:
-        return { label: cond.replace(/_/g, ' ').toUpperCase(), className: 'bg-[#FAF7F2] text-[#8A5E12] border-[#D4A24C]/30' };
+    if (cond === 'brand_new') {
+      return { label: '★ Brand New', className: 'bg-amber-50 text-amber-900 border-amber-300' };
     }
+    if (cond === 'open_box') {
+      return { label: 'Open Box', className: 'bg-sky-50 text-sky-900 border-sky-300' };
+    }
+    return null; // Omit Grade A+ to keep cards clean and compact
   };
 
-  // Helper for dynamic stock info based on actual DB numbers
+  // Helper for dynamic stock info: completely transparent breakdown between Buy & Rent
   const getStockInfo = (p, currentFilter) => {
+    const saleStock = typeof p.sale_stock === 'number' ? p.sale_stock : (typeof p.stock_quantity === 'number' ? p.stock_quantity : 0);
+    const rentalStock = typeof p.rental_stock === 'number' ? p.rental_stock : 0;
+
+    // When viewing rent filter or rent-only product
     if (currentFilter === 'rent' || p.available_for === 'rent') {
-      const fleet = typeof p.rental_stock === 'number' ? p.rental_stock : 0;
-      if (fleet > 0) {
-        return { text: `${fleet} in fleet`, inStock: true };
+      if (rentalStock > 0) {
+        return { text: `${rentalStock} in fleet`, inStock: true };
       }
       return { text: 'Fleet Reserved', inStock: false };
     }
 
+    // When viewing sale filter or sale-only product
     if (currentFilter === 'sale' || p.available_for === 'sale') {
-      const saleStock = typeof p.sale_stock === 'number' ? p.sale_stock : (typeof p.stock_quantity === 'number' ? p.stock_quantity : 0);
       if (saleStock > 0) {
         return { text: `${saleStock} in stock`, inStock: true };
       }
       return { text: 'Out of Stock', inStock: false };
     }
 
-    // Combined view ('all' filter & product is 'both')
-    const saleStock = typeof p.sale_stock === 'number' ? p.sale_stock : (typeof p.stock_quantity === 'number' ? p.stock_quantity : 0);
-    const rentalStock = typeof p.rental_stock === 'number' ? p.rental_stock : 0;
+    // Combined view ('all' filter)
+    if (p.available_for === 'both') {
+      if (saleStock > 0 && rentalStock > 0) {
+        return {
+          text: `Buy: ${saleStock} • Lease: ${rentalStock}`,
+          inStock: true
+        };
+      }
+      if (saleStock > 0) {
+        return { text: `${saleStock} for Sale`, inStock: true };
+      }
+      if (rentalStock > 0) {
+        return { text: `${rentalStock} in Fleet`, inStock: true };
+      }
+      return { text: 'Out of Stock', inStock: false };
+    }
 
-    if (saleStock > 0) {
-      return { text: `${saleStock} in stock`, inStock: true };
+    if (p.available_for === 'sale') {
+      return { text: saleStock > 0 ? `${saleStock} in stock` : 'Out of Stock', inStock: saleStock > 0 };
     }
-    if (rentalStock > 0) {
-      return { text: `${rentalStock} in fleet`, inStock: true };
-    }
-    return { text: 'Out of Stock', inStock: false };
+
+    return { text: rentalStock > 0 ? `${rentalStock} in fleet` : 'Fleet Reserved', inStock: rentalStock > 0 };
   };
 
   // Helper for deployment badge — smart reflection of live stock
@@ -185,24 +193,24 @@ export default function Products() {
   }, []);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-8 py-10 space-y-8">
-      {/* Top Header & Search Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-[#D4A24C]/20">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
+      {/* Top Header & Search Bar (Compact Height) */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-[#D4A24C]/20">
         <div>
           <span className="text-[10px] uppercase font-mono tracking-[0.2em] text-[#D4A24C] font-semibold block">
             — VERIFIED COMMERCIAL INVENTORY
           </span>
-          <h1 className="text-2xl sm:text-3xl font-serif text-[#0D3B2A] font-normal tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-serif text-[#0D3B2A] font-normal tracking-tight">
             Commercial Hardware Catalog
           </h1>
-          <p className="text-xs sm:text-sm text-[#5A6B63] mt-1">
+          <p className="text-xs text-[#5A6B63] mt-0.5">
             Showing {total} enterprise tested machines & components available for dispatch.
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="relative w-full sm:w-64">
-            <Search className="w-4 h-4 text-[#D4A24C] absolute left-3 top-1/2 -translate-y-1/2" />
+        <div className="flex items-center gap-2.5">
+          <div className="relative w-full sm:w-60">
+            <Search className="w-3.5 h-3.5 text-[#D4A24C] absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Search model, specs, GPU..."
@@ -211,14 +219,14 @@ export default function Products() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              className="w-full pl-9 pr-4 py-2 bg-white border border-[#D4A24C]/30 rounded-full text-xs text-[#0D3B2A] focus:outline-none focus:border-[#0D3B2A] transition shadow-sm"
+              className="w-full pl-8 pr-3 py-1.5 bg-white border border-[#D4A24C]/30 rounded-full text-xs text-[#0D3B2A] focus:outline-none focus:border-[#0D3B2A] transition shadow-xs"
             />
           </div>
 
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value)}
-            className="px-4 py-2 bg-white border border-[#D4A24C]/30 rounded-full text-xs font-semibold text-[#0D3B2A] focus:outline-none focus:border-[#0D3B2A] shadow-sm"
+            className="px-3 py-1.5 bg-white border border-[#D4A24C]/30 rounded-full text-xs font-semibold text-[#0D3B2A] focus:outline-none focus:border-[#0D3B2A] shadow-xs cursor-pointer"
           >
             <option value="newest">Newest First</option>
             <option value="price_asc">Price: Low to High</option>
@@ -228,10 +236,10 @@ export default function Products() {
 
           <button
             onClick={() => setMobileFilterOpen(!mobileFilterOpen)}
-            className="md:hidden p-2 bg-white border border-[#D4A24C]/30 rounded-xl text-[#0D3B2A] hover:bg-[#FAF7F2]"
+            className="md:hidden p-1.5 bg-white border border-[#D4A24C]/30 rounded-lg text-[#0D3B2A] hover:bg-[#FAF7F2]"
             aria-label="Toggle Filters"
           >
-            <SlidersHorizontal className="w-5 h-5" />
+            <SlidersHorizontal className="w-4 h-4" />
           </button>
         </div>
       </div>
@@ -244,16 +252,16 @@ export default function Products() {
         />
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
         {/* Left Sidebar Filters */}
         <aside
           className={`${
             mobileFilterOpen
               ? 'fixed inset-y-0 left-0 z-50 w-72 bg-white shadow-2xl p-5 overflow-y-auto'
               : 'hidden'
-          } md:relative md:inset-auto md:z-auto md:w-auto md:block md:col-span-3 bg-white p-5 rounded-2xl border border-[#D4A24C]/25 shadow-sm space-y-6 text-xs md:sticky md:top-24 self-start`}
+          } md:relative md:inset-auto md:z-auto md:w-auto md:block md:col-span-3 bg-white p-4 sm:p-5 rounded-2xl border border-[#D4A24C]/25 shadow-xs space-y-5 text-xs md:sticky md:top-20 self-start`}
         >
-          <div className="flex items-center justify-between font-bold text-[#0D3B2A] border-b border-[#D4A24C]/15 pb-3">
+          <div className="flex items-center justify-between font-bold text-[#0D3B2A] border-b border-[#D4A24C]/15 pb-2.5">
             <span className="flex items-center gap-1.5 font-serif text-sm">
               <Filter className="w-4 h-4 text-[#D4A24C]" />
               Filter Inventory
@@ -282,7 +290,7 @@ export default function Products() {
           </div>
 
           {/* Category Filter */}
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <label className="font-bold text-[#0D3B2A] block uppercase font-mono tracking-wider text-[10px]">
               Hardware Category
             </label>
@@ -295,9 +303,9 @@ export default function Products() {
                     setPage(1);
                     if (mobileFilterOpen) setMobileFilterOpen(false);
                   }}
-                  className={`w-full text-left px-3 py-2 rounded-xl font-semibold transition flex items-center justify-between cursor-pointer ${
+                  className={`w-full text-left px-3 py-1.5 rounded-xl font-semibold transition flex items-center justify-between cursor-pointer ${
                     category === c.id
-                      ? 'bg-[#0D3B2A] text-white shadow-sm'
+                      ? 'bg-[#0D3B2A] text-white shadow-xs'
                       : 'text-[#5A6B63] hover:bg-[#FAF7F2] hover:text-[#0D3B2A]'
                   }`}
                 >
@@ -308,15 +316,15 @@ export default function Products() {
           </div>
 
           {/* Availability */}
-          <div className="space-y-2 pt-2 border-t border-[#D4A24C]/15">
+          <div className="space-y-1.5 pt-2 border-t border-[#D4A24C]/15">
             <label className="font-bold text-[#0D3B2A] block uppercase font-mono tracking-wider text-[10px]">
               Available For
             </label>
             <div className="grid grid-cols-3 gap-1">
               {[
-                { id: 'all', label: 'All Items' },
-                { id: 'sale', label: 'Buy Only' },
-                { id: 'rent', label: 'Rent Only' }
+                { id: 'all', label: 'All' },
+                { id: 'sale', label: 'Buy' },
+                { id: 'rent', label: 'Rent' }
               ].map((opt) => (
                 <button
                   key={opt.id}
@@ -324,9 +332,9 @@ export default function Products() {
                     setAvailableFor(opt.id);
                     setPage(1);
                   }}
-                  className={`py-1.5 px-1 rounded-lg font-semibold transition text-center text-[10px] uppercase tracking-wider cursor-pointer ${
+                  className={`py-1 px-1 rounded-lg font-semibold transition text-center text-[10px] uppercase tracking-wider cursor-pointer ${
                     availableFor === opt.id
-                      ? 'bg-[#0D3B2A] text-white shadow-sm'
+                      ? 'bg-[#0D3B2A] text-white shadow-xs'
                       : 'bg-[#FAF7F2] text-[#5A6B63] hover:bg-[#F3E8D2] hover:text-[#0D3B2A] border border-[#D4A24C]/20'
                   }`}
                 >
@@ -336,12 +344,12 @@ export default function Products() {
             </div>
           </div>
 
-          {/* Condition / Grade */}
-          <div className="space-y-2 pt-2 border-t border-[#D4A24C]/15">
+          {/* Condition / Grade Filter */}
+          <div className="space-y-1.5 pt-2 border-t border-[#D4A24C]/15">
             <label className="font-bold text-[#0D3B2A] block uppercase font-mono tracking-wider text-[10px]">
               Condition Grade
             </label>
-            <div className="space-y-1">
+            <div className="space-y-0.5">
               {[
                 { id: 'all', label: 'All Conditions' },
                 { id: 'brand_new', label: '★ Brand New (Sealed)' },
@@ -351,7 +359,7 @@ export default function Products() {
               ].map((cond) => (
                 <label
                   key={cond.id}
-                  className="flex items-center gap-2 text-[#5A6B63] cursor-pointer hover:text-[#0D3B2A] py-1"
+                  className="flex items-center gap-2 text-[#5A6B63] cursor-pointer hover:text-[#0D3B2A] py-0.5 text-[11px]"
                 >
                   <input
                     type="radio"
@@ -370,16 +378,16 @@ export default function Products() {
           </div>
         </aside>
 
-        {/* Right Products Grid */}
-        <div className="md:col-span-9 space-y-6">
+        {/* Right Products Grid (Ultra-Compact Proportions) */}
+        <div className="md:col-span-9 space-y-5">
           {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="h-96 bg-white rounded-3xl border border-[#D4A24C]/20 animate-pulse"></div>
+                <div key={i} className="h-80 bg-white rounded-2xl border border-[#D4A24C]/20 animate-pulse"></div>
               ))}
             </div>
           ) : products.length === 0 ? (
-            <div className="text-center py-20 bg-white rounded-3xl border border-[#D4A24C]/25 p-8 space-y-3">
+            <div className="text-center py-16 bg-white rounded-2xl border border-[#D4A24C]/25 p-8 space-y-3">
               <p className="text-sm font-bold text-[#0D3B2A] font-serif">No hardware found matching your criteria.</p>
               <p className="text-xs text-[#5A6B63]">Try clearing filters or search terms.</p>
               <button
@@ -389,13 +397,13 @@ export default function Products() {
                   setAvailableFor('all');
                   setSearch('');
                 }}
-                className="px-5 py-2.5 rounded-full bg-[#0D3B2A] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#153423] transition cursor-pointer"
+                className="px-5 py-2 rounded-full bg-[#0D3B2A] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#153423] transition cursor-pointer"
               >
                 Clear All Filters
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 items-stretch">
               {products.map((p) => {
                 const condBadge = getConditionBadge(p.condition);
                 const stockInfo = getStockInfo(p, availableFor);
@@ -407,24 +415,26 @@ export default function Products() {
                 return (
                   <div
                     key={p._id}
-                    className="bg-white rounded-3xl p-5 border border-[#D4A24C]/25 hover:border-[#D4A24C] shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_16px_36px_rgba(13,59,42,0.1)] transition-all duration-300 flex flex-col justify-between group h-full"
+                    className="bg-white rounded-2xl p-3.5 sm:p-4 border border-[#D4A24C]/25 hover:border-[#D4A24C] shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between group h-full"
                   >
                     <div>
-                      {/* Top Row: Clean Condition Pill (Left) & Real Stock Status (Right) */}
-                      <div className="flex items-center justify-between gap-2 mb-3 h-6">
+                      {/* Top Row: Special Condition Pill OR Brand (Left) + Real Transparent Stock (Right) */}
+                      <div className="flex items-center justify-between gap-1 mb-2 h-5 text-[10px] font-mono">
                         {condBadge ? (
                           <span
-                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold tracking-wider uppercase border shadow-xs whitespace-nowrap ${condBadge.className}`}
+                            className={`inline-flex items-center px-2 py-0.5 rounded-full font-bold tracking-wider uppercase border shadow-xs whitespace-nowrap ${condBadge.className}`}
                           >
                             {condBadge.label}
                           </span>
                         ) : (
-                          <span />
+                          <span className="font-semibold text-[#8A5E12] uppercase tracking-wider truncate max-w-[120px]">
+                            {p.brand || 'ENTERPRISE'}
+                          </span>
                         )}
 
-                        {/* Stock availability: Clean, single-line indicator that NEVER wraps */}
+                        {/* Real dynamic stock: crystal-clear separation between Sale and Rental */}
                         <div
-                          className={`flex items-center gap-1.5 text-[11px] font-mono font-medium shrink-0 ${
+                          className={`flex items-center gap-1 font-medium shrink-0 ${
                             stockInfo.inStock ? 'text-emerald-800' : 'text-[#8A5E12]'
                           }`}
                         >
@@ -433,67 +443,62 @@ export default function Products() {
                               stockInfo.inStock ? 'bg-emerald-600 animate-pulse' : 'bg-[#D4A24C]'
                             }`}
                           />
-                          <span className="whitespace-nowrap">{stockInfo.text}</span>
+                          <span className="whitespace-nowrap font-semibold">{stockInfo.text}</span>
                         </div>
                       </div>
 
-                      {/* Image Pedestal Stage Container */}
+                      {/* Compact Image Pedestal Stage Container (h-36 sm:h-38) */}
                       <Link to={`/products/${p.slug}`} className="block">
-                        <div className="h-48 sm:h-52 rounded-2xl bg-gradient-to-b from-[#FAF7F2] via-[#F6F0E7] to-[#EFE7DC] flex items-center justify-center p-4 mb-3.5 overflow-hidden border border-[#D4A24C]/20 cursor-pointer group-hover:border-[#D4A24C]/60 transition-all duration-300 relative">
+                        <div className="h-36 sm:h-38 rounded-xl bg-gradient-to-b from-[#FAF7F2] via-[#F6F0E7] to-[#EFE7DC] flex items-center justify-center p-3 mb-2.5 overflow-hidden border border-[#D4A24C]/20 cursor-pointer group-hover:border-[#D4A24C]/60 transition-all duration-300 relative">
                           {/* Deployment badge floating inside stage top-right */}
                           {deployBadge && (
-                            <div className="absolute top-3 right-3 z-20 pointer-events-none">
-                              <span className="inline-flex items-center px-2.5 py-1 rounded-md text-[10px] font-mono font-bold tracking-wider uppercase whitespace-nowrap bg-white/95 text-[#0D3B2A] border border-[#D4A24C]/40 shadow-xs backdrop-blur-sm">
+                            <div className="absolute top-2.5 right-2.5 z-20 pointer-events-none">
+                              <span className="inline-flex items-center px-2 py-0.5 rounded text-[9px] font-mono font-bold tracking-wider uppercase whitespace-nowrap bg-white/95 text-[#0D3B2A] border border-[#D4A24C]/40 shadow-xs backdrop-blur-sm">
                                 {deployBadge}
                               </span>
                             </div>
                           )}
 
                           {/* Pedestal surface shadow */}
-                          <div className="absolute bottom-2.5 w-32 h-3.5 bg-black/10 rounded-full blur-xs pointer-events-none" />
+                          <div className="absolute bottom-1.5 w-24 h-2.5 bg-black/10 rounded-full blur-xs pointer-events-none" />
 
                           <img
                             src={getSafeImageUrl(p)}
                             alt={p.title}
-                            className="relative z-10 max-h-36 sm:max-h-40 max-w-[82%] object-contain group-hover:scale-105 transition-transform duration-300 ease-out filter drop-shadow-[0_8px_14px_rgba(0,0,0,0.12)]"
+                            className="relative z-10 max-h-28 sm:max-h-30 max-w-[82%] object-contain group-hover:scale-105 transition-transform duration-300 ease-out filter drop-shadow-[0_6px_10px_rgba(0,0,0,0.12)]"
                           />
                         </div>
                       </Link>
 
-                      {/* Brand / Category Micro Tag */}
-                      <div className="text-[10px] font-mono uppercase tracking-widest text-[#8A5E12] font-semibold mb-1 h-4 truncate">
-                        {p.brand || 'Enterprise Hardware'}
-                      </div>
-
-                      {/* Product Title */}
+                      {/* Product Title (Compact 2-line clamp) */}
                       <Link to={`/products/${p.slug}`} className="hover:text-[#B8860B] transition block">
-                        <h3 className="text-[14px] sm:text-[15px] font-serif font-bold text-[#0D3B2A] group-hover:text-[#B8860B] transition-colors leading-snug line-clamp-2 min-h-[44px]">
+                        <h3 className="text-[13px] sm:text-[14px] font-serif font-bold text-[#0D3B2A] group-hover:text-[#B8860B] transition-colors leading-snug line-clamp-2 min-h-[36px]">
                           {p.title}
                         </h3>
                       </Link>
 
-                      {/* Spec Summary */}
-                      <p className="text-[11px] text-[#5A6B63] font-mono mt-1 leading-normal line-clamp-1 h-5">
+                      {/* Spec Summary (Compact 1-line clamp) */}
+                      <p className="text-[10px] text-[#5A6B63] font-mono mt-0.5 leading-normal line-clamp-1 h-4">
                         {getProductSpecSummary(p)}
                       </p>
                     </div>
 
-                    {/* Context-Aware Bottom Section (Smart Stock-Aware Buttons & Baseline Alignment) */}
-                    <div className="pt-3.5 mt-3 border-t border-[#D4A24C]/20 space-y-3">
+                    {/* Context-Aware Bottom Section (Clean Price Row & Bottom Buttons) */}
+                    <div className="pt-2 mt-2 border-t border-[#D4A24C]/20 space-y-2">
                       {availableFor === 'rent' || p.available_for === 'rent' ? (
                         /* DEDICATED RENTAL CARD */
                         <>
-                          <div className="min-h-[46px] flex items-baseline justify-between">
+                          <div className="min-h-[38px] flex items-baseline justify-between">
                             <div>
-                              <span className="text-[9px] font-bold uppercase tracking-wider text-[#8A5E12] block">
+                              <span className="text-[8.5px] font-bold uppercase tracking-wider text-[#8A5E12] block">
                                 Monthly Fleet Lease
                               </span>
-                              <span className="text-base sm:text-lg font-bold text-[#0D3B2A] font-serif">
+                              <span className="text-sm sm:text-base font-bold text-[#0D3B2A] font-serif">
                                 ₹{(p.rental_price_monthly || 0).toLocaleString('en-IN')}
-                                <span className="text-xs font-normal text-[#5A6B63] font-sans">/mo</span>
+                                <span className="text-[11px] font-normal text-[#5A6B63] font-sans">/mo</span>
                               </span>
                             </div>
-                            <span className="text-[10px] font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 whitespace-nowrap">
+                            <span className="text-[9px] font-semibold text-emerald-800 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 whitespace-nowrap">
                               24h Swap SLA
                             </span>
                           </div>
@@ -501,41 +506,38 @@ export default function Products() {
                           {hasRentalStock ? (
                             <button
                               onClick={() => addToRentalCart(p, 1, '6_months')}
-                              className="h-10 w-full rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-sm flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
+                              className="h-9 w-full rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-xs flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
                             >
                               <Repeat className="w-3.5 h-3.5 text-[#D4A24C]" />
-                              <span>Rent Fleet (Add to Cart)</span>
+                              <span>Rent Fleet</span>
                             </button>
                           ) : (
                             <button
                               disabled
-                              className="h-10 w-full rounded-full bg-stone-100 text-[#8A5E12] text-xs font-bold uppercase tracking-wider cursor-not-allowed border border-[#D4A24C]/30 flex items-center justify-center gap-1.5"
+                              className="h-9 w-full rounded-full bg-stone-100 text-[#8A5E12] text-xs font-bold uppercase tracking-wider cursor-not-allowed border border-[#D4A24C]/30 flex items-center justify-center gap-1.5"
                             >
-                              <span>Fleet Reserved (Unavailable)</span>
+                              <span>Fleet Reserved</span>
                             </button>
                           )}
                         </>
                       ) : availableFor === 'sale' || p.available_for === 'sale' ? (
-                        /* DEDICATED BUY CARD */
+                        /* DEDICATED BUY CARD (No redundant 100% tax pill!) */
                         <>
-                          <div className="min-h-[46px] flex items-baseline justify-between">
+                          <div className="min-h-[38px] flex items-baseline justify-between">
                             <div>
-                              <span className="text-[9px] font-bold uppercase tracking-wider text-[#5A6B63] block">
+                              <span className="text-[8.5px] font-bold uppercase tracking-wider text-[#5A6B63] block">
                                 Direct Purchase Price
                               </span>
-                              <span className="text-base sm:text-lg font-bold text-[#0D3B2A] font-serif">
+                              <span className="text-sm sm:text-base font-bold text-[#0D3B2A] font-serif">
                                 ₹{(p.sale_price || 0).toLocaleString('en-IN')}
                               </span>
                             </div>
-                            <span className="text-[10px] font-semibold text-[#8A5E12] bg-[#FAF7F2] px-2 py-0.5 rounded-full border border-[#D4A24C]/30 whitespace-nowrap">
-                              100% Tax Invoiced
-                            </span>
                           </div>
 
                           {hasSaleStock ? (
                             <button
                               onClick={() => addToBuyCart(p, 1)}
-                              className="h-10 w-full rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-sm flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
+                              className="h-9 w-full rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-xs flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
                             >
                               <ShoppingCart className="w-3.5 h-3.5 text-[#D4A24C]" />
                               <span>Add to Cart (Buy)</span>
@@ -543,7 +545,7 @@ export default function Products() {
                           ) : (
                             <button
                               disabled
-                              className="h-10 w-full rounded-full bg-stone-100 text-stone-400 text-xs font-bold uppercase tracking-wider cursor-not-allowed border border-stone-200 flex items-center justify-center gap-1.5"
+                              className="h-9 w-full rounded-full bg-stone-100 text-stone-400 text-xs font-bold uppercase tracking-wider cursor-not-allowed border border-stone-200 flex items-center justify-center gap-1.5"
                             >
                               <span>Out of Stock</span>
                             </button>
@@ -552,31 +554,27 @@ export default function Products() {
                       ) : (
                         /* BALANCED ALL ITEMS VIEW (Available for Both) */
                         <>
-                          <div className="min-h-[46px] flex items-baseline justify-between">
+                          <div className="min-h-[38px] flex items-baseline justify-between">
                             <div>
-                              <span className="text-[9px] font-bold uppercase tracking-wider text-[#5A6B63] block">
+                              <span className="text-[8.5px] font-bold uppercase tracking-wider text-[#5A6B63] block">
                                 Purchase Price
                               </span>
-                              <span className="text-base sm:text-lg font-bold text-[#0D3B2A] font-serif">
+                              <span className="text-sm sm:text-base font-bold text-[#0D3B2A] font-serif">
                                 ₹{(p.sale_price || 0).toLocaleString('en-IN')}
                               </span>
                             </div>
                             {p.rental_price_monthly > 0 && hasRentalStock ? (
-                              <span className="text-[11px] font-bold text-[#8A5E12] bg-[#FAF7F2] px-2.5 py-0.5 rounded-full border border-[#D4A24C]/35 whitespace-nowrap">
+                              <span className="text-[10.5px] font-bold text-[#8A5E12] bg-[#FAF7F2] px-2 py-0.5 rounded-full border border-[#D4A24C]/35 whitespace-nowrap">
                                 or ₹{p.rental_price_monthly.toLocaleString('en-IN')}/mo
                               </span>
-                            ) : (
-                              <span className="text-[10px] font-semibold text-[#8A5E12] bg-[#FAF7F2] px-2 py-0.5 rounded-full border border-[#D4A24C]/30 whitespace-nowrap">
-                                Enterprise Fleet
-                              </span>
-                            )}
+                            ) : null}
                           </div>
 
                           {hasSaleStock && hasRentalStock ? (
-                            <div className="grid grid-cols-2 gap-2 h-10">
+                            <div className="grid grid-cols-2 gap-2 h-9">
                               <button
                                 onClick={() => addToRentalCart(p, 1, '6_months')}
-                                className="h-10 w-full py-2 px-2 rounded-full bg-[#FAF7F2] hover:bg-[#F3ECE1] text-[#8A5E12] text-xs font-bold uppercase tracking-wider transition border border-[#D4A24C]/40 flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
+                                className="h-9 w-full py-1 px-2 rounded-full bg-[#FAF7F2] hover:bg-[#F3ECE1] text-[#8A5E12] text-xs font-bold uppercase tracking-wider transition border border-[#D4A24C]/40 flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
                                 title="Add to Rental Fleet Cart"
                               >
                                 <Repeat className="w-3.5 h-3.5 text-[#D4A24C]" />
@@ -584,7 +582,7 @@ export default function Products() {
                               </button>
                               <button
                                 onClick={() => addToBuyCart(p, 1)}
-                                className="h-10 w-full py-2 px-2 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-sm border border-[#D4A24C]/40 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
+                                className="h-9 w-full py-1 px-2 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-xs border border-[#D4A24C]/40 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
                                 title="Add to Direct Purchase Cart"
                               >
                                 <ShoppingCart className="w-3.5 h-3.5 text-[#D4A24C]" />
@@ -594,7 +592,7 @@ export default function Products() {
                           ) : hasSaleStock ? (
                             <button
                               onClick={() => addToBuyCart(p, 1)}
-                              className="h-10 w-full rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-sm flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
+                              className="h-9 w-full rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-xs flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
                             >
                               <ShoppingCart className="w-3.5 h-3.5 text-[#D4A24C]" />
                               <span>Add to Cart (Buy)</span>
@@ -602,15 +600,15 @@ export default function Products() {
                           ) : hasRentalStock ? (
                             <button
                               onClick={() => addToRentalCart(p, 1, '6_months')}
-                              className="h-10 w-full rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-sm flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
+                              className="h-9 w-full rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-xs flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
                             >
                               <Repeat className="w-3.5 h-3.5 text-[#D4A24C]" />
-                              <span>Rent Fleet (Add to Cart)</span>
+                              <span>Rent Fleet</span>
                             </button>
                           ) : (
                             <button
                               disabled
-                              className="h-10 w-full rounded-full bg-stone-100 text-stone-400 text-xs font-bold uppercase tracking-wider cursor-not-allowed border border-stone-200 flex items-center justify-center gap-1.5"
+                              className="h-9 w-full rounded-full bg-stone-100 text-stone-400 text-xs font-bold uppercase tracking-wider cursor-not-allowed border border-stone-200 flex items-center justify-center gap-1.5"
                             >
                               <span>Out of Stock</span>
                             </button>
@@ -626,11 +624,11 @@ export default function Products() {
 
           {/* Pagination Controls */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-center space-x-2 pt-8">
+            <div className="flex items-center justify-center space-x-2 pt-6">
               <button
                 disabled={page <= 1}
                 onClick={() => setPage(page - 1)}
-                className="p-2 rounded-lg border border-[#D4A24C]/30 disabled:opacity-40 hover:bg-[#FAF7F2] text-[#0D3B2A] transition cursor-pointer"
+                className="p-1.5 rounded-lg border border-[#D4A24C]/30 disabled:opacity-40 hover:bg-[#FAF7F2] text-[#0D3B2A] transition cursor-pointer"
                 aria-label="Previous Page"
               >
                 <ChevronLeft className="w-4 h-4" />
@@ -641,7 +639,7 @@ export default function Products() {
               <button
                 disabled={page >= totalPages}
                 onClick={() => setPage(page + 1)}
-                className="p-2 rounded-lg border border-[#D4A24C]/30 disabled:opacity-40 hover:bg-[#FAF7F2] text-[#0D3B2A] transition cursor-pointer"
+                className="p-1.5 rounded-lg border border-[#D4A24C]/30 disabled:opacity-40 hover:bg-[#FAF7F2] text-[#0D3B2A] transition cursor-pointer"
                 aria-label="Next Page"
               >
                 <ChevronRight className="w-4 h-4" />
