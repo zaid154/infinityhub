@@ -63,6 +63,34 @@ export default function AdminProductForm() {
   const [generatingAI, setGeneratingAI] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [loadingData, setLoadingData] = useState(isEdit);
+  const [dbCategories, setDbCategories] = useState([
+    { value: 'laptop', label: 'Corporate Laptops' },
+    { value: 'desktop', label: 'Commercial Desktops' },
+    { value: 'monitor', label: 'Business Monitors' },
+    { value: 'ram', label: 'RAM Modules' },
+    { value: 'gpu', label: 'Workstation GPUs' },
+    { value: 'cpu', label: 'CPUs & Processors' },
+    { value: 'other', label: 'Accessories & Other' }
+  ]);
+
+  useEffect(() => {
+    const fetchCats = async () => {
+      try {
+        const res = await api.get('/categories');
+        if (res.data.success && res.data.categories?.length > 0) {
+          setDbCategories(
+            res.data.categories.map((c) => ({
+              value: c.slug,
+              label: c.name
+            }))
+          );
+        }
+      } catch (err) {
+        console.error('[AdminProductForm] Categories load error:', err);
+      }
+    };
+    fetchCats();
+  }, []);
 
   // Manual URL input state
   const [mediaUrlInput, setMediaUrlInput] = useState('');
@@ -329,15 +357,7 @@ export default function AdminProductForm() {
               <ThemeSelect
                 value={formData.category}
                 onChange={(val) => setFormData({ ...formData, category: val })}
-                options={[
-                  { value: 'laptop', label: 'Corporate Laptops' },
-                  { value: 'desktop', label: 'Commercial Desktops' },
-                  { value: 'monitor', label: 'Business Monitors' },
-                  { value: 'ram', label: 'RAM Modules' },
-                  { value: 'gpu', label: 'Workstation GPUs' },
-                  { value: 'cpu', label: 'CPUs & Processors' },
-                  { value: 'other', label: 'Accessories & Other' }
-                ]}
+                options={dbCategories}
                 variant="admin"
               />
             </div>

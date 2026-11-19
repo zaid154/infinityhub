@@ -19,6 +19,16 @@ const categorySchema = new mongoose.Schema(
       default: 18,
       enum: [0, 5, 12, 18, 28]
     },
+    hsn_sac: {
+      type: String,
+      default: '',
+      trim: true
+    },
+    description: {
+      type: String,
+      default: '',
+      trim: true
+    },
     icon: {
       type: String,
       default: 'laptop'
@@ -26,6 +36,10 @@ const categorySchema = new mongoose.Schema(
     sort_order: {
       type: Number,
       default: 0
+    },
+    is_active: {
+      type: Boolean,
+      default: true
     }
   },
   { timestamps: true }

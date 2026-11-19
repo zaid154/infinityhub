@@ -3,6 +3,7 @@ import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
   Package,
+  Layers,
   FileText,
   ShoppingBag,
   Repeat,
@@ -24,6 +25,7 @@ export default function AdminLayout() {
   const navItems = [
     { label: 'Overview', path: '/admin', icon: LayoutDashboard },
     { label: 'Products', path: '/admin/products', icon: Package },
+    { label: 'Categories', path: '/admin/categories', icon: Layers },
     { label: 'Inquiries & RFQs', path: '/admin/inquiries', icon: FileText },
     { label: 'Orders & Invoices', path: '/admin/orders', icon: ShoppingBag },
     { label: 'Rental Fleets', path: '/admin/rentals', icon: Repeat },
