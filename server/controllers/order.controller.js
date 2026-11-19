@@ -172,14 +172,32 @@ export const getOrderById = async (req, res, next) => {
 // @access  Admin only
 export const getAllOrdersAdmin = async (req, res, next) => {
   try {
-    const { status, payment_status, page = 1, limit = 20 } = req.query;
+    const { status, payment_status, search, page = 1, limit = 20 } = req.query;
     const query = {};
     if (status && status !== 'all') query.order_status = status;
     if (payment_status && payment_status !== 'all') query.payment_status = payment_status;
 
+    if (search && search.trim()) {
+      const reg = new RegExp(search.trim(), 'i');
+      query.$or = [
+        { invoice_number: reg },
+        { tracking_number: reg },
+        { courier_name: reg },
+        { 'shipping_address.company_name': reg },
+        { 'shipping_address.contact_person': reg },
+        { 'shipping_address.phone': reg },
+        { 'shipping_address.city': reg }
+      ];
+    }
+
     const skip = (Number(page) - 1) * Number(limit);
     const [orders, total] = await Promise.all([
-      Order.find(query).populate('user', 'name email phone company_name').sort({ createdAt: -1 }).skip(skip).limit(Number(limit)),
+      Order.find(query)
+        .populate('user', 'name email phone company_name')
+        .populate('items.product', 'title brand model images sale_price')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(Number(limit)),
       Order.countDocuments(query)
     ]);
 
@@ -201,15 +219,18 @@ export const getAllOrdersAdmin = async (req, res, next) => {
 // @access  Admin only
 export const updateOrderStatus = async (req, res, next) => {
   try {
-    const { order_status, payment_status } = req.body;
+    const { order_status, payment_status, tracking_number, courier_name, admin_notes } = req.body;
     const order = await Order.findById(req.params.id);
     if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
 
     if (order_status) order.order_status = order_status;
     if (payment_status) order.payment_status = payment_status;
+    if (tracking_number !== undefined) order.tracking_number = tracking_number;
+    if (courier_name !== undefined) order.courier_name = courier_name;
+    if (admin_notes !== undefined) order.admin_notes = admin_notes;
 
     await order.save();
-    res.status(200).json({ success: true, message: 'Order status updated', order });
+    res.status(200).json({ success: true, message: 'Order status updated successfully', order });
   } catch (error) {
     next(error);
   }

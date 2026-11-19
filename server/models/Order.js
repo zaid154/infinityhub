@@ -82,6 +82,18 @@ const orderSchema = new mongoose.Schema(
     invoice_number: {
       type: String,
       unique: true
+    },
+    tracking_number: {
+      type: String,
+      default: ''
+    },
+    courier_name: {
+      type: String,
+      default: ''
+    },
+    admin_notes: {
+      type: String,
+      default: ''
     }
   },
   { timestamps: true }
