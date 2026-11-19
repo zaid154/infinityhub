@@ -94,6 +94,17 @@ export default function Products() {
     fetchProducts();
   }, [category, condition, availableFor, sort, page, search]);
 
+  // Instantly scroll to top when user changes page (pagination) or category filter
+  useEffect(() => {
+    try {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    } catch {
+      window.scrollTo(0, 0);
+    }
+    if (document.documentElement) document.documentElement.scrollTop = 0;
+    if (document.body) document.body.scrollTop = 0;
+  }, [page, category]);
+
   // 100% Dynamic Category list from MongoDB
   const [categories, setCategories] = useState([
     { id: 'all', label: 'All Hardware' }
