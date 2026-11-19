@@ -118,26 +118,37 @@ export default function Products() {
   }, []);
 
   // Dynamic Category Title & Subtitle (Option 3: Smart Dynamic Header)
+  const catLabels = {
+    all: availableFor === 'rent' ? 'Corporate Rental Fleets' : availableFor === 'sale' ? 'Direct Purchase Hardware' : 'Hardware Catalog',
+    laptop: availableFor === 'rent' ? 'Corporate Rental Laptops' : 'Corporate Laptops',
+    desktop: availableFor === 'rent' ? 'Rental Desktop Fleets' : 'Commercial Desktops',
+    monitor: 'Business Monitors',
+    ram: 'RAM Modules (DDR4 / DDR5)',
+    gpu: 'Workstation GPUs',
+    cpu: 'CPUs & Processors',
+    accessory: 'Peripherals & Accessories',
+    other: 'Peripherals & Accessories'
+  };
+
   const getDynamicHeading = () => {
     if (search.trim()) {
-      return `Search: "${search.trim()}"`;
+      return category && category !== 'all'
+        ? `${catLabels[category] || 'Hardware'} — Search Results`
+        : 'Search Results';
     }
-    const catLabels = {
-      all: availableFor === 'rent' ? 'Corporate Rental Fleets' : availableFor === 'sale' ? 'Direct Purchase Hardware' : 'Hardware Catalog',
-      laptop: availableFor === 'rent' ? 'Corporate Rental Laptops' : 'Corporate Laptops',
-      desktop: availableFor === 'rent' ? 'Rental Desktop Fleets' : 'Commercial Desktops',
-      monitor: 'Business Monitors',
-      ram: 'RAM Modules (DDR4 / DDR5)',
-      gpu: 'Workstation GPUs',
-      cpu: 'CPUs & Processors',
-      accessory: 'Peripherals & Accessories',
-      other: 'Peripherals & Accessories'
-    };
     return catLabels[category] || 'Hardware Catalog';
   };
 
   const getDynamicSubtitle = () => {
-    if (total === 0) return 'No matching hardware units currently found in this filter.';
+    if (search.trim()) {
+      if (total === 0) {
+        return `0 units found matching "${search.trim()}". Try searching by brand or specifications.`;
+      }
+      return `Showing ${total} certified ${total === 1 ? 'unit' : 'units'} matching "${search.trim()}".`;
+    }
+    if (total === 0) {
+      return 'No units currently available in this category.';
+    }
     return `Showing ${total} certified ${total === 1 ? 'unit' : 'units'} available for dispatch.`;
   };
 
@@ -152,6 +163,25 @@ export default function Products() {
           <p className="text-xs text-[#5A6B63] mt-1 font-medium">
             {getDynamicSubtitle()}
           </p>
+          {search.trim() && (
+            <div className="flex items-center gap-2 pt-2">
+              <span className="text-[11px] text-[#5A6B63] font-medium">Active Search:</span>
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#FAF7F2] text-[#0D3B2A] border border-[#D4A24C]/40 shadow-xs">
+                <span>"{search.trim()}"</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearch('');
+                    setPage(1);
+                  }}
+                  className="text-[#8A5E12] hover:text-[#0D3B2A] transition cursor-pointer p-0.5"
+                  title="Clear search"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            </div>
+          )}
         </div>
 
         <div className="flex items-center gap-2.5">
@@ -165,8 +195,21 @@ export default function Products() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              className="w-full pl-8 pr-3 py-1.5 bg-white border border-[#D4A24C]/30 rounded-full text-xs text-[#0D3B2A] focus:outline-none focus:border-[#0D3B2A] transition shadow-xs"
+              className="w-full pl-8 pr-8 py-1.5 bg-white border border-[#D4A24C]/30 rounded-full text-xs text-[#0D3B2A] focus:outline-none focus:border-[#0D3B2A] transition shadow-xs"
             />
+            {search && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearch('');
+                  setPage(1);
+                }}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#5A6B63] hover:text-[#0D3B2A] p-0.5 rounded-full transition cursor-pointer"
+                title="Clear search"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
 
           <ThemeSelect
@@ -335,19 +378,32 @@ export default function Products() {
               ))}
             </div>
           ) : products.length === 0 ? (
-            <div className="text-center py-16 bg-white rounded-2xl border border-[#D4A24C]/25 p-8 space-y-3">
-              <p className="text-sm font-bold text-[#0D3B2A] font-serif">No hardware found matching your criteria.</p>
-              <p className="text-xs text-[#5A6B63]">Try clearing filters or search terms.</p>
+            <div className="text-center py-16 bg-white rounded-2xl border border-[#D4A24C]/25 p-8 space-y-3.5">
+              <div className="w-12 h-12 rounded-full bg-[#FAF7F2] border border-[#D4A24C]/35 flex items-center justify-center mx-auto text-[#0D3B2A] shadow-xs">
+                <Search className="w-5 h-5 text-[#8A5E12]" />
+              </div>
+              <div>
+                <p className="text-base font-bold text-[#0D3B2A] font-serif">
+                  {search.trim() ? `No hardware found matching "${search.trim()}"` : 'No hardware found matching your criteria.'}
+                </p>
+                <p className="text-xs text-[#5A6B63] mt-1 max-w-md mx-auto">
+                  {search.trim() 
+                    ? 'Check for spelling mistakes, try searching by brand (Dell, HP, Lenovo, NVIDIA), or clear the search to view all inventory.'
+                    : 'Try adjusting your category, price range, or condition filters to view available inventory.'}
+                </p>
+              </div>
               <button
                 onClick={() => {
                   setCategory('all');
                   setCondition('all');
                   setAvailableFor('all');
                   setSearch('');
+                  setPage(1);
                 }}
-                className="px-5 py-2 rounded-full bg-[#0D3B2A] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#153423] transition cursor-pointer"
+                className="px-5 py-2 rounded-full bg-[#0D3B2A] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#153423] transition cursor-pointer shadow-sm inline-flex items-center gap-1.5"
               >
-                Clear All Filters
+                <X className="w-3.5 h-3.5 text-[#D4A24C]" />
+                <span>{search.trim() ? 'Clear Search & Show All Hardware' : 'Clear All Filters'}</span>
               </button>
             </div>
           ) : (
