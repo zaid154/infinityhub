@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import api from '../services/api';
 import toast from 'react-hot-toast';
+import ThemeSelect from '../components/ThemeSelect';
 
 export default function Contact() {
   const [settings, setSettings] = useState(null);
@@ -222,17 +223,18 @@ export default function Contact() {
 
               <div>
                 <label className="block font-semibold text-[#0D3B2A] mb-1">Requirement Type</label>
-                <select
+                <ThemeSelect
                   value={formData.inquiry_type}
-                  onChange={(e) => setFormData({ ...formData, inquiry_type: e.target.value })}
-                  className="w-full px-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition"
-                >
-                  <option value="bulk_purchase">Bulk Hardware Purchase</option>
-                  <option value="rental">Corporate Laptop Rental</option>
-                  <option value="components">Wholesale Components (RAM/GPU)</option>
-                  <option value="amc">AMC & Chip-Level Repair</option>
-                  <option value="buyback">Asset Liquidation (Buyback)</option>
-                </select>
+                  onChange={(val) => setFormData({ ...formData, inquiry_type: val })}
+                  options={[
+                    { value: 'bulk_purchase', label: 'Bulk Hardware Purchase' },
+                    { value: 'rental', label: 'Corporate Laptop Rental' },
+                    { value: 'components', label: 'Wholesale Components (RAM/GPU)' },
+                    { value: 'amc', label: 'AMC & Chip-Level Repair' },
+                    { value: 'buyback', label: 'Asset Liquidation (Buyback)' }
+                  ]}
+                  variant="form"
+                />
               </div>
             </div>
 

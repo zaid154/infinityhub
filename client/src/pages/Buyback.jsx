@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import api from '../services/api';
 import toast from 'react-hot-toast';
+import ThemeSelect from '../components/ThemeSelect';
 
 export default function Buyback() {
   const [formData, setFormData] = useState({
@@ -162,17 +163,18 @@ export default function Buyback() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block font-semibold text-[#0D3B2A] mb-1">Asset Category</label>
-                <select
+                <ThemeSelect
                   value={formData.asset_type}
-                  onChange={(e) => setFormData({ ...formData, asset_type: e.target.value })}
-                  className="w-full px-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition"
-                >
-                  <option value="Used Laptops (i3/i5/i7 Mix)">Used Laptops (ThinkPad, Dell, HP)</option>
-                  <option value="Complete Desktop Towers & Monitors">Desktop Towers & Monitors Lot</option>
-                  <option value="Servers & Workstations">Servers & Workstations</option>
-                  <option value="RAM / GPU / CPU Scrap Lot">Components Lot (RAM, GPUs, CPUs)</option>
-                  <option value="Mixed E-Waste Lot">Dead / Mixed Scrap Hardware</option>
-                </select>
+                  onChange={(val) => setFormData({ ...formData, asset_type: val })}
+                  options={[
+                    { value: 'Used Laptops (i3/i5/i7 Mix)', label: 'Used Laptops (ThinkPad, Dell, HP)' },
+                    { value: 'Complete Desktop Towers & Monitors', label: 'Desktop Towers & Monitors Lot' },
+                    { value: 'Servers & Workstations', label: 'Servers & Workstations' },
+                    { value: 'RAM / GPU / CPU Scrap Lot', label: 'Components Lot (RAM, GPUs, CPUs)' },
+                    { value: 'Mixed E-Waste Lot', label: 'Dead / Mixed Scrap Hardware' }
+                  ]}
+                  variant="form"
+                />
               </div>
 
               <div>

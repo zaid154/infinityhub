@@ -1,0 +1,175 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { ChevronDown, Check } from 'lucide-react';
+
+/**
+ * Nova Infotech Enterprise Themed Select / Dropdown
+ * Replaces ugly browser-native <select> elements with an executive Deep Emerald & Gold themed dropdown.
+ */
+export default function ThemeSelect({
+  options = [],
+  value,
+  onChange,
+  placeholder = 'Select option...',
+  variant = 'form', // 'pill' | 'form' | 'admin' | 'compact'
+  className = '',
+  menuClassName = '',
+  align = 'left',
+  disabled = false,
+  id,
+  name
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef(null);
+
+  // Normalize options into { value, label } objects
+  const normalizedOptions = options.map((opt) => {
+    if (typeof opt === 'object' && opt !== null) {
+      return {
+        value: opt.value !== undefined ? opt.value : opt.id,
+        label: opt.label !== undefined ? opt.label : opt.name || String(opt.value),
+        badge: opt.badge
+      };
+    }
+    return { value: opt, label: String(opt) };
+  });
+
+  const selectedOption = normalizedOptions.find(
+    (opt) => String(opt.value) === String(value)
+  );
+
+  // Close on outside click
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (containerRef.current && !containerRef.current.contains(e.target)) {
+        setIsOpen(false);
+      }
+    };
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
+
+  // Handle escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setIsOpen(false);
+      }
+    };
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen]);
+
+  // Variant styling
+  const variantStyles = {
+    pill: {
+      button:
+        'bg-white border border-[#D4A24C]/35 text-[#0D3B2A] rounded-full px-3.5 py-1.5 text-xs font-semibold hover:border-[#D4A24C] shadow-xs inline-flex items-center gap-2 justify-between cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#D4A24C]',
+      menu: 'min-w-[190px] rounded-2xl border border-[#D4A24C]/35 bg-[#FAF7F2] shadow-xl shadow-[#0D3B2A]/10 py-1.5 backdrop-blur-md',
+      item: 'px-3.5 py-2 text-xs font-medium'
+    },
+    compact: {
+      button:
+        'bg-white border border-[#D4A24C]/35 text-[#0D3B2A] rounded-xl px-2.5 py-1 text-xs font-semibold hover:border-[#D4A24C] shadow-xs inline-flex items-center gap-1.5 justify-between cursor-pointer focus:outline-none',
+      menu: 'min-w-[160px] rounded-xl border border-[#D4A24C]/35 bg-[#FAF7F2] shadow-xl py-1 backdrop-blur-md',
+      item: 'px-3 py-1.5 text-xs font-medium'
+    },
+    form: {
+      button:
+        'w-full bg-[#FAF7F2] border border-[#D4A24C]/35 text-[#0D3B2A] rounded-xl px-3.5 py-2.5 text-sm font-medium hover:border-[#0D3B2A] shadow-xs flex items-center justify-between cursor-pointer focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]',
+      menu: 'w-full rounded-2xl border border-[#D4A24C]/35 bg-[#FAF7F2] shadow-xl shadow-[#0D3B2A]/12 py-1.5 max-h-64 overflow-y-auto',
+      item: 'px-3.5 py-2 text-sm font-medium'
+    },
+    admin: {
+      button:
+        'bg-slate-50 border border-slate-300 text-slate-800 rounded-xl px-3 py-2 text-xs font-semibold hover:border-[#0D3B2A] shadow-xs flex items-center justify-between gap-2 cursor-pointer focus:outline-none focus:border-[#0D3B2A]',
+      menu: 'min-w-[180px] w-full rounded-xl border border-[#D4A24C]/35 bg-white shadow-xl py-1.5 max-h-60 overflow-y-auto',
+      item: 'px-3 py-2 text-xs font-medium'
+    }
+  };
+
+  const style = variantStyles[variant] || variantStyles.form;
+
+  const handleSelect = (optValue) => {
+    if (disabled) return;
+    onChange(optValue);
+    setIsOpen(false);
+  };
+
+  return (
+    <div
+      ref={containerRef}
+      className={`relative inline-block ${variant === 'form' ? 'w-full' : ''}`}
+      id={id}
+    >
+      {/* Hidden input for HTML form accessibility/submission if name provided */}
+      {name && <input type="hidden" name={name} value={value || ''} />}
+
+      {/* Dropdown Trigger Button */}
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={() => setIsOpen((prev) => !prev)}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        className={`${style.button} ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
+      >
+        <span className="truncate">
+          {selectedOption ? selectedOption.label : placeholder}
+        </span>
+        <ChevronDown
+          className={`w-3.5 h-3.5 text-[#D4A24C] transition-transform duration-200 shrink-0 ${
+            isOpen ? 'rotate-180' : ''
+          }`}
+        />
+      </button>
+
+      {/* Floating Themed Menu */}
+      {isOpen && (
+        <div
+          role="listbox"
+          tabIndex={-1}
+          className={`absolute z-50 mt-1.5 ${
+            align === 'right' ? 'right-0' : 'left-0'
+          } ${style.menu} ${menuClassName} animate-in fade-in zoom-in-95 duration-100`}
+        >
+          {normalizedOptions.map((opt) => {
+            const isSelected = String(opt.value) === String(value);
+            return (
+              <div
+                key={String(opt.value)}
+                role="option"
+                aria-selected={isSelected}
+                onClick={() => handleSelect(opt.value)}
+                className={`${style.item} flex items-center justify-between gap-2 cursor-pointer transition select-none ${
+                  isSelected
+                    ? 'bg-[#0D3B2A] text-[#FAF7F2] font-semibold'
+                    : 'text-[#0D3B2A] hover:bg-[#D4A24C]/15 hover:text-[#0D3B2A]'
+                }`}
+              >
+                <div className="flex items-center gap-1.5 truncate">
+                  <span className="truncate">{opt.label}</span>
+                  {opt.badge && (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#D4A24C]/20 text-[#0D3B2A] font-bold">
+                      {opt.badge}
+                    </span>
+                  )}
+                </div>
+                {isSelected && (
+                  <Check className="w-3.5 h-3.5 text-[#D4A24C] shrink-0" />
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}

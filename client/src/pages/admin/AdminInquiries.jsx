@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FileText, MessageSquare, Phone, Mail, Building, Clock, CheckCircle } from 'lucide-react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
+import ThemeSelect from '../../components/ThemeSelect';
 
 export default function AdminInquiries() {
   const [inquiries, setInquiries] = useState([]);
@@ -65,18 +66,19 @@ export default function AdminInquiries() {
 
         <div className="flex items-center gap-2 text-xs">
           <label className="font-bold text-[#8A5E12] uppercase tracking-wider text-[11px]">Status:</label>
-          <select
+          <ThemeSelect
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 bg-white border border-[#D4A24C]/30 rounded-xl font-semibold text-slate-700 focus:outline-none focus:border-[#0D3B2A]"
-          >
-            <option value="all">All Inquiries</option>
-            <option value="new">New (Uncontacted)</option>
-            <option value="contacted">Contacted</option>
-            <option value="quoted">Quoted</option>
-            <option value="converted">Converted (Won)</option>
-            <option value="closed">Closed / Lost</option>
-          </select>
+            onChange={(val) => setStatusFilter(val)}
+            options={[
+              { value: 'all', label: 'All Inquiries' },
+              { value: 'new', label: 'New (Uncontacted)' },
+              { value: 'contacted', label: 'Contacted' },
+              { value: 'quoted', label: 'Quoted' },
+              { value: 'converted', label: 'Converted (Won)' },
+              { value: 'closed', label: 'Closed / Lost' }
+            ]}
+            variant="admin"
+          />
         </div>
       </div>
 
@@ -194,17 +196,18 @@ export default function AdminInquiries() {
 
             <div>
               <label className="block font-semibold text-slate-700 mb-1">Status</label>
-              <select
+              <ThemeSelect
                 value={newStatus}
-                onChange={(e) => setNewStatus(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-semibold"
-              >
-                <option value="new">New</option>
-                <option value="contacted">Contacted</option>
-                <option value="quoted">Quoted</option>
-                <option value="converted">Converted (Won Deal)</option>
-                <option value="closed">Closed / Lost</option>
-              </select>
+                onChange={(val) => setNewStatus(val)}
+                options={[
+                  { value: 'new', label: 'New' },
+                  { value: 'contacted', label: 'Contacted' },
+                  { value: 'quoted', label: 'Quoted' },
+                  { value: 'converted', label: 'Converted (Won Deal)' },
+                  { value: 'closed', label: 'Closed / Lost' }
+                ]}
+                variant="admin"
+              />
             </div>
 
             <div>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Repeat, Clock, CheckCircle2 } from 'lucide-react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
+import ThemeSelect from '../../components/ThemeSelect';
 
 export default function AdminRentals() {
   const [rentals, setRentals] = useState([]);
@@ -134,16 +135,17 @@ export default function AdminRentals() {
             <h3 className="text-base font-bold font-serif text-[#0D3B2A]">Manage Rental Fleet</h3>
             <div>
               <label className="block font-semibold text-slate-700 mb-1">Status</label>
-              <select
+              <ThemeSelect
                 value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-semibold focus:outline-none focus:border-[#0D3B2A]"
-              >
-                <option value="active">Active</option>
-                <option value="returned">Returned / Closed</option>
-                <option value="overdue">Overdue / Follow-up Needed</option>
-                <option value="cancelled">Cancelled</option>
-              </select>
+                onChange={(val) => setStatus(val)}
+                options={[
+                  { value: 'active', label: 'Active' },
+                  { value: 'returned', label: 'Returned / Closed' },
+                  { value: 'overdue', label: 'Overdue / Follow-up Needed' },
+                  { value: 'cancelled', label: 'Cancelled' }
+                ]}
+                variant="admin"
+              />
             </div>
             <div>
               <label className="block font-semibold text-slate-700 mb-1">Admin Notes</label>

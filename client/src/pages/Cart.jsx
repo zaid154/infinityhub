@@ -21,6 +21,7 @@ import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import { getSafeImageUrl, DEFAULT_HARDWARE_PLACEHOLDER } from '../utils/imageHelper';
 import toast from 'react-hot-toast';
+import ThemeSelect from '../components/ThemeSelect';
 
 export default function Cart() {
   const {
@@ -524,18 +525,16 @@ export default function Cart() {
 
                   {deliveryZones.length > 0 && (
                     <div>
-                      <label className="block font-semibold text-slate-700 mb-1">Logistics & Shipping Zone</label>
-                      <select
+                      <label className="block font-semibold text-[#0D3B2A] mb-1">Logistics & Shipping Zone</label>
+                      <ThemeSelect
                         value={selectedZone}
-                        onChange={(e) => setSelectedZone(e.target.value)}
-                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
-                      >
-                        {deliveryZones.map((z) => (
-                          <option key={z._id} value={z._id}>
-                            {z.zone_name} — Delivery: ₹{z.delivery_charge}
-                          </option>
-                        ))}
-                      </select>
+                        onChange={(val) => setSelectedZone(val)}
+                        options={deliveryZones.map((z) => ({
+                          value: z._id,
+                          label: `${z.zone_name} — Delivery: ₹${z.delivery_charge}`
+                        }))}
+                        variant="form"
+                      />
                     </div>
                   )}
                 </div>

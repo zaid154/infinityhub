@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Check, MessageSquare, FileText, Send, Building, User, Phone, Mail } from 'lucide-react';
 import api from '../services/api';
 import toast from 'react-hot-toast';
+import ThemeSelect from './ThemeSelect';
 
 export default function RFQModal({ isOpen, onClose, initialContext }) {
   if (!isOpen) return null;
@@ -135,17 +136,18 @@ export default function RFQModal({ isOpen, onClose, initialContext }) {
             </div>
 
             <div>
-              <label className="block font-semibold text-slate-700 mb-1">Units Required *</label>
-              <select
+              <label className="block font-semibold text-[#0D3B2A] mb-1">Units Required *</label>
+              <ThemeSelect
                 value={formData.quantity}
-                onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] transition"
-              >
-                <option value="5 - 10 Units">5 – 10 Units</option>
-                <option value="11 - 25 Units">11 – 25 Units</option>
-                <option value="26 - 50 Units">26 – 50 Units</option>
-                <option value="50+ Units">50+ Units (Enterprise)</option>
-              </select>
+                onChange={(val) => setFormData({ ...formData, quantity: val })}
+                options={[
+                  { value: '5 - 10 Units', label: '5 – 10 Units' },
+                  { value: '11 - 25 Units', label: '11 – 25 Units' },
+                  { value: '26 - 50 Units', label: '26 – 50 Units' },
+                  { value: '50+ Units', label: '50+ Units (Enterprise)' }
+                ]}
+                variant="form"
+              />
             </div>
           </div>
 

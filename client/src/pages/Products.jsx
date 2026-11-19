@@ -15,6 +15,7 @@ import {
 import api from '../services/api';
 import { useCart } from '../context/CartContext';
 import { getSafeImageUrl } from '../utils/imageHelper';
+import ThemeSelect from '../components/ThemeSelect';
 
 export default function Products() {
   const { openRFQ } = useOutletContext();
@@ -147,16 +148,18 @@ export default function Products() {
             />
           </div>
 
-          <select
+          <ThemeSelect
             value={sort}
-            onChange={(e) => setSort(e.target.value)}
-            className="px-3 py-1.5 bg-white border border-[#D4A24C]/30 rounded-full text-xs font-semibold text-[#0D3B2A] focus:outline-none focus:border-[#0D3B2A] shadow-xs cursor-pointer"
-          >
-            <option value="newest">Newest First</option>
-            <option value="price_asc">Price: Low to High</option>
-            <option value="price_desc">Price: High to Low</option>
-            <option value="featured">Featured First</option>
-          </select>
+            onChange={(val) => setSort(val)}
+            options={[
+              { value: 'newest', label: 'Newest First' },
+              { value: 'price_asc', label: 'Price: Low to High' },
+              { value: 'price_desc', label: 'Price: High to Low' },
+              { value: 'featured', label: 'Featured First' }
+            ]}
+            variant="pill"
+            align="right"
+          />
 
           <button
             onClick={() => setMobileFilterOpen(!mobileFilterOpen)}

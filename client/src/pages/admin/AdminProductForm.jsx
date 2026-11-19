@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
+import ThemeSelect from '../../components/ThemeSelect';
 
 export default function AdminProductForm() {
   const { id } = useParams();
@@ -253,48 +254,51 @@ export default function AdminProductForm() {
           <div className="grid grid-cols-3 gap-4">
             <div>
               <label className="block font-semibold text-slate-700 mb-1">Category *</label>
-              <select
+              <ThemeSelect
                 value={formData.category}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
-              >
-                <option value="laptop">Corporate Laptops</option>
-                <option value="desktop">Commercial Desktops</option>
-                <option value="monitor">Business Monitors</option>
-                <option value="ram">RAM Modules</option>
-                <option value="gpu">Workstation GPUs</option>
-                <option value="cpu">CPUs & Processors</option>
-                <option value="other">Accessories & Other</option>
-              </select>
+                onChange={(val) => setFormData({ ...formData, category: val })}
+                options={[
+                  { value: 'laptop', label: 'Corporate Laptops' },
+                  { value: 'desktop', label: 'Commercial Desktops' },
+                  { value: 'monitor', label: 'Business Monitors' },
+                  { value: 'ram', label: 'RAM Modules' },
+                  { value: 'gpu', label: 'Workstation GPUs' },
+                  { value: 'cpu', label: 'CPUs & Processors' },
+                  { value: 'other', label: 'Accessories & Other' }
+                ]}
+                variant="admin"
+              />
             </div>
 
             <div>
               <label className="block font-semibold text-slate-700 mb-1">Condition Grade</label>
-              <select
+              <ThemeSelect
                 value={formData.condition}
-                onChange={(e) => setFormData({ ...formData, condition: e.target.value })}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
-              >
-                <option value="brand_new">Brand New (Factory Sealed / Unused)</option>
-                <option value="open_box">Open Box (Surplus / Unused)</option>
-                <option value="grade_a_plus">Grade A+ Pristine (Corporate Refurbished)</option>
-                <option value="grade_a">Grade A Corporate</option>
-                <option value="grade_b">Grade B Budget</option>
-                <option value="for_parts">For Parts / Scrap</option>
-              </select>
+                onChange={(val) => setFormData({ ...formData, condition: val })}
+                options={[
+                  { value: 'brand_new', label: 'Brand New (Factory Sealed / Unused)' },
+                  { value: 'open_box', label: 'Open Box (Surplus / Unused)' },
+                  { value: 'grade_a_plus', label: 'Grade A+ Pristine (Corporate Refurbished)' },
+                  { value: 'grade_a', label: 'Grade A Corporate' },
+                  { value: 'grade_b', label: 'Grade B Budget' },
+                  { value: 'for_parts', label: 'For Parts / Scrap' }
+                ]}
+                variant="admin"
+              />
             </div>
 
             <div>
               <label className="block font-semibold text-slate-700 mb-1">Available For</label>
-              <select
+              <ThemeSelect
                 value={formData.available_for}
-                onChange={(e) => setFormData({ ...formData, available_for: e.target.value })}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
-              >
-                <option value="both">Both Sale & Rent</option>
-                <option value="sale">Direct Sale Only</option>
-                <option value="rent">Rental Fleet Only</option>
-              </select>
+                onChange={(val) => setFormData({ ...formData, available_for: val })}
+                options={[
+                  { value: 'both', label: 'Both Sale & Rent' },
+                  { value: 'sale', label: 'Direct Sale Only' },
+                  { value: 'rent', label: 'Rental Fleet Only' }
+                ]}
+                variant="admin"
+              />
             </div>
           </div>
         </div>
@@ -367,17 +371,18 @@ export default function AdminProductForm() {
 
             <div>
               <label className="block font-semibold text-slate-700 mb-1">Applicable GST</label>
-              <select
+              <ThemeSelect
                 value={formData.gst_rate}
-                onChange={(e) => setFormData({ ...formData, gst_rate: Number(e.target.value) })}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] font-mono"
-              >
-                <option value="0">0% (Exempt)</option>
-                <option value="5">5% GST</option>
-                <option value="12">12% GST</option>
-                <option value="18">18% GST (Standard Hardware)</option>
-                <option value="28">28% GST (Luxury)</option>
-              </select>
+                onChange={(val) => setFormData({ ...formData, gst_rate: Number(val) })}
+                options={[
+                  { value: 0, label: '0% (Exempt)' },
+                  { value: 5, label: '5% GST' },
+                  { value: 12, label: '12% GST' },
+                  { value: 18, label: '18% GST (Standard Hardware)' },
+                  { value: 28, label: '28% GST (Luxury)' }
+                ]}
+                variant="admin"
+              />
             </div>
           </div>
         </div>

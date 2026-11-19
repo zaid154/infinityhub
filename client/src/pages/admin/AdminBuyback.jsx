@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Recycle, MessageSquare, CheckCircle2 } from 'lucide-react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
+import ThemeSelect from '../../components/ThemeSelect';
 
 export default function AdminBuyback() {
   const [requests, setRequests] = useState([]);
@@ -153,18 +154,19 @@ export default function AdminBuyback() {
             </div>
             <div>
               <label className="block font-semibold text-slate-700 mb-1">Status</label>
-              <select
+              <ThemeSelect
                 value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-semibold"
-              >
-                <option value="new">New</option>
-                <option value="inspected">Inspected</option>
-                <option value="quoted">Valuation Quoted</option>
-                <option value="accepted">Accepted (Scheduled for Pickup)</option>
-                <option value="picked_up">Picked Up & Paid</option>
-                <option value="closed">Closed</option>
-              </select>
+                onChange={(val) => setStatus(val)}
+                options={[
+                  { value: 'new', label: 'New' },
+                  { value: 'inspected', label: 'Inspected' },
+                  { value: 'quoted', label: 'Valuation Quoted' },
+                  { value: 'accepted', label: 'Accepted (Scheduled for Pickup)' },
+                  { value: 'picked_up', label: 'Picked Up & Paid' },
+                  { value: 'closed', label: 'Closed' }
+                ]}
+                variant="admin"
+              />
             </div>
             <div>
               <label className="block font-semibold text-slate-700 mb-1">Offered Bulk Valuation (₹)</label>

@@ -3,6 +3,7 @@ import { ShoppingBag, CreditCard, Truck, CheckCircle2, Eye, Edit2, Printer } fro
 import api from '../../services/api';
 import toast from 'react-hot-toast';
 import InvoiceModal from '../../components/InvoiceModal';
+import ThemeSelect from '../../components/ThemeSelect';
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
@@ -178,31 +179,33 @@ export default function AdminOrders() {
 
             <div>
               <label className="block font-semibold text-slate-700 mb-1">Dispatch / Order Status</label>
-              <select
+              <ThemeSelect
                 value={orderStatus}
-                onChange={(e) => setOrderStatus(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-semibold focus:outline-none focus:border-[#0D3B2A]"
-              >
-                <option value="placed">Placed</option>
-                <option value="confirmed">Confirmed</option>
-                <option value="shipped">Shipped</option>
-                <option value="delivered">Delivered</option>
-                <option value="cancelled">Cancelled</option>
-              </select>
+                onChange={(val) => setOrderStatus(val)}
+                options={[
+                  { value: 'placed', label: 'Placed' },
+                  { value: 'confirmed', label: 'Confirmed' },
+                  { value: 'shipped', label: 'Shipped' },
+                  { value: 'delivered', label: 'Delivered' },
+                  { value: 'cancelled', label: 'Cancelled' }
+                ]}
+                variant="admin"
+              />
             </div>
 
             <div>
               <label className="block font-semibold text-slate-700 mb-1">Payment Status</label>
-              <select
+              <ThemeSelect
                 value={paymentStatus}
-                onChange={(e) => setPaymentStatus(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-semibold focus:outline-none focus:border-[#0D3B2A]"
-              >
-                <option value="pending">Pending</option>
-                <option value="paid">Paid (Verified)</option>
-                <option value="failed">Failed</option>
-                <option value="refunded">Refunded</option>
-              </select>
+                onChange={(val) => setPaymentStatus(val)}
+                options={[
+                  { value: 'pending', label: 'Pending' },
+                  { value: 'paid', label: 'Paid (Verified)' },
+                  { value: 'failed', label: 'Failed' },
+                  { value: 'refunded', label: 'Refunded' }
+                ]}
+                variant="admin"
+              />
             </div>
 
             <div className="flex items-center justify-end gap-2 pt-2">

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Package, Plus, Search, Edit2, Trash2, Eye, ExternalLink } from 'lucide-react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
+import ThemeSelect from '../../components/ThemeSelect';
 
 export default function AdminProducts() {
   const [products, setProducts] = useState([]);
@@ -84,20 +85,21 @@ export default function AdminProducts() {
 
         <div className="flex items-center gap-2">
           <label className="font-bold text-[#8A5E12] uppercase tracking-wider text-[11px]">Category:</label>
-          <select
+          <ThemeSelect
             value={categoryFilter}
-            onChange={(e) => setCategoryFilter(e.target.value)}
-            className="px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-semibold text-slate-700 focus:outline-none focus:border-[#0D3B2A]"
-          >
-            <option value="all">All Categories</option>
-            <option value="laptop">Laptops</option>
-            <option value="desktop">Desktops</option>
-            <option value="monitor">Monitors</option>
-            <option value="ram">RAM</option>
-            <option value="gpu">GPU</option>
-            <option value="cpu">CPU</option>
-            <option value="other">Other</option>
-          </select>
+            onChange={(val) => setCategoryFilter(val)}
+            options={[
+              { value: 'all', label: 'All Categories' },
+              { value: 'laptop', label: 'Laptops' },
+              { value: 'desktop', label: 'Desktops' },
+              { value: 'monitor', label: 'Monitors' },
+              { value: 'ram', label: 'RAM' },
+              { value: 'gpu', label: 'GPU' },
+              { value: 'cpu', label: 'CPU' },
+              { value: 'other', label: 'Other' }
+            ]}
+            variant="admin"
+          />
         </div>
       </div>
 
