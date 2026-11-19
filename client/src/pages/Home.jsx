@@ -215,10 +215,10 @@ export default function Home() {
               Equip your enterprise workforce with certified Grade A+ commercial fleets, workstation graphics, and pivot displays. Available for immediate bulk dispatch or flexible monthly leasing with guaranteed 24-48h replacement SLA.
             </p>
 
-            {/* Action Buttons - Clean 2-Row Stack on Mobile, 1-Row Flow on Desktop */}
-            <div className="pt-2 flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2.5 sm:gap-3">
-              <button
-                onClick={() => openRFQ('Priority Fleet Requirement')}
+            {/* Action Buttons */}
+            <div className="pt-2 flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-3">
+              <Link
+                to="/products"
                 className="group relative overflow-hidden rounded-full px-6 sm:px-7 py-3 text-xs font-sans font-extrabold uppercase tracking-[0.12em] sm:tracking-[0.15em] bg-gradient-to-r from-[#eec373] via-[#D4A24C] to-[#eec373] text-[#072117] shadow-[0_8px_25px_rgba(212,162,76,0.45)] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2 text-center"
               >
                 <span className="relative z-10 flex items-center gap-2">
@@ -226,25 +226,15 @@ export default function Home() {
                   <ArrowRight className="w-4 h-4 text-[#072117]" />
                 </span>
                 <div className="absolute inset-0 bg-white/25 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" />
-              </button>
+              </Link>
 
-              <div className="flex items-center gap-2 sm:gap-2.5">
-                <a
-                  href="#video-reels"
-                  className="flex-1 sm:flex-none px-4 sm:px-5 py-2.5 sm:py-3 rounded-full bg-black/55 hover:bg-black/80 text-white border border-[#D4A24C]/60 font-bold text-[11px] sm:text-xs uppercase tracking-wider backdrop-blur-md transition-all flex items-center justify-center gap-1.5 shadow-lg text-center whitespace-nowrap"
-                >
-                  <span className="w-2 h-2 rounded-full bg-[#F59E0B] animate-ping" />
-                  <span>▶ Watch Reels</span>
-                </a>
-
-                <a
-                  href="#rental-calculator"
-                  className="flex-1 sm:flex-none px-4 sm:px-5 py-2.5 sm:py-3 rounded-full bg-white/10 hover:bg-white/20 border border-white/25 text-white font-bold text-[11px] sm:text-xs uppercase tracking-wider backdrop-blur-md transition flex items-center justify-center gap-1.5 shadow-sm text-center whitespace-nowrap"
-                >
-                  <Calculator className="w-3.5 h-3.5 text-[#D4A24C]" />
-                  <span>Calculator</span>
-                </a>
-              </div>
+              <a
+                href="#rental-calculator"
+                className="px-5 py-3 rounded-full bg-white/10 hover:bg-white/20 border border-white/25 text-white font-bold text-xs uppercase tracking-wider backdrop-blur-md transition flex items-center justify-center gap-2 shadow-sm text-center whitespace-nowrap"
+              >
+                <Calculator className="w-4 h-4 text-[#D4A24C]" />
+                <span>Rental Calculator</span>
+              </a>
             </div>
           </div>
 
