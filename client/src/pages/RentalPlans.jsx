@@ -181,7 +181,7 @@ export default function RentalPlans() {
     }
   ];
 
-  // 2. 4 Standardized Operational Rental Packages (Compact, Elegant, Non-wrapping)
+  // 2. 4 Standardized Operational Rental Packages (Explicit Hardware Specs, Transparent & Compact)
   const standardizedPlans = [
     {
       id: 'short-term',
@@ -189,10 +189,18 @@ export default function RentalPlans() {
       name: 'Short-Term Project Rental',
       duration: '1 – 3 Months',
       target: 'Temporary projects, software testing, events & surge hiring',
-      features: [
-        'ThinkPad T490 / Latitude (i5 • 16GB • 256GB SSD)',
-        'Clean Win 11 Pro Enterprise Image Pre-Loaded',
-        '24–48h Standby Swap SLA & Zero Long-Term Lock-in'
+      hardware: 'ThinkPad T490 / Latitude 7490',
+      icon: Laptop,
+      specs: [
+        'Core i5 Quad-Core (8th Gen)',
+        '16GB DDR4 High-Speed RAM',
+        '256GB Fast NVMe M.2 SSD',
+        '14" FHD IPS • Win 11 Pro'
+      ],
+      included: [
+        'Pre-configured OS & corporate app stack',
+        'Guaranteed 24–48h standby swap SLA',
+        'Zero long-term financial lock-in'
       ],
       price: '₹1,500',
       period: '/mo per unit',
@@ -204,10 +212,18 @@ export default function RentalPlans() {
       name: 'Long-Term Corporate Leasing',
       duration: '6 – 36 Months',
       target: 'Full enterprise workforce workstations with 100% tax benefit',
-      features: [
-        'Latitude 7490 / EliteBook 840 (i5/i7 • 16GB/32GB)',
-        '100% Tax Deductible OPEX & 18% GSTR-2B Credit',
-        'Free Ongoing AMC, Free Spares & Annual Refresh'
+      hardware: 'HP EliteBook 840 / Latitude 7490',
+      icon: Laptop,
+      specs: [
+        'Core i5 / i7 Quad vPro (8th Gen)',
+        '16GB / 32GB DDR4 High-Speed RAM',
+        '512GB Fast NVMe M.2 SSD',
+        '14" FHD Anti-Glare • Win 11 Pro'
+      ],
+      included: [
+        '100% Tax-deductible OPEX & 18% GSTR-2B',
+        'Free ongoing AMC, parts & spares',
+        'Annual technology fleet refresh option'
       ],
       price: '₹1,200',
       period: '/mo per unit',
@@ -218,14 +234,22 @@ export default function RentalPlans() {
       badge: 'Volume Discount',
       name: 'Bulk Fleet Deployment',
       duration: '12 – 24 Months',
-      target: 'Scaling startups, BPOs, MNC offshore centers & large teams',
-      features: [
-        'Standardized Fleet Mix of Laptops, Desktops & Displays',
-        '5% to 15% Volume Fleet Rebates on 25+ to 100+ Units',
-        'Dedicated Standby Buffer Units Staged On-Site'
+      target: 'Scaling startups, BPOs, MNC offshore centers & developer teams',
+      hardware: 'Standardized Multi-Tier Fleet Mix',
+      icon: Layers,
+      specs: [
+        'Core i5 / i7 Corporate Editions',
+        '16GB / 32GB DDR4 High-Speed RAM',
+        '512GB Fast NVMe M.2 SSD',
+        'Custom OS & VPN Image Pre-Loaded'
+      ],
+      included: [
+        '5% to 15% tiered bulk volume rebate',
+        'Dedicated standby buffer units on-site',
+        'Direct Pan-India employee WFH courier'
       ],
       price: 'Custom Tier',
-      period: 'volume quotation',
+      period: 'volume quote',
       popular: false
     },
     {
@@ -233,14 +257,22 @@ export default function RentalPlans() {
       badge: 'Heavy Compute',
       name: 'Custom Enterprise Workstations',
       duration: '3 – 24 Months',
-      target: 'CAD/3D modeling, deep learning & high-performance rigs',
-      features: [
-        'NVIDIA RTX 12GB GPU • 32GB–64GB RAM • 1TB SSD',
-        'ISV Certified Hardware & Thermal Stress Lab Tested',
-        'Dual 24" Frameless IPS Ergonomic Displays Included'
+      target: 'CAD/3D modeling, deep learning, AI & high-performance rigs',
+      hardware: 'Dell Precision & HP Z-Series',
+      icon: Cpu,
+      specs: [
+        'NVIDIA RTX 3060 12GB GDDR6',
+        '32GB / 64GB DDR4 High-Speed RAM',
+        '1TB Fast Gen4 NVMe M.2 SSD',
+        'Dual 24" Frameless IPS Displays'
+      ],
+      included: [
+        'ISV certified CAD / 3D & AI benchmarked',
+        'Thermal stress & memtest lab validated',
+        'Heavy-duty Gold rated corporate PSU'
       ],
       price: '₹3,500',
-      period: '/mo per workstation',
+      period: '/mo per rig',
       popular: false
     }
   ];
@@ -492,16 +524,34 @@ export default function RentalPlans() {
                 <h3 className="text-sm sm:text-base font-bold font-serif text-[#0D3B2A] tracking-tight">
                   {plan.name}
                 </h3>
-                <p className="text-[11px] text-[#5A6B63] mt-0.5 leading-snug line-clamp-1">
+                <p className="text-[11px] text-[#5A6B63] mt-0.5 leading-snug line-clamp-2 min-h-[30px]">
                   {plan.target}
                 </p>
 
-                {/* 3 Core Value Features */}
-                <div className="space-y-1.5 my-3 pt-2.5 border-t border-[#D4A24C]/15 text-[11px] text-[#0D3B2A]">
-                  {plan.features.map((feat, fIdx) => (
-                    <div key={fIdx} className="flex items-start gap-1.5 leading-tight">
+                {/* Hardware Fleet Model Banner */}
+                <div className="flex items-center gap-1.5 px-2.5 py-1.5 mt-2 rounded-lg bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] text-[11px] font-semibold">
+                  <plan.icon className="w-3.5 h-3.5 text-[#D4A24C] shrink-0" />
+                  <span className="truncate">{plan.hardware}</span>
+                </div>
+
+                {/* 2x2 Explicit Technical Hardware Specifications Grid */}
+                <div className="grid grid-cols-2 gap-1.5 my-2.5">
+                  {plan.specs.map((spec, sIdx) => (
+                    <div
+                      key={sIdx}
+                      className="px-2 py-1.5 rounded-lg bg-[#FAF7F2] text-[#0D3B2A] text-[10px] font-medium border border-[#D4A24C]/20 flex items-center justify-center text-center leading-tight min-h-[34px]"
+                    >
+                      <span>{spec}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Included Corporate SLA & Financial Benefits */}
+                <div className="space-y-1.5 my-2.5 pt-2 border-t border-[#D4A24C]/15 text-[11px] text-[#0D3B2A]">
+                  {plan.included.map((inc, iIdx) => (
+                    <div key={iIdx} className="flex items-start gap-1.5 leading-tight">
                       <Check className="w-3.5 h-3.5 text-[#D4A24C] shrink-0 mt-0.5" />
-                      <span className="line-clamp-1">{feat}</span>
+                      <span className="leading-snug">{inc}</span>
                     </div>
                   ))}
                 </div>
@@ -509,16 +559,16 @@ export default function RentalPlans() {
 
               {/* Pricing & Inquire Button */}
               <div className="pt-2.5 mt-auto border-t border-[#D4A24C]/20 space-y-2">
-                <div className="flex items-baseline justify-between gap-1">
-                  <div className="truncate">
+                <div className="flex items-end justify-between gap-1.5">
+                  <div>
                     <span className="text-[9px] uppercase tracking-wider font-bold text-[#8A5E12] block">
                       Starting Rate
                     </span>
-                    <div className="flex items-baseline gap-1 truncate">
-                      <span className="text-base sm:text-lg font-bold font-serif text-[#0D3B2A] leading-tight">
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-base sm:text-lg font-bold font-serif text-[#0D3B2A] leading-none">
                         {plan.price}
                       </span>
-                      <span className="text-[10px] font-normal text-[#5A6B63] truncate">
+                      <span className="text-[10px] font-normal text-[#5A6B63] whitespace-nowrap">
                         {plan.period}
                       </span>
                     </div>
