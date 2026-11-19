@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import api from '../services/api';
 import { useCart } from '../context/CartContext';
+import { getSafeImageUrl } from '../utils/imageHelper';
 
 export default function Products() {
   const { openRFQ } = useOutletContext();
@@ -37,36 +38,6 @@ export default function Products() {
     const laptopParts = [p.specs?.processor, p.specs?.ram, p.specs?.storage].filter(Boolean);
     if (laptopParts.length > 0) return laptopParts.join(' • ');
     return p.description || 'Enterprise Grade A+ Hardware';
-  };
-
-  const getProductImage = (p) => {
-    const s = p.slug?.toLowerCase() || '';
-    const cat = p.category?.toLowerCase() || '';
-
-    if (cat === 'gpu' || s.includes('rtx') || s.includes('3060')) {
-      return '/products/real-rtx-3060-gpu-transparent.png';
-    }
-    if (cat === 'ram' || s.includes('ddr4') || s.includes('memory')) {
-      return '/products/real-enterprise-ram-transparent.png';
-    }
-    if (cat === 'monitor' || s.includes('p2419h') || s.includes('display')) {
-      return '/products/real-dell-display-transparent.png';
-    }
-    if (s.includes('latitude')) {
-      return '/products/real-dell-latitude-transparent.png';
-    }
-    if (s.includes('thinkpad')) {
-      return '/products/real-thinkpad-t14-transparent.png';
-    }
-    if (s.includes('elitebook') || s.includes('hp')) {
-      return '/products/real-mobile-workstation-transparent.png';
-    }
-
-    const url = p.images?.[0]?.url;
-    if (!url || url.includes('photo-1544717305-2782549b5136')) {
-      return '/products/real-thinkpad-t14-transparent.png';
-    }
-    return url;
   };
 
   const [products, setProducts] = useState([]);
@@ -122,16 +93,28 @@ export default function Products() {
     fetchProducts();
   }, [category, condition, availableFor, sort, page, search]);
 
-  const categories = [
-    { id: 'all', label: 'All Hardware' },
-    { id: 'laptop', label: 'Corporate Laptops' },
-    { id: 'desktop', label: 'Commercial Desktops' },
-    { id: 'monitor', label: 'Business Monitors' },
-    { id: 'ram', label: 'RAM Modules' },
-    { id: 'gpu', label: 'Workstation GPUs' },
-    { id: 'cpu', label: 'Processors / CPUs' },
-    { id: 'other', label: 'Accessories' }
-  ];
+  // 100% Dynamic Category list from MongoDB
+  const [categories, setCategories] = useState([
+    { id: 'all', label: 'All Hardware' }
+  ]);
+
+  useEffect(() => {
+    const fetchDBCategories = async () => {
+      try {
+        const res = await api.get('/categories');
+        if (res.data.success && res.data.categories?.length > 0) {
+          const mapped = res.data.categories.map((c) => ({
+            id: c.slug,
+            label: c.name
+          }));
+          setCategories([{ id: 'all', label: 'All Hardware' }, ...mapped]);
+        }
+      } catch (err) {
+        console.error('[Products] Category fetch notice:', err);
+      }
+    };
+    fetchDBCategories();
+  }, []);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-8 py-10 space-y-8">
@@ -367,7 +350,7 @@ export default function Products() {
                         <div className="absolute bottom-2 w-32 h-4 bg-black/10 rounded-full blur-xs pointer-events-none" />
 
                         <img
-                          src={getProductImage(p)}
+                          src={getSafeImageUrl(p)}
                           alt={p.title}
                           className="relative z-10 max-h-36 max-w-[88%] object-contain group-hover:scale-108 transition-transform duration-500 ease-out filter drop-shadow-[0_8px_14px_rgba(0,0,0,0.14)]"
                         />

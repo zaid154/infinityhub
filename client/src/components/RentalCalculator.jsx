@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Laptop, 
   Cpu, 
@@ -9,38 +9,9 @@ import {
   Percent 
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import api from '../services/api';
+import { getSafeImageUrl } from '../utils/imageHelper';
 import toast from 'react-hot-toast';
-
-const TIERS = [
-  {
-    id: 'essential',
-    name: 'Office Essential',
-    subtitle: 'ThinkPad T490 • Core i5 • 16GB',
-    price: 1350,
-    icon: Laptop
-  },
-  {
-    id: 'developer',
-    name: 'Developer Pro',
-    subtitle: 'ThinkPad T14 / Latitude • i7 • NVMe',
-    price: 1850,
-    icon: Cpu
-  },
-  {
-    id: 'workstation',
-    name: 'Workstation / AI',
-    subtitle: 'Dell Precision • 32GB • RTX GPU',
-    price: 3200,
-    icon: Server
-  },
-  {
-    id: 'macbook',
-    name: 'Apple Silicon Fleet',
-    subtitle: 'MacBook Air M1/M2 • 8/16GB • Retina',
-    price: 2800,
-    icon: Laptop
-  }
-];
 
 const DURATIONS = [
   { id: '3m', label: '3 Months', multiplier: 1.0, discount: 0 },
@@ -50,12 +21,70 @@ const DURATIONS = [
 
 const PRESETS = [5, 15, 30, 50, 100];
 
-export default function RentalCalculator({ onOpenRFQ }) {
+export default function RentalCalculator({ onOpenRFQ, rentalProducts }) {
   const { addToRentalCart } = useCart();
-  const [selectedTier, setSelectedTier] = useState(TIERS[0]);
+  const [liveProducts, setLiveProducts] = useState(rentalProducts || []);
+  const [selectedTierId, setSelectedTierId] = useState(null);
   const [quantity, setQuantity] = useState(15);
   const [duration, setDuration] = useState(DURATIONS[1]);
   const [includeGst, setIncludeGst] = useState(false);
+
+  // Fetch live rental machines from MongoDB if not provided via props
+  useEffect(() => {
+    if (rentalProducts && rentalProducts.length > 0) {
+      setLiveProducts(rentalProducts);
+      return;
+    }
+
+    const fetchLiveRentalTiers = async () => {
+      try {
+        const res = await api.get('/products', {
+          params: { available_for: 'rent', limit: 8 }
+        });
+        if (res.data.success && res.data.products?.length > 0) {
+          setLiveProducts(res.data.products);
+        }
+      } catch (err) {
+        console.error('[RentalCalculator] Live hardware fetch notice:', err);
+      }
+    };
+
+    fetchLiveRentalTiers();
+  }, [rentalProducts]);
+
+  // Dynamically map MongoDB products to calculator tiers
+  const dynamicTiers = liveProducts
+    .filter((p) => p.rental_price_monthly > 0 || p.available_for === 'rent' || p.available_for === 'both')
+    .slice(0, 4)
+    .map((p, idx) => {
+      const subtitle = [p.specs?.processor, p.specs?.ram, p.specs?.storage].filter(Boolean).join(' • ') ||
+        (p.description ? p.description.slice(0, 45) : 'Enterprise Grade A+ Hardware');
+
+      return {
+        _id: p._id,
+        id: p._id,
+        name: p.title,
+        subtitle,
+        price: p.rental_price_monthly || 1350,
+        icon: idx === 1 ? Cpu : idx === 2 ? Server : Laptop,
+        product: p,
+        image: getSafeImageUrl(p)
+      };
+    });
+
+  const tiers = dynamicTiers.length > 0
+    ? dynamicTiers
+    : [
+        {
+          id: 'tier-default-1',
+          name: 'Enterprise Commercial Fleet',
+          subtitle: 'Intel Core i5 • 16GB RAM • 512GB SSD',
+          price: 1350,
+          icon: Laptop
+        }
+      ];
+
+  const selectedTier = tiers.find((t) => t.id === selectedTierId) || tiers[0];
 
   // Volume discount logic
   const volumeDiscountPercent = quantity >= 50 ? 10 : quantity >= 25 ? 5 : 0;
@@ -73,18 +102,24 @@ export default function RentalCalculator({ onOpenRFQ }) {
 
   const handleAddToCart = () => {
     const tenureKey = duration.id === '3m' ? '3_months' : duration.id === '12m' ? '12_months' : '6_months';
-    addToRentalCart(
-      {
-        _id: `custom-lease-${selectedTier.id}-${quantity}-${duration.id}`,
-        title: `${quantity}x ${selectedTier.name} Corporate Lease (${duration.label})`,
-        rental_price_monthly: finalTotal,
-        rental_stock: 999, // custom bundle has dedicated fulfillment
-        images: [{ url: selectedTier.id === 'macbook' ? 'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=800&auto=format&fit=crop&q=80' : '/products/real-thinkpad-t14-transparent.png' }],
-        category: 'laptop'
-      },
-      1,
-      tenureKey
-    );
+
+    if (selectedTier.product) {
+      // Pass the genuine MongoDB product record to Cart Context
+      addToRentalCart(selectedTier.product, quantity, tenureKey);
+    } else {
+      addToRentalCart(
+        {
+          _id: selectedTier._id || `fleet-lease-${Date.now()}`,
+          title: `${quantity}x ${selectedTier.name} Corporate Lease (${duration.label})`,
+          rental_price_monthly: finalTotal,
+          rental_stock: 999,
+          images: [{ url: selectedTier.image }],
+          category: 'laptop'
+        },
+        1,
+        tenureKey
+      );
+    }
     toast.success(`${quantity}x ${selectedTier.name} fleet lease added to Corporate Rental Cart!`);
   };
 
@@ -127,11 +162,11 @@ export default function RentalCalculator({ onOpenRFQ }) {
                 </span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2.5">
-                {TIERS.map((tier) => (
+                {tiers.map((tier) => (
                   <button
                     key={tier.id}
                     type="button"
-                    onClick={() => setSelectedTier(tier)}
+                    onClick={() => setSelectedTierId(tier.id)}
                     className={`p-2 sm:p-2.5 rounded-xl text-left border transition-all cursor-pointer ${
                       selectedTier.id === tier.id
                         ? 'bg-[#0D3B2A] border-[#D4A24C] text-[#FAF7F2] shadow-sm ring-1 ring-[#D4A24C]/40'

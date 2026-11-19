@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   MapPin,
   Phone,
@@ -14,6 +14,7 @@ import api from '../services/api';
 import toast from 'react-hot-toast';
 
 export default function Contact() {
+  const [settings, setSettings] = useState(null);
   const [formData, setFormData] = useState({
     company_name: '',
     contact_person: '',
@@ -23,6 +24,20 @@ export default function Contact() {
     message: ''
   });
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await api.get('/settings');
+        if (res.data.success && res.data.settings) {
+          setSettings(res.data.settings);
+        }
+      } catch (err) {
+        console.error('[Contact] Settings fetch notice:', err);
+      }
+    };
+    fetchSettings();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -73,7 +88,7 @@ export default function Contact() {
               <div>
                 <strong className="text-[#0D3B2A] block text-xs">Warehouse & Diagnostic Lab:</strong>
                 <p className="leading-relaxed mt-0.5">
-                  Plot No. 42, Sector 18, Electronic City / Industrial Area, Delhi NCR, India.
+                  {settings?.address || 'Plot No. 42, Sector 18, Electronic City / Industrial Area, Delhi NCR, India.'}
                 </p>
               </div>
             </div>
@@ -82,8 +97,8 @@ export default function Contact() {
               <Phone className="w-5 h-5 text-[#0D3B2A] shrink-0" />
               <div>
                 <strong className="text-[#0D3B2A] block text-xs">Direct Calling Desk:</strong>
-                <a href="tel:+919876543210" className="text-[#0D3B2A] font-semibold hover:underline">
-                  +91 98765 43210
+                <a href={`tel:${settings?.phone || '+919876543210'}`} className="text-[#0D3B2A] font-semibold hover:underline">
+                  {settings?.phone || '+91 98765 43210'}
                 </a>
               </div>
             </div>
@@ -92,8 +107,8 @@ export default function Contact() {
               <Mail className="w-5 h-5 text-[#D4A24C] shrink-0" />
               <div>
                 <strong className="text-[#0D3B2A] block text-xs">Procurement Email:</strong>
-                <a href="mailto:procurement@novainfotech.in" className="text-[#0D3B2A] font-semibold hover:underline">
-                  procurement@novainfotech.in
+                <a href={`mailto:${settings?.email || 'procurement@novainfotech.in'}`} className="text-[#0D3B2A] font-semibold hover:underline">
+                  {settings?.email || 'procurement@novainfotech.in'}
                 </a>
               </div>
             </div>
@@ -108,7 +123,7 @@ export default function Contact() {
 
             <div className="pt-4 border-t border-[#D4A24C]/15">
               <a
-                href="https://wa.me/919876543210?text=Hello%20Nova%20Infotech,%20we%20have%20an%20urgent%20hardware%20requirement."
+                href={`https://wa.me/${(settings?.whatsapp || '919876543210').replace(/[^0-9]/g, '')}?text=Hello%20Nova%20Infotech,%20we%20have%20an%20urgent%20hardware%20requirement.`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full py-3 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md transition"
@@ -123,7 +138,7 @@ export default function Contact() {
           <div className="h-64 rounded-3xl overflow-hidden border border-[#D4A24C]/25 shadow-sm">
             <iframe
               title="Nova Infotech Warehouse Location"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d224345.83923192776!2d77.06889754725782!3d28.52758200617607!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cfd5b347eb62d%3A0x37205b715389640!2sDelhi!5e0!3m2!1sen!2sin!4v1700000000000"
+              src={settings?.google_maps_embed_url || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d224345.83923192776!2d77.06889754725782!3d28.52758200617607!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cfd5b347eb62d%3A0x37205b715389640!2sDelhi!5e0!3m2!1sen!2sin!4v1700000000000"}
               width="100%"
               height="100%"
               style={{ border: 0 }}

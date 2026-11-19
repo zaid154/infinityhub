@@ -98,12 +98,13 @@ async function runAllTests() {
   });
 
   await test('GET /api/products should return catalog array', async () => {
-    const res = await request('GET', '/api/products?limit=5');
+    const res = await request('GET', '/api/products?limit=20');
     assert(res.status === 200, `Expected 200, got ${res.status}`);
     assert(res.body.success === true, 'Expected success: true');
     assert(Array.isArray(res.body.products), 'Expected products array');
     assert(res.body.products.length > 0, 'Expected at least 1 product');
-    testProductId = res.body.products[0]._id;
+    const rentalItem = res.body.products.find((p) => (p.rental_stock || 0) > 0);
+    testProductId = rentalItem ? rentalItem._id : res.body.products[0]._id;
   });
 
   await test('GET /api/settings should return corporate legal settings', async () => {

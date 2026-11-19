@@ -1,123 +1,64 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Star, ShoppingBag, ArrowRight } from 'lucide-react';
+import { Star, ShoppingBag, ArrowRight, Repeat } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import api from '../services/api';
+import { getSafeImageUrl } from '../utils/imageHelper';
 import toast from 'react-hot-toast';
 
-const COMPLETE_COLLECTION = [
-  {
-    _id: 'col-1',
-    title: 'Lenovo ThinkPad T490 Enterprise Fleet',
-    brand: 'THINKPAD ENTERPRISE',
-    category: 'laptop',
-    badge: 'RENTAL FLEET',
-    type: 'rent',
-    specs: 'Core i5 8th Gen • 16GB DDR4 • 512GB NVMe SSD',
-    active_price: 1450,
-    price_unit: '/mo',
-    original_price: 2200,
-    rating: '5.0',
-    reviews: 58,
-    image: '/products/real-thinkpad-t14-transparent.png',
-    inStock: true,
-    slug: 'lenovo-thinkpad-t490-enterprise-laptop'
-  },
-  {
-    _id: 'col-2',
-    title: 'Dell Latitude 7490 Corporate Ultrabook',
-    brand: 'DELL COMMERCIAL',
-    category: 'laptop',
-    badge: 'CERTIFIED BUY',
-    type: 'sale',
-    specs: 'Core i7 8th Gen • 16GB RAM • 512GB NVMe • Win 11 Pro',
-    active_price: 24900,
-    price_unit: '',
-    original_price: 35000,
-    rating: '4.9',
-    reviews: 44,
-    image: '/products/real-dell-latitude-transparent.png',
-    inStock: true,
-    slug: 'dell-latitude-7490-ultrabook-corporate'
-  },
-  {
-    _id: 'col-3',
-    title: 'HP EliteBook 840 G6 Aluminum Executive',
-    brand: 'HP EXECUTIVE',
-    category: 'laptop',
-    badge: 'RENTAL & LEASE',
-    type: 'rent',
-    specs: 'Core i5 8th Gen • 16GB RAM • 256GB SSD • 14" IPS',
-    active_price: 1500,
-    price_unit: '/mo',
-    original_price: 2150,
-    rating: '4.9',
-    reviews: 38,
-    image: '/products/real-mobile-workstation-transparent.png',
-    inStock: true,
-    slug: 'hp-elitebook-840-g6-aluminum-executive'
-  },
-  {
-    _id: 'col-4',
-    title: 'Samsung / Micron 16GB DDR4 RAM Module',
-    brand: 'SAMSUNG OEM',
-    category: 'ram',
-    badge: 'OUTRIGHT SALE',
-    type: 'sale',
-    specs: '16GB DDR4 3200MHz • MemTest86 Tested • Tier-1 OEM',
-    active_price: 1650,
-    price_unit: '',
-    original_price: 2400,
-    rating: '5.0',
-    reviews: 26,
-    image: '/products/real-enterprise-ram-transparent.png',
-    inStock: true,
-    slug: 'samsung-micron-16gb-ddr4-3200mhz-memory-stick'
-  },
-  {
-    _id: 'col-5',
-    title: 'Dell Professional P2419H 24" IPS Display',
-    brand: 'DELL DISPLAYS',
-    category: 'monitor',
-    badge: 'DISPLAY LEASE',
-    type: 'rent',
-    specs: 'FHD IPS 1920x1080 • 99% sRGB • Height Pivot Stand',
-    active_price: 450,
-    price_unit: '/mo',
-    original_price: 750,
-    rating: '4.9',
-    reviews: 64,
-    image: '/products/real-dell-display-transparent.png',
-    inStock: true,
-    slug: 'dell-professional-p2419h-24-inch-ips-display'
-  }
-];
-
 export default function CompleteCollectionSection({ onOpenRFQ }) {
-  const { addToCart } = useCart();
+  const { addToCart, addToRentalCart } = useCart();
   const [filterType, setFilterType] = useState('all'); // 'all', 'rent', 'sale'
+  const [collection, setCollection] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const filteredItems = filterType === 'all' 
-    ? COMPLETE_COLLECTION 
-    : COMPLETE_COLLECTION.filter((i) => i.type === filterType);
+  useEffect(() => {
+    const fetchCollection = async () => {
+      try {
+        const res = await api.get('/products', {
+          params: { limit: 12 }
+        });
+        if (res.data.success && res.data.products?.length > 0) {
+          setCollection(res.data.products);
+        }
+      } catch (err) {
+        console.error('[CompleteCollectionSection] Dynamic fetch error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleAddToCart = (item) => {
-    if (!item.inStock) {
+    fetchCollection();
+  }, []);
+
+  const filteredItems = collection.filter((item) => {
+    if (filterType === 'all') return true;
+    if (filterType === 'rent') return item.available_for === 'rent' || item.available_for === 'both' || item.rental_price_monthly > 0;
+    if (filterType === 'sale') return item.available_for === 'sale' || item.available_for === 'both' || item.sale_price > 0;
+    return true;
+  });
+
+  const handleAction = (item) => {
+    const inStock = (item.sale_stock || item.stock_quantity || 0) > 0 || (item.rental_stock || 0) > 0;
+    if (!inStock) {
       toast.error(`${item.title} is currently fully booked. Requesting priority dispatch!`);
       onOpenRFQ?.(`Waitlist Request: ${item.title}`);
       return;
     }
 
-    addToCart(
-      {
-        _id: item._id,
-        title: item.title,
-        sale_price: item.type === 'sale' ? item.active_price : item.active_price * 12,
-        rental_price_monthly: item.type === 'rent' ? item.active_price : Math.round(item.active_price / 18),
-        images: [{ url: item.image }],
-        category: item.category
-      },
-      1
-    );
+    if (filterType === 'rent' || item.available_for === 'rent') {
+      addToRentalCart(item, 1, '6_months');
+      toast.success(`${item.title} added to Rental Cart!`);
+    } else {
+      addToCart(item, 1);
+      toast.success(`${item.title} added to Purchase Cart!`);
+    }
+  };
+
+  const formatSpecs = (p) => {
+    const parts = [p.specs?.processor, p.specs?.ram, p.specs?.storage].filter(Boolean);
+    if (parts.length > 0) return parts.join(' • ');
+    return p.description ? p.description.slice(0, 52) : 'Enterprise Grade A+ Machine';
   };
 
   return (
@@ -177,87 +118,90 @@ export default function CompleteCollectionSection({ onOpenRFQ }) {
           </div>
         </div>
 
-        {/* 5 Product Cards Grid - Exact Al-Tooba Anatomy */}
-        <div className="flex overflow-x-auto pb-6 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0 lg:grid lg:grid-cols-5 gap-4 sm:gap-6 snap-x snap-mandatory scroll-smooth hide-scrollbar">
-          {filteredItems.map((item) => (
-            <div
-              key={item._id}
-              className="group bg-[#FAF7F2] rounded-[16px] sm:rounded-[20px] p-2.5 sm:p-3 flex flex-col justify-between h-full border border-[#D4A24C]/15 hover:border-[#D4A24C]/40 shadow-[0_4px_20px_rgba(13,59,42,0.03)] hover:shadow-[0_20px_40px_rgba(13,59,42,0.1)] transition-all duration-500 relative overflow-hidden min-w-[240px] sm:min-w-[260px] lg:min-w-0 snap-center"
-            >
-              {/* Al-Tooba Exact Flush Category Badge (Top Right) */}
-              <div className="absolute right-0 top-2.5 md:top-3.5 z-20 bg-[#F2E8D5] text-[#8A5E12] flex items-center justify-center py-0.5 px-2 md:px-2.5 rounded-l-[5px] md:rounded-l-[8px] shadow-sm">
-                <span className="text-[7.5px] sm:text-[8.5px] md:text-[9.5px] font-sans font-extrabold uppercase tracking-widest leading-none">
-                  {item.badge}
-                </span>
-              </div>
+        {/* Product Cards Grid (100% Dynamic from MongoDB) */}
+        <div className="flex overflow-x-auto pb-6 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0 lg:grid lg:grid-cols-4 gap-4 sm:gap-6 snap-x snap-mandatory scroll-smooth hide-scrollbar">
+          {loading ? (
+            [1, 2, 3, 4].map((i) => (
+              <div key={i} className="min-w-[260px] h-84 bg-white rounded-2xl border border-[#D4A24C]/20 animate-pulse" />
+            ))
+          ) : (
+            filteredItems.map((item) => {
+              const isRental = filterType === 'rent' || item.available_for === 'rent' || (item.rental_price_monthly > 0 && item.sale_price === 0);
+              const displayPrice = isRental
+                ? `₹${(item.rental_price_monthly || 1350).toLocaleString('en-IN')}`
+                : `₹${(item.sale_price || 0).toLocaleString('en-IN')}`;
 
-              <div>
-                {/* White Product Image Stage Box */}
-                <Link
-                  to={`/products/${item.slug}`}
-                  className="relative w-full shrink-0 aspect-[1/1] rounded-[12px] sm:rounded-[14px] overflow-hidden bg-white mb-2 md:mb-3 z-10 shadow-inner border border-gray-100 group/img flex items-center justify-center p-3 block"
+              return (
+                <div
+                  key={item._id}
+                  className="group bg-white rounded-[16px] sm:rounded-[20px] p-3 sm:p-3.5 flex flex-col justify-between h-full border border-[#D4A24C]/20 hover:border-[#D4A24C]/60 shadow-[0_8px_30px_rgba(13,59,42,0.03)] hover:shadow-[0_20px_40px_rgba(13,59,42,0.1)] transition-all duration-500 relative overflow-hidden min-w-[250px] sm:min-w-[270px] lg:min-w-0 snap-center"
                 >
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    loading="lazy"
-                    className="w-full h-full object-contain group-hover:scale-105 transition-all duration-500 filter drop-shadow-[0_10px_12px_rgba(0,0,0,0.12)]"
-                  />
-                </Link>
+                  <div>
+                    {/* Badge Overlay */}
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="px-2 py-0.5 rounded-full text-[9px] font-bold font-mono uppercase bg-[#FAF7F2] text-[#8A5E12] border border-[#D4A24C]/30">
+                        {item.condition === 'brand_new' ? 'Brand New' : item.available_for === 'rent' ? 'Rental Fleet' : 'Certified Grade A+'}
+                      </span>
+                      <span className="text-[10px] font-mono text-emerald-800 font-semibold">
+                        {(item.sale_stock || item.stock_quantity || 1)} in stock
+                      </span>
+                    </div>
 
-                {/* Brand & Star Rating Row */}
-                <div className="flex items-center justify-between gap-1 mb-1.5 px-0.5">
-                  <span className="text-[9px] sm:text-[10px] font-sans font-bold uppercase tracking-widest text-gray-500 truncate">
-                    {item.brand}
-                  </span>
+                    {/* White Product Image Stage Box */}
+                    <Link
+                      to={`/products/${item.slug}`}
+                      className="relative w-full aspect-[4/3] rounded-[12px] sm:rounded-[14px] overflow-hidden bg-[#FAF7F2] mb-2.5 z-10 border border-[#D4A24C]/15 flex items-center justify-center p-3 block group-hover:border-[#D4A24C]/40 transition-colors"
+                    >
+                      <img
+                        src={getSafeImageUrl(item)}
+                        alt={item.title}
+                        loading="lazy"
+                        className="max-h-36 max-w-full object-contain group-hover:scale-106 transition-all duration-500 filter drop-shadow-[0_8px_12px_rgba(0,0,0,0.1)]"
+                      />
+                    </Link>
 
-                  <div className="flex items-center gap-1 text-[11px] font-semibold text-[#0D3B2A] shrink-0">
-                    <Star className="w-3.5 h-3.5 fill-[#8A5E12] text-[#8A5E12]" />
-                    <span>{item.rating}</span>
-                    <span className="text-gray-400">|</span>
-                    <span className="text-gray-500">{item.reviews}</span>
+                    {/* Product Brand */}
+                    <div className="text-[9.5px] font-sans font-bold uppercase tracking-widest text-gray-500 mb-1">
+                      {item.brand || 'Enterprise Hardware'}
+                    </div>
+
+                    {/* Product Title */}
+                    <Link to={`/products/${item.slug}`} className="block">
+                      <h3 className="text-[13px] sm:text-[14px] font-serif font-bold text-[#0D3B2A] mb-1 leading-snug group-hover:text-[#8A5E12] transition-colors duration-300 line-clamp-2 min-h-[36px]">
+                        {item.title}
+                      </h3>
+                    </Link>
+
+                    {/* Spec Snippet */}
+                    <p className="text-[11px] text-[#5A6B63] font-mono line-clamp-1 mb-2">
+                      {formatSpecs(item)}
+                    </p>
+                  </div>
+
+                  {/* Bottom Row */}
+                  <div className="pt-2.5 border-t border-[#D4A24C]/15 flex items-center justify-between gap-2">
+                    <div>
+                      <span className="text-[9px] font-bold uppercase tracking-wider text-[#8A5E12] block">
+                        {isRental ? 'Monthly Lease' : 'Direct Buy'}
+                      </span>
+                      <span className="text-base font-bold text-[#0D3B2A] font-serif">
+                        {displayPrice}
+                        {isRental && <span className="text-[10px] font-normal text-[#5A6B63]">/mo</span>}
+                      </span>
+                    </div>
+
+                    <button
+                      onClick={() => handleAction(item)}
+                      className="px-3.5 py-2 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-[11px] font-bold uppercase tracking-wider transition shadow-sm flex items-center gap-1.5 cursor-pointer active:scale-95"
+                    >
+                      {isRental ? <Repeat className="w-3.5 h-3.5 text-[#D4A24C]" /> : <ShoppingBag className="w-3.5 h-3.5 text-[#D4A24C]" />}
+                      <span>{isRental ? 'Rent' : 'Buy'}</span>
+                    </button>
                   </div>
                 </div>
-
-                {/* Product Title */}
-                <Link to={`/products/${item.slug}`} className="block px-0.5">
-                  <h3 className="text-[13px] sm:text-[15px] font-sans font-bold text-[#0D3B2A] mb-1 leading-snug group-hover:text-[#8A5E12] transition-colors duration-300 line-clamp-2 min-h-[36px] sm:min-h-[40px]">
-                    {item.title}
-                  </h3>
-                </Link>
-
-                {/* Compact Spec Snippet */}
-                <p className="text-[11px] text-[#5A6B63] px-0.5 font-sans line-clamp-1 mb-2">
-                  {item.specs}
-                </p>
-
-                {/* Price Row: Rental or Sale */}
-                <div className="flex items-baseline gap-2 px-0.5 mb-3">
-                  <span className="text-[15px] sm:text-[18px] font-sans font-bold text-[#8A5E12]">
-                    ₹{item.active_price.toLocaleString('en-IN')}
-                    {item.price_unit && (
-                      <span className="text-[11px] font-normal text-gray-500">{item.price_unit}</span>
-                    )}
-                  </span>
-                  <span className="text-[10px] sm:text-xs font-sans text-gray-400 line-through">
-                    ₹{item.original_price.toLocaleString('en-IN')}
-                  </span>
-                  <span className="ml-auto text-[9px] font-semibold uppercase tracking-wider text-slate-500 bg-white/60 px-1.5 py-0.5 rounded border border-[#D4A24C]/20">
-                    {item.type === 'rent' ? 'Rental' : 'Outright'}
-                  </span>
-                </div>
-              </div>
-
-              {/* Bottom "Add to Cart" Pill Button */}
-              <button
-                onClick={() => handleAddToCart(item)}
-                className="relative overflow-hidden cursor-pointer w-full bg-[#0D3B2A] text-white hover:bg-[#F7EFE0] hover:text-[#0D3B2A] py-2 sm:py-2.5 rounded-lg sm:rounded-xl font-sans font-bold text-[10px] sm:text-xs uppercase tracking-widest shadow-md flex items-center justify-center gap-1.5 sm:gap-2 group/btn border border-transparent hover:border-[#D4A24C]/40 transition-all duration-300 active:scale-95"
-              >
-                <span>Add to Cart</span>
-                <ShoppingBag className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          ))}
+              );
+            })
+          )}
         </div>
       </div>
     </section>

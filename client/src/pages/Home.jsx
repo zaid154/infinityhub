@@ -129,36 +129,7 @@ export default function Home() {
     }
   };
 
-  const categoriesMoorish = [
-    {
-      id: 'laptop',
-      name: 'ThinkPad Fleets',
-      count: '85+ Fleets Ready',
-      desc: 'T480, T490 & T14 Enterprise Series',
-      image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=600&auto=format&fit=crop&q=80'
-    },
-    {
-      id: 'monitor',
-      name: 'Frameless IPS Displays',
-      count: '120+ Units Ready',
-      desc: 'Dell 24" & 27" Height Pivot Ergonomic',
-      image: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=600&auto=format&fit=crop&q=80'
-    },
-    {
-      id: 'gpu',
-      name: 'AI & VFX Graphics',
-      count: '24+ Workstations',
-      desc: 'NVIDIA RTX 3060 / 3070 12GB VRAM',
-      image: 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=600&auto=format&fit=crop&q=80'
-    },
-    {
-      id: 'ram',
-      name: 'Certified Memory',
-      count: '350+ Sticks',
-      desc: 'Samsung & Micron 16GB/32GB DDR4',
-      image: 'https://images.unsplash.com/photo-1562976540-1502c2145186?w=600&auto=format&fit=crop&q=80'
-    }
-  ];
+
 
   const faqs = [
     {

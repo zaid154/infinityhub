@@ -26,6 +26,7 @@ import RentalCalculator from '../components/RentalCalculator';
 import api from '../services/api';
 import { useCart } from '../context/CartContext';
 import toast from 'react-hot-toast';
+import { getSafeImageUrl } from '../utils/imageHelper';
 
 export default function RentalPlans() {
   const { openRFQ } = useOutletContext();
@@ -53,80 +54,33 @@ export default function RentalPlans() {
     fetchRentalHardware();
   }, []);
 
-  const getProductImage = (p) => {
-    const s = (p.title || '').toLowerCase();
-    const cat = (p.category || '').toLowerCase();
-    if (cat === 'gpu' || s.includes('rtx 3060') || s.includes('graphics')) {
-      return '/products/real-rtx-3060-gpu-transparent.png';
-    }
-    if (cat === 'monitor' || s.includes('p2419h') || s.includes('display')) {
-      return '/products/real-dell-display-transparent.png';
-    }
-    if (s.includes('latitude')) {
-      return '/products/real-dell-latitude-transparent.png';
-    }
-    if (s.includes('thinkpad')) {
-      return '/products/real-thinkpad-t14-transparent.png';
-    }
-    if (s.includes('elitebook') || s.includes('hp')) {
-      return '/products/real-mobile-workstation-transparent.png';
-    }
-    if (s.includes('macbook') || s.includes('apple')) {
-      return p.images?.[0]?.url || 'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=800&auto=format&fit=crop&q=80';
-    }
-    return p.images?.[0]?.url || '/products/real-thinkpad-t14-transparent.png';
-  };
+  // 100% Dynamic Enterprise Fleet Tiers from MongoDB & Cloudinary
+  const fleetTiers = (rentalProducts && rentalProducts.length > 0
+    ? rentalProducts.filter((p) => (p.rental_price_monthly > 0 || p.available_for === 'rent' || p.available_for === 'both')).slice(0, 4)
+    : []
+  ).map((p, idx) => {
+    const specsList = [
+      p.specs?.processor,
+      p.specs?.ram,
+      p.specs?.storage,
+      p.specs?.gpu_model || p.specs?.screen_size || p.specs?.operating_system
+    ].filter(Boolean);
 
-  const fleetTiers = [
-    {
-      id: 'office',
-      role: 'Operations Fleet',
-      hardware: 'Lenovo ThinkPad T490',
-      image: '/products/real-thinkpad-t14-transparent.png',
-      rate: '1,350',
-      specsList: ['Core i5 vPro', '16GB DDR4 RAM', '256GB NVMe SSD', '14.0" FHD Display'],
-      sla: '48h Swap SLA',
-      tagline: 'Ideal for BPO, Telecalling, Sales Teams & Backoffice',
-      popular: false,
-      badge: 'Tier 1'
-    },
-    {
-      id: 'developer',
-      role: 'Developer Fleet',
-      hardware: 'Dell Latitude 7490 Pro',
-      image: '/products/real-dell-latitude-transparent.png',
-      rate: '1,850',
-      specsList: ['Core i7 / Ryzen 7', '16GB Dual-Channel', '512GB NVMe SSD', 'FHD IPS / Win 11'],
-      sla: '24h Standby SLA',
-      tagline: 'Optimal for Full-Stack Developers, QA & Data Analysts',
-      popular: true,
-      badge: 'Most Popular'
-    },
-    {
-      id: 'workstation',
-      role: 'Workstation & AI',
-      hardware: 'HP EliteBook Workstation',
-      image: '/products/real-mobile-workstation-transparent.png',
-      rate: '3,200',
-      specsList: ['Hexa-Core i7/i9', '32GB DDR4 RAM', '1TB Gen4 NVMe', 'Dedicated RTX GPU'],
-      sla: '24h VIP SLA',
-      tagline: 'High-Performance Rig for 3D Modeling, Video & AI Code',
-      popular: false,
-      badge: 'Enterprise Rig'
-    },
-    {
-      id: 'macbook',
-      role: 'Executive & Creative',
-      hardware: 'Apple MacBook Air M1',
-      image: 'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=800&auto=format&fit=crop&q=80',
-      rate: '2,800',
-      specsList: ['Apple M1 8-Core', '8GB Unified RAM', '256GB NVMe SSD', 'Retina True Tone'],
-      sla: '24h Swap SLA',
-      tagline: 'Engineered for Product Designers, UI/UX & iOS Teams',
-      popular: false,
-      badge: 'Apple Fleet'
-    }
-  ];
+    return {
+      id: p._id,
+      role: p.brand ? `${p.brand} Fleet` : 'Enterprise Fleet',
+      hardware: p.title,
+      image: getSafeImageUrl(p),
+      rate: (p.rental_price_monthly || 1350).toLocaleString('en-IN'),
+      rawRate: p.rental_price_monthly || 1350,
+      specsList: specsList.length > 0 ? specsList : ['Grade A+ Certified', 'MemTest86 Tested', '100% Tax Invoiced', '24–48h SLA'],
+      sla: '24–48h Swap SLA',
+      tagline: p.description ? (p.description.length > 80 ? p.description.slice(0, 80) + '...' : p.description) : 'Engineered for corporate role-based deployments with zero capital outlay.',
+      popular: idx === 1 || Boolean(p.is_featured),
+      badge: p.condition === 'brand_new' ? 'Brand New' : p.condition === 'open_box' ? 'Open Box' : `Tier ${idx + 1}`,
+      product: p
+    };
+  });
 
   const onboardingSteps = [
     {
@@ -311,17 +265,28 @@ export default function RentalPlans() {
                   </span>
                 </div>
 
-                <button
-                  onClick={() => openRFQ(`Fleet Package Selection: ${tier.hardware} (Starting ₹${tier.rate}/mo)`)}
-                  className={`w-full py-2.5 rounded-full font-bold text-xs uppercase tracking-wider transition shadow-sm cursor-pointer flex items-center justify-center gap-1.5 active:scale-95 ${
-                    tier.popular
-                      ? 'bg-[#0D3B2A] hover:bg-[#153423] text-white border border-[#D4A24C]'
-                      : 'bg-white hover:bg-[#0D3B2A] text-[#0D3B2A] hover:text-white border-2 border-[#0D3B2A]/30 hover:border-[#0D3B2A]'
-                  }`}
-                >
-                  <span>Select {tier.hardware.split(' ')[0]} Fleet</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-[#D4A24C]" />
-                </button>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => openRFQ(`Fleet Package Selection: ${tier.hardware} (Starting ₹${tier.rate}/mo)`)}
+                    className="w-full py-2.5 rounded-full bg-[#FAF7F2] hover:bg-[#F3E8D2] text-[#0D3B2A] text-[11px] font-bold uppercase tracking-wider transition border border-[#D4A24C]/30 text-center cursor-pointer"
+                  >
+                    Inquire RFQ
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (tier.product) {
+                        addToRentalCart(tier.product, 1, '6_months');
+                        toast.success(`${tier.hardware} added to Rental Cart!`);
+                      } else {
+                        openRFQ(`Fleet Package Selection: ${tier.hardware}`);
+                      }
+                    }}
+                    className="w-full py-2.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-[11px] font-bold uppercase tracking-wider transition shadow-sm flex items-center justify-center gap-1 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
+                  >
+                    <Repeat className="w-3.5 h-3.5 text-[#D4A24C]" />
+                    <span>Rent Fleet</span>
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -387,7 +352,7 @@ export default function RentalPlans() {
                     <Link to={`/products/${p.slug}`} className="block">
                       <div className="h-40 rounded-2xl bg-[#FAF7F2] flex items-center justify-center p-3 mb-3 border border-[#D4A24C]/20 cursor-pointer overflow-hidden">
                         <img
-                          src={getProductImage(p)}
+                          src={getSafeImageUrl(p)}
                           alt={p.title}
                           className="h-full object-contain group-hover:scale-105 transition duration-500 filter drop-shadow-sm"
                         />
@@ -456,7 +421,7 @@ export default function RentalPlans() {
           </p>
         </div>
 
-        <RentalCalculator onOpenRFQ={openRFQ} />
+        <RentalCalculator rentalProducts={rentalProducts} onOpenRFQ={openRFQ} />
       </section>
 
       {/* ======================================================== */}

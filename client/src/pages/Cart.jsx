@@ -19,6 +19,7 @@ import {
 import { useCart, getTenureDiscount } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
+import { getSafeImageUrl, DEFAULT_HARDWARE_PLACEHOLDER } from '../utils/imageHelper';
 import toast from 'react-hot-toast';
 
 export default function Cart() {
@@ -78,29 +79,7 @@ export default function Cart() {
     fetchZones();
   }, []);
 
-  const getProductImage = (p) => {
-    const s = (p.title || '').toLowerCase();
-    const cat = (p.category || '').toLowerCase();
-    if (cat === 'gpu' || s.includes('rtx 3060') || s.includes('graphics')) {
-      return '/products/real-rtx-3060-gpu-transparent.png';
-    }
-    if (cat === 'ram' || s.includes('ddr4') || s.includes('memory') || s.includes('samsung') || s.includes('micron')) {
-      return '/products/real-enterprise-ram-transparent.png';
-    }
-    if (cat === 'monitor' || s.includes('p2419h') || s.includes('display')) {
-      return '/products/real-dell-display-transparent.png';
-    }
-    if (s.includes('latitude')) {
-      return '/products/real-dell-latitude-transparent.png';
-    }
-    if (s.includes('thinkpad')) {
-      return '/products/real-thinkpad-t14-transparent.png';
-    }
-    if (s.includes('elitebook') || s.includes('hp')) {
-      return '/products/real-mobile-workstation-transparent.png';
-    }
-    return p.images?.[0]?.url || '/products/real-thinkpad-t14-transparent.png';
-  };
+  const getProductImage = (p) => getSafeImageUrl(p);
 
   const currentZone = deliveryZones.find((z) => z._id === selectedZone);
   const deliveryCharge = currentZone ? currentZone.delivery_charge : 0;
@@ -393,7 +372,7 @@ export default function Cart() {
                             alt={p.title}
                             onError={(e) => {
                               e.target.onerror = null;
-                              e.target.src = '/products/real-thinkpad-t14-transparent.png';
+                              e.target.src = DEFAULT_HARDWARE_PLACEHOLDER;
                             }}
                             className="max-h-full object-contain filter drop-shadow-sm"
                           />
@@ -690,7 +669,7 @@ export default function Cart() {
                               alt={p.title}
                               onError={(e) => {
                                 e.target.onerror = null;
-                                e.target.src = '/products/real-thinkpad-t14-transparent.png';
+                                e.target.src = DEFAULT_HARDWARE_PLACEHOLDER;
                               }}
                               className="max-h-full object-contain filter drop-shadow-sm"
                             />
