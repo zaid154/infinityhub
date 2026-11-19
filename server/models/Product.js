@@ -66,9 +66,14 @@ const productSchema = new mongoose.Schema(
     images: [
       {
         url: { type: String, required: true },
-        public_id: { type: String, default: '' }
+        public_id: { type: String, default: '' },
+        resource_type: { type: String, default: 'image' }
       }
     ],
+    media_layout: {
+      type: String,
+      default: 'standard'
+    },
     specs: {
       processor: { type: String, default: '' },
       ram: { type: String, default: '' },

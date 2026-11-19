@@ -5,8 +5,10 @@ import { protect, adminOnly } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Allow up to 6 images in a single upload
-router.post('/images', protect, adminOnly, upload.array('images', 6), uploadImages);
+// Allow up to 10 photos or videos in a single upload
+router.post('/images', protect, adminOnly, upload.array('images', 10), uploadImages);
+router.post('/media', protect, adminOnly, upload.array('media', 10), uploadImages);
 router.delete('/images', protect, adminOnly, deleteImage);
+router.delete('/media', protect, adminOnly, deleteImage);
 
 export default router;

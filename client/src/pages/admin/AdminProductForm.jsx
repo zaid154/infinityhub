@@ -9,11 +9,20 @@ import {
   Package,
   Layers,
   CheckCircle2,
-  Loader2
+  Loader2,
+  Video,
+  Image as ImageIcon,
+  Star,
+  ChevronLeft,
+  ChevronRight,
+  Play,
+  Film,
+  Plus
 } from 'lucide-react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
 import ThemeSelect from '../../components/ThemeSelect';
+import { isVideoUrl } from '../../utils/imageHelper';
 
 export default function AdminProductForm() {
   const { id } = useParams();
@@ -44,6 +53,7 @@ export default function AdminProductForm() {
       operating_system: 'Windows 11 Pro'
     },
     images: [],
+    media_layout: 'standard',
     is_featured: false,
     is_hot_deal: false,
     is_active: true
@@ -53,6 +63,11 @@ export default function AdminProductForm() {
   const [generatingAI, setGeneratingAI] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [loadingData, setLoadingData] = useState(isEdit);
+
+  // Manual URL input state
+  const [mediaUrlInput, setMediaUrlInput] = useState('');
+  const [mediaTypeInput, setMediaTypeInput] = useState('image');
+  const [showUrlInput, setShowUrlInput] = useState(false);
 
   useEffect(() => {
     if (isEdit) {
@@ -77,7 +92,12 @@ export default function AdminProductForm() {
                 gst_rate: found.gst_rate || 18,
                 description: found.description || '',
                 specs: found.specs || {},
-                images: found.images || [],
+                images: (found.images || []).map((img) => ({
+                  url: typeof img === 'string' ? img : img.url,
+                  public_id: img.public_id || '',
+                  resource_type: img.resource_type || (isVideoUrl(typeof img === 'string' ? img : img.url) ? 'video' : 'image')
+                })),
+                media_layout: found.media_layout || 'standard',
                 is_featured: Boolean(found.is_featured),
                 is_hot_deal: Boolean(found.is_hot_deal),
                 is_active: Boolean(found.is_active)
@@ -94,8 +114,8 @@ export default function AdminProductForm() {
     }
   }, [id, isEdit]);
 
-  // Handle Multi-image upload to Cloudinary
-  const handleImageUpload = async (e) => {
+  // Handle Multi-media (photos + videos) upload to Cloudinary
+  const handleMediaUpload = async (e) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
@@ -111,17 +131,69 @@ export default function AdminProductForm() {
       });
 
       if (res.data.success) {
+        const uploadedMedia = (res.data.images || []).map((item) => {
+          const isVid = item.resource_type === 'video' || isVideoUrl(item.url);
+          return {
+            url: item.url,
+            public_id: item.public_id || '',
+            resource_type: isVid ? 'video' : 'image'
+          };
+        });
+
         setFormData((prev) => ({
           ...prev,
-          images: [...prev.images, ...res.data.images]
+          images: [...prev.images, ...uploadedMedia]
         }));
-        toast.success(`${res.data.images.length} images uploaded to Cloudinary`);
+        toast.success(`${uploadedMedia.length} media file(s) (photo/video) uploaded to Cloudinary!`);
       }
     } catch (err) {
-      toast.error('Image upload failed.');
+      toast.error(err.response?.data?.message || 'Media upload failed.');
     } finally {
       setUploadingImages(false);
+      e.target.value = null;
     }
+  };
+
+  // Add media via direct URL
+  const handleAddMediaUrl = (e) => {
+    e.preventDefault();
+    if (!mediaUrlInput.trim()) return;
+    const url = mediaUrlInput.trim();
+    const isVid = mediaTypeInput === 'video' || isVideoUrl(url);
+    setFormData((prev) => ({
+      ...prev,
+      images: [
+        ...prev.images,
+        {
+          url,
+          public_id: '',
+          resource_type: isVid ? 'video' : 'image'
+        }
+      ]
+    }));
+    setMediaUrlInput('');
+    toast.success(`${isVid ? 'Video' : 'Photo'} added to media gallery!`);
+  };
+
+  // Reorder media: Move Left (-1) or Move Right (+1)
+  const handleMoveMedia = (index, direction) => {
+    const targetIndex = index + direction;
+    if (targetIndex < 0 || targetIndex >= formData.images.length) return;
+    const newImages = [...formData.images];
+    const temp = newImages[index];
+    newImages[index] = newImages[targetIndex];
+    newImages[targetIndex] = temp;
+    setFormData((prev) => ({ ...prev, images: newImages }));
+  };
+
+  // Set as Cover / Primary media (position 0)
+  const handleSetCover = (index) => {
+    if (index === 0) return;
+    const newImages = [...formData.images];
+    const [selected] = newImages.splice(index, 1);
+    newImages.unshift(selected);
+    setFormData((prev) => ({ ...prev, images: newImages }));
+    toast.success('Set as primary cover media!');
   };
 
   const handleRemoveImage = (index) => {
@@ -251,7 +323,7 @@ export default function AdminProductForm() {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block font-semibold text-slate-700 mb-1">Category *</label>
               <ThemeSelect
@@ -303,11 +375,20 @@ export default function AdminProductForm() {
           </div>
         </div>
 
-        {/* Pricing & Stock Box */}
-        <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-          <h2 className="text-sm font-bold text-slate-900">Commercial Pricing & Segregated Inventory</h2>
+        {/* Pricing & Stock Box - Spacious Multi-Row Grid */}
+        <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-5">
+          <div className="border-b border-slate-100 pb-3">
+            <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <Package className="w-4 h-4 text-[#D4A24C]" />
+              Commercial Pricing & Segregated Inventory
+            </h2>
+            <p className="text-[11px] text-slate-500 mt-0.5">
+              Set commercial purchase price, monthly lease fee, and segregated inventory stock pools.
+            </p>
+          </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+          {/* Row 1: Commercial Pricing & GST */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label className="block font-semibold text-slate-700 mb-1">Sale Price (₹) *</label>
               <input
@@ -316,8 +397,9 @@ export default function AdminProductForm() {
                 placeholder="e.g. 21500"
                 value={formData.sale_price}
                 onChange={(e) => setFormData({ ...formData, sale_price: e.target.value })}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] font-mono"
+                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] font-mono text-sm"
               />
+              <span className="text-[10px] text-slate-400 mt-1 block">Corporate direct purchase rate</span>
             </div>
 
             <div>
@@ -327,46 +409,9 @@ export default function AdminProductForm() {
                 placeholder="e.g. 1450"
                 value={formData.rental_price_monthly}
                 onChange={(e) => setFormData({ ...formData, rental_price_monthly: e.target.value })}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] font-mono"
+                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] font-mono text-sm"
               />
-            </div>
-
-            <div>
-              <label className="block font-semibold text-slate-700 mb-1">Direct Sale Stock</label>
-              <input
-                type="number"
-                min="0"
-                placeholder="e.g. 10"
-                value={formData.sale_stock}
-                onChange={(e) => {
-                  const val = Number(e.target.value);
-                  setFormData({
-                    ...formData,
-                    sale_stock: val,
-                    stock_quantity: val + (formData.rental_stock || 0)
-                  });
-                }}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] font-mono"
-              />
-            </div>
-
-            <div>
-              <label className="block font-semibold text-slate-700 mb-1">Rental Fleet Stock</label>
-              <input
-                type="number"
-                min="0"
-                placeholder="e.g. 3"
-                value={formData.rental_stock}
-                onChange={(e) => {
-                  const val = Number(e.target.value);
-                  setFormData({
-                    ...formData,
-                    rental_stock: val,
-                    stock_quantity: (formData.sale_stock || 0) + val
-                  });
-                }}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] font-mono"
-              />
+              <span className="text-[10px] text-slate-400 mt-1 block">Monthly OPEX lease fee</span>
             </div>
 
             <div>
@@ -379,10 +424,80 @@ export default function AdminProductForm() {
                   { value: 5, label: '5% GST' },
                   { value: 12, label: '12% GST' },
                   { value: 18, label: '18% GST (Standard Hardware)' },
-                  { value: 28, label: '28% GST (Luxury)' }
+                  { value: 28, label: '28% GST (Luxury / Specialized)' }
                 ]}
                 variant="admin"
               />
+              <span className="text-[10px] text-slate-400 mt-1 block">Tax invoice line item</span>
+            </div>
+          </div>
+
+          {/* Row 2: Segregated Inventory Stock Pools */}
+          <div className="pt-4 border-t border-slate-100 space-y-3">
+            <label className="block font-semibold text-slate-800 text-xs uppercase tracking-wider">
+              Dual-Pool Inventory Segregation
+            </label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="font-semibold text-slate-700 text-xs">Direct Sale Stock</label>
+                  <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                    Purchase Pool
+                  </span>
+                </div>
+                <input
+                  type="number"
+                  min="0"
+                  placeholder="e.g. 10"
+                  value={formData.sale_stock}
+                  onChange={(e) => {
+                    const val = Number(e.target.value);
+                    setFormData({
+                      ...formData,
+                      sale_stock: val,
+                      stock_quantity: val + (formData.rental_stock || 0)
+                    });
+                  }}
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] font-mono text-sm"
+                />
+                <p className="text-[10px] text-slate-500">Decrements independently when customers place buy orders.</p>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="font-semibold text-slate-700 text-xs">Rental Fleet Stock</label>
+                  <span className="text-[10px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+                    Lease Pool
+                  </span>
+                </div>
+                <input
+                  type="number"
+                  min="0"
+                  placeholder="e.g. 3"
+                  value={formData.rental_stock}
+                  onChange={(e) => {
+                    const val = Number(e.target.value);
+                    setFormData({
+                      ...formData,
+                      rental_stock: val,
+                      stock_quantity: (formData.sale_stock || 0) + val
+                    });
+                  }}
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] font-mono text-sm"
+                />
+                <p className="text-[10px] text-slate-500">Decrements independently when corporate rental agreements activate.</p>
+              </div>
+            </div>
+
+            {/* Total Inventory Summary Bar */}
+            <div className="flex items-center justify-between px-4 py-2.5 rounded-xl bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] text-xs font-semibold">
+              <span className="flex items-center gap-1.5">
+                <Package className="w-3.5 h-3.5 text-[#D4A24C]" />
+                Total Operational Inventory: <strong className="font-mono text-sm">{formData.stock_quantity || 0} Units</strong>
+              </span>
+              <span className="text-[10px] font-mono text-[#8A5E12]">
+                (Direct Sale: {formData.sale_stock || 0} • Rental Fleet: {formData.rental_stock || 0})
+              </span>
             </div>
           </div>
         </div>
@@ -497,59 +612,246 @@ export default function AdminProductForm() {
           </div>
         </div>
 
-        {/* Cloudinary Multiple Image Upload */}
-        <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <Upload className="w-4 h-4 text-emerald-600" />
-              Upload Photos to Cloudinary
-            </h2>
-            <span className="text-[11px] text-slate-400">Multiple images allowed</span>
+        {/* Media Showcase: Photos & Videos with Ordering and Alignment */}
+        <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+            <div>
+              <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                <Upload className="w-4 h-4 text-emerald-600" />
+                <Film className="w-4 h-4 text-[#D4A24C]" />
+                Product Media Showcase (Photos & Demo Videos)
+              </h2>
+              <p className="text-[11px] text-slate-500 mt-0.5">
+                Upload real hardware photos and video walk-throughs. Arrange sequence and set primary cover media.
+              </p>
+            </div>
+
+            {/* Media Gallery Alignment Selector */}
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider shrink-0">
+                Display Alignment:
+              </span>
+              <div className="w-52">
+                <ThemeSelect
+                  value={formData.media_layout || 'standard'}
+                  onChange={(val) => setFormData({ ...formData, media_layout: val })}
+                  options={[
+                    { value: 'standard', label: 'Standard Gallery (Cover First)' },
+                    { value: 'video_spotlight', label: 'Video Spotlight First' },
+                    { value: 'split_showcase', label: 'Balanced Grid Showcase' }
+                  ]}
+                  variant="admin"
+                />
+              </div>
+            </div>
           </div>
 
+          {/* Drag & Drop Upload Zone (Photos & Videos) */}
           <div className="border-2 border-dashed border-[#D4A24C]/40 rounded-2xl p-6 text-center hover:border-[#0D3B2A] transition bg-[#FAF7F2] cursor-pointer relative">
             <input
               type="file"
               multiple
-              accept="image/*"
-              onChange={handleImageUpload}
+              accept="image/*,video/*"
+              onChange={handleMediaUpload}
               className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
             />
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               {uploadingImages ? (
                 <div className="flex items-center justify-center gap-2 text-[#0D3B2A] font-bold">
                   <Loader2 className="w-5 h-5 animate-spin text-[#D4A24C]" />
-                  <span>Streaming images to Cloudinary...</span>
+                  <span>Streaming photos & videos to Cloudinary...</span>
                 </div>
               ) : (
                 <>
-                  <Upload className="w-8 h-8 text-slate-400 mx-auto" />
-                  <p className="font-semibold text-slate-700">Click or drag images here to upload</p>
-                  <p className="text-[11px] text-slate-400">JPEG, PNG, WebP supported</p>
+                  <div className="flex items-center justify-center gap-2 text-slate-400">
+                    <Upload className="w-6 h-6 text-emerald-600" />
+                    <Film className="w-6 h-6 text-[#D4A24C]" />
+                  </div>
+                  <p className="font-semibold text-slate-800 text-sm">
+                    Click or drag hardware photos & demonstration videos here
+                  </p>
+                  <p className="text-[11px] text-slate-500">
+                    Images (JPEG, PNG, WebP) & Videos (MP4, WebM, MOV) up to 60MB supported
+                  </p>
                 </>
               )}
             </div>
           </div>
 
-          {/* Uploaded Images Preview */}
-          {formData.images.length > 0 && (
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 pt-3">
-              {formData.images.map((img, idx) => (
-                <div
-                  key={idx}
-                  className="h-24 rounded-xl bg-slate-100 p-1 border border-slate-200 relative group overflow-hidden"
-                >
-                  <img src={img.url} alt="" className="w-full h-full object-contain" />
+          {/* Quick Add Media by Direct URL */}
+          <div className="pt-1">
+            {!showUrlInput ? (
+              <button
+                type="button"
+                onClick={() => setShowUrlInput(true)}
+                className="text-xs font-semibold text-[#8A5E12] hover:text-[#0D3B2A] flex items-center gap-1 transition cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Add Media via Direct Image or Video URL</span>
+              </button>
+            ) : (
+              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-800">Add Media via External / CDN Link</span>
                   <button
                     type="button"
-                    onClick={() => handleRemoveImage(idx)}
-                    className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-md opacity-0 group-hover:opacity-100 transition shadow"
-                    title="Remove"
+                    onClick={() => setShowUrlInput(false)}
+                    className="text-[10px] text-slate-400 hover:text-slate-600 cursor-pointer"
                   >
-                    <Trash2 className="w-3 h-3" />
+                    ✕ Close
                   </button>
                 </div>
-              ))}
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <input
+                    type="url"
+                    placeholder="e.g. https://res.cloudinary.com/.../demo.mp4 or photo.png"
+                    value={mediaUrlInput}
+                    onChange={(e) => setMediaUrlInput(e.target.value)}
+                    className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] text-xs font-mono"
+                  />
+                  <select
+                    value={mediaTypeInput}
+                    onChange={(e) => setMediaTypeInput(e.target.value)}
+                    className="px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-semibold text-slate-700"
+                  >
+                    <option value="image">Photo / Image</option>
+                    <option value="video">Product Video (MP4/WebM)</option>
+                  </select>
+                  <button
+                    type="button"
+                    onClick={handleAddMediaUrl}
+                    className="px-4 py-2 rounded-xl bg-[#0D3B2A] text-white font-bold text-xs hover:bg-[#153423] transition cursor-pointer shrink-0"
+                  >
+                    Add Media
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Uploaded Media Preview & Arrangement Toolbar */}
+          {formData.images.length > 0 && (
+            <div className="space-y-3 pt-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-slate-800">
+                  Arranged Media Gallery ({formData.images.length} items)
+                </span>
+                <span className="text-[10px] text-slate-500">
+                  ★ Position #1 is the Primary Cover displayed first
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5">
+                {formData.images.map((img, idx) => {
+                  const isVid = img.resource_type === 'video' || isVideoUrl(img.url);
+                  const isCover = idx === 0;
+
+                  return (
+                    <div
+                      key={idx}
+                      className={`rounded-2xl p-2.5 bg-slate-50 border transition-all flex flex-col justify-between relative group ${
+                        isCover
+                          ? 'border-[#D4A24C] ring-2 ring-[#D4A24C]/25 bg-[#FAF7F2]'
+                          : 'border-slate-200 hover:border-slate-300 hover:shadow-xs'
+                      }`}
+                    >
+                      {/* Top Badges: Position & Media Type */}
+                      <div className="flex items-center justify-between gap-1 mb-2">
+                        <span
+                          className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                            isCover
+                              ? 'bg-[#0D3B2A] text-[#D4A24C] border border-[#D4A24C]'
+                              : 'bg-slate-200 text-slate-700'
+                          }`}
+                        >
+                          {isCover ? '★ #1 Cover' : `#${idx + 1}`}
+                        </span>
+
+                        <span
+                          className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md uppercase tracking-wider flex items-center gap-1 ${
+                            isVid
+                              ? 'bg-amber-100 text-amber-900 border border-amber-300'
+                              : 'bg-emerald-100 text-emerald-900 border border-emerald-300'
+                          }`}
+                        >
+                          {isVid ? <Film className="w-2.5 h-2.5" /> : <ImageIcon className="w-2.5 h-2.5" />}
+                          <span>{isVid ? 'Video' : 'Photo'}</span>
+                        </span>
+                      </div>
+
+                      {/* Media Thumbnail Container */}
+                      <div className="h-28 rounded-xl bg-white p-1.5 border border-slate-200/80 flex items-center justify-center overflow-hidden relative">
+                        {isVid ? (
+                          <div className="w-full h-full relative flex items-center justify-center bg-slate-900 rounded-lg overflow-hidden">
+                            <video
+                              src={img.url}
+                              className="w-full h-full object-cover opacity-85"
+                              muted
+                              playsInline
+                            />
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/30 pointer-events-none">
+                              <div className="w-8 h-8 rounded-full bg-[#D4A24C] text-[#0D3B2A] flex items-center justify-center font-bold text-xs shadow-md">
+                                ▶
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <img
+                            src={img.url}
+                            alt=""
+                            className="w-full h-full object-contain filter drop-shadow-2xs"
+                          />
+                        )}
+                      </div>
+
+                      {/* Reordering & Action Toolbar */}
+                      <div className="mt-2.5 pt-2 border-t border-slate-200/70 flex items-center justify-between gap-1">
+                        <div className="flex items-center gap-1">
+                          <button
+                            type="button"
+                            disabled={idx === 0}
+                            onClick={() => handleMoveMedia(idx, -1)}
+                            className="p-1 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 disabled:opacity-30 disabled:pointer-events-none transition cursor-pointer"
+                            title="Move Left"
+                          >
+                            <ChevronLeft className="w-3.5 h-3.5" />
+                          </button>
+
+                          <button
+                            type="button"
+                            disabled={idx === formData.images.length - 1}
+                            onClick={() => handleMoveMedia(idx, 1)}
+                            className="p-1 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 disabled:opacity-30 disabled:pointer-events-none transition cursor-pointer"
+                            title="Move Right"
+                          >
+                            <ChevronRight className="w-3.5 h-3.5" />
+                          </button>
+
+                          {!isCover && (
+                            <button
+                              type="button"
+                              onClick={() => handleSetCover(idx)}
+                              className="px-2 py-1 rounded-lg bg-white border border-[#D4A24C]/40 text-[#8A5E12] hover:bg-[#FAF7F2] text-[10px] font-bold transition cursor-pointer"
+                              title="Set as Cover"
+                            >
+                              ★ Cover
+                            </button>
+                          )}
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveImage(idx)}
+                          className="p-1 rounded-lg bg-red-50 border border-red-200 text-red-600 hover:bg-red-100 transition cursor-pointer"
+                          title="Remove Media"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
         </div>

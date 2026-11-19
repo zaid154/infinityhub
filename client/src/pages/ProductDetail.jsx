@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import api from '../services/api';
 import { useCart } from '../context/CartContext';
-import { getGalleryUrls, getSafeImageUrl } from '../utils/imageHelper';
+import { getGalleryUrls, getGalleryMedia, getSafeImageUrl } from '../utils/imageHelper';
 import toast from 'react-hot-toast';
 
 export default function ProductDetail() {
@@ -78,8 +78,9 @@ export default function ProductDetail() {
     );
   }
 
-  // 100% Dynamic Gallery Images directly from MongoDB Cloudinary records
-  const galleryImages = getGalleryUrls(product);
+  // 100% Dynamic Gallery Media (Images & Videos) directly from MongoDB Cloudinary records
+  const galleryMedia = getGalleryMedia(product);
+  const currentMedia = galleryMedia[selectedImage] || galleryMedia[0];
   const originalPrice = Math.round(product.sale_price * 1.25);
   const discountPercent = 20;
 
@@ -121,39 +122,74 @@ export default function ProductDetail() {
           
           {/* Vertical Thumbnails Stack (Desktop: vertical flex-col, Mobile: horizontal flex-row) */}
           <div className="flex sm:flex-col gap-2 w-full sm:w-18 md:w-20 shrink-0 overflow-x-auto sm:overflow-visible pb-1 sm:pb-0">
-            {galleryImages.map((img, idx) => (
+            {galleryMedia.map((m, idx) => (
               <button
                 key={idx}
                 type="button"
                 onClick={() => setSelectedImage(idx)}
-                className={`w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-xl bg-white p-2 flex items-center justify-center transition-all cursor-pointer border-2 shrink-0 ${
+                className={`w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-xl bg-white p-1.5 flex items-center justify-center transition-all cursor-pointer border-2 shrink-0 relative overflow-hidden ${
                   selectedImage === idx
                     ? 'border-[#0D3B2A] shadow-md ring-2 ring-[#0D3B2A]/20'
                     : 'border-gray-200 hover:border-gray-400 opacity-75 hover:opacity-100'
                 }`}
+                title={m.type === 'video' ? `Video Clip #${idx + 1}` : `Photo Angle #${idx + 1}`}
               >
-                <img
-                  src={img}
-                  alt={`Angle ${idx + 1}`}
-                  className="w-full h-full object-contain filter drop-shadow-sm"
-                />
+                {m.type === 'video' ? (
+                  <div className="w-full h-full flex flex-col items-center justify-center bg-slate-900 rounded-lg text-white">
+                    <div className="w-5 h-5 rounded-full bg-[#D4A24C] text-[#0D3B2A] flex items-center justify-center text-[9px] font-bold shadow-xs">
+                      ▶
+                    </div>
+                    <span className="text-[7.5px] font-bold uppercase tracking-wider mt-0.5 text-[#D4A24C]">Video</span>
+                  </div>
+                ) : (
+                  <img
+                    src={m.url}
+                    alt={`Angle ${idx + 1}`}
+                    className="w-full h-full object-contain filter drop-shadow-sm"
+                  />
+                )}
+                {m.type === 'video' && (
+                  <span className="absolute top-1 right-1 bg-black/80 text-[#D4A24C] text-[7px] font-bold px-1 rounded">
+                    HD
+                  </span>
+                )}
               </button>
             ))}
           </div>
 
-          {/* Main Large Image Stage Container (Rounded Linen/Warm Stage like Al-Tooba) */}
-          <div className="flex-1 w-full h-[320px] sm:h-[380px] lg:h-[410px] bg-[#F4EFE6] rounded-[24px] sm:rounded-[28px] p-5 sm:p-8 flex items-center justify-center relative overflow-hidden border border-[#D4A24C]/25 shadow-inner">
-            {/* Top-Right Image Count Pill: 1/3 */}
-            <div className="absolute top-3.5 right-3.5 bg-black/75 backdrop-blur text-white text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full z-10 shadow-sm">
-              {selectedImage + 1}/{galleryImages.length}
+          {/* Main Large Image / Video Stage Container */}
+          <div className="flex-1 w-full h-[320px] sm:h-[380px] lg:h-[410px] bg-[#F4EFE6] rounded-[24px] sm:rounded-[28px] p-4 sm:p-6 flex items-center justify-center relative overflow-hidden border border-[#D4A24C]/25 shadow-inner">
+            {/* Top-Right Media Count Pill: Video/Photo 1/3 */}
+            <div className="absolute top-3.5 right-3.5 bg-black/75 backdrop-blur text-white text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full z-10 shadow-sm flex items-center gap-1.5">
+              {currentMedia?.type === 'video' ? (
+                <span className="text-[#D4A24C] font-sans font-bold flex items-center gap-1">
+                  <span>🎥</span> Video
+                </span>
+              ) : (
+                <span>Photo</span>
+              )}
+              <span>•</span>
+              <span>{selectedImage + 1}/{galleryMedia.length}</span>
             </div>
 
-            {/* Central Hardware Cutout Image (Transparent PNG on warm linen stage) */}
-            <img
-              src={galleryImages[selectedImage]}
-              alt={product.title}
-              className="max-h-full max-w-full object-contain transition-all duration-300 filter drop-shadow-[0_15px_20px_rgba(0,0,0,0.12)] hover:scale-105"
-            />
+            {/* Central Hardware Media Item (Interactive Video Player OR Hardware PNG) */}
+            {currentMedia?.type === 'video' ? (
+              <video
+                key={currentMedia.url}
+                src={currentMedia.url}
+                controls
+                autoPlay
+                muted
+                playsInline
+                className="max-h-full max-w-full rounded-2xl object-contain shadow-lg bg-black/10"
+              />
+            ) : (
+              <img
+                src={currentMedia?.url}
+                alt={product.title}
+                className="max-h-full max-w-full object-contain transition-all duration-300 filter drop-shadow-[0_15px_20px_rgba(0,0,0,0.12)] hover:scale-105"
+              />
+            )}
           </div>
 
         </div>

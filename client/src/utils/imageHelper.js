@@ -47,6 +47,23 @@ export const getSafeImageUrl = (product, index = 0) => {
 };
 
 /**
+ * Detects if a URL points to a video asset (Cloudinary video, mp4, webm, mov, etc.)
+ */
+export const isVideoUrl = (url) => {
+  if (!url || typeof url !== 'string') return false;
+  const clean = url.toLowerCase().split('?')[0];
+  return (
+    clean.endsWith('.mp4') ||
+    clean.endsWith('.webm') ||
+    clean.endsWith('.mov') ||
+    clean.endsWith('.ogg') ||
+    clean.endsWith('.mkv') ||
+    url.includes('/video/upload/') ||
+    url.includes('/videos/')
+  );
+};
+
+/**
  * Returns an array of all Cloudinary image URLs for a product gallery.
  *
  * @param {Object} product - Product document from MongoDB
@@ -68,6 +85,39 @@ export const getGalleryUrls = (product) => {
   }
 
   return [DEFAULT_HARDWARE_PLACEHOLDER];
+};
+
+/**
+ * Returns structured media items (images and videos) for gallery viewers.
+ *
+ * @param {Object} product - Product document from MongoDB
+ * @returns {{ url: string, type: 'image' | 'video', public_id?: string }[]} Array of media objects
+ */
+export const getGalleryMedia = (product) => {
+  if (!product) return [{ url: DEFAULT_HARDWARE_PLACEHOLDER, type: 'image' }];
+
+  if (Array.isArray(product.images) && product.images.length > 0) {
+    const media = product.images
+      .map((item) => {
+        const url = typeof item === 'string' ? item : item?.url;
+        if (!url || typeof url !== 'string' || url.trim().length === 0) return null;
+        const isVid = (item && item.resource_type === 'video') || isVideoUrl(url);
+        return {
+          url: url.trim(),
+          type: isVid ? 'video' : 'image',
+          public_id: item?.public_id || ''
+        };
+      })
+      .filter(Boolean);
+
+    if (media.length > 0) return media;
+  }
+
+  if (product.image && typeof product.image === 'string') {
+    return [{ url: product.image, type: isVideoUrl(product.image) ? 'video' : 'image' }];
+  }
+
+  return [{ url: DEFAULT_HARDWARE_PLACEHOLDER, type: 'image' }];
 };
 
 export default getSafeImageUrl;
