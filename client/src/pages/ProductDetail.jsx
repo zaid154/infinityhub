@@ -267,11 +267,12 @@ export default function ProductDetail() {
                 {inRentalItem && (
                   <Link
                     to="/cart"
-                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-300 hover:bg-emerald-100 hover:border-emerald-400 transition-all shadow-xs group"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#FAF7F2] text-[#0D3B2A] border border-[#D4A24C]/60 hover:bg-[#F4ECE1] hover:border-[#D4A24C] transition-all shadow-xs group"
                   >
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#8A5E12] shrink-0" />
                     <span>{inRentalItem.quantity} in Rental Cart</span>
-                    <span className="text-[11px] font-medium text-emerald-700 underline group-hover:text-emerald-900 ml-1">
+                    <span className="text-[#D4A24C] font-normal">•</span>
+                    <span className="text-[11px] font-semibold text-[#8A5E12] group-hover:text-[#0D3B2A] group-hover:underline">
                       View Cart &rarr;
                     </span>
                   </Link>
@@ -279,11 +280,12 @@ export default function ProductDetail() {
                 {inBuyItem && (
                   <Link
                     to="/cart"
-                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-300 hover:bg-emerald-100 hover:border-emerald-400 transition-all shadow-xs group"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#FAF7F2] text-[#0D3B2A] border border-[#D4A24C]/60 hover:bg-[#F4ECE1] hover:border-[#D4A24C] transition-all shadow-xs group"
                   >
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#8A5E12] shrink-0" />
                     <span>{inBuyItem.quantity} in Cart</span>
-                    <span className="text-[11px] font-medium text-emerald-700 underline group-hover:text-emerald-900 ml-1">
+                    <span className="text-[#D4A24C] font-normal">•</span>
+                    <span className="text-[11px] font-semibold text-[#8A5E12] group-hover:text-[#0D3B2A] group-hover:underline">
                       View Cart &rarr;
                     </span>
                   </Link>

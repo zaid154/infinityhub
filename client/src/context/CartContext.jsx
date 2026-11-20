@@ -44,41 +44,47 @@ export const CartProvider = ({ children }) => {
   const addToBuyCart = (product, quantity = 1) => {
     const maxAvailable = product.sale_stock !== undefined ? product.sale_stock : product.stock_quantity || 10;
     if (maxAvailable <= 0) {
-      toast.error(`Sorry, ${product.title} is currently out of stock for outright purchase.`);
+      toast.dismiss();
+      toast.error(`Sorry, ${product.title} is currently out of stock for outright purchase.`, {
+        id: `cart-status-${product._id}`
+      });
       return false;
     }
 
-    let clamped = false;
+    const existing = buyCart.find((item) => item.product._id === product._id);
+    const currentQty = existing ? existing.quantity : 0;
+
+    if (currentQty >= maxAvailable) {
+      toast.dismiss();
+      toast.error(`Max stock limit (${maxAvailable} units) reached.`, {
+        id: `cart-status-${product._id}`,
+        duration: 3000
+      });
+      return false;
+    }
+
+    const qtyToAdd = Math.min(quantity, maxAvailable - currentQty);
     setBuyCart((prev) => {
-      const existing = prev.find((item) => item.product._id === product._id);
-      if (existing) {
-        let newQty = existing.quantity + quantity;
-        if (newQty > maxAvailable) {
-          newQty = maxAvailable;
-          clamped = true;
-        }
+      const itemExists = prev.find((item) => item.product._id === product._id);
+      if (itemExists) {
         return prev.map((item) =>
-          item.product._id === product._id ? { ...item, quantity: newQty } : item
+          item.product._id === product._id ? { ...item, quantity: item.quantity + qtyToAdd } : item
         );
-      } else {
-        let initialQty = quantity;
-        if (initialQty > maxAvailable) {
-          initialQty = maxAvailable;
-          clamped = true;
-        }
-        return [...prev, { product, quantity: initialQty }];
       }
+      return [...prev, { product, quantity: qtyToAdd }];
     });
 
-    if (clamped) {
-      toast.error(`Max stock limit (${maxAvailable} units) reached.`, {
-        id: `buy-limit-${product._id}`,
+    toast.dismiss();
+    const shortTitle = product.title?.length > 28 ? product.title.slice(0, 28) + '...' : product.title;
+    if (currentQty + quantity > maxAvailable) {
+      toast(`Added ${qtyToAdd} unit(s). Max purchase limit reached (${maxAvailable} units).`, {
+        id: `cart-status-${product._id}`,
+        icon: '⚠️',
         duration: 3000
       });
     } else {
-      const shortTitle = product.title?.length > 28 ? product.title.slice(0, 28) + '...' : product.title;
       toast.success(`Added ${shortTitle} to Purchase Cart`, {
-        id: `cart-action-${product._id}`,
+        id: `cart-status-${product._id}`,
         duration: 2500
       });
     }
@@ -89,44 +95,49 @@ export const CartProvider = ({ children }) => {
   const addToRentalCart = (product, quantity = 1, tenure = '6_months') => {
     const maxRental = product.rental_stock !== undefined ? product.rental_stock : 5;
     if (maxRental <= 0) {
+      toast.dismiss();
       toast.error(`Sorry, ${product.title} has no units in active rental inventory.`, {
-        id: `rental-empty-${product._id}`,
+        id: `cart-status-${product._id}`
+      });
+      return false;
+    }
+
+    const existing = rentalCart.find((item) => item.product._id === product._id);
+    const currentQty = existing ? existing.quantity : 0;
+
+    if (currentQty >= maxRental) {
+      toast.dismiss();
+      toast.error(`Rental limit reached (${maxRental} units max). Request custom RFQ for larger quantity.`, {
+        id: `cart-status-${product._id}`,
         duration: 3000
       });
       return false;
     }
 
-    let clamped = false;
+    const qtyToAdd = Math.min(quantity, maxRental - currentQty);
     setRentalCart((prev) => {
-      const existing = prev.find((item) => item.product._id === product._id);
-      if (existing) {
-        let newQty = existing.quantity + quantity;
-        if (newQty > maxRental) {
-          newQty = maxRental;
-          clamped = true;
-        }
+      const itemExists = prev.find((item) => item.product._id === product._id);
+      if (itemExists) {
         return prev.map((item) =>
-          item.product._id === product._id ? { ...item, quantity: newQty, tenure: tenure || item.tenure } : item
+          item.product._id === product._id
+            ? { ...item, quantity: item.quantity + qtyToAdd, tenure: tenure || item.tenure }
+            : item
         );
-      } else {
-        let initialQty = quantity;
-        if (initialQty > maxRental) {
-          initialQty = maxRental;
-          clamped = true;
-        }
-        return [...prev, { product, quantity: initialQty, tenure }];
       }
+      return [...prev, { product, quantity: qtyToAdd, tenure }];
     });
 
-    if (clamped) {
-      toast.error(`Rental limit reached (${maxRental} units max). Request custom RFQ for larger quantity.`, {
-        id: `rental-limit-${product._id}`,
+    toast.dismiss();
+    const shortTitle = product.title?.length > 28 ? product.title.slice(0, 28) + '...' : product.title;
+    if (currentQty + quantity > maxRental) {
+      toast(`Added ${qtyToAdd} unit(s). Rental limit reached (${maxRental} units max).`, {
+        id: `cart-status-${product._id}`,
+        icon: '⚠️',
         duration: 3000
       });
     } else {
-      const shortTitle = product.title?.length > 28 ? product.title.slice(0, 28) + '...' : product.title;
       toast.success(`Added ${shortTitle} to Rental Cart`, {
-        id: `cart-action-${product._id}`,
+        id: `cart-status-${product._id}`,
         duration: 2500
       });
     }
