@@ -89,7 +89,7 @@ export const CartProvider = ({ children }) => {
   const addToRentalCart = (product, quantity = 1, tenure = '6_months') => {
     const maxRental = product.rental_stock !== undefined ? product.rental_stock : 5;
     if (maxRental <= 0) {
-      toast.error(`Sorry, ${product.title} has no units in active rental fleet.`, {
+      toast.error(`Sorry, ${product.title} has no units in active rental inventory.`, {
         id: `rental-empty-${product._id}`,
         duration: 3000
       });
@@ -119,13 +119,13 @@ export const CartProvider = ({ children }) => {
     });
 
     if (clamped) {
-      toast.error(`Fleet lease limit reached (${maxRental} units max). Request custom RFQ for larger fleet.`, {
+      toast.error(`Rental limit reached (${maxRental} units max). Request custom RFQ for larger quantity.`, {
         id: `rental-limit-${product._id}`,
         duration: 3000
       });
     } else {
       const shortTitle = product.title?.length > 28 ? product.title.slice(0, 28) + '...' : product.title;
-      toast.success(`Added ${shortTitle} to Rental Fleet`, {
+      toast.success(`Added ${shortTitle} to Rental Cart`, {
         id: `cart-action-${product._id}`,
         duration: 2500
       });
@@ -165,7 +165,7 @@ export const CartProvider = ({ children }) => {
         if (item.product._id === productId) {
           const maxRental = item.product.rental_stock !== undefined ? item.product.rental_stock : 5;
           if (quantity > maxRental) {
-            toast.error(`Only ${maxRental} units available in active rental fleet. Cannot select ${quantity}.`);
+            toast.error(`Only ${maxRental} units available in active rental inventory. Cannot select ${quantity}.`);
             return { ...item, quantity: maxRental };
           }
           return { ...item, quantity };

@@ -402,7 +402,7 @@ export default function ProductDetail() {
                 className="w-full py-3 sm:py-3.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-sans font-bold text-xs sm:text-sm uppercase tracking-[0.2em] shadow-lg flex items-center justify-center gap-2 cursor-pointer transition-all hover:brightness-105 active:scale-95 group"
               >
                 <Repeat className="w-4 h-4 text-[#D4A24C]" />
-                <span>RENT THIS FLEET (ADD TO LEASE CART)</span>
+                <span>RENT THIS MODEL (ADD TO RENTAL CART)</span>
                 <ArrowRight className="w-4 h-4 text-[#D4A24C] group-hover:translate-x-1 transition-transform" />
               </button>
             </div>

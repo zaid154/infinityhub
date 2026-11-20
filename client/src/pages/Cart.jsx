@@ -474,7 +474,7 @@ export default function Cart() {
               />
             )}
             <Repeat className={`w-3.5 h-3.5 ${activeTab === 'rental' ? 'text-[#D4A24C]' : 'text-slate-400'}`} />
-            <span>Rental Fleet Lease ({rentalCartCount})</span>
+            <span>Rental Cart ({rentalCartCount})</span>
           </button>
         </div>
       </div>
@@ -794,7 +794,7 @@ export default function Cart() {
           {rentalCart.length === 0 ? (
             <div className="bg-white rounded-3xl p-12 text-center border border-[#D4A24C]/25 space-y-3">
               <Repeat className="w-10 h-10 text-slate-300 mx-auto" />
-              <h3 className="font-serif font-bold text-base text-[#0D3B2A]">No Hardware in Rental Fleet Cart</h3>
+              <h3 className="font-serif font-bold text-base text-[#0D3B2A]">No Hardware in Rental Cart</h3>
               <p className="text-xs text-[#5A6B63]">
                 Looking to deploy laptops or workstations on flexible monthly leases without capital expenditure?
               </p>
@@ -802,7 +802,7 @@ export default function Cart() {
                 to="/rental"
                 className="inline-block mt-2 px-5 py-2.5 rounded-full bg-[#0D3B2A] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#153423] transition"
               >
-                Explore Rental Fleet Plans
+                Explore Rental Hardware
               </Link>
             </div>
           ) : (
@@ -1067,7 +1067,7 @@ export default function Cart() {
 
                   <div className="space-y-2.5 text-[#5A6B63]">
                     <div className="flex justify-between items-center">
-                      <span>Total Fleet Size:</span>
+                      <span>Total Rental Units:</span>
                       <span className="font-mono font-bold text-[#0D3B2A]">
                         {rentalCartCount} {rentalCartCount === 1 ? 'Machine' : 'Machines'}
                       </span>

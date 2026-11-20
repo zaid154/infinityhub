@@ -673,7 +673,7 @@ export default function RentalPlans() {
                   <div className="pt-2.5 mt-2.5 border-t border-[#D4A24C]/20 space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="text-[9px] font-bold uppercase tracking-wider text-[#8A5E12]">
-                        Monthly Fleet Lease
+                        Monthly Rental Rate
                       </span>
                       <span className="text-sm sm:text-base font-bold text-[#0D3B2A] font-serif">
                         ₹{p.rental_price_monthly?.toLocaleString('en-IN') || 1200}
@@ -683,7 +683,7 @@ export default function RentalPlans() {
 
                     <div className="grid grid-cols-2 gap-2">
                       <button
-                        onClick={() => openRFQ(`Fleet Lease Inquiry: ${p.title} (${maxRental} units in stock)`)}
+                        onClick={() => openRFQ(`Rental Inquiry: ${p.title} (${maxRental} units in stock)`)}
                         className="w-full h-8 rounded-full bg-[#FAF7F2] hover:bg-[#F3E8D2] text-[#0D3B2A] text-[10px] sm:text-[11px] font-bold uppercase tracking-wider transition border border-[#D4A24C]/30 text-center cursor-pointer"
                       >
                         Inquire RFQ
@@ -694,7 +694,7 @@ export default function RentalPlans() {
                         className="w-full h-8 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-[10px] sm:text-[11px] font-bold uppercase tracking-wider transition shadow-2xs flex items-center justify-center gap-1 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
                       >
                         <Repeat className="w-3 h-3 text-[#D4A24C]" />
-                        <span>Rent Fleet</span>
+                        <span>Rent Now</span>
                       </button>
                     </div>
                   </div>
@@ -706,7 +706,7 @@ export default function RentalPlans() {
       </section>
 
       {/* ======================================================== */}
-      {/* SECTION 5: INTERACTIVE LUXURY FLEET COST ESTIMATOR       */}
+      {/* SECTION 5: INTERACTIVE CORPORATE RENTAL CALCULATOR       */}
       {/* ======================================================== */}
       <section className="space-y-4">
         <div className="text-center max-w-2xl mx-auto space-y-1.5">
@@ -714,10 +714,10 @@ export default function RentalPlans() {
             — DYNAMIC COST PROJECTION
           </span>
           <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#0D3B2A]">
-            Interactive Corporate Fleet Calculator
+            Interactive Corporate Rental Calculator
           </h2>
           <p className="text-xs sm:text-sm text-[#5A6B63]">
-            Customize fleet volume, device specifications, and contract tenure with real-time OPEX projections.
+            Customize quantity, device specifications, and contract tenure with real-time OPEX projections.
           </p>
         </div>
 

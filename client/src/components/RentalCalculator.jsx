@@ -23,7 +23,7 @@ const TENURE_OPTIONS = [
 ];
 
 const CATEGORY_TABS = [
-  { id: 'all', label: 'All Leasable Fleets', icon: Layers },
+  { id: 'all', label: 'All Rental Hardware', icon: Layers },
   { id: 'laptop', label: 'Enterprise Laptops', icon: Laptop },
   { id: 'monitor', label: 'Business Displays', icon: Monitor },
   { id: 'gpu', label: 'Workstation GPUs', icon: Cpu }
@@ -154,11 +154,11 @@ export default function RentalCalculator({ onOpenRFQ, rentalProducts, hideHeader
       return;
     }
     if (maxStock <= 0 || effectiveQuantity <= 0) {
-      toast.error(`Sorry, ${currentProduct.title} currently has 0 units available in rental fleet.`);
+      toast.error(`Sorry, ${currentProduct.title} currently has 0 units available in rental inventory.`);
       return;
     }
     addToRentalCart(currentProduct, effectiveQuantity, tenure.tenureKey);
-    toast.success(`${effectiveQuantity}x ${currentProduct.title} (${tenure.label}) added to Corporate Cart!`);
+    toast.success(`${effectiveQuantity}x ${currentProduct.title} (${tenure.label}) added to Rental Cart!`);
   };
 
   const handleRequestRFQ = () => {
@@ -180,7 +180,7 @@ export default function RentalCalculator({ onOpenRFQ, rentalProducts, hideHeader
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 mb-6 pb-5 border-b border-[#0D3B2A]/10">
             <div>
               <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.22em] text-[#8A5E12] font-mono font-bold block mb-1">
-                — TRANSPARENT B2B LEASING & FLEET SIZING
+                — TRANSPARENT B2B LEASING & QUANTITY SIZING
               </span>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif text-[#0D3B2A] font-bold tracking-tight">
                 Corporate Rental & Lease Estimator
@@ -224,14 +224,14 @@ export default function RentalCalculator({ onOpenRFQ, rentalProducts, hideHeader
         {/* 2-Column Responsive Estimator Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
           
-          {/* Left Column: Interactive Fleet Controls (Span 7) */}
+          {/* Left Column: Interactive Controls (Span 7) */}
           <div className="lg:col-span-7 space-y-6">
             
             {/* 1. Hardware Selection Grid (Pure Database Feed) */}
             <div>
               <div className="flex items-center justify-between mb-2.5">
                 <label className="text-xs font-bold uppercase tracking-wider text-[#0D3B2A] font-mono">
-                  1. Select Hardware Fleet
+                  1. Select Hardware Model
                 </label>
                 {currentProduct && (
                   <span className="text-xs text-[#8A5E12] font-semibold truncate max-w-[240px]">
@@ -313,12 +313,12 @@ export default function RentalCalculator({ onOpenRFQ, rentalProducts, hideHeader
               )}
             </div>
 
-            {/* 2. Fleet Size / Quantity Slider */}
+            {/* 2. Quantity (Units) Selection Slider */}
             <div className="bg-white p-4 sm:p-5 rounded-2xl border border-[#0D3B2A]/15 shadow-xs">
               <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
                 <div className="flex items-center gap-2">
                   <label className="text-xs font-bold uppercase tracking-wider text-[#0D3B2A] font-mono">
-                    2. Required Fleet Volume
+                    2. Required Quantity (Units)
                   </label>
                   <span className="text-[10.5px] font-mono text-[#8A5E12] font-semibold bg-[#FAF7F2] px-2 py-0.5 rounded-md border border-[#D4A24C]/30">
                     Max Stock: {maxStock} {unitLabel}
@@ -344,7 +344,7 @@ export default function RentalCalculator({ onOpenRFQ, rentalProducts, hideHeader
                     onClick={handleRequestRFQ}
                     className="underline font-bold text-[#0D3B2A] hover:text-[#8A5E12] text-left cursor-pointer"
                   >
-                    Request Custom Fleet Procurement RFQ &rarr;
+                    Request Custom Bulk Quotation (RFQ) &rarr;
                   </button>
                 </div>
               ) : (
@@ -363,9 +363,9 @@ export default function RentalCalculator({ onOpenRFQ, rentalProducts, hideHeader
                     className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0D3B2A]"
                   />
 
-                  {/* Dynamic Fleet Presets capped to available warehouse stock */}
+                  {/* Dynamic Presets capped to available warehouse stock */}
                   <div className="flex items-center justify-between mt-3 pt-2 border-t border-slate-100 flex-wrap gap-2">
-                    <span className="text-[10.5px] text-[#5A6B63] font-semibold">Available Fleet Sizing:</span>
+                    <span className="text-[10.5px] text-[#5A6B63] font-semibold">Quick Quantity Presets:</span>
                     <div className="flex items-center gap-1.5 flex-wrap">
                       {dynamicPresets.map((p) => (
                         <button
@@ -487,14 +487,14 @@ export default function RentalCalculator({ onOpenRFQ, rentalProducts, hideHeader
               {/* Line Items Breakdown */}
               <div className="space-y-2 text-xs border-t border-white/10 pt-3.5 text-slate-300">
                 <div className="flex justify-between items-start gap-2">
-                  <span className="text-slate-400 shrink-0">Selected Fleet:</span>
+                  <span className="text-slate-400 shrink-0">Selected Model:</span>
                   <span className="text-right text-[#FAF7F2] font-semibold truncate max-w-[220px]">
-                    {currentProduct?.title || 'Enterprise Hardware Fleet'}
+                    {currentProduct?.title || 'Enterprise Hardware Model'}
                   </span>
                 </div>
 
                 <div className="flex justify-between">
-                  <span className="text-slate-400">Fleet Deployment:</span>
+                  <span className="text-slate-400">Total Quantity:</span>
                   <span className="text-[#FAF7F2] font-semibold font-mono">
                     {effectiveQuantity} {unitLabel}
                   </span>
@@ -509,7 +509,7 @@ export default function RentalCalculator({ onOpenRFQ, rentalProducts, hideHeader
 
                 {volumeDiscountPercent > 0 && (
                   <div className="flex justify-between text-emerald-400">
-                    <span>Volume Fleet Rebate:</span>
+                    <span>Bulk Order Discount:</span>
                     <span className="font-mono">-{volumeDiscountPercent}%</span>
                   </div>
                 )}
@@ -542,7 +542,7 @@ export default function RentalCalculator({ onOpenRFQ, rentalProducts, hideHeader
                 className="w-full py-3 rounded-xl bg-[#D4A24C] hover:bg-[#c5943b] disabled:opacity-40 disabled:cursor-not-allowed text-[#0D3B2A] font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md active:scale-98"
               >
                 <ShoppingBag className="w-4 h-4" />
-                <span>{maxStock <= 0 ? 'Out of Stock in Fleet' : 'Add Fleet Lease to Cart'}</span>
+                <span>{maxStock <= 0 ? 'Out of Stock' : 'Add to Rental Cart'}</span>
               </button>
 
               <button
@@ -551,7 +551,7 @@ export default function RentalCalculator({ onOpenRFQ, rentalProducts, hideHeader
                 className="w-full py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-[#FAF7F2] font-semibold text-xs tracking-wide transition-colors flex items-center justify-center gap-2 cursor-pointer"
               >
                 <FileText className="w-4 h-4 text-[#D4A24C]" />
-                <span>Request Custom Procurement RFQ</span>
+                <span>Request Custom Bulk Quotation (RFQ)</span>
               </button>
             </div>
 
