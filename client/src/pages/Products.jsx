@@ -441,7 +441,7 @@ export default function Products() {
                 </p>
                 <p className="text-xs text-[#5A6B63] mt-1 max-w-md mx-auto">
                   {search.trim() 
-                    ? 'Check for spelling mistakes, try searching by brand (Dell, HP, Lenovo, NVIDIA), or clear the search to view all inventory.'
+                    ? 'Check for spelling mistakes, try searching by brand or model name, or clear the search to view all inventory.'
                     : 'Try adjusting your category, price range, or condition filters to view available inventory.'}
                 </p>
               </div>
