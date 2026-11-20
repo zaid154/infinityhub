@@ -60,7 +60,7 @@ export default function AdminRentals() {
       const res = await api.put(`/rentals/${selectedRental._id}/status`, {
         status,
         payment_status: paymentStatus,
-        admin_notes: notes
+        admin_notes: (notes || '').trim()
       });
       if (res.data.success) {
         toast.success('Rental fleet agreement updated successfully!');

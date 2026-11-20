@@ -117,9 +117,9 @@ export default function AdminOrders() {
       const payload = {
         order_status: drawerDispatchStatus,
         payment_status: drawerPaymentStatus,
-        courier_name: drawerCourier,
-        tracking_number: drawerTracking,
-        admin_notes: drawerNotes
+        courier_name: (drawerCourier || '').trim(),
+        tracking_number: (drawerTracking || '').trim(),
+        admin_notes: (drawerNotes || '').trim()
       };
       const res = await api.put(`/orders/${drawerOrder._id}/status`, payload);
       if (res.data.success) {
