@@ -108,6 +108,7 @@ export default function Cart() {
     rentalCartCount,
     cartCount,
     buySubtotal,
+    rentalUndiscountedTotal,
     rentalMonthlyTotal,
     rentalSavingsTotal,
     updateBuyQuantity,
@@ -379,7 +380,7 @@ export default function Cart() {
         title: 'Master Rental Agreement Registered!',
         subtitle: 'Hardware fleet staging and SLA provisioning initiated.',
         referenceId: 'RENTAL-FLEET-AGMT',
-        amount: `₹${Math.round(rentalMonthlyTotal).toLocaleString('en-IN')}/mo`,
+        amount: `₹${Math.round(grandRentalMonthly).toLocaleString('en-IN')}/mo`,
         redirectTo: '/dashboard/rentals'
       });
     } catch (err) {
@@ -519,7 +520,7 @@ export default function Cart() {
                         key={p._id}
                         className="bg-white p-4 sm:p-5 rounded-3xl border border-[#D4A24C]/25 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4"
                       >
-                        <div className="flex items-center gap-3.5">
+                        <div className="flex items-start sm:items-center gap-3.5 flex-1 min-w-0">
                           <div className="w-16 h-16 rounded-2xl bg-[#FAF7F2] p-2 border border-[#D4A24C]/20 flex items-center justify-center shrink-0">
                             <img
                               src={getProductImage(p)}
@@ -531,15 +532,16 @@ export default function Cart() {
                               className="max-h-full object-contain filter drop-shadow-sm"
                             />
                           </div>
-                          <div>
-                            <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-[#FAF7F2] text-[#0D3B2A] uppercase border border-[#D4A24C]/30">
-                              Buy Stock: {maxSale} Available
+                          <div className="flex-1 min-w-0">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-[#FAF7F2] text-[#0D3B2A] border border-[#D4A24C]/30 whitespace-nowrap">
+                              <ShieldCheck className="w-3 h-3 text-[#D4A24C]" />
+                              Stock: {maxSale} Available
                             </span>
-                            <h3 className="text-xs sm:text-sm font-bold text-[#0D3B2A] font-serif line-clamp-1 mt-1">
+                            <h3 className="text-sm sm:text-base font-bold text-[#0D3B2A] font-serif line-clamp-2 mt-1">
                               {p.title}
                             </h3>
-                            <p className="text-[11px] text-[#5A6B63] font-mono">
-                              ₹{p.sale_price.toLocaleString('en-IN')} unit • GST {p.gst_rate || 18}%
+                            <p className="text-[11px] text-[#5A6B63] font-mono mt-0.5">
+                              ₹{p.sale_price.toLocaleString('en-IN')}/unit • GST {p.gst_rate || 18}% (excl. GST)
                             </p>
                           </div>
                         </div>
@@ -807,8 +809,10 @@ export default function Cart() {
                     const p = item.product;
                     const discount = getTenureDiscount(item.tenure);
                     const baseRate = p.rental_price_monthly || 1350;
-                    const effectiveRate = Math.round(baseRate * (1 - discount));
-                    const itemMonthly = effectiveRate * item.quantity;
+                    const itemBaseTotal = baseRate * item.quantity;
+                    const itemDiscount = Math.round(itemBaseTotal * discount);
+                    const itemTaxableTotal = itemBaseTotal - itemDiscount;
+                    const effectivePerUnitRate = item.quantity > 0 ? itemTaxableTotal / item.quantity : baseRate;
                     const maxRental = p.rental_stock !== undefined ? p.rental_stock : 5;
                     const isMax = item.quantity >= maxRental;
 
@@ -823,7 +827,7 @@ export default function Cart() {
                         className="bg-white p-5 rounded-3xl border border-[#D4A24C]/25 shadow-sm space-y-4"
                       >
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                          <div className="flex items-center gap-3.5">
+                          <div className="flex items-start sm:items-center gap-3.5 flex-1 min-w-0">
                             <div className="w-16 h-16 rounded-2xl bg-[#FAF7F2] p-2 border border-[#D4A24C]/20 flex items-center justify-center shrink-0">
                               <img
                                 src={getProductImage(p)}
@@ -835,36 +839,36 @@ export default function Cart() {
                                 className="max-h-full object-contain filter drop-shadow-sm"
                               />
                             </div>
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-[#FAF7F2] text-[#8A5E12] uppercase border border-[#D4A24C]/30">
-                                  Active Rental Fleet: {maxRental} Available
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-[#FAF7F2] text-[#8A5E12] border border-[#D4A24C]/30 whitespace-nowrap">
+                                  <ShieldCheck className="w-3 h-3 text-[#D4A24C]" />
+                                  Stock: {maxRental} Available
                                 </span>
                                 {discount > 0 && (
-                                  <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-[#FAF7F2] text-[#0D3B2A] border border-[#D4A24C]/40">
-                                    Save {Math.round(discount * 100)}%
+                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 whitespace-nowrap">
+                                    {Math.round(discount * 100)}% Tenure Off
                                   </span>
                                 )}
                               </div>
-                              <h3 className="text-xs sm:text-sm font-bold text-[#0D3B2A] font-serif line-clamp-1 mt-1">
+                              <h3 className="text-sm sm:text-base font-bold text-[#0D3B2A] font-serif line-clamp-2 mt-1">
                                 {p.title}
                               </h3>
-                              <p className="text-[11px] text-[#5A6B63] font-mono">
-                                Rate:{' '}
+                              <div className="flex flex-wrap items-baseline gap-1.5 text-xs font-mono mt-0.5">
                                 {discount > 0 && (
-                                  <span className="line-through text-slate-400 mr-1.5">
+                                  <span className="line-through text-slate-400 text-[11px]">
                                     ₹{baseRate.toLocaleString('en-IN')}/mo
                                   </span>
                                 )}
                                 <span className="font-bold text-[#0D3B2A]">
-                                  ₹{effectiveRate.toLocaleString('en-IN')}/mo
-                                </span>{' '}
-                                per device
-                              </p>
+                                  ₹{Number(effectivePerUnitRate.toFixed(2)).toLocaleString('en-IN')}/mo
+                                </span>
+                                <span className="text-[10.5px] text-[#5A6B63] font-sans">per device (excl. GST)</span>
+                              </div>
                             </div>
                           </div>
 
-                          <div className="flex items-center justify-between sm:justify-end gap-4">
+                          <div className="flex items-center justify-between sm:justify-end gap-4 shrink-0 border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-100">
                             {/* Quantity Counter clamped to rental_stock */}
                             <div className="flex items-center border border-[#D4A24C]/30 rounded-full overflow-hidden bg-[#FAF7F2] text-xs shadow-inner">
                               <button
@@ -884,16 +888,16 @@ export default function Cart() {
                               </button>
                             </div>
 
-                            <div className="text-right min-w-[90px]">
+                            <div className="text-right min-w-[95px]">
                               <span className="text-sm font-bold text-[#0D3B2A] font-mono block">
-                                ₹{itemMonthly.toLocaleString('en-IN')}/mo
+                                ₹{itemTaxableTotal.toLocaleString('en-IN')}/mo
                               </span>
-                              <span className="text-[10px] text-[#5A6B63]">monthly billing</span>
+                              <span className="text-[10px] text-[#5A6B63] block">taxable subtotal</span>
                             </div>
 
                             <button
                               onClick={() => removeFromRentalCart(p._id)}
-                              className="text-slate-400 hover:text-red-500 transition p-1 cursor-pointer"
+                              className="text-slate-400 hover:text-red-500 transition p-1.5 cursor-pointer rounded-lg hover:bg-red-50"
                               title="Remove from rental cart"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -902,30 +906,54 @@ export default function Cart() {
                         </div>
 
                         {/* Tenure Selector for this machine */}
-                        <div className="bg-[#FAF7F2] p-3 rounded-2xl border border-[#D4A24C]/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
-                          <span className="font-bold text-[#0D3B2A] font-serif flex items-center gap-1.5">
-                            <Clock className="w-3.5 h-3.5 text-[#D4A24C]" />
-                            Lease Tenure Commitment:
-                          </span>
+                        <div className="bg-[#FAF7F2] p-3 sm:p-3.5 rounded-2xl border border-[#D4A24C]/20 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
+                          <div className="flex items-center gap-2">
+                            <div className="w-6 h-6 rounded-lg bg-white border border-[#D4A24C]/30 flex items-center justify-center text-[#8A5E12] shadow-xs shrink-0">
+                              <Clock className="w-3.5 h-3.5" />
+                            </div>
+                            <div>
+                              <span className="font-bold text-[#0D3B2A] font-serif block text-xs">
+                                Lease Commitment Tenure
+                              </span>
+                              <span className="text-[10.5px] text-[#5A6B63] block">
+                                Higher tenure commits unlock progressive billing discounts
+                              </span>
+                            </div>
+                          </div>
 
-                          <div className="grid grid-cols-3 gap-1.5">
+                          <div className="flex flex-wrap sm:flex-nowrap items-center gap-1.5 p-1 bg-white/80 rounded-xl border border-[#D4A24C]/25 shadow-xs">
                             {[
-                              { id: '3_months', label: '3 Months' },
-                              { id: '6_months', label: '6 Months (5% Off)' },
-                              { id: '12_months', label: '12+ Months (15% Off)' }
-                            ].map((t) => (
-                              <button
-                                key={t.id}
-                                onClick={() => updateRentalTenure(p._id, t.id)}
-                                className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider transition ${
-                                  (item.tenure || '6_months') === t.id
-                                    ? 'bg-[#0D3B2A] text-white shadow-sm'
-                                    : 'bg-white text-[#5A6B63] hover:text-[#0D3B2A] border border-[#D4A24C]/25'
-                                }`}
-                              >
-                                {t.label}
-                              </button>
-                            ))}
+                              { id: '3_months', label: '3 Months', tag: 'Standard' },
+                              { id: '6_months', label: '6 Months', tag: '5% Off' },
+                              { id: '12_months', label: '12+ Months', tag: '15% Off' }
+                            ].map((t) => {
+                              const isSelected = (item.tenure || '6_months') === t.id;
+                              return (
+                                <button
+                                  key={t.id}
+                                  type="button"
+                                  onClick={() => updateRentalTenure(p._id, t.id)}
+                                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                                    isSelected
+                                      ? 'bg-[#0D3B2A] text-white shadow-sm ring-1 ring-[#D4A24C]/40'
+                                      : 'text-[#5A6B63] hover:text-[#0D3B2A] hover:bg-[#FAF7F2]'
+                                  }`}
+                                >
+                                  <span>{t.label}</span>
+                                  <span
+                                    className={`text-[9.5px] px-1.5 py-0.2 rounded-full font-bold ${
+                                      isSelected
+                                        ? 'bg-white/20 text-[#D4A24C]'
+                                        : t.id === '3_months'
+                                        ? 'bg-slate-100 text-slate-500'
+                                        : 'bg-emerald-50 text-emerald-700'
+                                    }`}
+                                  >
+                                    {t.tag}
+                                  </span>
+                                </button>
+                              );
+                            })}
                           </div>
                         </div>
                       </motion.div>
@@ -1013,47 +1041,59 @@ export default function Cart() {
                     Monthly Lease Quotation Summary
                   </h3>
 
-                  <div className="space-y-2 text-[#5A6B63]">
-                    <div className="flex justify-between">
+                  <div className="space-y-2.5 text-[#5A6B63]">
+                    <div className="flex justify-between items-center">
                       <span>Total Fleet Size:</span>
                       <span className="font-mono font-bold text-[#0D3B2A]">
-                        {rentalCartCount} Machines
+                        {rentalCartCount} {rentalCartCount === 1 ? 'Machine' : 'Machines'}
                       </span>
                     </div>
 
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center">
                       <span>Base Monthly Rental:</span>
                       <span className="font-mono font-bold text-[#0D3B2A]">
-                        ₹{(rentalMonthlyTotal + rentalSavingsTotal).toLocaleString('en-IN')}/mo
+                        ₹{rentalUndiscountedTotal.toLocaleString('en-IN')}/mo
                       </span>
                     </div>
 
                     {rentalSavingsTotal > 0 && (
-                      <div className="flex justify-between text-emerald-700 font-semibold">
-                        <span>Tenure Lease Discount:</span>
-                        <span className="font-mono">
+                      <div className="flex justify-between items-center text-emerald-700 font-semibold">
+                        <span>Tenure Volume Discount:</span>
+                        <span className="font-mono font-bold">
                           -₹{rentalSavingsTotal.toLocaleString('en-IN')}/mo
                         </span>
                       </div>
                     )}
 
-                    <div className="flex justify-between">
-                      <span>Refundable Security Deposit:</span>
+                    <div className="flex justify-between items-center border-t border-slate-200/80 pt-2 font-medium text-slate-800">
+                      <span>Net Taxable Rental:</span>
                       <span className="font-mono font-bold text-[#0D3B2A]">
+                        ₹{rentalMonthlyTotal.toLocaleString('en-IN')}/mo
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between items-center">
+                      <span>Refundable Security Deposit:</span>
+                      <span className="font-mono font-bold text-emerald-700">
                         ₹0 (100% Zero-Collateral)
                       </span>
                     </div>
 
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center">
                       <span>Monthly GST (18% GSTR-2B):</span>
-                      <span className="font-mono font-bold text-emerald-700">
+                      <span className="font-mono font-bold text-slate-700">
                         +₹{totalRentalGst.toLocaleString('en-IN')}/mo
                       </span>
                     </div>
 
                     <div className="border-t border-[#D4A24C]/20 pt-3 flex justify-between items-baseline text-sm">
-                      <span className="font-bold text-[#0D3B2A] font-serif">Grand Monthly Recurring:</span>
-                      <span className="text-xl font-bold text-[#0D3B2A] font-serif">
+                      <div>
+                        <span className="font-bold text-[#0D3B2A] font-serif block">Grand Monthly Recurring:</span>
+                        <span className="text-[10px] text-[#5A6B63] block font-sans">
+                          100% GST ITC Deductible (Net cost after ITC: ₹{rentalMonthlyTotal.toLocaleString('en-IN')}/mo)
+                        </span>
+                      </div>
+                      <span className="text-xl font-bold text-[#0D3B2A] font-serif text-right">
                         ₹{grandRentalMonthly.toLocaleString('en-IN')}<span className="text-xs text-[#5A6B63] font-sans font-normal">/mo</span>
                       </span>
                     </div>

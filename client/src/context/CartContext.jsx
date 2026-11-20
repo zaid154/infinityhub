@@ -211,20 +211,22 @@ export const CartProvider = ({ children }) => {
     0
   );
 
-  // Rental monthly calculation with tenure discounts (5% for 6mo, 15% for 12mo)
+  // Rental monthly calculation with accurate mathematical precision:
+  // Base total = sum(unit_rate * quantity)
+  // Discount = sum(Math.round(unit_rate * quantity * discount_rate))
+  // Net Taxable = Base total - Discount
   const rentalUndiscountedTotal = rentalCart.reduce(
     (total, item) => total + (item.product.rental_price_monthly || 0) * item.quantity,
     0
   );
 
-  const rentalMonthlyTotal = rentalCart.reduce((total, item) => {
-    const baseRate = item.product.rental_price_monthly || 0;
+  const rentalSavingsTotal = rentalCart.reduce((total, item) => {
+    const itemBaseTotal = (item.product.rental_price_monthly || 0) * item.quantity;
     const discount = getTenureDiscount(item.tenure);
-    const effectiveMonthlyRate = Math.round(baseRate * (1 - discount));
-    return total + effectiveMonthlyRate * item.quantity;
+    return total + Math.round(itemBaseTotal * discount);
   }, 0);
 
-  const rentalSavingsTotal = Math.max(0, rentalUndiscountedTotal - rentalMonthlyTotal);
+  const rentalMonthlyTotal = Math.max(0, rentalUndiscountedTotal - rentalSavingsTotal);
 
   return (
     <CartContext.Provider
@@ -254,6 +256,7 @@ export const CartProvider = ({ children }) => {
         rentalCartCount,
         cartCount,
         buySubtotal,
+        rentalUndiscountedTotal,
         rentalMonthlyTotal,
         rentalSavingsTotal,
         getTenureDiscount
