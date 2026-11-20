@@ -393,23 +393,22 @@ export default function ProductDetail() {
           {product.available_for === 'rent' ? (
             <div className="space-y-3 pt-1">
               {inRentalItem ? (
-                <div className="flex flex-col sm:flex-row items-center gap-2.5">
+                <div className="flex items-center gap-2">
                   <button
                     type="button"
                     onClick={(e) => handleAddRental(e)}
-                    className="flex-1 w-full py-3 sm:py-3.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-sans font-bold text-xs uppercase tracking-[0.15em] shadow-lg flex items-center justify-center gap-2 cursor-pointer transition-all hover:brightness-105 active:scale-95 group"
+                    className="flex-1 h-12 px-3 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-sans font-bold text-[11px] sm:text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-1.5 cursor-pointer transition-all hover:brightness-105 active:scale-95 whitespace-nowrap group"
                   >
-                    <Repeat className="w-4 h-4 text-[#D4A24C]" />
-                    <span>RENT THIS MODEL (+ ADD)</span>
-                    <ArrowRight className="w-4 h-4 text-[#D4A24C] group-hover:translate-x-1 transition-transform" />
+                    <Repeat className="w-3.5 h-3.5 text-[#D4A24C] shrink-0" />
+                    <span>RENT THIS MODEL</span>
                   </button>
 
                   <Link
                     to="/cart"
-                    className="w-full sm:w-auto px-4 sm:px-5 py-3 sm:py-3.5 rounded-full bg-[#FAF7F2] hover:bg-[#F4ECE1] text-[#0D3B2A] border border-[#D4A24C] font-sans font-bold text-xs uppercase tracking-wider shadow-sm flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95 whitespace-nowrap group shrink-0"
+                    className="flex-1 h-12 px-3 rounded-full bg-[#FAF7F2] hover:bg-[#F4ECE1] text-[#0D3B2A] border-2 border-[#D4A24C] font-sans font-bold text-[11px] sm:text-xs uppercase tracking-wider shadow-sm flex items-center justify-center gap-1.5 cursor-pointer transition-all active:scale-95 whitespace-nowrap group"
                   >
-                    <CheckCircle2 className="w-4 h-4 text-[#8A5E12] shrink-0" />
-                    <span>{inRentalItem.quantity} in Rental Cart</span>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#8A5E12] shrink-0" />
+                    <span>{inRentalItem.quantity} in Cart</span>
                     <span className="text-[#D4A24C]">•</span>
                     <span className="text-[11px] font-semibold text-[#8A5E12] group-hover:underline">
                       View Cart &rarr;
