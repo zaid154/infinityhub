@@ -21,7 +21,7 @@ import api from '../services/api';
 import { getSafeImageUrl, DEFAULT_HARDWARE_PLACEHOLDER } from '../utils/imageHelper';
 import toast from 'react-hot-toast';
 import { useCompany } from '../context/SettingsContext';
-import { ExecutiveSuccessCard, APPLE_SPRING, useReducedMotionSafe } from '../animations';
+import { ExecutiveSuccessCard, useReducedMotionSafe } from '../animations';
 
 /**
  * 100% Database-Driven Logistics Zone Auto-Matcher
@@ -421,9 +421,25 @@ export default function Cart() {
             to="/rental"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#FAF7F2] hover:bg-[#F3E8D2] text-[#0D3B2A] font-bold text-xs uppercase tracking-wider transition border border-[#D4A24C]/40"
           >
-            <span>Rental Fleet Plans</span>
+            <span>Rental Plans</span>
           </Link>
         </div>
+
+        {/* Executive Success Modal (rendered even if cart is emptied on checkout) */}
+        <ExecutiveSuccessCard
+          isOpen={celebration.isOpen}
+          title={celebration.title}
+          referenceId={celebration.referenceId}
+          amount={celebration.amount}
+          viewOrderLink={celebration.redirectTo || '/dashboard/orders'}
+          onClose={() => {
+            const target = celebration.redirectTo;
+            setCelebration((prev) => ({ ...prev, isOpen: false }));
+            if (target) {
+              navigate(target);
+            }
+          }}
+        />
       </div>
     );
   }
@@ -445,45 +461,52 @@ export default function Cart() {
         <div className="inline-flex p-1 rounded-full bg-[#FAF7F2] border border-[#D4A24C]/30 shadow-inner relative">
           <button
             onClick={() => setActiveTab('buy')}
-            className={`relative px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition flex items-center gap-2 cursor-pointer z-10 ${
+            className={`relative px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-colors duration-200 flex items-center gap-2 cursor-pointer z-10 ${
               activeTab === 'buy' ? 'text-white' : 'text-[#5A6B63] hover:text-[#0D3B2A]'
             }`}
           >
             {activeTab === 'buy' && (
               <motion.div
                 layoutId="activeCartTab"
-                transition={APPLE_SPRING}
+                transition={{ type: 'spring', stiffness: 300, damping: 26, mass: 0.8 }}
                 className="absolute inset-0 bg-[#0D3B2A] rounded-full -z-10 shadow-md"
               />
             )}
-            <ShoppingCart className={`w-3.5 h-3.5 ${activeTab === 'buy' ? 'text-[#D4A24C]' : 'text-slate-400'}`} />
+            <ShoppingCart className={`w-3.5 h-3.5 transition-colors duration-200 ${activeTab === 'buy' ? 'text-[#D4A24C]' : 'text-slate-400'}`} />
             <span>Direct Purchase ({buyCartCount})</span>
           </button>
 
           <button
             onClick={() => setActiveTab('rental')}
-            className={`relative px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition flex items-center gap-2 cursor-pointer z-10 ${
+            className={`relative px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-colors duration-200 flex items-center gap-2 cursor-pointer z-10 ${
               activeTab === 'rental' ? 'text-white' : 'text-[#5A6B63] hover:text-[#0D3B2A]'
             }`}
           >
             {activeTab === 'rental' && (
               <motion.div
                 layoutId="activeCartTab"
-                transition={APPLE_SPRING}
+                transition={{ type: 'spring', stiffness: 300, damping: 26, mass: 0.8 }}
                 className="absolute inset-0 bg-[#0D3B2A] rounded-full -z-10 shadow-md"
               />
             )}
-            <Repeat className={`w-3.5 h-3.5 ${activeTab === 'rental' ? 'text-[#D4A24C]' : 'text-slate-400'}`} />
+            <Repeat className={`w-3.5 h-3.5 transition-colors duration-200 ${activeTab === 'rental' ? 'text-[#D4A24C]' : 'text-slate-400'}`} />
             <span>Rental Cart ({rentalCartCount})</span>
           </button>
         </div>
       </div>
 
       {/* ======================================================== */}
-      {/* TAB 1: DIRECT PURCHASE ORDER (BUY CART)                  */}
+      {/* TABS CONTENT WITH SILKY CROSS-FADE TRANSITION            */}
       {/* ======================================================== */}
-      {activeTab === 'buy' && (
-        <>
+      <AnimatePresence mode="wait">
+        {activeTab === 'buy' ? (
+          <motion.div
+            key="buy-tab-container"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.22 }}
+          >
           {buyCart.length === 0 ? (
             <div className="bg-white rounded-3xl p-12 text-center border border-[#D4A24C]/25 space-y-3">
               <ShoppingCart className="w-10 h-10 text-slate-300 mx-auto" />
@@ -790,15 +813,16 @@ export default function Cart() {
               </div>
             </div>
           )}
-        </>
-      )}
-
-      {/* ======================================================== */}
-      {/* TAB 2: CORPORATE RENTAL FLEET LEASE (RENTAL CART)       */}
-      {/* ======================================================== */}
-      {activeTab === 'rental' && (
-        <>
-          {rentalCart.length === 0 ? (
+          </motion.div>
+        ) : (
+          <motion.div
+            key="rental-tab-container"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.22 }}
+          >
+            {rentalCart.length === 0 ? (
             <div className="bg-white rounded-3xl p-12 text-center border border-[#D4A24C]/25 space-y-3">
               <Repeat className="w-10 h-10 text-slate-300 mx-auto" />
               <h3 className="font-serif font-bold text-base text-[#0D3B2A]">No Hardware in Rental Cart</h3>
@@ -1164,8 +1188,9 @@ export default function Cart() {
               </div>
             </div>
           )}
-        </>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Checkout Executive Success Modal */}
       <ExecutiveSuccessCard

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useParams, Link, useOutletContext } from 'react-router-dom';
 import {
   ShieldCheck,
@@ -206,15 +206,18 @@ export default function ProductDetail() {
                 className="max-h-full max-w-full rounded-2xl object-contain shadow-lg bg-black/10"
               />
             ) : (
-              <motion.img
-                key={currentMedia?.url}
-                initial={{ opacity: 0.5, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.28, ease: APPLE_EASE }}
-                src={currentMedia?.url}
-                alt={product.title}
-                className="max-h-full max-w-full object-contain filter drop-shadow-[0_15px_20px_rgba(0,0,0,0.12)] hover:scale-105"
-              />
+              <AnimatePresence mode="wait">
+                <motion.img
+                  key={currentMedia?.url || selectedImage}
+                  initial={{ opacity: 0, scale: 0.94 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.96 }}
+                  transition={{ duration: 0.32, ease: APPLE_EASE }}
+                  src={currentMedia?.url}
+                  alt={product.title}
+                  className="max-h-full max-w-full object-contain filter drop-shadow-[0_15px_20px_rgba(0,0,0,0.12)] hover:scale-105 transition-transform"
+                />
+              </AnimatePresence>
             )}
           </div>
 
