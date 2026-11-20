@@ -13,7 +13,8 @@ import {
   Minus,
   Plus,
   Repeat,
-  CheckCircle2
+  CheckCircle2,
+  SlidersHorizontal
 } from 'lucide-react';
 import api from '../services/api';
 import { useCart } from '../context/CartContext';
@@ -31,6 +32,7 @@ export default function ProductDetail() {
   const [selectedImage, setSelectedImage] = useState(0);
   const [qty, setQty] = useState(1);
   const [readMore, setReadMore] = useState(false);
+  const [showAllSpecs, setShowAllSpecs] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -49,6 +51,7 @@ export default function ProductDetail() {
           setSelectedImage(0);
           setQty(1);
           setReadMore(false);
+          setShowAllSpecs(false);
         }
       } catch (err) {
         console.error('[Product Detail Error]', err);
@@ -530,27 +533,62 @@ export default function ProductDetail() {
             </div>
           )}
 
-          {/* Technical Specifications Accordion / Box */}
-          {product.specs && Object.keys(product.specs).length > 0 && (
-            <div className="pt-2 border-t border-[#D4A24C]/20">
-              <h3 className="text-[11px] font-bold uppercase tracking-wider text-[#0D3B2A] font-sans mb-1.5">
-                TECHNICAL SPECIFICATIONS
-              </h3>
-              <div className="bg-white rounded-xl border border-[#D4A24C]/25 p-3 text-[11px] space-y-1.5">
-                {Object.entries(product.specs).map(([k, v]) => {
-                  if (!v) return null;
-                  return (
-                    <div key={k} className="flex justify-between border-b border-[#D4A24C]/10 pb-1 last:border-none">
-                      <span className="font-semibold text-[#5A6B63] capitalize">
+          {/* Technical Specifications Section (Luxury Theme Styled with Top Specs & Read More Toggle) */}
+          {product.specs && Object.keys(product.specs).length > 0 && (() => {
+            const validSpecs = Object.entries(product.specs).filter(([, v]) => Boolean(v));
+            if (validSpecs.length === 0) return null;
+            const visibleSpecs = showAllSpecs ? validSpecs : validSpecs.slice(0, 3);
+
+            return (
+              <div className="pt-2 border-t border-[#D4A24C]/25 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <SlidersHorizontal className="w-3.5 h-3.5 text-[#8A5E12]" />
+                    <h3 className="text-[11px] font-bold uppercase tracking-wider text-[#0D3B2A] font-sans">
+                      KEY TECHNICAL SPECIFICATIONS
+                    </h3>
+                  </div>
+                  <span className="text-[9.5px] font-mono text-[#8A5E12] font-semibold bg-[#FAF7F2] px-2 py-0.5 rounded-full border border-[#D4A24C]/35">
+                    100% Certified OEM
+                  </span>
+                </div>
+
+                <div className="bg-[#FAF7F2] rounded-2xl border border-[#D4A24C]/35 p-3.5 text-xs shadow-xs space-y-2">
+                  {visibleSpecs.map(([k, v]) => (
+                    <div
+                      key={k}
+                      className="flex items-center justify-between border-b border-[#D4A24C]/15 pb-1.5 last:border-none last:pb-0"
+                    >
+                      <span className="text-[#5A6B63] font-sans font-medium capitalize text-[11px] flex items-center gap-1.5">
+                        <span className="w-1 h-1 rounded-full bg-[#D4A24C]" />
                         {k.replace(/_/g, ' ')}
                       </span>
-                      <span className="font-bold text-[#0D3B2A] text-right font-mono">{v}</span>
+                      <span className="font-bold text-[#0D3B2A] text-right font-mono text-xs">
+                        {v}
+                      </span>
                     </div>
-                  );
-                })}
+                  ))}
+
+                  {/* READ MORE / VIEW ALL SPECIFICATIONS TOGGLE */}
+                  {validSpecs.length > 3 && (
+                    <div className="pt-1.5 border-t border-[#D4A24C]/20 text-center">
+                      <button
+                        type="button"
+                        onClick={() => setShowAllSpecs(!showAllSpecs)}
+                        className="inline-flex items-center gap-1 text-[11px] font-sans font-bold uppercase tracking-wider text-[#8A5E12] hover:text-[#0D3B2A] transition-colors cursor-pointer"
+                      >
+                        <span>
+                          {showAllSpecs
+                            ? 'SHOW LESS SPECS ∧'
+                            : `+ READ MORE SPECIFICATIONS (${validSpecs.length - 3} MORE) ∨`}
+                        </span>
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
 
         </div>
 
