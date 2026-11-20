@@ -209,15 +209,15 @@ export default function Home() {
 
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10 w-full my-auto">
           {/* Left Column: Al-Tooba Style Typography & Responsive CTAs */}
-          <div className="lg:col-span-7 space-y-4">
-            {/* Majestic Heading - Responsive across mobile, laptop, desktop */}
+          <div className="lg:col-span-8 space-y-3.5">
+            {/* Majestic Heading - Compact, balanced, and elegant across all viewports */}
             <motion.h1
               initial={{ opacity: 0, y: shouldReduce ? 0 : 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, ease: APPLE_EASE }}
-              className="text-[1.85rem] sm:text-4xl md:text-5xl lg:text-[3.25rem] xl:text-[3.65rem] font-normal tracking-tight text-white font-serif leading-[1.14] sm:leading-[1.12] drop-shadow-[0_12px_24px_rgba(0,0,0,0.85)]"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.45rem] xl:text-[2.7rem] font-normal tracking-tight text-white font-serif leading-[1.18] drop-shadow-[0_12px_24px_rgba(0,0,0,0.85)] max-w-2xl"
             >
-              Authentic <span className="text-[#F59E0B] italic font-serif font-extrabold drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">Laptops & Systems,</span> <br />
+              Authentic <span className="text-[#F59E0B] italic font-serif font-extrabold drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)] whitespace-nowrap">Laptops & Systems,</span> <br className="hidden sm:inline" />
               proven <span className="text-[#F59E0B] italic font-serif font-extrabold drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">performance.</span>
             </motion.h1>
 
@@ -225,7 +225,7 @@ export default function Home() {
               initial={{ opacity: 0, y: shouldReduce ? 0 : 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.12, ease: APPLE_EASE }}
-              className="text-xs sm:text-sm text-white/95 leading-relaxed font-sans drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)] font-medium max-w-lg"
+              className="text-xs sm:text-[13px] text-white/90 leading-relaxed font-sans drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)] font-medium max-w-lg"
             >
               Equip your enterprise workforce with certified Grade A+ commercial laptops, workstation graphics, and pivot displays. Available for immediate bulk dispatch or flexible monthly leasing with guaranteed 24-48h replacement SLA.
             </motion.p>
@@ -235,7 +235,7 @@ export default function Home() {
               initial={{ opacity: 0, y: shouldReduce ? 0 : 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.22, ease: APPLE_EASE }}
-              className="pt-2 flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-3"
+              className="pt-1.5 flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-3"
             >
               <Link
                 to="/products"
@@ -259,7 +259,7 @@ export default function Home() {
           </div>
 
           {/* Right Column: Completely unobstructed for full ambient video visibility */}
-          <div className="lg:col-span-5 hidden lg:block" />
+          <div className="lg:col-span-4 hidden lg:block" />
         </div>
       </section>
 
