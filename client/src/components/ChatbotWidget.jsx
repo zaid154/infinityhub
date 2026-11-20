@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bot, X, Send, Sparkles, MessageSquare, Loader2 } from 'lucide-react';
+import { Bot, X, Send, Sparkles, Loader2 } from 'lucide-react';
 import api from '../services/api';
 import { useCompany } from '../context/SettingsContext';
 import { useReducedMotionSafe } from '../animations';
@@ -63,7 +63,7 @@ function FormattedBotMessage({ text }) {
     }
 
     // Bullet line: * or - or •
-    const bulletMatch = trimmed.match(/^[\*\-•]\s+(.*)$/);
+    const bulletMatch = trimmed.match(/^[*\-•]\s+(.*)$/);
     if (bulletMatch) {
       currentList.push(bulletMatch[1]);
     } else {
@@ -146,7 +146,7 @@ export default function ChatbotWidget() {
           }
         ]);
       }
-    } catch (err) {
+    } catch {
       setMessages((prev) => [
         ...prev,
         {

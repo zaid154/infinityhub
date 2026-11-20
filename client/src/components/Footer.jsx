@@ -1,24 +1,14 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import {
-  ShieldCheck,
-  Mail,
-  Phone,
-  MapPin,
-  Clock,
-  ArrowRight,
-  CheckCircle2,
-  Lock,
-  Building2,
-  ExternalLink,
-  Truck
-} from 'lucide-react';
+import { Mail, Phone } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../services/api';
 import BrandLogo from './BrandLogo';
 import { useCompany } from '../context/SettingsContext';
 import { AnimatedCheck } from '../animations';
+
+const CURRENT_YEAR = new Date().getFullYear();
 
 /**
  * Enterprise B2B Footer (Al-Tooba Sacred Forest Minimalist Style)
@@ -429,7 +419,7 @@ export default function Footer() {
 
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-[10.5px] font-sans font-semibold tracking-wider uppercase text-white/75 pt-2">
             <p>
-              © {new Date().getFullYear()} {legalName}. ALL RIGHTS RESERVED.
+              © {CURRENT_YEAR} {legalName}. ALL RIGHTS RESERVED.
             </p>
             <p className="text-[#D4A24C] font-mono text-[10px] tracking-normal">
               GST Tax Invoice provided with every order · 100% GSTR-1 Compliant

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Package, Plus, Search, Edit2, Trash2, Eye, ExternalLink } from 'lucide-react';
+import { Package, Plus, Search, Edit2, Trash2, ExternalLink } from 'lucide-react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
 import ThemeSelect from '../../components/ThemeSelect';
@@ -21,26 +21,28 @@ export default function AdminProducts() {
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
 
-  const fetchProducts = async () => {
-    setLoading(true);
-    try {
-      const params = { limit: 50 };
-      if (categoryFilter !== 'all') params.category = categoryFilter;
-      if (search.trim()) params.search = search.trim();
-
-      const res = await api.get('/products', { params });
-      if (res.data.success) {
-        setProducts(res.data.products);
-      }
-    } catch (err) {
-      console.error('[Admin fetch products error]', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchProducts();
+    let isMounted = true;
+    const params = { limit: 50 };
+    if (categoryFilter !== 'all') params.category = categoryFilter;
+    if (search.trim()) params.search = search.trim();
+
+    api.get('/products', { params })
+      .then((res) => {
+        if (isMounted && res.data?.success) {
+          setProducts(res.data.products);
+        }
+      })
+      .catch((err) => {
+        console.error('[Admin fetch products error]', err);
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, [categoryFilter, search]);
 
   const handleDelete = async (id, title) => {
@@ -48,11 +50,11 @@ export default function AdminProducts() {
 
     try {
       const res = await api.delete(`/products/${id}`);
-      if (res.data.success) {
+      if (res.data?.success) {
         toast.success('Product deleted successfully');
         setProducts(products.filter((p) => p._id !== id));
       }
-    } catch (err) {
+    } catch {
       toast.error('Failed to delete product');
     }
   };

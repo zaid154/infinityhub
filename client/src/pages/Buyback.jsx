@@ -2,14 +2,11 @@ import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import {
   Recycle,
-  CheckCircle2,
   ShieldCheck,
   Truck,
   Building,
   User,
   Phone,
-  Mail,
-  FileSpreadsheet,
   Award
 } from 'lucide-react';
 import api from '../services/api';
@@ -50,7 +47,7 @@ export default function Buyback() {
           description: ''
         });
       }
-    } catch (err) {
+    } catch {
       toast.error('Failed to submit asset liquidation request.');
     } finally {
       setSubmitting(false);

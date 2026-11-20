@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Shield, Cookie, X, Check } from 'lucide-react';
+import { Cookie, X } from 'lucide-react';
 import { useCompany } from '../context/SettingsContext';
 import { useReducedMotionSafe } from '../animations';
 

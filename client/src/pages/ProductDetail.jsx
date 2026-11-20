@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useParams, Link, useOutletContext } from 'react-router-dom';
 import {
   ShieldCheck,
@@ -17,7 +17,7 @@ import {
 import api from '../services/api';
 import { useCart } from '../context/CartContext';
 import { APPLE_EASE } from '../animations';
-import { getGalleryUrls, getGalleryMedia, getSafeImageUrl } from '../utils/imageHelper';
+import { getGalleryMedia, getSafeImageUrl } from '../utils/imageHelper';
 import toast from 'react-hot-toast';
 
 export default function ProductDetail() {

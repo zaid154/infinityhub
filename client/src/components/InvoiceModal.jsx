@@ -1,6 +1,5 @@
 import React from 'react';
-import { X, Printer, ArrowLeft, ShieldCheck, CheckCircle2, Building2, FileText, CreditCard } from 'lucide-react';
-import BrandLogo from './BrandLogo';
+import { X, Printer, ArrowLeft, ShieldCheck, CheckCircle2, CreditCard } from 'lucide-react';
 import { useSettings } from '../context/SettingsContext';
 
 /**
@@ -71,6 +70,15 @@ function getHsnCode(item) {
   return '8471 30 00';
 }
 
+function formatInvoiceDate(dateVal) {
+  const d = new Date(dateVal || '2026-01-01T00:00:00Z');
+  return d.toLocaleDateString('en-IN', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric'
+  });
+}
+
 export default function InvoiceModal({ order, onClose }) {
   const { settings } = useSettings();
   if (!order) return null;
@@ -83,11 +91,7 @@ export default function InvoiceModal({ order, onClose }) {
   const totalGst = order.total_gst || 0;
   const halfGst = Math.round(totalGst / 2);
 
-  const formattedDate = new Date(order.createdAt || Date.now()).toLocaleDateString('en-IN', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric'
-  });
+  const formattedDate = formatInvoiceDate(order.createdAt);
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm p-2 sm:p-4 md:p-6 flex justify-center items-center print:p-0 print:bg-white print:overflow-visible">

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { FileText, MessageSquare, Phone, Mail, Building, Clock, CheckCircle } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { MessageSquare } from 'lucide-react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
 import ThemeSelect from '../../components/ThemeSelect';
@@ -12,13 +12,13 @@ export default function AdminInquiries() {
   const [adminNotes, setAdminNotes] = useState('');
   const [newStatus, setNewStatus] = useState('');
 
-  const fetchInquiries = async () => {
-    setLoading(true);
+  const fetchInquiries = useCallback(async (showLoading = false) => {
+    if (showLoading) setLoading(true);
     try {
       const params = {};
       if (statusFilter !== 'all') params.status = statusFilter;
       const res = await api.get('/inquiries', { params });
-      if (res.data.success) {
+      if (res.data?.success) {
         setInquiries(res.data.inquiries);
       }
     } catch (err) {
@@ -26,10 +26,28 @@ export default function AdminInquiries() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [statusFilter]);
 
   useEffect(() => {
-    fetchInquiries();
+    let isMounted = true;
+    const params = {};
+    if (statusFilter !== 'all') params.status = statusFilter;
+    api.get('/inquiries', { params })
+      .then((res) => {
+        if (isMounted && res.data?.success) {
+          setInquiries(res.data.inquiries);
+        }
+      })
+      .catch((err) => {
+        console.error('[Fetch Inquiries Error]', err);
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, [statusFilter]);
 
   const handleUpdate = async () => {
@@ -39,12 +57,12 @@ export default function AdminInquiries() {
         status: newStatus,
         admin_notes: adminNotes
       });
-      if (res.data.success) {
+      if (res.data?.success) {
         toast.success('Inquiry updated successfully');
         setSelectedInquiry(null);
-        fetchInquiries();
+        fetchInquiries(true);
       }
-    } catch (err) {
+    } catch {
       toast.error('Failed to update inquiry');
     }
   };

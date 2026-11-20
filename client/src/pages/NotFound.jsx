@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { ArrowLeft, Home, ShoppingBag, Phone } from 'lucide-react';
+import { Home, ShoppingBag } from 'lucide-react';
 import { useCompany } from '../context/SettingsContext';
 import BrandLogo from '../components/BrandLogo';
 

@@ -16,7 +16,7 @@ export default function ForgotPassword() {
     try {
       await api.post('/auth/forgot-password', { email });
       setSubmitted(true);
-    } catch (err) {
+    } catch {
       toast.error('Failed to send reset link.');
     } finally {
       setSubmitting(false);

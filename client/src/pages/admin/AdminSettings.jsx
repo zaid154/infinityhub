@@ -1,34 +1,22 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import {
-  Settings,
   Save,
   Building,
   Phone,
-  Mail,
-  MapPin,
   ShieldCheck,
-  FileText,
   CreditCard,
   Percent,
-  CheckCircle2,
   RefreshCw,
-  MessageSquare,
-  Clock,
-  ExternalLink,
-  Upload,
-  Check,
   AlertCircle,
   AlertTriangle,
   RotateCcw,
   Eye,
   History,
-  Lock,
   Scale
 } from 'lucide-react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
 import { useCompany } from '../../context/SettingsContext';
-import BrandLogo from '../../components/BrandLogo';
 
 const DEFAULT_CATEGORY_GST_RATES = [
   { category_key: 'laptop', category_name: 'Corporate Laptops', hsn_sac: '8471 30 10', gst_rate: 18, description: 'Standard commercial notebooks & ultrabooks' },
@@ -205,7 +193,89 @@ export default function AdminSettings() {
   };
 
   useEffect(() => {
-    loadServerSettings();
+    let isMounted = true;
+    api.get('/settings')
+      .then((res) => {
+        if (!isMounted || !res.data?.success || !res.data?.settings) return;
+        const s = res.data.settings;
+        setSettings({
+          brand_name: s.brand_name || 'Demo Infotech',
+          brand_name_short: s.brand_name_short || 'Demo',
+          tagline: s.tagline || 'Enterprise IT Hardware & Workstation Infrastructure',
+          description: s.description || '',
+          logo_url: s.logo_url || '',
+          favicon_url: s.favicon_url || '',
+          primary_color: s.primary_color || '#072117',
+          accent_color: s.accent_color || '#D4A24C',
+
+          legal_name: s.legal_name || 'Demo Infotech Private Limited [PLACEHOLDER]',
+          trade_name: s.trade_name || 'Demo Infotech',
+          cin_number: s.cin_number || 'U72900DL2024PTC000000 [PLACEHOLDER]',
+          pan_number: s.pan_number || 'AAAAA0000A [PLACEHOLDER]',
+          gst_number: s.gst_number || '07AAAAA0000A1Z5 [PLACEHOLDER]',
+          registered_address: s.registered_address || s.address || 'Unit No. 101, Commercial Tower, Barakhamba Road, Connaught Place, New Delhi 110001 [PLACEHOLDER]',
+          operations_address: s.operations_address || s.address || 'Plot No. 42, Sector 18, Electronic City / Industrial Area, Delhi NCR · Bangalore [PLACEHOLDER]',
+          address: s.address || s.operations_address || 'Plot No. 42, Sector 18, Electronic City / Industrial Area, Delhi NCR · Bangalore [PLACEHOLDER]',
+          jurisdiction_city: s.jurisdiction_city || 'New Delhi',
+          iso_cert_number: s.iso_cert_number || '',
+          epr_registration_number: s.epr_registration_number || 'CPCB/EPR/2024/000000 [PLACEHOLDER]',
+
+          phone: s.phone || '+91 XXXXX XXXXX [PLACEHOLDER]',
+          whatsapp: s.whatsapp || '+91 XXXXX XXXXX [PLACEHOLDER]',
+          email: s.email || 'procurement@example.com [PLACEHOLDER]',
+          support_email: s.support_email || 'support@example.com [PLACEHOLDER]',
+          procurement_email: s.procurement_email || 'procurement@example.com [PLACEHOLDER]',
+          business_hours: s.business_hours || 'Monday – Saturday: 9:30 AM – 7:30 PM IST',
+          warehouse_locations: s.warehouse_locations || 'Electronic City Phase 1, Bangalore · Okhla Industrial Area, Delhi NCR · Mumbai, India',
+          support_sla: s.support_sla || '24–48h Hardware Standby Replacement SLA (Subject to SLA Terms)',
+          google_maps_embed_url: s.google_maps_embed_url || '',
+
+          grievance_officer: {
+            name: s.grievance_officer?.name || 'Statutory Grievance Officer [PLACEHOLDER]',
+            designation: s.grievance_officer?.designation || 'Head of Legal & Enterprise Compliance',
+            email: s.grievance_officer?.email || 'grievance@example.com [PLACEHOLDER]',
+            phone: s.grievance_officer?.phone || '+91 XXXXX XXXXX [PLACEHOLDER]',
+            address: s.grievance_officer?.address || s.registered_address || 'Unit No. 101, Legal Grievance Cell, Connaught Place, New Delhi 110001 [PLACEHOLDER]'
+          },
+
+          third_party_disclaimer: s.third_party_disclaimer || '',
+
+          signatory_name: s.signatory_name || 'Authorized Signatory [PLACEHOLDER]',
+          signatory_designation: s.signatory_designation || 'Authorized Commercial Signatory / General Manager',
+          signature_url: s.signature_url || '',
+          company_seal_url: s.company_seal_url || '',
+
+          invoice_prefix: s.invoice_prefix || 'INV',
+          default_gst_rate: s.default_gst_rate || 18,
+          category_gst_rates: s.category_gst_rates && s.category_gst_rates.length > 0 ? s.category_gst_rates : DEFAULT_CATEGORY_GST_RATES,
+
+          bank_details: {
+            bank_name: s.bank_details?.bank_name || 'HDFC Bank Ltd',
+            account_name: s.bank_details?.account_name || 'Demo Infotech Private Limited [PLACEHOLDER]',
+            account_number: s.bank_details?.account_number || '50200000000000',
+            ifsc_code: s.bank_details?.ifsc_code || 'HDFC0000000',
+            branch: s.bank_details?.branch || 'Connaught Place / Electronic City',
+            upi_id: s.bank_details?.upi_id || 'demoinfotech@hdfcbank'
+          },
+
+          legal_version: s.legal_version || '1.0',
+          settings_version: s.settings_version || 1
+        });
+        if (res.data.auditLogs) {
+          setAuditLogs(res.data.auditLogs);
+        }
+      })
+      .catch((err) => {
+        console.error('[Admin Settings Error]', err);
+        toast.error('Failed to load settings from server');
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // Demo / Placeholder status detection

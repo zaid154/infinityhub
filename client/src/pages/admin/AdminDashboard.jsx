@@ -9,18 +9,11 @@ import {
   Recycle,
   ArrowRight,
   TrendingUp,
-  Clock,
   MessageSquare,
   Plus,
   ExternalLink,
-  ShieldCheck,
-  CheckCircle2,
-  Building2,
-  Phone,
   ArrowUpRight,
   Sparkles,
-  Layers,
-  MapPin,
   RefreshCw
 } from 'lucide-react';
 import api from '../../services/api';
@@ -32,13 +25,13 @@ export default function AdminDashboard() {
   const [topDemands, setTopDemands] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [lastRefreshed, setLastRefreshed] = useState(new Date());
+  const [lastRefreshed, setLastRefreshed] = useState(() => new Date());
 
   const fetchAnalytics = async (isManual = false) => {
     if (isManual) setRefreshing(true);
     try {
       const res = await api.get('/admin/analytics');
-      if (res.data.success) {
+      if (res.data?.success) {
         setStats(res.data.stats);
         setRecentInquiries(res.data.recentInquiries || []);
         setRecentOrders(res.data.recentOrders || []);
@@ -54,7 +47,27 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
-    fetchAnalytics();
+    let isMounted = true;
+    api.get('/admin/analytics')
+      .then((res) => {
+        if (isMounted && res.data?.success) {
+          setStats(res.data.stats);
+          setRecentInquiries(res.data.recentInquiries || []);
+          setRecentOrders(res.data.recentOrders || []);
+          setTopDemands(res.data.topDemands || []);
+          setLastRefreshed(new Date());
+        }
+      })
+      .catch((err) => {
+        console.error('[Admin Analytics Error]', err);
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // Helper for company initial monogram

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Repeat, Calendar, CheckCircle2, Clock } from 'lucide-react';
+import { ArrowLeft, Repeat, CheckCircle2 } from 'lucide-react';
 import api from '../services/api';
 
 export default function MyRentals() {

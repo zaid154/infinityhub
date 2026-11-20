@@ -13,7 +13,6 @@ import {
   Award,
   Recycle,
   FileText,
-  Building,
   ArrowRight
 } from 'lucide-react';
 import { useCompany } from '../context/SettingsContext';

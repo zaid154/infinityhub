@@ -1,41 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion, AnimatePresence, useMotionValue, useMotionTemplate } from 'framer-motion';
-import { Check, ShieldCheck, ArrowRight, Download, FileText } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
-/**
- * Apple-Grade Motion System
- * Lean, high-impact motion primitives matching Apple.com:
- * 1. APPLE_EASE: [0.16, 1, 0.3, 1] (Apple's signature cubic-bezier deceleration)
- * 2. APPLE_SPRING: Crisp spring physics for morphing tabs & layout shifts
- * 3. AppleSpotlightCard: Cursor-following radial flashlight illumination
- * 4. AppleReveal: Cinematic scroll reveal with subtle scale & depth
- * 5. AnimatedAccordion: Smooth spring-height expansion for FAQs
- * 6. ExecutiveSuccessCard: High-trust B2B order confirmation (replaces toy confetti)
- */
-
-export const APPLE_EASE = [0.16, 1, 0.3, 1];
-export const APPLE_SPRING = { type: 'spring', stiffness: 420, damping: 32 };
-export const APPLE_GENTLE_SPRING = { type: 'spring', stiffness: 280, damping: 28 };
-
-/**
- * Accessibility hook respecting OS-level reduced motion preferences
- */
-export function useReducedMotionSafe() {
-  const [shouldReduce, setShouldReduce] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === 'undefined' || !window.matchMedia) return;
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setShouldReduce(mediaQuery.matches);
-
-    const handler = (e) => setShouldReduce(e.matches);
-    mediaQuery.addEventListener('change', handler);
-    return () => mediaQuery.removeEventListener('change', handler);
-  }, []);
-
-  return shouldReduce;
-}
+import { APPLE_EASE } from './motionConstants';
+import { useReducedMotionSafe } from './useReducedMotionSafe';
 
 /**
  * AppleSpotlightCard

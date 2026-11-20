@@ -86,7 +86,6 @@ export default function BestSellersSection({ onOpenRFQ }) {
           ))
         ) : (
           bestSellers.map((item) => {
-            const inStock = (item.sale_stock || item.stock_quantity || 0) > 0 || (item.rental_stock || 0) > 0;
             const isRental = item.available_for === 'rent' || (item.rental_price_monthly > 0 && item.sale_price === 0);
             const displayPrice = isRental
               ? `₹${(item.rental_price_monthly || 1350).toLocaleString('en-IN')}`

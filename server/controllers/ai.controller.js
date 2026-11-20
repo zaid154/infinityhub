@@ -116,7 +116,7 @@ const recordCustomerDemand = async (message, replyText, liveProducts = [], user 
  * Detect Language from User Message and Conversation History.
  * Returns: 'en' (Default) | 'hi' (Devanagari Hindi) | 'hinglish' (Romanized Hindi)
  */
-export const detectUserLanguage = (message = '', history = []) => {
+const detectUserLanguage = (message = '', history = []) => {
   const msg = (message || '').trim();
   if (!msg) return 'en';
 

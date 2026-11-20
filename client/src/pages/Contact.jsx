@@ -50,7 +50,7 @@ export default function Contact() {
           message: ''
         });
       }
-    } catch (err) {
+    } catch {
       toast.error('Failed to submit message.');
     } finally {
       setSubmitting(false);

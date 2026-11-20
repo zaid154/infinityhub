@@ -6,7 +6,7 @@ import DeliveryZone from '../models/DeliveryZone.js';
 let publicSettingsCache = null;
 let cacheExpiryTime = 0;
 
-export const invalidatePublicSettingsCache = () => {
+const invalidatePublicSettingsCache = () => {
   publicSettingsCache = null;
   cacheExpiryTime = 0;
 };

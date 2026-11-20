@@ -18,7 +18,6 @@ import {
   HardDrive,
   Server,
   Tv,
-  ArrowUpDown,
   Tag
 } from 'lucide-react';
 import api from '../../services/api';
@@ -81,7 +80,24 @@ export default function AdminCategories() {
   };
 
   useEffect(() => {
-    fetchCategories();
+    let isMounted = true;
+    api.get('/categories')
+      .then((res) => {
+        if (isMounted && res.data?.success) {
+          setCategories(res.data.categories || []);
+        }
+      })
+      .catch((err) => {
+        console.error('[Admin Categories Error]', err);
+        toast.error('Failed to load hardware categories');
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // Open Create Modal

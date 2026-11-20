@@ -3,15 +3,10 @@ import { Link } from 'react-router-dom';
 import { 
   ArrowLeft, 
   ShoppingBag, 
-  FileText, 
-  CheckCircle2, 
-  Clock, 
   Printer, 
   Truck, 
   Copy, 
-  Check, 
-  ExternalLink,
-  ShieldCheck
+  Check 
 } from 'lucide-react';
 import api from '../services/api';
 import toast from 'react-hot-toast';

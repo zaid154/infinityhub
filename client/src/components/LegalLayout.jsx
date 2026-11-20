@@ -1,15 +1,12 @@
 /* DRAFT – to be reviewed by a practising advocate/CA before publishing */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import {
   FileText,
   Printer,
   Calendar,
-  ShieldAlert,
-  ArrowLeft,
   ChevronRight,
-  ShieldCheck,
   Scale
 } from 'lucide-react';
 import { useCompany } from '../context/SettingsContext';
@@ -17,11 +14,11 @@ import { useCompany } from '../context/SettingsContext';
 export default function LegalLayout({
   title,
   subtitle,
-  policyKey = 'policy',
+  _policyKey = 'policy',
   toc = [],
   children
 }) {
-  const { company, renderToken } = useCompany();
+  const { company } = useCompany();
   const brandName = company?.brand_name || 'Demo Infotech';
   const legalVersion = company?.legal_version || '1.0';
   const [activeSection, setActiveSection] = useState(toc[0]?.id || '');
@@ -56,13 +53,14 @@ export default function LegalLayout({
     }
   };
 
-  const formattedDate = company?.legal_last_updated
-    ? new Date(company.legal_last_updated).toLocaleDateString('en-IN', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-      })
-    : new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+  const formattedDate = useMemo(() => {
+    const raw = company?.legal_last_updated || '2026-01-01T00:00:00Z';
+    return new Date(raw).toLocaleDateString('en-IN', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+  }, [company]);
 
   const handlePrint = () => {
     window.print();

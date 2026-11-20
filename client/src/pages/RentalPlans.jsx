@@ -2,13 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Link, useOutletContext } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import {
-  ShieldCheck,
-  CheckCircle2,
-  RotateCcw,
-  Percent,
-  FileCheck2,
-  Building2,
-  Clock,
   Check,
   ArrowRight,
   Repeat,
@@ -22,16 +15,12 @@ import {
   ChevronDown,
   PhoneCall,
   ShoppingBag,
-  Award,
-  Sparkles,
   PackageCheck,
   Building,
   User,
   Phone,
   Mail,
-  FileText,
-  Send,
-  HelpCircle
+  Send
 } from 'lucide-react';
 import RentalCalculator from '../components/RentalCalculator';
 import ThemeSelect from '../components/ThemeSelect';

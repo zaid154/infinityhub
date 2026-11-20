@@ -9,8 +9,7 @@ import {
   FileText, 
   Percent, 
   ShieldCheck, 
-  Zap,
-  Info
+  Zap
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import api from '../services/api';
@@ -23,8 +22,6 @@ const TENURE_OPTIONS = [
   { id: '12m', label: '12+ Months', tenureKey: '12_months', discountPercent: 15, tag: 'Save 15%' }
 ];
 
-const PRESETS = [5, 10, 25, 50, 100];
-
 const CATEGORY_TABS = [
   { id: 'all', label: 'All Leasable Fleets', icon: Layers },
   { id: 'laptop', label: 'Enterprise Laptops', icon: Laptop },
@@ -35,41 +32,38 @@ const CATEGORY_TABS = [
 export default function RentalCalculator({ onOpenRFQ, rentalProducts, hideHeader = false }) {
   const { addToRentalCart } = useCart();
   const [liveProducts, setLiveProducts] = useState(rentalProducts || []);
+  const [prevRentalProducts, setPrevRentalProducts] = useState(rentalProducts);
+  if (rentalProducts && rentalProducts !== prevRentalProducts) {
+    setPrevRentalProducts(rentalProducts);
+    setLiveProducts(rentalProducts);
+  }
+
   const [activeCategory, setActiveCategory] = useState('all');
   const [selectedProductId, setSelectedProductId] = useState(null);
-  const [quantity, setQuantity] = useState(10);
+  const [quantity, setQuantity] = useState(5);
   const [tenure, setTenure] = useState(TENURE_OPTIONS[1]); // default: 6 months
   const [includeGst, setIncludeGst] = useState(false);
-  const [loading, setLoading] = useState(false);
 
-  // Fetch live rental inventory from MongoDB API
+  // Fetch live rental inventory from MongoDB API if not passed via props
   useEffect(() => {
-    if (rentalProducts && rentalProducts.length > 0) {
-      setLiveProducts(rentalProducts);
-      return;
-    }
+    if (rentalProducts && rentalProducts.length > 0) return;
 
-    const fetchLiveInventory = async () => {
-      setLoading(true);
-      try {
-        const res = await api.get('/products', {
-          params: { available_for: 'rent', limit: 30 }
-        });
-        if (res.data?.success && Array.isArray(res.data.products)) {
-          // Filter products with active rental rates
-          const availableRentals = res.data.products.filter(
-            (p) => (p.rental_price_monthly > 0 || p.available_for === 'rent' || p.available_for === 'both')
-          );
-          setLiveProducts(availableRentals);
-        }
-      } catch (err) {
+    let isMounted = true;
+    api.get('/products', { params: { available_for: 'rent', limit: 30 } })
+      .then((res) => {
+        if (!isMounted || !res.data?.success || !Array.isArray(res.data.products)) return;
+        const availableRentals = res.data.products.filter(
+          (p) => (p.rental_price_monthly > 0 || p.available_for === 'rent' || p.available_for === 'both')
+        );
+        setLiveProducts(availableRentals);
+      })
+      .catch((err) => {
         console.warn('[RentalCalculator] Live inventory fetch Notice:', err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+      });
 
-    fetchLiveInventory();
+    return () => {
+      isMounted = false;
+    };
   }, [rentalProducts]);
 
   // Filter products by selected category tab
@@ -89,12 +83,24 @@ export default function RentalCalculator({ onOpenRFQ, rentalProducts, hideHeader
     return filteredProducts[0] || liveProducts[0] || null;
   }, [filteredProducts, liveProducts, selectedProductId]);
 
-  // Auto-select first item when category tab changes
-  useEffect(() => {
-    if (filteredProducts.length > 0 && (!selectedProductId || !filteredProducts.some(p => p._id === selectedProductId))) {
-      setSelectedProductId(filteredProducts[0]._id);
+  // Live Available Rental Stock for Selected Hardware
+  const maxStock = Math.max(0, currentProduct?.rental_stock ?? 0);
+
+  // Effective Quantity dynamically clamped to available warehouse stock
+  const effectiveQuantity = maxStock <= 0 ? 0 : Math.min(Math.max(1, quantity), maxStock);
+
+  // Dynamic Fleet Sizing Presets that NEVER exceed available warehouse stock
+  const dynamicPresets = useMemo(() => {
+    if (maxStock <= 0) return [];
+    if (maxStock <= 4) {
+      return Array.from({ length: maxStock }, (_, i) => i + 1);
     }
-  }, [activeCategory, filteredProducts, selectedProductId]);
+    const standard = [5, 10, 25, 50, 100].filter((p) => p < maxStock);
+    if (!standard.includes(maxStock)) {
+      standard.push(maxStock);
+    }
+    return standard.sort((a, b) => a - b);
+  }, [maxStock]);
 
   // Unit Label based on category
   const unitLabel = useMemo(() => {
@@ -128,16 +134,15 @@ export default function RentalCalculator({ onOpenRFQ, rentalProducts, hideHeader
   const rateAfterTenure = baseRate - tenureDiscountAmount;
 
   // Fleet Volume Tier Rebate (Additional rebate for large B2B deployments)
-  const volumeDiscountPercent = quantity >= 50 ? 10 : quantity >= 25 ? 5 : 0;
+  const volumeDiscountPercent = effectiveQuantity >= 50 ? 10 : effectiveQuantity >= 25 ? 5 : 0;
   const volumeDiscountAmount = Math.round(rateAfterTenure * (volumeDiscountPercent / 100));
   
   // Final Net Unit Rate per month
   const netUnitRate = rateAfterTenure - volumeDiscountAmount;
 
   // Monthly Subtotals
-  const totalBaseMonthly = baseRate * quantity;
-  const totalMonthlySavings = (baseRate - netUnitRate) * quantity;
-  const netMonthlyTaxable = netUnitRate * quantity;
+  const totalMonthlySavings = (baseRate - netUnitRate) * effectiveQuantity;
+  const netMonthlyTaxable = netUnitRate * effectiveQuantity;
   const gstRate = 0.18;
   const monthlyGst = Math.round(netMonthlyTaxable * gstRate);
   const grandMonthlyTotal = includeGst ? netMonthlyTaxable + monthlyGst : netMonthlyTaxable;
@@ -148,13 +153,17 @@ export default function RentalCalculator({ onOpenRFQ, rentalProducts, hideHeader
       toast.error('Please select a hardware model from the inventory.');
       return;
     }
-    addToRentalCart(currentProduct, quantity, tenure.tenureKey);
-    toast.success(`${quantity}x ${currentProduct.title} (${tenure.label}) added to Corporate Cart!`);
+    if (maxStock <= 0 || effectiveQuantity <= 0) {
+      toast.error(`Sorry, ${currentProduct.title} currently has 0 units available in rental fleet.`);
+      return;
+    }
+    addToRentalCart(currentProduct, effectiveQuantity, tenure.tenureKey);
+    toast.success(`${effectiveQuantity}x ${currentProduct.title} (${tenure.label}) added to Corporate Cart!`);
   };
 
   const handleRequestRFQ = () => {
     if (!currentProduct) return;
-    const rfqContext = `Corporate Lease Quotation: ${quantity}x ${currentProduct.title} (${tenure.label}) @ ₹${netMonthlyTaxable.toLocaleString('en-IN')}/mo (Net OPEX)`;
+    const rfqContext = `Corporate Lease Quotation: ${effectiveQuantity || 1}x ${currentProduct.title} (${tenure.label}) @ ₹${netMonthlyTaxable.toLocaleString('en-IN')}/mo (Net OPEX)`;
     onOpenRFQ?.(rfqContext);
   };
 
@@ -270,16 +279,29 @@ export default function RentalCalculator({ onOpenRFQ, rentalProducts, hideHeader
                             <span className="text-[10px] uppercase font-bold tracking-wider text-[#8A5E12] block">
                               {product.brand}
                             </span>
-                            <h4 className="font-bold text-xs text-[#0D3B2A] leading-snug line-clamp-2">
+                            <h4 className="font-bold text-xs text-[#0D3B2A] leading-snug line-clamp-1">
                               {product.title}
                             </h4>
+                            <p className="text-[10px] text-[#5A6B63] truncate mt-0.5" title={specsSnippet}>
+                              {specsSnippet}
+                            </p>
                           </div>
                         </div>
 
                         <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
-                          <p className="text-[10px] text-[#5A6B63] truncate max-w-[140px]" title={specsSnippet}>
-                            {specsSnippet}
-                          </p>
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <span
+                              className={`px-2 py-0.5 rounded-full text-[9.5px] font-mono font-semibold truncate ${
+                                (product.rental_stock || 0) > 0
+                                  ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                                  : 'bg-rose-50 text-rose-700 border border-rose-200'
+                              }`}
+                            >
+                              {(product.rental_stock || 0) > 0
+                                ? `Stock: ${product.rental_stock} Available`
+                                : 'Out of Stock'}
+                            </span>
+                          </div>
                           <span className="font-mono font-bold text-[#0D3B2A] text-xs shrink-0">
                             ₹{(product.rental_price_monthly || 0).toLocaleString('en-IN')}<span className="text-[10px] font-normal text-slate-500">/mo</span>
                           </span>
@@ -293,13 +315,18 @@ export default function RentalCalculator({ onOpenRFQ, rentalProducts, hideHeader
 
             {/* 2. Fleet Size / Quantity Slider */}
             <div className="bg-white p-4 sm:p-5 rounded-2xl border border-[#0D3B2A]/15 shadow-xs">
-              <div className="flex items-center justify-between mb-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-[#0D3B2A] font-mono">
-                  2. Required Fleet Volume
-                </label>
+              <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
+                <div className="flex items-center gap-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-[#0D3B2A] font-mono">
+                    2. Required Fleet Volume
+                  </label>
+                  <span className="text-[10.5px] font-mono text-[#8A5E12] font-semibold bg-[#FAF7F2] px-2 py-0.5 rounded-md border border-[#D4A24C]/30">
+                    Max Stock: {maxStock} {unitLabel}
+                  </span>
+                </div>
                 <div className="flex items-center gap-1.5">
                   <span className="px-3 py-1 rounded-full bg-[#0D3B2A] text-[#FAF7F2] text-xs font-bold font-mono">
-                    {quantity} {unitLabel}
+                    {effectiveQuantity} {unitLabel}
                   </span>
                   {volumeDiscountPercent > 0 && (
                     <span className="px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[10.5px] font-bold">
@@ -309,37 +336,55 @@ export default function RentalCalculator({ onOpenRFQ, rentalProducts, hideHeader
                 </div>
               </div>
 
-              {/* Slider */}
-              <input
-                type="range"
-                min="1"
-                max="100"
-                step="1"
-                value={quantity}
-                onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value, 10) || 1))}
-                className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0D3B2A]"
-              />
-
-              {/* Quick Presets */}
-              <div className="flex items-center justify-between mt-3 pt-2 border-t border-slate-100">
-                <span className="text-[10.5px] text-[#5A6B63] font-semibold">Common Fleet Sizes:</span>
-                <div className="flex items-center gap-1.5">
-                  {PRESETS.map((p) => (
-                    <button
-                      key={p}
-                      type="button"
-                      onClick={() => setQuantity(p)}
-                      className={`px-2.5 py-1 rounded-lg text-xs font-mono font-semibold transition cursor-pointer ${
-                        quantity === p
-                          ? 'bg-[#0D3B2A] text-[#FAF7F2]'
-                          : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                      }`}
-                    >
-                      {p}
-                    </button>
-                  ))}
+              {maxStock <= 0 ? (
+                <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 my-2">
+                  <span>This hardware model is currently fully leased / 0 stock available.</span>
+                  <button
+                    type="button"
+                    onClick={handleRequestRFQ}
+                    className="underline font-bold text-[#0D3B2A] hover:text-[#8A5E12] text-left cursor-pointer"
+                  >
+                    Request Custom Fleet Procurement RFQ &rarr;
+                  </button>
                 </div>
-              </div>
+              ) : (
+                <>
+                  {/* Slider strictly bounded by available rental stock */}
+                  <input
+                    type="range"
+                    min={maxStock > 0 ? 1 : 0}
+                    max={Math.max(1, maxStock)}
+                    step="1"
+                    value={effectiveQuantity}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value, 10) || 0;
+                      setQuantity(Math.min(maxStock, Math.max(1, val)));
+                    }}
+                    className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0D3B2A]"
+                  />
+
+                  {/* Dynamic Fleet Presets capped to available warehouse stock */}
+                  <div className="flex items-center justify-between mt-3 pt-2 border-t border-slate-100 flex-wrap gap-2">
+                    <span className="text-[10.5px] text-[#5A6B63] font-semibold">Available Fleet Sizing:</span>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      {dynamicPresets.map((p) => (
+                        <button
+                          key={p}
+                          type="button"
+                          onClick={() => setQuantity(p)}
+                          className={`px-2.5 py-1 rounded-lg text-xs font-mono font-semibold transition cursor-pointer ${
+                            effectiveQuantity === p
+                              ? 'bg-[#0D3B2A] text-[#FAF7F2]'
+                              : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                          }`}
+                        >
+                          {p === maxStock && maxStock > 5 ? `${p} (Max)` : p}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
 
             {/* 3. Lease Duration Commitment Tabs */}
@@ -451,7 +496,7 @@ export default function RentalCalculator({ onOpenRFQ, rentalProducts, hideHeader
                 <div className="flex justify-between">
                   <span className="text-slate-400">Fleet Deployment:</span>
                   <span className="text-[#FAF7F2] font-semibold font-mono">
-                    {quantity} {unitLabel}
+                    {effectiveQuantity} {unitLabel}
                   </span>
                 </div>
 
@@ -492,11 +537,12 @@ export default function RentalCalculator({ onOpenRFQ, rentalProducts, hideHeader
             <div className="mt-6 pt-4 border-t border-white/10 space-y-2.5">
               <button
                 type="button"
+                disabled={maxStock <= 0 || quantity <= 0}
                 onClick={handleAddToCart}
-                className="w-full py-3 rounded-xl bg-[#D4A24C] hover:bg-[#c5943b] text-[#0D3B2A] font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md active:scale-98"
+                className="w-full py-3 rounded-xl bg-[#D4A24C] hover:bg-[#c5943b] disabled:opacity-40 disabled:cursor-not-allowed text-[#0D3B2A] font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md active:scale-98"
               >
                 <ShoppingBag className="w-4 h-4" />
-                <span>Add Fleet Lease to Cart</span>
+                <span>{maxStock <= 0 ? 'Out of Stock in Fleet' : 'Add Fleet Lease to Cart'}</span>
               </button>
 
               <button

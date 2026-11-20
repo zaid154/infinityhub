@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Link, useSearchParams, useOutletContext } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Link, useSearchParams } from 'react-router-dom';
 import {
   Search,
   Filter,
@@ -10,8 +10,6 @@ import {
   ShoppingCart,
   X,
   Repeat,
-  ShieldCheck,
-  CheckCircle2,
   Check,
   Plus,
   Minus
@@ -23,7 +21,6 @@ import { getSafeImageUrl } from '../utils/imageHelper';
 import ThemeSelect from '../components/ThemeSelect';
 
 export default function Products() {
-  const { openRFQ } = useOutletContext();
   const {
     addToBuyCart,
     addToRentalCart,
@@ -32,7 +29,7 @@ export default function Products() {
     updateRentalQuantity,
     updateBuyQuantity
   } = useCart();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
   // Helper to format specs dynamically
   const getProductSpecSummary = (p) => {
@@ -80,6 +77,13 @@ export default function Products() {
   // Filters State
   const initialCat = (searchParams.get('category') || 'all').replace(/s$/, '');
   const [category, setCategory] = useState(initialCat);
+  const [prevParamCat, setPrevParamCat] = useState(initialCat);
+  if (initialCat !== prevParamCat) {
+    setPrevParamCat(initialCat);
+    setCategory(initialCat);
+    setPage(1);
+  }
+
   const [condition, setCondition] = useState('all');
   const [availableFor, setAvailableFor] = useState('all');
   const [search, setSearch] = useState('');
@@ -87,47 +91,40 @@ export default function Products() {
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
   useEffect(() => {
-    const cat = searchParams.get('category');
-    if (cat) {
-      setCategory(cat.replace(/s$/, ''));
-      setPage(1);
-    }
-  }, [searchParams]);
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      try {
-        const params = {
-          page,
-          limit: 12,
-          sort
-        };
-        if (category !== 'all') params.category = category;
-        if (condition !== 'all') params.condition = condition;
-        if (availableFor !== 'all') params.available_for = availableFor;
-        if (search.trim()) params.search = search.trim();
-
-        const res = await api.get('/products', { params });
-        if (res.data.success) {
-          setProducts(res.data.products);
-          setTotal(res.data.total);
-          setTotalPages(res.data.totalPages);
-
-          // If user searched for a hardware model and got 0 results, log to Customer Demand Intelligence
-          if (search.trim().length >= 3 && res.data.products.length === 0) {
-            api.post('/demand/log-search', { query: search.trim(), results_count: 0 }).catch(() => {});
-          }
-        }
-      } catch (err) {
-        console.error('[Error fetching products]', err);
-      } finally {
-        setLoading(false);
-      }
+    let isMounted = true;
+    const params = {
+      page,
+      limit: 12,
+      sort
     };
+    if (category !== 'all') params.category = category;
+    if (condition !== 'all') params.condition = condition;
+    if (availableFor !== 'all') params.available_for = availableFor;
+    if (search.trim()) params.search = search.trim();
 
-    fetchProducts();
-  }, [category, condition, availableFor, sort, page, search]);
+    api.get('/products', { params })
+      .then((res) => {
+        if (!isMounted || !res.data?.success) return;
+        setProducts(res.data.products);
+        setTotal(res.data.total);
+        setTotalPages(res.data.totalPages);
+
+        // If user searched for a hardware model and got 0 results, log to Customer Demand Intelligence
+        if (search.trim().length >= 3 && res.data.products.length === 0) {
+          api.post('/demand/log-search', { query: search.trim(), results_count: 0 }).catch(() => {});
+        }
+      })
+      .catch((err) => {
+        console.error('[Error fetching products]', err);
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [category, condition, availableFor, search, sort, page]);
 
   // Instantly scroll to top when user changes page (pagination) or category filter
   useEffect(() => {

@@ -11,20 +11,16 @@ import {
   CreditCard,
   FileText,
   Repeat,
-  Sparkles,
   CheckCircle2,
   Clock,
-  Building,
-  Info
+  Building
 } from 'lucide-react';
 import { useCart, getTenureDiscount } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import { getSafeImageUrl, DEFAULT_HARDWARE_PLACEHOLDER } from '../utils/imageHelper';
 import toast from 'react-hot-toast';
-import ThemeSelect from '../components/ThemeSelect';
 import { useCompany } from '../context/SettingsContext';
-import { Helmet } from 'react-helmet-async';
 import { ExecutiveSuccessCard, APPLE_SPRING, useReducedMotionSafe } from '../animations';
 
 /**
@@ -130,7 +126,6 @@ export default function Cart() {
   });
 
   const [deliveryZones, setDeliveryZones] = useState([]);
-  const [selectedZone, setSelectedZone] = useState('');
   const [shippingAddress, setShippingAddress] = useState({
     company_name: user?.company_name || '',
     contact_person: user?.name || '',
@@ -141,6 +136,21 @@ export default function Cart() {
     pincode: user?.pincode || '',
     gst_number: user?.gst_number || ''
   });
+  const [prevUser, setPrevUser] = useState(user);
+  if (user && user !== prevUser) {
+    setPrevUser(user);
+    setShippingAddress((prev) => ({
+      ...prev,
+      company_name: prev.company_name || user.company_name || '',
+      contact_person: prev.contact_person || (user.designation ? `${user.name} (${user.designation})` : user.name) || '',
+      phone: prev.phone || user.phone || '',
+      city: prev.city || user.city || '',
+      street: prev.street || user.address?.street || '',
+      pincode: prev.pincode || user.address?.pincode || '',
+      state: prev.state || user.address?.state || ''
+    }));
+  }
+
   const [processing, setProcessing] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
   const [celebration, setCelebration] = useState({
@@ -158,51 +168,33 @@ export default function Cart() {
     setTimeout(() => setIsShaking(false), 600);
   };
 
-  // Auto-sync user session details into checkout form
   useEffect(() => {
-    if (user) {
-      setShippingAddress((prev) => ({
-        ...prev,
-        company_name: prev.company_name || user.company_name || '',
-        contact_person: prev.contact_person || (user.designation ? `${user.name} (${user.designation})` : user.name) || '',
-        phone: prev.phone || user.phone || '',
-        city: prev.city || user.city || '',
-        street: prev.street || user.address?.street || '',
-        pincode: prev.pincode || user.address?.pincode || '',
-        state: prev.state || user.address?.state || ''
-      }));
-    }
-  }, [user]);
-
-  useEffect(() => {
-    const fetchZones = async () => {
-      try {
-        const res = await api.get('/settings/delivery-zones');
-        if (res.data.success && res.data.zones.length > 0) {
+    let isMounted = true;
+    api.get('/settings/delivery-zones')
+      .then((res) => {
+        if (isMounted && res.data?.success && res.data.zones?.length > 0) {
           setDeliveryZones(res.data.zones);
-          const initialMatch = detectZone(shippingAddress.city, shippingAddress.state, shippingAddress.pincode, res.data.zones);
-          setSelectedZone(initialMatch ? initialMatch._id : res.data.zones[0]._id);
         }
-      } catch (err) {
+      })
+      .catch((err) => {
         console.error('[Fetch Zones Error]', err);
-      }
+      });
+
+    return () => {
+      isMounted = false;
     };
-    fetchZones();
   }, []);
 
   // Real-time automatic zone matcher whenever City, State, or Pincode changes
-  useEffect(() => {
-    if (deliveryZones.length > 0) {
-      const autoMatched = detectZone(
-        shippingAddress.city,
-        shippingAddress.state,
-        shippingAddress.pincode,
-        deliveryZones
-      );
-      if (autoMatched && autoMatched._id !== selectedZone) {
-        setSelectedZone(autoMatched._id);
-      }
-    }
+  const selectedZone = React.useMemo(() => {
+    if (!deliveryZones.length) return '';
+    const autoMatched = detectZone(
+      shippingAddress.city,
+      shippingAddress.state,
+      shippingAddress.pincode,
+      deliveryZones
+    );
+    return autoMatched ? autoMatched._id : deliveryZones[0]._id;
   }, [shippingAddress.city, shippingAddress.state, shippingAddress.pincode, deliveryZones]);
 
   const getProductImage = (p) => getSafeImageUrl(p);
@@ -283,7 +275,7 @@ export default function Cart() {
                 redirectTo: '/dashboard/orders'
               });
             }
-          } catch (vErr) {
+          } catch {
             triggerFailureShake();
             toast.error('Payment verification failed.');
           }

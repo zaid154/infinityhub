@@ -1,29 +1,44 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import {
   Repeat,
-  Clock,
-  CheckCircle2,
-  AlertCircle,
   Calendar,
   Search,
-  Building2,
   Laptop,
-  Layers,
-  Phone,
   ShieldCheck,
-  FileText,
-  DollarSign,
   TrendingUp,
   X,
-  RefreshCw,
-  Eye,
-  SlidersHorizontal,
-  PackageCheck
+  RefreshCw
 } from 'lucide-react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
 import ThemeSelect from '../../components/ThemeSelect';
 import { getSafeImageUrl } from '../../utils/imageHelper';
+
+// Pure helper: Calculate authentic renewal end date based on tenure
+const getRentalDates = (r, now = 0) => {
+  const startDate = new Date(r.start_date || r.createdAt || 0);
+  let endDate = r.end_date ? new Date(r.end_date) : null;
+
+  if (!endDate) {
+    endDate = new Date(startDate);
+    const months = r.tenure === '1_month' ? 1 : r.tenure === '3_months' ? 3 : r.tenure === '12_months' ? 12 : 6;
+    endDate.setMonth(endDate.getMonth() + months);
+  }
+
+  const fmt = (d) =>
+    d.toLocaleDateString('en-IN', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    });
+
+  const currentTime = now || Date.now();
+  return {
+    startFormatted: fmt(startDate),
+    endFormatted: fmt(endDate),
+    isNearRenewal: (endDate.getTime() - currentTime) / (1000 * 60 * 60 * 24) <= 30
+  };
+};
 
 export default function AdminRentals() {
   const [rentals, setRentals] = useState([]);
@@ -35,8 +50,8 @@ export default function AdminRentals() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
-  const fetchRentals = async () => {
-    setLoading(true);
+  const fetchRentals = async (showLoading = false) => {
+    if (showLoading) setLoading(true);
     try {
       const res = await api.get('/rentals');
       if (res.data.success) {
@@ -51,7 +66,24 @@ export default function AdminRentals() {
   };
 
   useEffect(() => {
-    fetchRentals();
+    let isMounted = true;
+    api.get('/rentals')
+      .then((res) => {
+        if (isMounted && res.data?.success) {
+          setRentals(res.data.rentals || []);
+        }
+      })
+      .catch((err) => {
+        console.error('[Admin Rentals Error]', err);
+        toast.error('Failed to load rental fleet records');
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleUpdate = async () => {
@@ -65,36 +97,11 @@ export default function AdminRentals() {
       if (res.data.success) {
         toast.success('Rental fleet agreement updated successfully!');
         setSelectedRental(null);
-        fetchRentals();
+        fetchRentals(true);
       }
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to update rental status');
     }
-  };
-
-  // Helper: Calculate authentic renewal end date based on tenure
-  const getRentalDates = (r) => {
-    const startDate = new Date(r.start_date || r.createdAt || Date.now());
-    let endDate = r.end_date ? new Date(r.end_date) : null;
-
-    if (!endDate) {
-      endDate = new Date(startDate);
-      const months = r.tenure === '1_month' ? 1 : r.tenure === '3_months' ? 3 : r.tenure === '12_months' ? 12 : 6;
-      endDate.setMonth(endDate.getMonth() + months);
-    }
-
-    const fmt = (d) =>
-      d.toLocaleDateString('en-IN', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric'
-      });
-
-    return {
-      startFormatted: fmt(startDate),
-      endFormatted: fmt(endDate),
-      isNearRenewal: (endDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24) <= 30
-    };
   };
 
   // KPI Calculations

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Check, MessageSquare, FileText, Send, Building, User, Phone, Mail } from 'lucide-react';
+import { X, MessageSquare, FileText, Building, User, Phone, Mail } from 'lucide-react';
 import api from '../services/api';
 import toast from 'react-hot-toast';
 import ThemeSelect from './ThemeSelect';

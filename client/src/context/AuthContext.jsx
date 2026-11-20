@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
           if (res.data.success) {
             setUser(res.data.user);
           }
-        } catch (err) {
+        } catch {
           console.error('[Auth Error] Session expired or invalid');
           localStorage.removeItem('technova_token');
           setUser(null);

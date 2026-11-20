@@ -13,7 +13,6 @@ import {
   Settings,
   LogOut,
   ExternalLink,
-  Server,
   Sparkles
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';

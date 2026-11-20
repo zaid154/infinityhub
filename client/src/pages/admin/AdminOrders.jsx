@@ -3,13 +3,9 @@ import {
   ShoppingBag,
   CreditCard,
   Truck,
-  CheckCircle2,
-  Clock,
-  AlertCircle,
   Search,
   X,
   Printer,
-  ExternalLink,
   Building2,
   Phone,
   Mail,
@@ -22,8 +18,7 @@ import {
   Send,
   FileText,
   MapPin,
-  TrendingUp,
-  ShieldCheck
+  TrendingUp
 } from 'lucide-react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
@@ -54,11 +49,11 @@ export default function AdminOrders() {
   // Invoice Modal State
   const [viewingInvoice, setViewingInvoice] = useState(null);
 
-  const fetchOrders = async () => {
-    setLoading(true);
+  const fetchOrders = async (showLoading = false) => {
+    if (showLoading) setLoading(true);
     try {
       const res = await api.get('/orders');
-      if (res.data.success) {
+      if (res.data?.success) {
         setOrders(res.data.orders || []);
       }
     } catch (err) {
@@ -70,7 +65,24 @@ export default function AdminOrders() {
   };
 
   useEffect(() => {
-    fetchOrders();
+    let isMounted = true;
+    api.get('/orders')
+      .then((res) => {
+        if (isMounted && res.data?.success) {
+          setOrders(res.data.orders || []);
+        }
+      })
+      .catch((err) => {
+        console.error('[Admin fetch orders error]', err);
+        toast.error('Failed to load orders');
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // Quick Inline Status Update (Instant DB write + Optimistic UI update)

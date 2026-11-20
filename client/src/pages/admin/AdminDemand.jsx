@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Sparkles,
-  TrendingUp,
   Search,
   Package,
-  Layers,
   Clock,
   CheckCircle2,
   AlertTriangle,
@@ -13,11 +11,9 @@ import {
   Building,
   User as UserIcon,
   Phone,
-  Mail,
-  RefreshCw,
-  ExternalLink
+  RefreshCw
 } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
 import ThemeSelect from '../../components/ThemeSelect';
@@ -39,8 +35,8 @@ export default function AdminDemand() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const fetchDemands = async () => {
-    setLoading(true);
+  const fetchDemands = useCallback(async (showLoading = false) => {
+    if (showLoading) setLoading(true);
     try {
       const res = await api.get('/demand', {
         params: {
@@ -50,7 +46,7 @@ export default function AdminDemand() {
           page
         }
       });
-      if (res.data.success) {
+      if (res.data?.success) {
         setDemands(res.data.demands);
         setStats(res.data.stats);
         setTopDemands(res.data.topDemands || []);
@@ -62,10 +58,36 @@ export default function AdminDemand() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [statusFilter, sourceFilter, sortOption, page]);
 
   useEffect(() => {
-    fetchDemands();
+    let isMounted = true;
+    api.get('/demand', {
+      params: {
+        status: statusFilter,
+        source: sourceFilter,
+        sort: sortOption,
+        page
+      }
+    })
+      .then((res) => {
+        if (!isMounted || !res.data?.success) return;
+        setDemands(res.data.demands);
+        setStats(res.data.stats);
+        setTopDemands(res.data.topDemands || []);
+        setTotalPages(res.data.totalPages || 1);
+      })
+      .catch((err) => {
+        console.error('[Fetch Demands Error]', err);
+        toast.error('Failed to load customer demand records');
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, [statusFilter, sourceFilter, sortOption, page]);
 
   const handleStatusChange = async (id, newStatus) => {
@@ -75,7 +97,7 @@ export default function AdminDemand() {
         toast.success(`Demand marked as ${newStatus.replace('_', ' ')}`);
         fetchDemands();
       }
-    } catch (err) {
+    } catch {
       toast.error('Failed to update status');
     }
   };
@@ -88,7 +110,7 @@ export default function AdminDemand() {
         toast.success('Demand record removed');
         fetchDemands();
       }
-    } catch (err) {
+    } catch {
       toast.error('Failed to delete record');
     }
   };
@@ -98,7 +120,7 @@ export default function AdminDemand() {
     if (demand.procurement_status === 'demand_logged') {
       try {
         await api.put(`/demand/${demand._id}`, { procurement_status: 'procurement_planned' });
-      } catch (e) {
+      } catch {
         // Continue navigation
       }
     }
@@ -307,15 +329,7 @@ export default function AdminDemand() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#D4A24C]/15">
-                {demands.map((d) => {
-                  const statusColors = {
-                    demand_logged: 'bg-amber-50 text-amber-800 border-amber-200',
-                    procurement_planned: 'bg-blue-50 text-blue-800 border-blue-200',
-                    stocked_listed: 'bg-emerald-50 text-emerald-800 border-emerald-200',
-                    dismissed: 'bg-slate-100 text-slate-600 border-slate-200'
-                  };
-
-                  return (
+                {demands.map((d) => (
                     <tr key={d._id} className="hover:bg-[#FAF7F2]/60 transition">
                       <td className="py-3 px-4 align-top">
                         <div className="space-y-1">
@@ -430,8 +444,7 @@ export default function AdminDemand() {
                         </div>
                       </td>
                     </tr>
-                  );
-                })}
+                ))}
               </tbody>
             </table>
           </div>

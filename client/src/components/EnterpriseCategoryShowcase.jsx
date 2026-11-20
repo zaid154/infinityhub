@@ -1,8 +1,18 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import api from '../services/api';
 import { getSafeImageUrl } from '../utils/imageHelper';
+
+const CATEGORY_FALLBACK_IMAGES = {
+  laptops: '/products/commercial-elite.png',
+  desktops: '/products/real-optiplex-pc-transparent.png',
+  monitors: '/products/real-dell-display-transparent.png',
+  ram: '/products/real-enterprise-ram-transparent.png',
+  gpu: '/products/real-rtx-3060-gpu-transparent.png',
+  cpu: '/products/real-enterprise-ram-transparent.png',
+  other: '/products/commercial-elite.png'
+};
 
 export default function EnterpriseCategoryShowcase() {
   const sliderRef = useRef(null);
@@ -14,16 +24,6 @@ export default function EnterpriseCategoryShowcase() {
       const scrollAmount = direction === 'left' ? -280 : 280;
       sliderRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
-  };
-
-  const categoryFallbackImages = {
-    laptops: '/products/commercial-elite.png',
-    desktops: '/products/real-optiplex-pc-transparent.png',
-    monitors: '/products/real-dell-display-transparent.png',
-    ram: '/products/real-enterprise-ram-transparent.png',
-    gpu: '/products/real-rtx-3060-gpu-transparent.png',
-    cpu: '/products/real-enterprise-ram-transparent.png',
-    other: '/products/commercial-elite.png'
   };
 
   useEffect(() => {
@@ -51,7 +51,7 @@ export default function EnterpriseCategoryShowcase() {
           );
 
           const featuredProd = matchingProds.find((p) => p.is_featured) || matchingProds[0];
-          const image = (featuredProd && getSafeImageUrl(featuredProd)) || categoryFallbackImages[cat.slug] || '/products/commercial-elite.png';
+          const image = (featuredProd && getSafeImageUrl(featuredProd)) || CATEGORY_FALLBACK_IMAGES[cat.slug] || '/products/commercial-elite.png';
 
           return {
             id: cat._id,

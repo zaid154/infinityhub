@@ -3,29 +3,18 @@ import { motion } from 'framer-motion';
 import { Link, useOutletContext } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import {
-  Laptop,
-  Monitor,
-  Cpu,
-  Wrench,
-  Recycle,
   ShieldCheck,
   CheckCircle2,
   ArrowRight,
   Calculator,
-  FileCheck2,
   BatteryCharging,
   HardDrive,
   Thermometer,
   ChevronDown,
-  Send,
-  Building,
-  Phone,
-  Star,
   Check
 } from 'lucide-react';
 import api from '../services/api';
 import toast from 'react-hot-toast';
-import VideoReels from '../components/VideoReels';
 import EnterpriseCategoryShowcase from '../components/EnterpriseCategoryShowcase';
 import BestSellersSection from '../components/BestSellersSection';
 import CompleteCollectionSection from '../components/CompleteCollectionSection';
@@ -37,11 +26,8 @@ export default function Home() {
   const { company } = useCompany();
   const shouldReduce = useReducedMotionSafe();
   const brandName = company?.brand_name || 'Demo Infotech';
-  const brandShort = company?.brand_name_short || 'Demo';
   const brandTagline = company?.tagline || 'Enterprise Hardware Solutions';
   const { openRFQ } = useOutletContext();
-  const [featuredProducts, setFeaturedProducts] = useState([]);
-  const [loadingProducts, setLoadingProducts] = useState(true);
   const heroVideoRef = useRef(null);
 
   // Guarantee hero video playback on load
@@ -56,52 +42,6 @@ export default function Home() {
     }
   }, []);
 
-  // Helper to format specs for any hardware category
-  const getProductSpecSummary = (p) => {
-    if (p.category === 'monitor') {
-      const parts = [p.specs?.screen_size, p.specs?.resolution, p.specs?.panel_type || p.specs?.ports].filter(Boolean);
-      return parts.length > 0 ? parts.join(' • ') : 'Full HD IPS Frameless Display';
-    }
-    if (p.category === 'charger') {
-      const parts = [p.specs?.wattage, p.specs?.connector_type, p.specs?.compatibility].filter(Boolean);
-      return parts.length > 0 ? parts.join(' • ') : 'Fast-Charge Power Adapter';
-    }
-    if (p.category === 'desktop') {
-      const parts = [p.specs?.processor, p.specs?.ram, p.specs?.storage || p.specs?.form_factor].filter(Boolean);
-      return parts.length > 0 ? parts.join(' • ') : 'Commercial Enterprise Desktop';
-    }
-    if (p.category === 'gpu') {
-      const parts = [p.specs?.vram, p.specs?.cuda_cores, p.specs?.outputs].filter(Boolean);
-      return parts.length > 0 ? parts.join(' • ') : 'GDDR6 Workstation Graphics';
-    }
-    if (p.category === 'ram') {
-      const parts = [p.specs?.ram, p.specs?.speed, p.specs?.form_factor].filter(Boolean);
-      return parts.length > 0 ? parts.join(' • ') : 'DDR4 High-Speed Memory';
-    }
-    if (p.category === 'cpu') {
-      const parts = [p.specs?.cores_threads, p.specs?.clock_speed, p.specs?.socket].filter(Boolean);
-      return parts.length > 0 ? parts.join(' • ') : 'Enterprise Multi-Core Processor';
-    }
-    const laptopParts = [p.specs?.processor, p.specs?.ram, p.specs?.storage].filter(Boolean);
-    if (laptopParts.length > 0) return laptopParts.join(' • ');
-
-    if (p.specs && typeof p.specs === 'object') {
-      const generic = Object.values(p.specs).filter((v) => typeof v === 'string' && v.trim());
-      if (generic.length > 0) return generic.slice(0, 3).join(' • ');
-    }
-
-    return p.description || 'Enterprise Grade A+ Hardware';
-  };
-
-  // Helper to ensure genuine hardware imagery
-  const getProductImage = (p) => {
-    const url = p.images?.[0]?.url;
-    if (!url || url.includes('photo-1544717305-2782549b5136') || p.slug?.includes('hp-elitebook')) {
-      return 'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=800&auto=format&fit=crop&q=80';
-    }
-    return url;
-  };
-
   // FAQ Accordion State
   const [expandedFaq, setExpandedFaq] = useState(null);
 
@@ -114,22 +54,6 @@ export default function Home() {
     approx_quantity: 20,
     city: 'Delhi NCR'
   });
-
-  useEffect(() => {
-    const fetchFeatured = async () => {
-      try {
-        const res = await api.get('/products/featured/list');
-        if (res.data.success) {
-          setFeaturedProducts(res.data.featured || []);
-        }
-      } catch (err) {
-        console.error('[Error fetching featured products]', err);
-      } finally {
-        setLoadingProducts(false);
-      }
-    };
-    fetchFeatured();
-  }, []);
 
   const handleBuybackSubmit = async (e) => {
     e.preventDefault();
@@ -151,7 +75,7 @@ export default function Home() {
           city: 'Delhi NCR'
         });
       }
-    } catch (err) {
+    } catch {
       toast.error('Failed to submit asset liquidation request.');
     }
   };
@@ -414,9 +338,6 @@ export default function Home() {
 
       {/* 6. AL-TOOBA 1:1 OUR COMPLETE COLLECTION - RENTING & SELLING FLEETS */}
       <CompleteCollectionSection onOpenRFQ={openRFQ} />
-
-      {/* 7. 3D VIDEO REELS CAROUSEL (Temporarily disabled as requested) */}
-      {/* <VideoReels /> */}
 
       {/* 7. SPIRITUAL / CORE VALUE BANNER (AL-TOOBA SIGNATURE QUOTE) */}
       <section className="max-w-5xl mx-auto px-4 sm:px-8">

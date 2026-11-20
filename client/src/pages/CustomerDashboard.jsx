@@ -3,12 +3,8 @@ import { Link } from 'react-router-dom';
 import {
   ShoppingBag,
   Repeat,
-  User,
   FileText,
-  ArrowRight,
-  Package,
-  Calendar,
-  CreditCard
+  ArrowRight
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';

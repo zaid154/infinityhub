@@ -8,8 +8,6 @@ export default function TermsConditionsPage() {
   const brand = company?.brand_name || 'Demo Infotech';
   const legal = company?.legal_name || 'Demo Infotech Private Limited [PLACEHOLDER]';
   const gstin = company?.gst_number || '07AAAAA0000A1Z5 [PLACEHOLDER]';
-  const cin = company?.cin_number || 'U72900DL2024PTC000000 [PLACEHOLDER]';
-  const regAddress = company?.registered_address || 'Registered Office Address [PLACEHOLDER]';
   const jurisdiction = company?.jurisdiction_city || 'New Delhi';
 
   const toc = [

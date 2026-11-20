@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, User, Building, Phone, Mail, MapPin, Save } from 'lucide-react';
+import { ArrowLeft, Save } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import toast from 'react-hot-toast';
 
 export default function MyProfile() {
   const { user, updateProfile } = useAuth();

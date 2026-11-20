@@ -3,21 +3,16 @@ import {
   Recycle,
   MessageSquare,
   CheckCircle2,
-  AlertCircle,
   Search,
   ChevronLeft,
   ChevronRight,
   RefreshCw,
-  FileText,
   X,
-  Building2,
   MapPin,
   TrendingUp,
   Coins,
   Send,
-  Calendar,
-  Layers,
-  ArrowUpRight
+  Layers
 } from 'lucide-react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
@@ -51,7 +46,7 @@ export default function AdminBuyback() {
 
     try {
       const res = await api.get('/buyback?limit=100');
-      if (res.data.success) {
+      if (res.data?.success) {
         setRequests(res.data.requests || []);
       }
     } catch (err) {
@@ -64,13 +59,36 @@ export default function AdminBuyback() {
   };
 
   useEffect(() => {
-    fetchRequests();
+    let isMounted = true;
+    api.get('/buyback?limit=100')
+      .then((res) => {
+        if (isMounted && res.data?.success) {
+          setRequests(res.data.requests || []);
+        }
+      })
+      .catch((err) => {
+        console.error('[Admin Buyback Error]', err);
+        toast.error('Failed to load asset buyback requests');
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  // Reset pagination on filter or search change
-  useEffect(() => {
+  // Reset pagination on filter or search change safely during render
+  const [prevFilter, setPrevFilter] = useState({ statusFilter, searchQuery, itemsPerPage });
+  if (
+    statusFilter !== prevFilter.statusFilter ||
+    searchQuery !== prevFilter.searchQuery ||
+    itemsPerPage !== prevFilter.itemsPerPage
+  ) {
+    setPrevFilter({ statusFilter, searchQuery, itemsPerPage });
     setCurrentPage(1);
-  }, [statusFilter, searchQuery, itemsPerPage]);
+  }
 
   // Clean company initial (strips bracket tags)
   const getCleanInitial = (name, company) => {

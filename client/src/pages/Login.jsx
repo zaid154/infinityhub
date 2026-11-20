@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { Lock, Mail, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Lock, Mail, ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCompany } from '../context/SettingsContext';
-import toast from 'react-hot-toast';
 import BrandLogo from '../components/BrandLogo';
 
 export default function Login() {

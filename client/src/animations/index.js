@@ -4,8 +4,12 @@
 export {
   APPLE_EASE,
   APPLE_SPRING,
-  APPLE_GENTLE_SPRING,
-  useReducedMotionSafe,
+  APPLE_GENTLE_SPRING
+} from './motionConstants';
+
+export { useReducedMotionSafe } from './useReducedMotionSafe';
+
+export {
   AppleSpotlightCard,
   AppleReveal,
   AnimatedAccordion,

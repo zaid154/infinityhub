@@ -22,11 +22,8 @@ import {
   Truck
 } from 'lucide-react';
 import api from '../../services/api';
-import { useCompany } from '../../context/SettingsContext';
 
 export default function AdminCustomers() {
-  const { company: siteCompany } = useCompany();
-  const brandName = siteCompany?.brand_name || 'Demo Infotech';
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -46,6 +43,12 @@ export default function AdminCustomers() {
   const [copiedId, setCopiedId] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
 
+  // Show Toast Helper (defined before fetchCustomers)
+  const showToast = (msg, type = 'success') => {
+    setToastMessage({ msg, type });
+    setTimeout(() => setToastMessage(null), 4000);
+  };
+
   // Fetch Customers
   const fetchCustomers = async (isManualRefresh = false) => {
     if (isManualRefresh) setRefreshing(true);
@@ -53,7 +56,7 @@ export default function AdminCustomers() {
 
     try {
       const res = await api.get('/admin/customers');
-      if (res.data.success) {
+      if (res.data?.success) {
         setCustomers(res.data.customers || []);
       }
     } catch (err) {
@@ -66,14 +69,25 @@ export default function AdminCustomers() {
   };
 
   useEffect(() => {
-    fetchCustomers();
-  }, []);
+    let isMounted = true;
+    api.get('/admin/customers')
+      .then((res) => {
+        if (isMounted && res.data?.success) {
+          setCustomers(res.data.customers || []);
+        }
+      })
+      .catch((err) => {
+        console.error('[Admin Customers Error]', err);
+        showToast('Failed to load customer directory', 'error');
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
 
-  // Show Toast Helper
-  const showToast = (msg, type = 'success') => {
-    setToastMessage({ msg, type });
-    setTimeout(() => setToastMessage(null), 4000);
-  };
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // Copy to clipboard helper
   const handleCopy = (text, id) => {
@@ -176,10 +190,16 @@ export default function AdminCustomers() {
     });
   }, [customers, statusFilter, searchQuery]);
 
-  // Reset to page 1 on filter or search changes
-  useEffect(() => {
+  // Reset to page 1 on filter or search changes safely during render
+  const [prevCustomerFilters, setPrevCustomerFilters] = useState({ statusFilter, searchQuery, itemsPerPage });
+  if (
+    statusFilter !== prevCustomerFilters.statusFilter ||
+    searchQuery !== prevCustomerFilters.searchQuery ||
+    itemsPerPage !== prevCustomerFilters.itemsPerPage
+  ) {
+    setPrevCustomerFilters({ statusFilter, searchQuery, itemsPerPage });
     setCurrentPage(1);
-  }, [statusFilter, searchQuery, itemsPerPage]);
+  }
 
   // Pagination Slice
   const totalItems = filteredCustomers.length;

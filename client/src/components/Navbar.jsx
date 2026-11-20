@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
-  Phone,
-  FileText,
   ShoppingCart,
   User,
   Menu,
   X,
   LogOut,
   LayoutDashboard,
-  ChevronRight,
-  Sparkles
+  ChevronRight
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -23,7 +20,6 @@ export default function Navbar({ onOpenRFQ }) {
   const { cartCount } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const navigate = useNavigate();
   const location = useLocation();
 
   const isHome = location.pathname === '/';

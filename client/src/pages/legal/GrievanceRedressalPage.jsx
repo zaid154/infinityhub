@@ -1,19 +1,6 @@
 /* DRAFT – to be reviewed by a practising advocate/CA before publishing */
 import React, { useState } from 'react';
-import { Helmet } from 'react-helmet-async';
-import {
-  ShieldCheck,
-  Send,
-  AlertCircle,
-  Clock,
-  Phone,
-  Mail,
-  MapPin,
-  Building,
-  CheckCircle2,
-  Lock,
-  Scale
-} from 'lucide-react';
+import { Send, CheckCircle2 } from 'lucide-react';
 import LegalLayout from '../../components/LegalLayout';
 import ThemeSelect from '../../components/ThemeSelect';
 import { useCompany } from '../../context/SettingsContext';

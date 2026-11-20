@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Star, ShoppingBag, ArrowRight, Repeat, Check } from 'lucide-react';
+import { ShoppingBag, ArrowRight, Repeat, Check } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { AppleSpotlightCard } from '../animations';
 import api from '../services/api';

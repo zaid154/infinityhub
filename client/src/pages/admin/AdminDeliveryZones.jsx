@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MapPin, Plus, Trash2, Edit2, CheckCircle2 } from 'lucide-react';
+import { Plus, Trash2, Edit2 } from 'lucide-react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
 
@@ -19,11 +19,11 @@ export default function AdminDeliveryZones() {
     is_active: true
   });
 
-  const fetchZones = async () => {
-    setLoading(true);
+  const fetchZones = async (showLoading = false) => {
+    if (showLoading) setLoading(true);
     try {
       const res = await api.get('/settings/delivery-zones');
-      if (res.data.success) {
+      if (res.data?.success) {
         setZones(res.data.zones);
       }
     } catch (err) {
@@ -34,7 +34,23 @@ export default function AdminDeliveryZones() {
   };
 
   useEffect(() => {
-    fetchZones();
+    let isMounted = true;
+    api.get('/settings/delivery-zones')
+      .then((res) => {
+        if (isMounted && res.data?.success) {
+          setZones(res.data.zones);
+        }
+      })
+      .catch((err) => {
+        console.error('[Fetch Zones Error]', err);
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleOpenAdd = () => {
@@ -83,7 +99,7 @@ export default function AdminDeliveryZones() {
           fetchZones();
         }
       }
-    } catch (err) {
+    } catch {
       toast.error('Failed to save zone');
     }
   };
@@ -96,7 +112,7 @@ export default function AdminDeliveryZones() {
         toast.success('Zone deleted');
         fetchZones();
       }
-    } catch (err) {
+    } catch {
       toast.error('Failed to delete zone');
     }
   };

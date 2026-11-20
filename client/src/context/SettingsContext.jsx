@@ -53,8 +53,44 @@ export function SettingsProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    fetchSettings();
-  }, [fetchSettings]);
+    let isMounted = true;
+    api.get('/settings/public')
+      .then((res) => {
+        if (!isMounted || !res.data?.success || !res.data.settings) return;
+        setSettings((prev) => ({
+          ...prev,
+          ...res.data.settings,
+          grievance_officer: {
+            ...prev.grievance_officer,
+            ...(res.data.settings.grievance_officer || {})
+          },
+          social_links: {
+            ...prev.social_links,
+            ...(res.data.settings.social_links || {})
+          },
+          bank_details: {
+            ...prev.bank_details,
+            ...(res.data.settings.bank_details || {})
+          },
+          category_gst_rates:
+            res.data.settings.category_gst_rates && res.data.settings.category_gst_rates.length > 0
+              ? res.data.settings.category_gst_rates
+              : prev.category_gst_rates
+        }));
+        setError(null);
+      })
+      .catch((err) => {
+        console.warn('[SettingsContext] Falling back to default company configuration:', err?.message);
+        if (isMounted) setError(err.message || 'Failed to fetch settings');
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // Check if critical enterprise identity fields still have demo placeholders
   const isDemoMode = useMemo(() => {
