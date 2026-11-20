@@ -54,27 +54,36 @@ export const register = async (req, res, next) => {
       company_size: normalizedSize,
       city: city || '',
       role: 'customer',
-      email_verified: false,
+      email_verified: true,
       verification_token: verificationToken
     });
 
-    // Send verification email via Gmail SMTP
+    // Send welcome / verification email via Gmail SMTP asynchronously
     try {
-      await sendVerificationEmail(
+      sendVerificationEmail(
         user.email,
         user.name,
         verificationToken,
         process.env.CLIENT_URL
-      );
+      ).catch((e) => console.error('[Verification Email Async Notice]', e.message));
     } catch (emailErr) {
       console.error('[Verification Email Failed]', emailErr);
     }
 
+    const token = generateToken(user._id, user.role);
+
     res.status(201).json({
       success: true,
-      message: 'Registration successful! Please check your email to verify your account.',
-      userId: user._id,
-      verificationToken: process.env.NODE_ENV === 'development' ? verificationToken : undefined
+      message: `Welcome to Demo Infotech, ${user.name}! Your corporate account is active.`,
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        company_name: user.company_name,
+        phone: user.phone
+      }
     });
   } catch (error) {
     next(error);
@@ -122,13 +131,10 @@ export const login = async (req, res, next) => {
       });
     }
 
-    // Check if email is verified (Admin accounts are pre-verified)
-    if (user.role === 'customer' && !user.email_verified) {
-      return res.status(403).json({
-        success: false,
-        isUnverified: true,
-        message: 'Please verify your email address before logging in. Check your inbox.'
-      });
+    // If customer has not yet been marked verified, auto-verify upon successful credential authentication
+    if (!user.email_verified) {
+      user.email_verified = true;
+      await user.save().catch(() => {});
     }
 
     const token = generateToken(user._id, user.role);

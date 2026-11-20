@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import {
   User,
@@ -15,7 +15,6 @@ import {
   Eye,
   EyeOff,
   ChevronDown,
-  CheckCircle2,
   FileText
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -26,6 +25,8 @@ export default function Signup() {
   const { register } = useAuth();
   const { company } = useCompany();
   const brandName = company?.brand_name || 'Demo Infotech';
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -39,7 +40,6 @@ export default function Signup() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [registeredSuccess, setRegisteredSuccess] = useState(false);
   const [emailExistsError, setEmailExistsError] = useState('');
 
   const designationOptions = [
@@ -61,51 +61,13 @@ export default function Signup() {
     setSubmitting(false);
 
     if (result.success) {
-      setRegisteredSuccess(true);
+      const queryParams = new URLSearchParams(location.search);
+      const redirect = queryParams.get('redirect') || '/dashboard';
+      navigate(redirect);
     } else if (result.message && result.message.toLowerCase().includes('already exists')) {
       setEmailExistsError(result.message);
     }
   };
-
-  if (registeredSuccess) {
-    return (
-      <div className="min-h-[85vh] flex items-center justify-center px-4 py-12 bg-[#FAF7F2]">
-        <Helmet>
-          <title>Registration Complete | {brandName} Corporate Portal</title>
-        </Helmet>
-        <div className="bg-white p-8 sm:p-10 rounded-3xl border border-[#D4A24C]/35 shadow-2xl max-w-md w-full text-center space-y-5">
-          <div className="w-16 h-16 rounded-2xl bg-[#FAF7F2] text-[#0D3B2A] flex items-center justify-center mx-auto border border-[#D4A24C]/40 shadow-xs">
-            <CheckCircle2 className="w-8 h-8 text-[#D4A24C]" />
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold font-serif text-[#0D3B2A]">Verification Email Sent</h2>
-            <p className="text-xs text-[#5A6B63] mt-2 leading-relaxed">
-              We have dispatched an activation link to <strong className="text-[#0D3B2A] font-semibold">{formData.email}</strong>.
-              Please click the link in your inbox to activate your account.
-            </p>
-          </div>
-          <div className="p-4 bg-[#FAF7F2] rounded-2xl border border-[#D4A24C]/25 text-[11px] text-[#5A6B63] text-left space-y-1.5">
-            <p className="font-bold text-[#0D3B2A] flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-[#8A5E12]" />
-              <span>Enterprise Benefits Unlocked</span>
-            </p>
-            <p className="text-[10.5px]">
-              Once activated, you can generate Net-30 Proforma POs, schedule rental fleets with 24–48h SLA, and claim 18% Input Tax Credit.
-            </p>
-          </div>
-          <div className="pt-2">
-            <Link
-              to="/login"
-              className="inline-flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-lg border border-[#D4A24C]/40"
-            >
-              <span>Proceed to Sign In</span>
-              <ArrowRight className="w-4 h-4 text-[#D4A24C]" />
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-[85vh] py-8 sm:py-14 px-4 sm:px-6 flex items-center justify-center relative overflow-hidden bg-[#FAF7F2]">

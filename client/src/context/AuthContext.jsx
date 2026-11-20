@@ -54,8 +54,13 @@ export const AuthProvider = ({ children }) => {
       const res = await api.post('/auth/register', userData);
       if (res.data.success) {
         toast.dismiss();
-        toast.success(res.data.message || 'Verification link sent to your email!', { id: 'auth-reg-success' });
-        return { success: true };
+        if (res.data.token && res.data.user) {
+          localStorage.setItem('technova_token', res.data.token);
+          setToken(res.data.token);
+          setUser(res.data.user);
+        }
+        toast.success(res.data.message || 'Corporate account created successfully!', { id: 'auth-reg-success' });
+        return { success: true, user: res.data.user };
       }
     } catch (err) {
       const message = err.response?.data?.message || 'Registration failed.';
