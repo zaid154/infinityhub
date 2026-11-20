@@ -107,11 +107,33 @@ export const getAllRentalsAdmin = async (req, res, next) => {
 
 export const updateRentalStatus = async (req, res, next) => {
   try {
-    const { status, admin_notes, payment_status } = req.body;
+    const status = req.body.status || req.body.rental_status;
+    const admin_notes = req.body.admin_notes !== undefined ? req.body.admin_notes : req.body.notes;
+    const payment_status = req.body.payment_status;
     const rental = await Rental.findById(req.params.id);
     if (!rental) return res.status(404).json({ success: false, message: 'Rental record not found' });
 
-    if (status) rental.status = status;
+    const previousStatus = rental.status;
+
+    // Inventory Lifecycle Reconciliation:
+    // If transitioning from active/allocated to returned/completed, restore rental_stock to warehouse
+    if (status && status !== previousStatus) {
+      const activeStates = ['active', 'allocated', 'pending'];
+      const returnedStates = ['returned', 'completed', 'cancelled'];
+
+      if (returnedStates.includes(status) && activeStates.includes(previousStatus)) {
+        await Product.findByIdAndUpdate(rental.product, {
+          $inc: { rental_stock: rental.quantity }
+        });
+      } else if (activeStates.includes(status) && returnedStates.includes(previousStatus)) {
+        // If transitioning from returned back to active, decrement stock
+        await Product.findByIdAndUpdate(rental.product, {
+          $inc: { rental_stock: -rental.quantity }
+        });
+      }
+      rental.status = status;
+    }
+
     if (admin_notes !== undefined) rental.admin_notes = admin_notes;
     if (payment_status) rental.payment_status = payment_status;
 

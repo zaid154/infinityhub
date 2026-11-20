@@ -28,6 +28,21 @@ export const register = async (req, res, next) => {
     // Generate email verification token
     const verificationToken = crypto.randomBytes(32).toString('hex');
 
+    // Normalize company_size to match strict User schema enum: ['1-10', '11-50', '51-200', '200+', 'Undisclosed']
+    let normalizedSize = 'Undisclosed';
+    const rawSize = (company_size || '').toString().trim().toLowerCase();
+    if (rawSize.includes('200+') || rawSize.includes('500+') || rawSize.includes('enterprise')) {
+      normalizedSize = '200+';
+    } else if (rawSize.includes('51') || rawSize.includes('50') || rawSize.includes('200')) {
+      normalizedSize = '51-200';
+    } else if (rawSize.includes('11') || rawSize.includes('50')) {
+      normalizedSize = '11-50';
+    } else if (rawSize.includes('1') || rawSize.includes('10')) {
+      normalizedSize = '1-10';
+    } else if (['1-10', '11-50', '51-200', '200+'].includes(company_size)) {
+      normalizedSize = company_size;
+    }
+
     const user = await User.create({
       name,
       email: email.toLowerCase(),
@@ -35,8 +50,8 @@ export const register = async (req, res, next) => {
       phone: phone || '',
       company_name: company_name || '',
       designation: designation || 'Other / Professional',
-      primary_interest: primary_interest || 'both',
-      company_size: company_size || 'Undisclosed',
+      primary_interest: ['rent', 'buy', 'both', 'buyback'].includes(primary_interest) ? primary_interest : 'both',
+      company_size: normalizedSize,
       city: city || '',
       role: 'customer',
       email_verified: false,

@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import slugify from 'slugify';
 import Product from '../models/Product.js';
 import Category from '../models/Category.js';
@@ -95,15 +96,17 @@ export const getProducts = async (req, res, next) => {
   }
 };
 
-// @desc    Get single product by slug
+// @desc    Get single product by slug or id
 // @route   GET /api/products/:slug
 // @access  Public
 export const getProductBySlug = async (req, res, next) => {
   try {
-    const product = await Product.findOne({
-      slug: req.params.slug,
-      is_active: true
-    });
+    const isObjectId = mongoose.Types.ObjectId.isValid(req.params.slug);
+    const query = isObjectId
+      ? { $or: [{ slug: req.params.slug }, { _id: req.params.slug }], is_active: true }
+      : { slug: req.params.slug, is_active: true };
+
+    const product = await Product.findOne(query);
 
     if (!product) {
       return res.status(404).json({ success: false, message: 'Product not found' });

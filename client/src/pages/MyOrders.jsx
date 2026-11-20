@@ -1,13 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, ShoppingBag, FileText, CheckCircle2, Clock, Printer } from 'lucide-react';
+import { 
+  ArrowLeft, 
+  ShoppingBag, 
+  FileText, 
+  CheckCircle2, 
+  Clock, 
+  Printer, 
+  Truck, 
+  Copy, 
+  Check, 
+  ExternalLink,
+  ShieldCheck
+} from 'lucide-react';
 import api from '../services/api';
+import toast from 'react-hot-toast';
 import InvoiceModal from '../components/InvoiceModal';
 
 export default function MyOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [viewingInvoice, setViewingInvoice] = useState(null);
+  const [copiedId, setCopiedId] = useState(null);
+
+  const handleCopyTracking = (trackingNum) => {
+    navigator.clipboard.writeText(trackingNum);
+    setCopiedId(trackingNum);
+    toast.success(`AWB Tracking #${trackingNum} copied to clipboard!`);
+    setTimeout(() => setCopiedId(null), 2500);
+  };
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -105,6 +126,50 @@ export default function MyOrders() {
                   </button>
                 </div>
               </div>
+
+              {/* Live Dispatch & Shipment Tracking Module (Updated by Admin) */}
+              {(o.tracking_number || o.courier_name || o.order_status === 'shipped' || o.order_status === 'delivered') && (
+                <div className="p-3.5 rounded-2xl bg-[#FAF7F2] border border-[#D4A24C]/35 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                  <div className="flex items-start sm:items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-[#0D3B2A] text-[#D4A24C] flex items-center justify-center shrink-0">
+                      <Truck className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-[#0D3B2A]">
+                          {o.courier_name || 'Express Logistics Partner'}
+                        </span>
+                        <span className={`px-2 py-0.5 rounded-full text-[9.5px] font-bold uppercase tracking-wider ${
+                          o.order_status === 'delivered' ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'
+                        }`}>
+                          {o.order_status === 'delivered' ? 'Delivered' : 'In Transit'}
+                        </span>
+                      </div>
+                      {o.tracking_number ? (
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <span className="text-[#5A6B63] text-[11px]">AWB Tracking:</span>
+                          <span className="font-mono font-bold text-[#0D3B2A] text-[11.5px]">{o.tracking_number}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleCopyTracking(o.tracking_number)}
+                            className="text-[#8A5E12] hover:text-[#0D3B2A] transition cursor-pointer p-0.5"
+                            title="Copy Tracking Number"
+                          >
+                            {copiedId === o.tracking_number ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                          </button>
+                        </div>
+                      ) : (
+                        <p className="text-[11px] text-[#5A6B63]">AWB tracking number assigned upon courier pickup.</p>
+                      )}
+                    </div>
+                  </div>
+                  {o.admin_notes && (
+                    <div className="text-[11px] text-[#5A6B63] sm:text-right max-w-xs">
+                      <span className="font-semibold text-[#0D3B2A]">Logistics Note:</span> {o.admin_notes}
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Items Table */}
               <div className="space-y-2 text-xs">

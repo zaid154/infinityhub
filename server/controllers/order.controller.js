@@ -70,7 +70,8 @@ export const createOrder = async (req, res, next) => {
     const grand_total = subtotal + total_gst + delivery_charges;
 
     // Handle B2B Corporate Purchase Order (Net-30 / Proforma / Wire)
-    if (payment_method === 'po') {
+    const isPoMethod = ['po', 'po_invoice', 'invoice', 'net30', 'offline'].includes(String(payment_method).toLowerCase());
+    if (isPoMethod) {
       const order = await Order.create({
         user: req.user._id,
         items: orderItems,
@@ -223,10 +224,31 @@ export const updateOrderStatus = async (req, res, next) => {
     const order = await Order.findById(req.params.id);
     if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
 
-    if (order_status) order.order_status = order_status;
+    const previousStatus = order.order_status;
+
+    // Inventory Lifecycle Reconciliation:
+    // If order was placed/processing/confirmed and is now cancelled, restore sale_stock
+    if (order_status && order_status !== previousStatus) {
+      if (order_status === 'cancelled' && ['placed', 'processing', 'confirmed', 'shipped'].includes(previousStatus)) {
+        for (const item of order.items) {
+          await Product.findByIdAndUpdate(item.product, {
+            $inc: { sale_stock: Number(item.quantity), stock_quantity: Number(item.quantity) }
+          });
+        }
+      } else if (previousStatus === 'cancelled' && ['placed', 'processing', 'confirmed', 'shipped'].includes(order_status)) {
+        // If un-cancelling, re-reserve stock
+        for (const item of order.items) {
+          await Product.findByIdAndUpdate(item.product, {
+            $inc: { sale_stock: -Number(item.quantity), stock_quantity: -Number(item.quantity) }
+          });
+        }
+      }
+      order.order_status = order_status;
+    }
+
     if (payment_status) order.payment_status = payment_status;
-    if (tracking_number !== undefined) order.tracking_number = tracking_number;
-    if (courier_name !== undefined) order.courier_name = courier_name;
+    if (tracking_number !== undefined) order.tracking_number = tracking_number ? tracking_number.trim() : '';
+    if (courier_name !== undefined) order.courier_name = courier_name ? courier_name.trim() : '';
     if (admin_notes !== undefined) order.admin_notes = admin_notes;
 
     await order.save();

@@ -27,16 +27,21 @@ export default function MyRentals() {
     <div className="max-w-5xl mx-auto px-4 sm:px-8 py-10 space-y-8">
       <Link
         to="/dashboard"
-        className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-[#0D3B2A] transition"
+        className="inline-flex items-center gap-1.5 text-xs font-bold text-[#8A5E12] hover:text-[#0D3B2A] transition"
       >
         <ArrowLeft className="w-4 h-4 text-[#D4A24C]" />
         <span>Back to Portal Overview</span>
       </Link>
 
-      <div className="border-b border-slate-200 pb-4">
-        <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Active Hardware Leases</h1>
-        <p className="text-xs text-slate-500 mt-1">
-          Monitor your ongoing corporate laptop fleets, tenure renewal dates, and free maintenance status.
+      <div className="border-b border-[#D4A24C]/25 pb-4">
+        <span className="text-[10px] font-sans uppercase tracking-[0.2em] text-[#8A5E12] font-bold block">
+          — ACTIVE INFRASTRUCTURE LEASING
+        </span>
+        <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#0D3B2A] tracking-tight mt-0.5">
+          Active Hardware Leases & Fleet Subscriptions
+        </h1>
+        <p className="text-xs text-[#5A6B63] mt-1">
+          Monitor your ongoing corporate laptop fleets, tenure renewal dates, and guaranteed 24–48h standby replacement SLA.
         </p>
       </div>
 
@@ -76,8 +81,14 @@ export default function MyRentals() {
                     Fleet Size: <strong>{r.quantity} Units</strong> • Tenure: <strong>{r.tenure.replace(/_/g, ' ')}</strong>
                   </p>
                   <p className="text-[11px] text-[#5A6B63]/80">
-                    Lease Started: {new Date(r.start_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    Lease Started: {new Date(r.start_date || r.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    {r.end_date && ` • Renews: ${new Date(r.end_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}`}
                   </p>
+                  {r.admin_notes && (
+                    <div className="mt-2 p-2.5 rounded-xl bg-[#FAF7F2] border border-[#D4A24C]/25 text-[11px] text-[#5A6B63]">
+                      <strong className="text-[#0D3B2A]">SLA Provisioning Note:</strong> {r.admin_notes}
+                    </div>
+                  )}
                 </div>
               </div>
 

@@ -31,20 +31,25 @@ export default function MyProfile() {
     <div className="max-w-3xl mx-auto px-4 sm:px-8 py-10 space-y-8">
       <Link
         to="/dashboard"
-        className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-[#0D3B2A] transition"
+        className="inline-flex items-center gap-1.5 text-xs font-bold text-[#8A5E12] hover:text-[#0D3B2A] transition"
       >
         <ArrowLeft className="w-4 h-4 text-[#D4A24C]" />
         <span>Back to Portal Overview</span>
       </Link>
 
-      <div className="border-b border-slate-200 pb-4">
-        <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Company Profile & Contact</h1>
-        <p className="text-xs text-slate-500 mt-1">
-          Keep your corporate billing and delivery details up to date.
+      <div className="border-b border-[#D4A24C]/25 pb-4">
+        <span className="text-[10px] font-sans uppercase tracking-[0.2em] text-[#8A5E12] font-bold block">
+          — CORPORATE ACCOUNT GOVERNANCE
+        </span>
+        <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#0D3B2A] tracking-tight mt-0.5">
+          Company Profile & Master Credentials
+        </h1>
+        <p className="text-xs text-[#5A6B63] mt-1">
+          Keep your corporate GST entity, billing contacts, and default delivery hubs up to date.
         </p>
       </div>
 
-      <div className="bg-white p-7 sm:p-9 rounded-3xl border border-slate-200 shadow-sm">
+      <div className="bg-white p-7 sm:p-9 rounded-3xl border border-[#D4A24C]/25 shadow-sm">
         <form onSubmit={handleSubmit} className="space-y-5 text-xs">
           <div className="grid grid-cols-2 gap-4">
             <div>

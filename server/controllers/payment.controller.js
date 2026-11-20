@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import Order from '../models/Order.js';
+import Product from '../models/Product.js';
 
 // @desc    Verify Razorpay payment signature
 // @route   POST /api/payments/verify
@@ -35,10 +36,23 @@ export const verifyPayment = async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'Order not found' });
     }
 
+    const previouslyPaid = order.payment_status === 'paid';
     order.payment_status = 'paid';
     order.razorpay_payment_id = razorpay_payment_id;
     order.order_status = 'confirmed';
     await order.save();
+
+    // Inventory Lifecycle Reconciliation:
+    // Decrement sale_stock atomically upon verified payment if not already processed
+    if (!previouslyPaid && Array.isArray(order.items)) {
+      for (const item of order.items) {
+        if (item.product && item.quantity > 0) {
+          await Product.findByIdAndUpdate(item.product, {
+            $inc: { sale_stock: -Number(item.quantity), stock_quantity: -Number(item.quantity) }
+          });
+        }
+      }
+    }
 
     res.status(200).json({
       success: true,
