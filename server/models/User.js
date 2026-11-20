@@ -32,6 +32,26 @@ const userSchema = new mongoose.Schema(
       trim: true,
       default: ''
     },
+    designation: {
+      type: String,
+      trim: true,
+      default: 'Other / Professional'
+    },
+    primary_interest: {
+      type: String,
+      enum: ['rent', 'buy', 'both', 'buyback'],
+      default: 'both'
+    },
+    company_size: {
+      type: String,
+      enum: ['1-10', '11-50', '51-200', '200+', 'Undisclosed'],
+      default: 'Undisclosed'
+    },
+    city: {
+      type: String,
+      trim: true,
+      default: ''
+    },
     role: {
       type: String,
       enum: ['admin', 'customer'],

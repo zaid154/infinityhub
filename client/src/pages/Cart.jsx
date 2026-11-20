@@ -158,6 +158,22 @@ export default function Cart() {
     setTimeout(() => setIsShaking(false), 600);
   };
 
+  // Auto-sync user session details into checkout form
+  useEffect(() => {
+    if (user) {
+      setShippingAddress((prev) => ({
+        ...prev,
+        company_name: prev.company_name || user.company_name || '',
+        contact_person: prev.contact_person || (user.designation ? `${user.name} (${user.designation})` : user.name) || '',
+        phone: prev.phone || user.phone || '',
+        city: prev.city || user.city || '',
+        street: prev.street || user.address?.street || '',
+        pincode: prev.pincode || user.address?.pincode || '',
+        state: prev.state || user.address?.state || ''
+      }));
+    }
+  }, [user]);
+
   useEffect(() => {
     const fetchZones = async () => {
       try {
@@ -604,12 +620,20 @@ export default function Cart() {
                       />
                     </div>
                     <div>
-                      <label className="block font-semibold text-slate-700 mb-1">GSTIN (for 18% Input Credit)</label>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="font-semibold text-slate-700">GSTIN (for 18% Input Credit)</label>
+                        {shippingAddress.gst_number?.trim().length === 15 && (
+                          <span className="text-[10px] font-mono font-bold text-emerald-800 bg-emerald-50 px-2 py-0.2 rounded border border-emerald-200">
+                            PAN: {shippingAddress.gst_number.trim().slice(2, 12).toUpperCase()}
+                          </span>
+                        )}
+                      </div>
                       <input
                         type="text"
+                        maxLength={15}
                         placeholder="07AAAAA0000A1Z5"
                         value={shippingAddress.gst_number}
-                        onChange={(e) => setShippingAddress({ ...shippingAddress, gst_number: e.target.value })}
+                        onChange={(e) => setShippingAddress({ ...shippingAddress, gst_number: e.target.value.toUpperCase() })}
                         className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] uppercase font-mono"
                       />
                     </div>
@@ -981,12 +1005,20 @@ export default function Cart() {
                       />
                     </div>
                     <div>
-                      <label className="block font-semibold text-slate-700 mb-1">Corporate GSTIN Number</label>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="font-semibold text-slate-700">Corporate GSTIN Number</label>
+                        {shippingAddress.gst_number?.trim().length === 15 && (
+                          <span className="text-[10px] font-mono font-bold text-emerald-800 bg-emerald-50 px-2 py-0.2 rounded border border-emerald-200">
+                            PAN: {shippingAddress.gst_number.trim().slice(2, 12).toUpperCase()}
+                          </span>
+                        )}
+                      </div>
                       <input
                         type="text"
+                        maxLength={15}
                         placeholder="07AAAAA0000A1Z5"
                         value={shippingAddress.gst_number}
-                        onChange={(e) => setShippingAddress({ ...shippingAddress, gst_number: e.target.value })}
+                        onChange={(e) => setShippingAddress({ ...shippingAddress, gst_number: e.target.value.toUpperCase() })}
                         className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] uppercase font-mono"
                       />
                     </div>

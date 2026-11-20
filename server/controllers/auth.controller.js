@@ -8,7 +8,7 @@ import { sendVerificationEmail, sendPasswordResetEmail } from '../utils/sendEmai
 // @access  Public
 export const register = async (req, res, next) => {
   try {
-    const { name, email, password, phone, company_name } = req.body;
+    const { name, email, password, phone, company_name, designation, primary_interest, company_size, city } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({
@@ -34,6 +34,10 @@ export const register = async (req, res, next) => {
       password,
       phone: phone || '',
       company_name: company_name || '',
+      designation: designation || 'Other / Professional',
+      primary_interest: primary_interest || 'both',
+      company_size: company_size || 'Undisclosed',
+      city: city || '',
       role: 'customer',
       email_verified: false,
       verification_token: verificationToken
@@ -123,6 +127,10 @@ export const login = async (req, res, next) => {
         email: user.email,
         phone: user.phone,
         company_name: user.company_name,
+        designation: user.designation || 'Other / Professional',
+        primary_interest: user.primary_interest || 'both',
+        company_size: user.company_size || 'Undisclosed',
+        city: user.city || '',
         role: user.role,
         email_verified: user.email_verified
       }
@@ -256,12 +264,16 @@ export const getMe = async (req, res, next) => {
 // @access  Private
 export const updateProfile = async (req, res, next) => {
   try {
-    const { name, phone, company_name, address } = req.body;
+    const { name, phone, company_name, designation, primary_interest, company_size, city, address } = req.body;
 
     const user = await User.findById(req.user._id);
     if (name) user.name = name;
     if (phone) user.phone = phone;
     if (company_name) user.company_name = company_name;
+    if (designation) user.designation = designation;
+    if (primary_interest) user.primary_interest = primary_interest;
+    if (company_size) user.company_size = company_size;
+    if (city) user.city = city;
     if (address) user.address = address;
 
     await user.save();
