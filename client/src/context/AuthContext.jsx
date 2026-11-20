@@ -43,7 +43,8 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (err) {
       const message = err.response?.data?.message || 'Login failed. Please check credentials.';
-      toast.error(message);
+      toast.dismiss();
+      toast.error(message, { id: 'auth-login-error' });
       return { success: false, message, isUnverified: err.response?.data?.isUnverified };
     }
   };
@@ -52,12 +53,14 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await api.post('/auth/register', userData);
       if (res.data.success) {
-        toast.success(res.data.message || 'Verification link sent to your email!');
+        toast.dismiss();
+        toast.success(res.data.message || 'Verification link sent to your email!', { id: 'auth-reg-success' });
         return { success: true };
       }
     } catch (err) {
       const message = err.response?.data?.message || 'Registration failed.';
-      toast.error(message);
+      toast.dismiss();
+      toast.error(message, { id: 'auth-reg-error' });
       return { success: false, message };
     }
   };

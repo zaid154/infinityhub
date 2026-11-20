@@ -40,6 +40,7 @@ export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [registeredSuccess, setRegisteredSuccess] = useState(false);
+  const [emailExistsError, setEmailExistsError] = useState('');
 
   const designationOptions = [
     { value: 'IT Head / Sysadmin', label: 'IT Head / Systems Administrator' },
@@ -53,6 +54,7 @@ export default function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setEmailExistsError('');
     setSubmitting(true);
 
     const result = await register(formData);
@@ -60,6 +62,8 @@ export default function Signup() {
 
     if (result.success) {
       setRegisteredSuccess(true);
+    } else if (result.message && result.message.toLowerCase().includes('already exists')) {
+      setEmailExistsError(result.message);
     }
   };
 
@@ -335,11 +339,23 @@ export default function Signup() {
                       required
                       placeholder="name@company.com"
                       value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      onChange={(e) => {
+                        setFormData({ ...formData, email: e.target.value });
+                        if (emailExistsError) setEmailExistsError('');
+                      }}
                       className="w-full pl-10 pr-3.5 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition text-xs font-sans placeholder:text-slate-400"
                     />
                   </div>
-                  <span className="text-[10px] text-[#5A6B63] block mt-0.5 font-mono">Use official domain for instant Net-30 PO</span>
+                  {emailExistsError ? (
+                    <div className="p-2 bg-amber-50 rounded-lg border border-amber-300 text-[10.5px] text-[#8A5E12] flex items-center justify-between gap-1 mt-1">
+                      <span>{emailExistsError}</span>
+                      <Link to="/login" className="font-bold underline text-[#0D3B2A] whitespace-nowrap hover:text-[#8A5E12]">
+                        Sign In →
+                      </Link>
+                    </div>
+                  ) : (
+                    <span className="text-[10px] text-[#5A6B63] block mt-0.5 font-mono">Use official domain for instant Net-30 PO</span>
+                  )}
                 </div>
 
                 <div>
@@ -350,13 +366,17 @@ export default function Signup() {
                     <Phone className="w-4 h-4 text-[#D4A24C] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                     <input
                       type="tel"
-                      name="phone"
+                      name="contact_phone_number"
                       id="signup-phone"
                       autoComplete="tel"
+                      inputMode="tel"
                       required
                       placeholder="e.g. 98100 12345"
                       value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      onChange={(e) => {
+                        const clean = e.target.value.replace(/[^0-9+\s-]/g, '');
+                        setFormData({ ...formData, phone: clean });
+                      }}
                       className="w-full pl-10 pr-3.5 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition text-xs font-sans placeholder:text-slate-400"
                     />
                   </div>
