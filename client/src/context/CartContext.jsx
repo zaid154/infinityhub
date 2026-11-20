@@ -191,7 +191,7 @@ export const CartProvider = ({ children }) => {
 
   const removeFromRentalCart = (productId) => {
     setRentalCart((prev) => prev.filter((item) => item.product._id !== productId));
-    toast.success('Removed item from Rental Lease Cart');
+    toast.success('Removed item from Rental Cart');
   };
 
   const clearBuyCart = () => setBuyCart([]);

@@ -12,7 +12,8 @@ import {
   ArrowRight,
   Minus,
   Plus,
-  Repeat
+  Repeat,
+  CheckCircle2
 } from 'lucide-react';
 import api from '../services/api';
 import { useCart } from '../context/CartContext';
@@ -223,47 +224,69 @@ export default function ProductDetail() {
         <div className="lg:col-span-5 space-y-3.5 sm:space-y-4">
           
           {/* Category Kicker & Availability Badge */}
-          <div>
-            <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between gap-2 flex-wrap">
               <span className="text-[10px] sm:text-[11px] font-sans font-bold uppercase tracking-[0.2em] text-[#8A5E12]">
                 — {categoryKicker}
               </span>
-              {product.condition === 'brand_new' && (
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-900 border border-amber-300 tracking-wider uppercase shadow-sm">
-                  ★ Brand New Sealed Box
-                </span>
-              )}
-              {product.available_for === 'both' ? (
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#0D3B2A] text-[#FAF7F2] tracking-wider uppercase flex items-center gap-1 shadow-sm">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#D4A24C]" />
-                  Buy & Rent Available
-                </span>
-              ) : product.available_for === 'rent' ? (
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#8A5E12] text-white tracking-wider uppercase flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#FAF7F2]" />
-                  Corporate Rental Fleet
-                </span>
-              ) : (
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#FAF7F2] text-[#0D3B2A] tracking-wider uppercase border border-[#D4A24C]/40">
-                  Direct Sale Only
-                </span>
-              )}
-              {inRentalItem && (
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#0D3B2A] text-[#D4A24C] border border-[#D4A24C]/60 tracking-wider uppercase flex items-center gap-1 shadow-sm">
-                  ✓ {inRentalItem.quantity} in Lease Cart
-                </span>
-              )}
-              {inBuyItem && (
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#0D3B2A] text-[#FAF7F2] border border-[#D4A24C]/40 tracking-wider uppercase flex items-center gap-1 shadow-sm">
-                  ✓ {inBuyItem.quantity} in Cart
-                </span>
-              )}
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {product.condition === 'brand_new' && (
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-900 border border-amber-300 tracking-wider uppercase shadow-xs">
+                    ★ Brand New Sealed Box
+                  </span>
+                )}
+                {product.available_for === 'both' ? (
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#FAF7F2] text-[#0D3B2A] border border-[#D4A24C]/40 tracking-wider uppercase flex items-center gap-1 shadow-xs">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#D4A24C]" />
+                    Buy & Rent Available
+                  </span>
+                ) : product.available_for === 'rent' ? (
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#FAF7F2] text-[#8A5E12] border border-[#D4A24C]/40 tracking-wider uppercase flex items-center gap-1 shadow-xs">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#0D3B2A]" />
+                    Rental Hardware
+                  </span>
+                ) : (
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#FAF7F2] text-[#0D3B2A] tracking-wider uppercase border border-[#D4A24C]/40 shadow-xs">
+                    Direct Sale Only
+                  </span>
+                )}
+              </div>
             </div>
             
             {/* Product Title */}
             <h1 className="text-xl sm:text-2xl lg:text-[26px] font-serif text-[#0D3B2A] font-bold tracking-tight leading-snug">
               {product.title}
             </h1>
+
+            {/* In-Cart Status Notification Pill (Dedicated Row) */}
+            {(inRentalItem || inBuyItem) && (
+              <div className="flex items-center gap-2 pt-1 flex-wrap">
+                {inRentalItem && (
+                  <Link
+                    to="/cart"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-300 hover:bg-emerald-100 hover:border-emerald-400 transition-all shadow-xs group"
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span>{inRentalItem.quantity} in Rental Cart</span>
+                    <span className="text-[11px] font-medium text-emerald-700 underline group-hover:text-emerald-900 ml-1">
+                      View Cart &rarr;
+                    </span>
+                  </Link>
+                )}
+                {inBuyItem && (
+                  <Link
+                    to="/cart"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-300 hover:bg-emerald-100 hover:border-emerald-400 transition-all shadow-xs group"
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span>{inBuyItem.quantity} in Cart</span>
+                    <span className="text-[11px] font-medium text-emerald-700 underline group-hover:text-emerald-900 ml-1">
+                      View Cart &rarr;
+                    </span>
+                  </Link>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Price Row: Context-Aware for Rent vs Buy vs Both */}
@@ -274,7 +297,7 @@ export default function ProductDetail() {
                   ₹{product.rental_price_monthly.toLocaleString('en-IN')}<span className="text-sm font-sans text-[#5A6B63]">/month</span>
                 </span>
                 <span className="px-2.5 py-0.5 rounded-md bg-[#FAF7F2] text-[#0D3B2A] text-[11px] font-bold uppercase tracking-wider border border-[#D4A24C]/40">
-                  Zero CAPEX Fleet
+                  Zero CAPEX Rental
                 </span>
               </>
             ) : (
@@ -294,7 +317,7 @@ export default function ProductDetail() {
                 )}
                 {product.available_for === 'both' && product.rental_price_monthly > 0 && (
                   <span className="text-[11px] font-semibold text-[#8A5E12] bg-[#F2E8D5] px-2.5 py-0.5 rounded-full ml-auto">
-                    or Lease ₹{product.rental_price_monthly.toLocaleString('en-IN')}/mo
+                    or Rent ₹{product.rental_price_monthly.toLocaleString('en-IN')}/mo
                   </span>
                 )}
               </>
@@ -326,7 +349,7 @@ export default function ProductDetail() {
               <>
                 <div className="flex items-center gap-1.5">
                   <ShieldCheck className="w-3.5 h-3.5 text-[#8A5E12] shrink-0" />
-                  <span>Corporate Grade A+ Fleet</span>
+                  <span>Corporate Grade A+ Hardware</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Award className="w-3.5 h-3.5 text-[#8A5E12] shrink-0" />
@@ -387,7 +410,7 @@ export default function ProductDetail() {
               <>
                 <span className="text-[#D4A24C]">•</span>
                 <span className="text-[#8A5E12] font-bold">
-                  Rental Fleet: <strong>{maxRental} Units</strong>
+                  Rental Stock: <strong>{maxRental} Units</strong>
                 </span>
               </>
             )}
@@ -469,8 +492,8 @@ export default function ProductDetail() {
                   <span>
                     {maxRental > 0
                       ? inRentalItem
-                        ? `ADD MORE TO LEASE (HAVE ${inRentalItem.quantity} IN CART)`
-                        : `RENT THIS FLEET (₹${product.rental_price_monthly.toLocaleString('en-IN')}/mo)`
+                        ? `ADD MORE TO RENTAL (HAVE ${inRentalItem.quantity} IN CART)`
+                        : `RENT THIS MODEL (₹${product.rental_price_monthly.toLocaleString('en-IN')}/mo)`
                       : 'RENTAL POOL CURRENTLY OUT OF STOCK'}
                   </span>
                 </button>
@@ -524,7 +547,7 @@ export default function ProductDetail() {
               Similar Recommended Hardware
             </h2>
             <p className="text-[#8A5E12] font-sans font-bold tracking-[0.2em] uppercase text-xs mt-1">
-              EXPLORE CERTIFIED ENTERPRISE FLEETS
+              EXPLORE CERTIFIED HARDWARE CATALOG
             </p>
           </div>
 

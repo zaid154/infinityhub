@@ -162,9 +162,9 @@ export default function Products() {
 
   // Dynamic Category Title & Subtitle (Option 3: Smart Dynamic Header)
   const catLabels = {
-    all: availableFor === 'rent' ? 'Corporate Rental Fleets' : availableFor === 'sale' ? 'Direct Purchase Hardware' : 'Hardware Catalog',
+    all: availableFor === 'rent' ? 'Corporate Rental Hardware' : availableFor === 'sale' ? 'Direct Purchase Hardware' : 'Hardware Catalog',
     laptop: availableFor === 'rent' ? 'Corporate Rental Laptops' : 'Corporate Laptops',
-    desktop: availableFor === 'rent' ? 'Rental Desktop Fleets' : 'Commercial Desktops',
+    desktop: availableFor === 'rent' ? 'Rental Desktops' : 'Commercial Desktops',
     monitor: 'Business Monitors',
     ram: 'RAM Modules (DDR4 / DDR5)',
     gpu: 'Workstation GPUs',
@@ -358,7 +358,7 @@ export default function Products() {
               {[
                 { id: 'all', label: 'All Items' },
                 { id: 'sale', label: 'Buy Only' },
-                { id: 'rent', label: 'Rent Fleet' }
+                { id: 'rent', label: 'Rent Hardware' }
               ].map((opt) => (
                 <button
                   key={opt.id}
@@ -520,7 +520,7 @@ export default function Products() {
                           <div className="absolute top-2.5 right-2.5 z-20 pointer-events-none">
                             {isRental ? (
                               <span className="inline-flex items-center px-2 py-0.5 rounded text-[9px] font-mono font-bold tracking-wider uppercase whitespace-nowrap bg-[#0D3B2A] text-[#FAF7F2] border border-[#D4A24C]/40 shadow-xs">
-                                Corporate Lease
+                                Rental Hardware
                               </span>
                             ) : isBrandNew ? (
                               <span className="inline-flex items-center px-2 py-0.5 rounded text-[9px] font-mono font-bold tracking-wider uppercase whitespace-nowrap bg-white/95 text-amber-900 border border-amber-400 shadow-xs">
@@ -538,7 +538,7 @@ export default function Products() {
                             <div className="absolute top-2.5 left-2.5 z-20 pointer-events-none">
                               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-mono font-bold tracking-wider uppercase whitespace-nowrap bg-[#0D3B2A] text-[#D4A24C] border border-[#D4A24C]/60 shadow-md">
                                 <Check className="w-2.5 h-2.5 text-[#D4A24C]" />
-                                In Lease Cart ({rentalQty})
+                                In Rental Cart ({rentalQty})
                               </span>
                             </div>
                           )}
@@ -583,7 +583,7 @@ export default function Products() {
                           <div className="min-h-[38px] flex items-baseline justify-between">
                             <div>
                               <span className="text-[8.5px] font-bold uppercase tracking-wider text-[#8A5E12] block">
-                                Monthly Fleet Lease
+                                Monthly Rental Rate
                               </span>
                               <span className="text-sm sm:text-base font-bold text-[#0D3B2A] font-serif">
                                 ₹{(p.rental_price_monthly || 0).toLocaleString('en-IN')}
@@ -603,7 +603,7 @@ export default function Products() {
                                     type="button"
                                     onClick={() => updateRentalQuantity(p._id, rentalQty - 1)}
                                     className="p-1 text-slate-500 hover:text-[#0D3B2A] hover:bg-slate-100 rounded-full transition cursor-pointer"
-                                    title="Decrease lease quantity"
+                                    title="Decrease rental quantity"
                                   >
                                     <Minus className="w-3 h-3" />
                                   </button>
@@ -613,7 +613,7 @@ export default function Products() {
                                     disabled={rentalQty >= stockQty}
                                     onClick={() => updateRentalQuantity(p._id, rentalQty + 1)}
                                     className="p-1 text-slate-500 hover:text-[#0D3B2A] hover:bg-slate-100 disabled:opacity-30 rounded-full transition cursor-pointer"
-                                    title="Increase lease quantity"
+                                    title="Increase rental quantity"
                                   >
                                     <Plus className="w-3 h-3" />
                                   </button>
@@ -635,7 +635,7 @@ export default function Products() {
                                 className="h-9 w-full rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-xs flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
                               >
                                 <Repeat className="w-3.5 h-3.5 text-[#D4A24C]" />
-                                <span>Rent Fleet (Add to Cart)</span>
+                                <span>Add to Rental Cart</span>
                               </button>
                             )
                           ) : (
@@ -643,7 +643,7 @@ export default function Products() {
                               disabled
                               className="h-9 w-full rounded-full bg-stone-100 text-[#8A5E12] text-xs font-bold uppercase tracking-wider cursor-not-allowed border border-[#D4A24C]/30 flex items-center justify-center gap-1.5"
                             >
-                              <span>Fleet Reserved</span>
+                              <span>Rental Out of Stock</span>
                             </button>
                           )}
                         </>
