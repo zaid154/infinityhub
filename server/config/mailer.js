@@ -12,14 +12,19 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-export const sendTransactionalEmail = async ({ to, subject, html, text }) => {
+export const sendTransactionalEmail = async ({ to, subject, html, text, fromName }) => {
   try {
+    const sender = `"${fromName || 'Demo Infotech'}" <${process.env.SMTP_USER}>`;
     const info = await transporter.sendMail({
-      from: process.env.SMTP_FROM || `Corporate IT Desk <${process.env.SMTP_USER}>`,
+      from: sender,
       to,
       subject,
       text: text || '',
-      html
+      html,
+      headers: {
+        'X-Entity-Ref-ID': `${Date.now()}-${Math.random().toString(36).substring(7)}`,
+        'X-Mailer': 'DemoInfotech-Mailer'
+      }
     });
     console.log(`[Email Sent] Message ID: ${info.messageId} to ${to}`);
     return { success: true, messageId: info.messageId };

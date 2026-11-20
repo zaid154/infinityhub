@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import User from '../models/User.js';
 import { generateToken } from '../utils/generateToken.js';
-import { sendVerificationEmail, sendPasswordResetEmail } from '../utils/sendEmail.js';
+import { sendVerificationEmail, sendPasswordResetEmail, sendWelcomeEmail } from '../utils/sendEmail.js';
 
 // @desc    Register a new customer
 // @route   POST /api/auth/register
@@ -58,16 +58,15 @@ export const register = async (req, res, next) => {
       verification_token: verificationToken
     });
 
-    // Send welcome / verification email via Gmail SMTP asynchronously
+    // Send luxury welcome email via Gmail SMTP asynchronously
     try {
-      sendVerificationEmail(
+      sendWelcomeEmail(
         user.email,
         user.name,
-        verificationToken,
         process.env.CLIENT_URL
-      ).catch((e) => console.error('[Verification Email Async Notice]', e.message));
+      ).catch((e) => console.error('[Welcome Email Async Notice]', e.message));
     } catch (emailErr) {
-      console.error('[Verification Email Failed]', emailErr);
+      console.error('[Welcome Email Failed]', emailErr);
     }
 
     const token = generateToken(user._id, user.role);
