@@ -11,6 +11,7 @@ import {
   CreditCard,
   FileText,
   Repeat,
+  Zap,
   Clock,
   Building
 } from 'lucide-react';
@@ -947,8 +948,9 @@ export default function Cart() {
                                   Stock: {maxRental} Available
                                 </span>
                                 {discount > 0 && (
-                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 whitespace-nowrap">
-                                    {Math.round(discount * 100)}% Tenure Off
+                                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#FAF7F2] text-[#8A5E12] border border-[#D4A24C]/40 whitespace-nowrap shadow-2xs">
+                                    <Zap className="w-2.5 h-2.5 text-[#D4A24C]" />
+                                    <span>{Math.round(discount * 100)}% Tenure Off</span>
                                   </span>
                                 )}
                               </div>
@@ -1009,22 +1011,22 @@ export default function Cart() {
                         </div>
 
                         {/* Tenure Selector for this machine */}
-                        <div className="bg-[#FAF7F2] p-3 sm:p-3.5 rounded-2xl border border-[#D4A24C]/20 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
-                          <div className="flex items-center gap-2">
-                            <div className="w-6 h-6 rounded-lg bg-white border border-[#D4A24C]/30 flex items-center justify-center text-[#8A5E12] shadow-xs shrink-0">
-                              <Clock className="w-3.5 h-3.5" />
-                            </div>
-                            <div>
-                              <span className="font-bold text-[#0D3B2A] font-serif block text-xs">
+                        <div className="bg-[#FAF7F2] p-3 sm:p-3.5 rounded-2xl border border-[#D4A24C]/25 space-y-2.5 text-xs">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-2">
+                            <div className="flex items-center gap-2">
+                              <div className="w-6 h-6 rounded-lg bg-white border border-[#D4A24C]/30 flex items-center justify-center text-[#8A5E12] shadow-2xs shrink-0">
+                                <Clock className="w-3.5 h-3.5" />
+                              </div>
+                              <span className="font-bold text-[#0D3B2A] font-serif text-xs whitespace-nowrap">
                                 Lease Commitment Tenure
                               </span>
-                              <span className="text-[10.5px] text-[#5A6B63] block">
-                                Higher tenure commits unlock progressive billing discounts
-                              </span>
                             </div>
+                            <span className="text-[10.5px] text-[#5A6B63] pl-8 sm:pl-0">
+                              Higher tenure commits unlock progressive billing discounts
+                            </span>
                           </div>
 
-                          <div className="flex flex-wrap sm:flex-nowrap items-center gap-1.5 p-1 bg-white/80 rounded-xl border border-[#D4A24C]/25 shadow-xs">
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 p-1.5 bg-white/90 rounded-xl border border-[#D4A24C]/25 shadow-2xs">
                             {[
                               { id: '3_months', label: '3 Months', tag: 'Standard' },
                               { id: '6_months', label: '6 Months', tag: '5% Off' },
@@ -1036,7 +1038,7 @@ export default function Cart() {
                                   key={t.id}
                                   type="button"
                                   onClick={() => updateRentalTenure(p._id, t.id)}
-                                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                                  className={`w-full py-2 px-3 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap ${
                                     isSelected
                                       ? 'bg-[#0D3B2A] text-white shadow-sm ring-1 ring-[#D4A24C]/40'
                                       : 'text-[#5A6B63] hover:text-[#0D3B2A] hover:bg-[#FAF7F2]'
@@ -1044,12 +1046,12 @@ export default function Cart() {
                                 >
                                   <span>{t.label}</span>
                                   <span
-                                    className={`text-[9.5px] px-1.5 py-0.2 rounded-full font-bold ${
+                                    className={`text-[9.5px] px-2 py-0.5 rounded-full font-bold transition ${
                                       isSelected
-                                        ? 'bg-white/20 text-[#D4A24C]'
+                                        ? 'bg-white/20 text-[#FAF7F2] border border-[#D4A24C]/40'
                                         : t.id === '3_months'
-                                        ? 'bg-slate-100 text-slate-500'
-                                        : 'bg-emerald-50 text-emerald-700'
+                                        ? 'bg-[#FAF7F2] text-slate-500 border border-slate-200'
+                                        : 'bg-[#FAF7F2] text-[#8A5E12] border border-[#D4A24C]/35'
                                     }`}
                                   >
                                     {t.tag}
@@ -1168,7 +1170,7 @@ export default function Cart() {
                     </div>
 
                     {rentalSavingsTotal > 0 && (
-                      <div className="flex justify-between items-center text-emerald-700 font-semibold">
+                      <div className="flex justify-between items-center text-[#8A5E12] font-semibold">
                         <span>Tenure Volume Discount:</span>
                         <span className="font-mono font-bold">
                           -₹{rentalSavingsTotal.toLocaleString('en-IN')}/mo
@@ -1185,7 +1187,7 @@ export default function Cart() {
 
                     <div className="flex justify-between items-center">
                       <span>Refundable Security Deposit:</span>
-                      <span className="font-mono font-bold text-emerald-700">
+                      <span className="font-mono font-bold text-[#0D3B2A]">
                         ₹0 (100% Zero-Collateral)
                       </span>
                     </div>
