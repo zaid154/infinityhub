@@ -517,6 +517,7 @@ export default function Cart() {
                     const itemTotal = (p.sale_price || 0) * item.quantity;
                     const maxSale = p.sale_stock !== undefined ? p.sale_stock : p.stock_quantity || 10;
                     const isMax = item.quantity >= maxSale;
+                    const productUrl = `/products/${p.slug || p._id}`;
 
                     return (
                       <motion.div
@@ -529,7 +530,11 @@ export default function Cart() {
                         className="bg-white p-4 sm:p-5 rounded-3xl border border-[#D4A24C]/25 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4"
                       >
                         <div className="flex items-start sm:items-center gap-3.5 flex-1 min-w-0">
-                          <div className="w-16 h-16 rounded-2xl bg-[#FAF7F2] p-2 border border-[#D4A24C]/20 flex items-center justify-center shrink-0">
+                          <Link
+                            to={productUrl}
+                            className="w-16 h-16 rounded-2xl bg-[#FAF7F2] p-2 border border-[#D4A24C]/20 flex items-center justify-center shrink-0 hover:border-[#0D3B2A]/40 transition group cursor-pointer"
+                            title={`View details for ${p.title}`}
+                          >
                             <img
                               src={getProductImage(p)}
                               alt={p.title}
@@ -537,17 +542,19 @@ export default function Cart() {
                                 e.target.onerror = null;
                                 e.target.src = DEFAULT_HARDWARE_PLACEHOLDER;
                               }}
-                              className="max-h-full object-contain filter drop-shadow-sm"
+                              className="max-h-full object-contain filter drop-shadow-sm group-hover:scale-105 transition"
                             />
-                          </div>
+                          </Link>
                           <div className="flex-1 min-w-0">
                             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-[#FAF7F2] text-[#0D3B2A] border border-[#D4A24C]/30 whitespace-nowrap">
                               <ShieldCheck className="w-3 h-3 text-[#D4A24C]" />
                               Stock: {maxSale} Available
                             </span>
-                            <h3 className="text-sm sm:text-base font-bold text-[#0D3B2A] font-serif line-clamp-2 mt-1">
-                              {p.title}
-                            </h3>
+                            <Link to={productUrl} className="block group">
+                              <h3 className="text-sm sm:text-base font-bold text-[#0D3B2A] font-serif line-clamp-2 mt-1 group-hover:text-[#D4A24C] transition cursor-pointer">
+                                {p.title}
+                              </h3>
+                            </Link>
                             <p className="text-[11px] text-[#5A6B63] font-mono mt-0.5">
                               ₹{p.sale_price.toLocaleString('en-IN')}/unit • GST {p.gst_rate || 18}% (excl. GST)
                             </p>
@@ -831,6 +838,7 @@ export default function Cart() {
                     const effectivePerUnitRate = item.quantity > 0 ? itemTaxableTotal / item.quantity : baseRate;
                     const maxRental = p.rental_stock !== undefined ? p.rental_stock : 5;
                     const isMax = item.quantity >= maxRental;
+                    const productUrl = `/products/${p.slug || p._id}`;
 
                     return (
                       <motion.div
@@ -844,7 +852,11 @@ export default function Cart() {
                       >
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                           <div className="flex items-start sm:items-center gap-3.5 flex-1 min-w-0">
-                            <div className="w-16 h-16 rounded-2xl bg-[#FAF7F2] p-2 border border-[#D4A24C]/20 flex items-center justify-center shrink-0">
+                            <Link
+                              to={productUrl}
+                              className="w-16 h-16 rounded-2xl bg-[#FAF7F2] p-2 border border-[#D4A24C]/20 flex items-center justify-center shrink-0 hover:border-[#0D3B2A]/40 transition group cursor-pointer"
+                              title={`View details for ${p.title}`}
+                            >
                               <img
                                 src={getProductImage(p)}
                                 alt={p.title}
@@ -852,9 +864,9 @@ export default function Cart() {
                                   e.target.onerror = null;
                                   e.target.src = DEFAULT_HARDWARE_PLACEHOLDER;
                                 }}
-                                className="max-h-full object-contain filter drop-shadow-sm"
+                                className="max-h-full object-contain filter drop-shadow-sm group-hover:scale-105 transition"
                               />
-                            </div>
+                            </Link>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-1.5 flex-wrap">
                                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-[#FAF7F2] text-[#8A5E12] border border-[#D4A24C]/30 whitespace-nowrap">
@@ -867,9 +879,11 @@ export default function Cart() {
                                   </span>
                                 )}
                               </div>
-                              <h3 className="text-sm sm:text-base font-bold text-[#0D3B2A] font-serif line-clamp-2 mt-1">
-                                {p.title}
-                              </h3>
+                              <Link to={productUrl} className="block group">
+                                <h3 className="text-sm sm:text-base font-bold text-[#0D3B2A] font-serif line-clamp-2 mt-1 group-hover:text-[#D4A24C] transition cursor-pointer">
+                                  {p.title}
+                                </h3>
+                              </Link>
                               <div className="flex flex-wrap items-baseline gap-1.5 text-xs font-mono mt-0.5">
                                 {discount > 0 && (
                                   <span className="line-through text-slate-400 text-[11px]">
