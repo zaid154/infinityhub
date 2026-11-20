@@ -187,7 +187,7 @@ export default function Footer() {
                   className="mt-0.5 w-3.5 h-3.5 accent-[#D4A24C] rounded shrink-0 cursor-pointer"
                 />
                 <span>
-                  I consent to {brandName} processing my corporate email for fleet availability updates under the{' '}
+                  I consent to {brandName} processing my corporate email for hardware & laptop availability updates under the{' '}
                   <Link to="/privacy" className="text-[#D4A24C] underline hover:text-[#FAF7F2]">
                     Privacy Policy
                   </Link>
@@ -215,7 +215,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link to="/products?category=laptop" className="hover:text-white hover:translate-x-1 inline-block transition-transform duration-200">
-                  Dell Latitude Fleets
+                  Dell Latitude Series
                 </Link>
               </li>
               <li>
@@ -288,48 +288,49 @@ export default function Footer() {
           {/* Column 4 (lg:col-span-3): CONTACT US & COMPLIANCE */}
           <div className="lg:col-span-3 space-y-4 text-xs">
             <h3 className="text-xs font-sans font-bold uppercase tracking-[0.16em] text-white">
-              Contact Us
+              Contact & Support
             </h3>
             
-            <div className="space-y-2.5 text-[#90b09a]">
-              <div>
-                <span className="text-[10px] uppercase tracking-wider text-white/50 block font-semibold">
-                  Corporate Headquarters
-                </span>
-                <p className="text-[11px] leading-relaxed text-[#90b09a]/90 pt-0.5">
-                  {regAddress}
-                </p>
-              </div>
-
-              <div>
-                <span className="text-[10px] uppercase tracking-wider text-white/50 block font-semibold">
+            <div className="space-y-3.5 text-[#90b09a]">
+              {/* Direct Support & RFQ Card */}
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-3 space-y-2">
+                <span className="text-[10px] uppercase tracking-wider text-[#D4A24C] font-bold flex items-center gap-1.5">
+                  <Phone className="w-3 h-3 text-[#D4A24C]" />
                   Direct Support & RFQ
                 </span>
-                <a
-                  href={`mailto:${supportEmail}`}
-                  className="text-white hover:text-[#D4A24C] transition-colors block font-mono text-[11px]"
-                >
-                  {supportEmail}
-                </a>
-                <a
-                  href={`tel:${cleanPhone}`}
-                  className="text-white hover:text-[#D4A24C] transition-colors block font-mono text-[11px] pt-0.5"
-                >
-                  {phone}
-                </a>
+
+                <div className="space-y-1.5 pt-0.5">
+                  <a
+                    href={`tel:${cleanPhone}`}
+                    className="flex items-center gap-2 text-white hover:text-[#D4A24C] transition-colors group"
+                  >
+                    <span className="text-xs font-semibold tracking-wide text-white group-hover:text-[#D4A24C]">
+                      {phone}
+                    </span>
+                  </a>
+
+                  <a
+                    href={`mailto:${supportEmail}`}
+                    className="flex items-center gap-1.5 text-[#90b09a] hover:text-white transition-colors text-[11px] break-all"
+                  >
+                    <Mail className="w-3 h-3 text-[#D4A24C]/80 shrink-0" />
+                    <span>{supportEmail}</span>
+                  </a>
+                </div>
               </div>
 
-              <div>
+              {/* Grievance Redressal Desk */}
+              <div className="space-y-1">
                 <span className="text-[10px] uppercase tracking-wider text-white/50 block font-semibold">
                   Grievance Redressal Desk
                 </span>
-                <p className="text-[11px] text-[#90b09a]/90">
+                <p className="text-[11px] text-[#90b09a]/90 font-medium">
                   {grievance.name} • {grievance.designation}
                 </p>
                 <div className="flex items-center gap-2 pt-0.5">
                   <a
                     href={`mailto:${grievance.email}`}
-                    className="text-[#D4A24C] hover:underline font-mono text-[11px]"
+                    className="text-[#D4A24C] hover:underline text-[11px]"
                   >
                     {grievance.email}
                   </a>
@@ -343,10 +344,20 @@ export default function Footer() {
                 </div>
               </div>
 
-              <div className="pt-1 font-mono text-[10px] text-white/60 space-x-2">
-                <span><strong>GSTIN:</strong> {gstin}</span>
-                <span>•</span>
-                <span><strong>CIN:</strong> {cin}</span>
+              {/* Statutory Registrations (Clean non-wrapping layout) */}
+              <div className="pt-2 border-t border-white/10 space-y-1.5">
+                <div className="flex items-center justify-between text-[11px]">
+                  <span className="text-white/50 text-[10px] font-semibold">GSTIN:</span>
+                  <span className="font-mono text-white/90 bg-white/5 px-2 py-0.5 rounded border border-white/10 tracking-wide text-[10.5px]">
+                    {gstin}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-[11px]">
+                  <span className="text-white/50 text-[10px] font-semibold">CIN:</span>
+                  <span className="font-mono text-white/90 bg-white/5 px-2 py-0.5 rounded border border-white/10 tracking-wide text-[10px]">
+                    {cin}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
