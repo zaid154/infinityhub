@@ -9,9 +9,7 @@ import {
   Zap,
   Repeat,
   Eye,
-  EyeOff,
-  Sparkles,
-  Building
+  EyeOff
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCompany } from '../context/SettingsContext';
@@ -239,30 +237,6 @@ export default function Login() {
                 <ArrowRight className="w-4 h-4 text-[#D4A24C] group-hover:translate-x-1 transition-transform" />
               </button>
             </form>
-
-            {/* Quick Demo Access Pills */}
-            <div className="p-3 bg-[#FAF7F2] rounded-2xl border border-[#D4A24C]/25 text-[11px] space-y-2">
-              <div className="flex items-center justify-between text-[#8A5E12] font-semibold">
-                <span className="flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-[#D4A24C]" />
-                  <span>Quick Portal Credentials</span>
-                </span>
-                <span className="text-[9.5px] text-[#5A6B63] font-mono">One-Click Fill</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setEmail('zaidm1323@gmail.com');
-                    setPassword('Zaid@9999201255');
-                  }}
-                  className="px-2.5 py-1.5 rounded-lg bg-white border border-[#D4A24C]/30 text-[#0D3B2A] font-semibold text-[10.5px] hover:bg-[#F3E8D2] transition cursor-pointer shadow-2xs flex items-center gap-1"
-                >
-                  <Building className="w-3 h-3 text-[#D4A24C]" />
-                  <span>Admin: zaidm1323@gmail.com</span>
-                </button>
-              </div>
-            </div>
 
             {/* Register Link */}
             <div className="pt-2 border-t border-slate-100 text-center text-xs text-[#5A6B63]">
