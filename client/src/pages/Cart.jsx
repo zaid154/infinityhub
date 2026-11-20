@@ -130,7 +130,6 @@ export default function Cart() {
 
   const [deliveryZones, setDeliveryZones] = useState([]);
   const [selectedZone, setSelectedZone] = useState('');
-  const [isManualOverride, setIsManualOverride] = useState(false);
   const [shippingAddress, setShippingAddress] = useState({
     company_name: user?.company_name || '',
     contact_person: user?.name || '',
@@ -176,7 +175,7 @@ export default function Cart() {
 
   // Real-time automatic zone matcher whenever City, State, or Pincode changes
   useEffect(() => {
-    if (deliveryZones.length > 0 && !isManualOverride) {
+    if (deliveryZones.length > 0) {
       const autoMatched = detectZone(
         shippingAddress.city,
         shippingAddress.state,
@@ -187,7 +186,7 @@ export default function Cart() {
         setSelectedZone(autoMatched._id);
       }
     }
-  }, [shippingAddress.city, shippingAddress.state, shippingAddress.pincode, deliveryZones, isManualOverride]);
+  }, [shippingAddress.city, shippingAddress.state, shippingAddress.pincode, deliveryZones]);
 
   const getProductImage = (p) => getSafeImageUrl(p);
 
@@ -679,81 +678,6 @@ export default function Cart() {
                       />
                     </div>
                   </div>
-
-                  {/* Smart Auto-Detected Logistics & Shipping Zone */}
-                  {deliveryZones.length > 0 && currentZone && (
-                    <div className="pt-1">
-                      <div className="p-3.5 rounded-2xl bg-gradient-to-r from-emerald-50/90 via-[#FAF7F2] to-amber-50/40 border border-emerald-200/90 shadow-2xs space-y-2">
-                        <div className="flex items-center justify-between gap-3">
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            <div className="w-8 h-8 rounded-xl bg-[#0D3B2A] text-white flex items-center justify-center text-sm shrink-0 shadow-xs">
-                              🚚
-                            </div>
-                            <div className="min-w-0">
-                              <div className="flex items-center gap-2 flex-wrap">
-                                <span className="font-bold text-[#0D3B2A] text-xs">
-                                  {currentZone.zone_name}
-                                </span>
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 font-bold text-[9.5px] uppercase tracking-wider shrink-0">
-                                  <CheckCircle2 className="w-3 h-3 text-emerald-700" />
-                                  Auto-Detected
-                                </span>
-                              </div>
-                              <p className="text-[10.5px] text-[#5A6B63] truncate mt-0.5">
-                                Automatically applied for {shippingAddress.city || shippingAddress.state || 'your delivery location'}
-                              </p>
-                            </div>
-                          </div>
-
-                          <div className="text-right shrink-0">
-                            {currentZone.delivery_charge === 0 ? (
-                              <span className="px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-bold font-mono text-[11px] tracking-wide inline-block shadow-2xs">
-                                FREE
-                              </span>
-                            ) : (
-                              <span className="font-bold font-mono text-sm text-[#0D3B2A]">
-                                ₹{currentZone.delivery_charge.toLocaleString('en-IN')}
-                              </span>
-                            )}
-                            <span className="text-[9.5px] text-[#8A5E12] font-semibold block mt-0.5">
-                              {currentZone.delivery_charge === 0
-                                ? 'Local Hub Express (24h)'
-                                : 'Express Insured Air (2–3 Days)'}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Subtle override option if needed */}
-                        <div className="pt-1 border-t border-emerald-200/40 flex items-center justify-between text-[10.5px]">
-                          <span className="text-slate-500">Shipping rate applied automatically based on city/state.</span>
-                          <button
-                            type="button"
-                            onClick={() => setIsManualOverride(!isManualOverride)}
-                            className="text-[#8A5E12] hover:text-[#0D3B2A] font-semibold underline cursor-pointer"
-                          >
-                            {isManualOverride ? 'Reset to Auto-detect' : 'Change zone manually'}
-                          </button>
-                        </div>
-
-                        {isManualOverride && (
-                          <div className="pt-2">
-                            <ThemeSelect
-                              value={selectedZone}
-                              onChange={(val) => {
-                                setSelectedZone(val);
-                                setIsManualOverride(true);
-                              }}
-                              options={deliveryZones.map((z) => ({
-                                value: z._id,
-                                label: `${z.zone_name} — Delivery: ₹${z.delivery_charge}`
-                              }))}
-                              variant="form"
-                            />
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
                 </div>
               </div>
 
@@ -783,10 +707,21 @@ export default function Cart() {
                       </span>
                     </div>
 
-                    <div className="flex justify-between">
-                      <span>Pan-India Secure Transit:</span>
+                    <div className="flex justify-between items-baseline">
+                      <div>
+                        <span>Pan-India Secure Transit:</span>
+                        {currentZone && (
+                          <p className="text-[10.5px] text-[#8A5E12] font-semibold mt-0.5">
+                            {currentZone.zone_name} • {currentZone.estimated_days || (deliveryCharge === 0 ? 'Same-Day / 24 Hours' : '2–3 Business Days')}
+                          </p>
+                        )}
+                      </div>
                       <span className="font-mono font-bold text-[#0D3B2A]">
-                        ₹{deliveryCharge.toLocaleString('en-IN')}
+                        {deliveryCharge === 0 ? (
+                          <span className="text-emerald-700 font-bold">FREE</span>
+                        ) : (
+                          `₹${deliveryCharge.toLocaleString('en-IN')}`
+                        )}
                       </span>
                     </div>
 
