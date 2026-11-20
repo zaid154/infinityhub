@@ -99,7 +99,7 @@ export default function ChatbotWidget() {
   const [messages, setMessages] = useState([
     {
       sender: 'bot',
-      text: `Welcome to ${brandName} Corporate Desk! How can I assist you with bulk hardware procurement, rental fleets, or component specifications today?`
+      text: `Welcome to ${brandName} Desk! How can I assist you with laptop sales, corporate rentals, or hardware specifications today?`
     }
   ]);
   const [input, setInput] = useState('');
@@ -107,9 +107,9 @@ export default function ChatbotWidget() {
   const messagesEndRef = useRef(null);
 
   const quickPrompts = [
-    'ThinkPads available for rent?',
-    'What is your replacement SLA?',
-    'Do you buy old office PCs?'
+    'Buy or Rent Laptops?',
+    'ThinkPads available in stock?',
+    'What is your replacement SLA?'
   ];
 
   const scrollToBottom = () => {
@@ -200,7 +200,7 @@ export default function ChatbotWidget() {
                     Online
                   </span>
                 </h4>
-                <p className="text-[10px] text-slate-300">Enterprise Hardware & Rental Advisory</p>
+                <p className="text-[10px] text-slate-300">Sales, Rentals & Hardware Solutions</p>
               </div>
             </div>
             <button
