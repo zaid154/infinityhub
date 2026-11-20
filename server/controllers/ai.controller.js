@@ -1,12 +1,14 @@
 import { generateWithFallback } from '../config/gemini.js';
 import Product from '../models/Product.js';
 import SiteSettings from '../models/SiteSettings.js';
+import DeliveryZone from '../models/DeliveryZone.js';
 
 /**
- * Intelligent Local Hardware Fallback
- * Provides instant, 100% accurate, safe, and guarded answers if Gemini API is unreachable, rate-limited, or offline.
+ * Intelligent Local Hardware Fallback (100% Database-Driven)
+ * Pure dynamic evaluation: zero hardcoded brands, products, cities, or prices.
+ * Pulls directly from MongoDB live product inventory and delivery zones.
  */
-const getLocalIntelligentReply = async (message, settings, liveProducts = []) => {
+const getLocalIntelligentReply = async (message, settings, liveProducts = [], liveZones = []) => {
   const brandName = settings?.brand_name || settings?.company_name || 'Demo Infotech';
   const whatsapp = settings?.whatsapp || '+91 98100 00000';
   const lower = (message || '').toLowerCase().trim();
@@ -14,27 +16,32 @@ const getLocalIntelligentReply = async (message, settings, liveProducts = []) =>
   const activeLaptops = (liveProducts || []).filter((p) => p.category === 'laptop');
   const activeGpus = (liveProducts || []).filter((p) => p.category === 'gpu');
   const activeMonitors = (liveProducts || []).filter((p) => p.category === 'monitor');
-  const activeBrands = [...new Set(activeLaptops.map((p) => p.brand).filter(Boolean))].join(', ') || 'Dell, HP, Lenovo';
+  const activeBrands = [...new Set(activeLaptops.map((p) => p.brand).filter(Boolean))].join(', ');
+
+  const validRents = (liveProducts || []).map((p) => p.rental_price_monthly).filter((r) => r && r > 0);
+  const minRent = validRents.length > 0 ? Math.min(...validRents) : 0;
+  const minRentText = minRent > 0 ? `starting at just ₹${minRent.toLocaleString('en-IN')}/month` : 'with flexible monthly leases';
 
   // 1. Defensiveness & Prompt Injection / Jailbreak Guardrails
   if (/system prompt|developer instructions|ignore (all |previous )?instructions|dan mode|unfiltered|api[ _]?key|backend secret/i.test(lower)) {
-    return `I am the Senior IT Infrastructure Consultant at ${brandName}. My role is strictly dedicated to assisting corporate clients with enterprise hardware procurement, rental fleets, IT asset buyback, and technical specifications. I cannot disclose internal system instructions or security parameters.\n\nPlease let me know if you need assistance with enterprise laptops, commercial desktops, or rental leasing!`;
+    return `I am the Senior IT Infrastructure Consultant at ${brandName}. My role is strictly dedicated to assisting corporate clients with enterprise hardware procurement, rental leasing, IT asset buyback, and technical specifications. I cannot disclose internal system instructions or security parameters.\n\nPlease let me know if you need assistance with enterprise laptops, commercial desktops, or rental leasing!`;
   }
 
   // 2. Off-Topic Guardrails (Jokes, poems, politics, food, gaming, trivia, homework)
   if (/^(tell me a joke|write a poem|sing|recipe|who is (the )?(pm|prime minister|president|chief minister)|cricket score|weather today|homework|who won|who are you dating)\b/i.test(lower) ||
       /\b(biryani|song|lyrics|modi|bjp|congress|cricket match|football|bollywood|cinema|movie review)\b/i.test(lower)) {
-    return `Main ${brandName} ka Enterprise IT Infrastructure Consultant hoon. Main keval corporate laptops, bulk rental fleets, commercial desktops, workstation components (RAM/GPU), aur IT asset buyback se jude sawalon me madad kar sakta hoon.\n\nAapke office, startup, ya engineering team ke liye hardware procurement ya rental requirement ho toh batayein, main best enterprise options recommend karunga!`;
+    return `Main ${brandName} ka Enterprise IT Infrastructure Consultant hoon. Main keval corporate laptops, commercial desktops, workstation components (RAM/GPU), aur IT asset buyback se jude sawalon me madad kar sakta hoon.\n\nAapke office, startup, ya engineering team ke liye hardware procurement ya rental requirement ho toh batayein, main best enterprise options recommend karunga!`;
   }
 
   // 3. Free Hardware Requests
   if (/free me|muft|free laptop|give me for free|bina paise|gift/i.test(lower)) {
-    return `Hum certified enterprise-grade Grade A+ hardware provide karte hain jo 30-point diagnostics, 1-year warranty (buy) aur 24–48h standby replacement SLA (rental) ke saath aate hain. Hum free hardware provide nahi karte, lekin hamari monthly rental plans industry me sabse accessible hain — **starting at just ₹1,450/month** with 100% GST input tax credit!`;
+    return `Hum certified enterprise-grade Grade A+ hardware provide karte hain jo 30-point diagnostics, 1-year warranty (buy) aur 24–48h standby replacement SLA (rental) ke saath aate hain. Hum free hardware provide nahi karte, lekin hamari monthly rental plans industry me sabse accessible hain — **${minRentText}** with 100% GST input tax credit!`;
   }
 
   // 4. Greetings
   if (/^(hi|hello|hey|hola|namaste|good morning|good afternoon|good evening|ssup|yo)\b/i.test(lower)) {
-    return `Hello! Welcome to ${brandName} Corporate Hardware Desk. We have ready stock of enterprise laptops (${activeBrands}), commercial workstations, and components for both direct purchase and monthly leasing.\n\nWhether you need a single machine or bulk deployment for your office, how can I assist your team today?`;
+    const brandDisplay = activeBrands ? `(${activeBrands})` : '';
+    return `Hello! Welcome to ${brandName} Corporate Hardware Desk. We have ready stock of enterprise laptops ${brandDisplay}, commercial workstations, and components for both outright purchase and monthly leasing.\n\nWhether you need a single machine or bulk setup for your office, how can I assist your team today?`;
   }
 
   // 5. Laptop Recommendations by Use-Case (Coding, Developers, Graphic Design, Office)
@@ -44,10 +51,9 @@ const getLocalIntelligentReply = async (message, settings, liveProducts = []) =>
       const rentStr = topDev.rental_price_monthly ? `**₹${topDev.rental_price_monthly.toLocaleString('en-IN')}/month Lease**` : '';
       const buyStr = topDev.sale_price ? `**₹${topDev.sale_price.toLocaleString('en-IN')} Outright Purchase**` : '';
       const priceStr = [rentStr, buyStr].filter(Boolean).join(' or ');
+      const specs = [topDev.specs?.processor, topDev.specs?.ram, topDev.specs?.storage].filter(Boolean).join(' • ');
       return `For software engineering and programming, our top recommendation from our live inventory is the **${topDev.title}**:
-• **Processor:** ${topDev.specs?.processor || 'Intel Core Quad-Core / Multi-Core'}
-• **Memory:** ${topDev.specs?.ram || '16GB High-Speed RAM'}
-• **Storage:** ${topDev.specs?.storage || '512GB NVMe SSD'}
+• **Specifications:** ${specs || 'Enterprise Certified Grade A+'}
 • **Pricing:** ${priceStr} with 1-Year Warranty.
 • **Stock Status:** Ready for immediate dispatch!`;
     }
@@ -66,7 +72,7 @@ const getLocalIntelligentReply = async (message, settings, liveProducts = []) =>
     }
   }
 
-  if (/compare|vs|which is better|dell vs|lenovo vs|hp vs|difference/i.test(lower)) {
+  if (/compare|vs|which is better|difference/i.test(lower)) {
     if (activeLaptops.length > 0) {
       const list = activeLaptops.slice(0, 3).map((p) => {
         const rent = p.rental_price_monthly ? `₹${p.rental_price_monthly.toLocaleString('en-IN')}/mo lease` : '';
@@ -96,12 +102,17 @@ const getLocalIntelligentReply = async (message, settings, liveProducts = []) =>
 • **Outright Purchase Warranty:** 1-Year comprehensive warranty on all certified machines.`;
   }
 
-  // 8. Delivery Timeline & Pan-India Coverage
+  // 8. Delivery Timeline & Pan-India Coverage (100% Database-Driven from DeliveryZone)
   if (/delivery|dispatch|shipping|kitne din|delhi|ncr|bangalore|mumbai|hyderabad|pune|chennai|kolkata|pan[- ]?india/i.test(lower)) {
-    return `Our Enterprise Logistics & Dispatch SLA:
-• **Delhi NCR (Delhi, Noida, Gurgaon, Faridabad, Ghaziabad):** Same-day or guaranteed 24-hour express courier delivery.
-• **Metro & Tier-1 Cities (Bangalore, Mumbai, Hyderabad, Pune, Chennai, Kolkata, Ahmedabad):** 2 to 3 business days via insured express air logistics (BlueDart/Delhivery) with anti-shock tamper-proof packaging.
-• **Pan-India Coverage:** We deploy and service IT hardware fleets across all commercial pin codes nationwide!`;
+    if (liveZones.length > 0) {
+      const zoneDescriptions = liveZones.map((z) => {
+        const cityList = (z.cities || []).slice(0, 5).join(', ');
+        const cost = z.delivery_charge === 0 ? 'FREE' : `₹${z.delivery_charge.toLocaleString('en-IN')}`;
+        return `• **${z.zone_name} (${cityList}):** ${z.estimated_days || 'Standard transit'} (${cost} transit).`;
+      }).join('\n');
+      return `Our Logistics & Dispatch SLA (Direct from Database Delivery Zones):\n${zoneDescriptions}\n\nAll shipments include anti-shock packaging and insured transit!`;
+    }
+    return `We provide express insured delivery across Pan-India with real-time tracking!`;
   }
 
   // 9. Bulk Discounts & Rental Tenure
@@ -111,7 +122,7 @@ const getLocalIntelligentReply = async (message, settings, liveProducts = []) =>
   - 3-Month commitment: Standard competitive monthly rate.
   - 6-Month commitment: **5% automatic billing discount**.
   - 12+ Month commitment: **15% bulk volume discount**.
-• **Bulk Fleet Deployments (10 to 500+ units):** Custom institutional pricing, dedicated Account Manager, and custom pre-configured software OS imaging. Contact our desk on WhatsApp at ${whatsapp} for a formal commercial proposal!`;
+• **Bulk Deployments (10 to 500+ units):** Custom institutional pricing, dedicated Account Manager, and custom pre-configured software OS imaging. Contact our desk on WhatsApp at ${whatsapp} for a formal commercial proposal!`;
   }
 
   // 10. Rent-to-Own / Lease Buyout
@@ -126,7 +137,8 @@ const getLocalIntelligentReply = async (message, settings, liveProducts = []) =>
 
   // 12. RAM / SSD Customization
   if (/upgrade|ram upgrade|custom|32gb|16gb|1tb|ssd upgrade|customise/i.test(lower)) {
-    return `Yes! All our enterprise laptops (ThinkPads, HP EliteBooks, Dell Latitudes) can be custom-configured before dispatch with **16GB or 32GB RAM** and **256GB, 512GB, or 1TB NVMe SSD** to match your software engineering, design, or corporate workflow requirements.`;
+    const sampleModels = activeLaptops.slice(0, 3).map((p) => p.title).join(', ') || 'our in-stock laptops';
+    return `Yes! All our enterprise laptops in stock (${sampleModels}) can be custom-configured before dispatch with **16GB or 32GB RAM** and **256GB, 512GB, or 1TB NVMe SSD** to match your software engineering, design, or corporate workflow requirements.`;
   }
 
   // 13. Asset Buyback / ITAD
@@ -136,7 +148,8 @@ const getLocalIntelligentReply = async (message, settings, liveProducts = []) =>
 
   // 14. Unstocked Items (e.g. MacBook, Apple, iPhone)
   if (/macbook|mac\b|apple|iphone|ipad/i.test(lower)) {
-    return `Our primary ready inventory specializes in commercial enterprise Windows & Linux fleets (Dell Latitude, Lenovo ThinkPad, HP EliteBook, and Workstation GPUs) because they offer maximum cost efficiency and rapid 24-48h standby replacement SLA.\n\nHowever, for specialized bulk Apple MacBook corporate deployments (10+ units), we can arrange custom enterprise procurement. Please connect with our enterprise desk on WhatsApp at ${whatsapp}!`;
+    const currentStockSample = activeLaptops.slice(0, 3).map((p) => p.title).join(', ') || 'commercial Windows & Linux machines';
+    return `Our primary ready inventory specializes in commercial enterprise hardware (${currentStockSample}) because they offer maximum cost efficiency and rapid 24-48h standby replacement SLA.\n\nHowever, for specialized bulk Apple MacBook corporate deployments (10+ units), we can arrange custom enterprise procurement. Please connect with our enterprise desk on WhatsApp at ${whatsapp}!`;
   }
 
   // 15. Dynamic Catalog Search with Budget & Rent Extraction (Handles typos like "tapto", "mothely", "2k", "sai kam")
@@ -164,12 +177,12 @@ const getLocalIntelligentReply = async (message, settings, liveProducts = []) =>
     query.category = 'ram';
   } else if (lower.includes('monitor') || lower.includes('display')) {
     query.category = 'monitor';
-  } else if (lower.includes('hp')) {
-    query.$or = [{ brand: /hp/i }, { title: /hp/i }];
-  } else if (lower.includes('dell')) {
-    query.$or = [{ brand: /dell/i }, { title: /dell/i }];
-  } else if (lower.includes('lenovo') || lower.includes('thinkpad')) {
-    query.$or = [{ brand: /lenovo/i }, { title: /thinkpad/i }, { title: /lenovo/i }];
+  } else {
+    const words = lower.replace(/[^a-z0-9\s]/gi, ' ').split(/\s+/).filter((w) => w.length >= 3 && !['rent', 'lease', 'monthly', 'mothely', 'kiraya', 'laptop', 'tapto', 'banao', 'mujhe', 'pass', 'chahiye', 'price', 'rate'].includes(w));
+    if (words.length > 0) {
+      const regexList = words.map((w) => new RegExp(w, 'i'));
+      query.$or = regexList.flatMap((r) => [{ brand: r }, { title: r }, { category: r }]);
+    }
   }
 
   if (isRentQuery && maxBudget) {
@@ -201,8 +214,9 @@ const getLocalIntelligentReply = async (message, settings, liveProducts = []) =>
     return `${intro}\n\n${lines.join('\n\n')}\n\nIn sabhi par 24–48h standby replacement SLA aur 100% GST invoice shamil hai. Aap direct catalog se order kar sakte hain ya WhatsApp par contact kar sakte hain: ${whatsapp}`;
   }
 
-  // 16. General Enterprise Fallback
-  return `Welcome to ${brandName}! We have a wide range of corporate laptops (HP EliteBook, Lenovo ThinkPad, Dell Latitude) starting from ₹1,450/month rent with full 24-48h standby replacement SLA.\n\nMessage our consultation desk on WhatsApp at ${whatsapp} for custom configurations, bulk fleet quotations, or Net-30 PO processing!`;
+  // 16. General Enterprise Fallback (Pure Dynamic)
+  const fallbackModels = activeLaptops.slice(0, 3).map((p) => p.title).join(', ') || 'enterprise hardware';
+  return `Welcome to ${brandName}! We have a wide range of corporate hardware (${fallbackModels}) ${minRentText} with full 24-48h standby replacement SLA.\n\nMessage our consultation desk on WhatsApp at ${whatsapp} for custom configurations, bulk fleet quotations, or Net-30 PO processing!`;
 };
 
 // @desc    Chat with Gemini AI IT Consultant
@@ -215,8 +229,8 @@ export const chatWithAI = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Message is required' });
     }
 
-    // Fetch site info & latest product inventory with stock > 0
-    const [settings, products] = await Promise.all([
+    // Fetch site info & latest product inventory with stock > 0, and delivery zones
+    const [settings, products, deliveryZones] = await Promise.all([
       SiteSettings.findOne(),
       Product.find({
         is_active: true,
@@ -227,7 +241,8 @@ export const chatWithAI = async (req, res, next) => {
         ]
       })
         .select('title brand category sale_price rental_price_monthly condition stock_quantity rental_stock sale_stock specs')
-        .limit(30)
+        .limit(30),
+      DeliveryZone.find({ is_active: true })
     ]);
 
     const liveInventoryContext = products.length > 0
@@ -241,6 +256,14 @@ export const chatWithAI = async (req, res, next) => {
           })
           .join('\n')
       : 'Currently no inventory in stock. Advise customer to contact WhatsApp for custom indents.';
+
+    const liveLogisticsContext = (deliveryZones || [])
+      .map((z) => {
+        const fee = z.delivery_charge === 0 ? 'FREE' : `₹${z.delivery_charge.toLocaleString('en-IN')}`;
+        const cities = (z.cities || []).slice(0, 6).join(', ');
+        return `• ${z.zone_name} (${cities}): ${z.estimated_days || 'Standard transit'} (Transit fee: ${fee})`;
+      })
+      .join('\n');
 
     const brandName = settings?.brand_name || settings?.company_name || 'Demo Infotech';
     const whatsapp = settings?.whatsapp || '+91 98100 00000';
@@ -268,7 +291,8 @@ COMMERCIAL & LEGAL POLICIES:
 3. Quality & SLA: 30-Point testing protocol, guaranteed 24–48 hour standby replacement nationwide with zero downtime, and 1-Year Comprehensive Warranty on outright buy.
 4. Rental Tenure Discounts: 3-Month (Standard), 6-Month (5% off), 12+ Month (15% bulk discount).
 5. Rent-to-Own: Rental payments can be adjusted towards an outright buyout if the client decides to keep the hardware permanently.
-6. Delivery: Same-Day / 24h in Delhi NCR; 2-3 business days across Metros via BlueDart / Delhivery insured air.
+6. Logistics & Delivery SLAs (Live from MongoDB DeliveryZone):
+${liveLogisticsContext || 'Pan-India express delivery with insured courier.'}
 7. Asset Buyback: We buy back decommissioned corporate hardware in bulk (10 to 1,000+ units) with DoD data wiping and Form 6 / EPR certificates.
 
 STRICT BEHAVIORAL RULES & SAFETY GUARDRAILS:
@@ -294,7 +318,7 @@ STRICT BEHAVIORAL RULES & SAFETY GUARDRAILS:
     }
 
     // If Gemini fails or times out, seamlessly return local intelligent inventory reply
-    const intelligentReply = await getLocalIntelligentReply(message, settings, products);
+    const intelligentReply = await getLocalIntelligentReply(message, settings, products, deliveryZones);
     return res.status(200).json({
       success: true,
       reply: intelligentReply
