@@ -130,7 +130,11 @@ export default function ChatbotWidget() {
     setLoading(true);
 
     try {
-      const res = await api.post('/ai/chat', { message: text });
+      const historyContext = messages.slice(-6);
+      const res = await api.post('/ai/chat', { 
+        message: text,
+        history: historyContext
+      });
       if (res.data?.success) {
         setMessages((prev) => [...prev, { sender: 'bot', text: res.data.reply }]);
       } else {
