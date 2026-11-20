@@ -22,8 +22,11 @@ import {
   Truck
 } from 'lucide-react';
 import api from '../../services/api';
+import { useCompany } from '../../context/SettingsContext';
 
 export default function AdminCustomers() {
+  const { company: siteCompany } = useCompany();
+  const brandName = siteCompany?.brand_name || 'Demo Infotech';
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -431,10 +434,26 @@ export default function AdminCustomers() {
                             </div>
                             <div className="text-[10.5px] text-slate-500 flex items-center gap-1 truncate max-w-[220px]">
                               <span>Attn: {c.name || 'Authorized Signatory'}</span>
+                              {c.designation && c.designation !== 'Other / Professional' && (
+                                <span className="text-slate-400">({c.designation})</span>
+                              )}
                             </div>
-                            <span className="text-[10px] font-mono text-[#8A5E12] block">
-                              Corporate Enterprise
-                            </span>
+                            <div className="flex items-center gap-1.5 mt-0.5">
+                              {c.company_size && c.company_size !== 'Undisclosed' ? (
+                                <span className="text-[10px] font-mono text-[#8A5E12] font-semibold bg-[#FAF7F2] px-1.5 py-0.2 rounded border border-[#D4A24C]/30">
+                                  {c.company_size} Employees
+                                </span>
+                              ) : (
+                                <span className="text-[10px] font-mono text-slate-400">
+                                  Enterprise Client
+                                </span>
+                              )}
+                              {c.city && (
+                                <span className="text-[10px] text-slate-400 font-mono">
+                                  • {c.city}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </td>
@@ -817,18 +836,26 @@ export default function AdminCustomers() {
       {/* ======================================================== */}
       {selectedCustomer && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-lg w-full overflow-hidden p-6 space-y-4">
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-xl w-full overflow-hidden p-6 space-y-4">
             
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-2xl bg-[#FAF7F2] text-[#8A5E12] border border-[#D4A24C]/30 flex items-center justify-center font-bold text-sm shrink-0">
+                <div className="w-12 h-12 rounded-2xl bg-[#FAF7F2] text-[#8A5E12] border border-[#D4A24C]/30 flex items-center justify-center font-bold text-base shrink-0 shadow-sm">
                   {getCleanInitial(selectedCustomer.name, selectedCustomer.company_name)}
                 </div>
                 <div>
-                  <h3 className="font-serif font-bold text-lg text-slate-900">
+                  <h3 className="font-serif font-bold text-lg text-slate-900 leading-snug">
                     {selectedCustomer.company_name || selectedCustomer.name}
                   </h3>
-                  <p className="text-xs text-slate-500">Corporate Customer Profile</p>
+                  <p className="text-xs text-slate-500 flex items-center gap-1.5 mt-0.5">
+                    <span>Corporate Client Profile</span>
+                    {selectedCustomer.city && (
+                      <>
+                        <span>•</span>
+                        <span className="text-[#8A5E12] font-medium">{selectedCustomer.city}</span>
+                      </>
+                    )}
+                  </p>
                 </div>
               </div>
               <button
@@ -839,24 +866,60 @@ export default function AdminCustomers() {
               </button>
             </div>
 
-            {/* Profile Grid */}
-            <div className="grid grid-cols-2 gap-3 text-xs">
+            {/* Profile Grid (All Database Driven Fields) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
               <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
                 <span className="text-[10px] text-slate-400 block uppercase font-mono">Contact Signatory</span>
-                <strong className="text-slate-900">{selectedCustomer.name}</strong>
+                <strong className="text-slate-900 block truncate">{selectedCustomer.name}</strong>
               </div>
               <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                <span className="text-[10px] text-slate-400 block uppercase font-mono">Email Address</span>
-                <span className="font-mono text-slate-800 break-all">{selectedCustomer.email}</span>
+                <span className="text-[10px] text-slate-400 block uppercase font-mono">Designation / Role</span>
+                <span className="text-slate-800 font-semibold block truncate">
+                  {selectedCustomer.designation && selectedCustomer.designation !== 'Other / Professional'
+                    ? selectedCustomer.designation
+                    : 'Corporate Signatory'}
+                </span>
+              </div>
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <span className="text-[10px] text-slate-400 block uppercase font-mono">Official Work Email</span>
+                <span className="font-mono text-slate-800 break-all block">{selectedCustomer.email}</span>
               </div>
               <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
                 <span className="text-[10px] text-slate-400 block uppercase font-mono">Phone Number</span>
-                <span className="font-mono text-slate-800">{selectedCustomer.phone || 'N/A'}</span>
+                <span className="font-mono text-slate-800 block">{selectedCustomer.phone || 'N/A'}</span>
               </div>
               <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                <span className="text-[10px] text-slate-400 block uppercase font-mono">Verification Status</span>
-                <span className="font-bold text-emerald-700">
-                  {selectedCustomer.email_verified ? 'Email Verified' : 'Pending Verification'}
+                <span className="text-[10px] text-slate-400 block uppercase font-mono">Company Scale / Size</span>
+                <span className="font-bold text-[#8A5E12] block">
+                  {selectedCustomer.company_size && selectedCustomer.company_size !== 'Undisclosed'
+                    ? `${selectedCustomer.company_size} Employees`
+                    : 'Undisclosed Scale'}
+                </span>
+              </div>
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <span className="text-[10px] text-slate-400 block uppercase font-mono">Corporate GSTIN</span>
+                <span className="font-mono text-slate-800 font-semibold block">
+                  {selectedCustomer.gstin || 'Unregistered / B2C'}
+                </span>
+              </div>
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <span className="text-[10px] text-slate-400 block uppercase font-mono">Deployment Hub</span>
+                <span className="text-slate-800 block truncate">{selectedCustomer.city || 'Pan-India Fleet'}</span>
+              </div>
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <span className="text-[10px] text-slate-400 block uppercase font-mono">Verification Compliance</span>
+                <span className={`font-bold block flex items-center gap-1.5 ${selectedCustomer.email_verified ? 'text-emerald-700' : 'text-amber-700'}`}>
+                  {selectedCustomer.email_verified ? (
+                    <>
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 inline" />
+                      <span>Verified Organization</span>
+                    </>
+                  ) : (
+                    <>
+                      <AlertCircle className="w-3.5 h-3.5 text-amber-600 inline" />
+                      <span>Pending Verification</span>
+                    </>
+                  )}
                 </span>
               </div>
             </div>
