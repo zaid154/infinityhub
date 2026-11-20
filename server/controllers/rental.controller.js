@@ -1,12 +1,47 @@
 import Rental from '../models/Rental.js';
 import Product from '../models/Product.js';
+import PaymentAuditLog from '../models/PaymentAuditLog.js';
 
+// @desc    Create new enterprise rental lease booking
+// @route   POST /api/rentals
+// @access  Private
 export const createRental = async (req, res, next) => {
   try {
-    const { product_id, quantity, tenure, monthly_rate } = req.body;
+    const {
+      product_id,
+      quantity,
+      tenure,
+      deployment_address,
+      company_name,
+      gstin
+    } = req.body;
 
     const product = await Product.findById(product_id);
     if (!product) return res.status(404).json({ success: false, message: 'Product not found' });
+
+    // Security Check: Inactive products cannot be rented
+    if (product.is_active === false) {
+      return res.status(400).json({
+        success: false,
+        message: `Product "${product.title}" is currently not available for leasing.`
+      });
+    }
+
+    // Security Check: Sale-only products cannot be rented
+    if (product.available_for === 'sale') {
+      return res.status(400).json({
+        success: false,
+        message: `Product "${product.title}" is available for direct purchase only, not rental leasing.`
+      });
+    }
+
+    // Security Check: Product must have a valid rental price
+    if (!product.rental_price_monthly || product.rental_price_monthly <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: `Rental pricing not configured for "${product.title}". Please contact procurement.`
+      });
+    }
 
     const reqQty = Number(quantity);
     if (!reqQty || reqQty <= 0 || !Number.isInteger(reqQty)) {
@@ -34,10 +69,14 @@ export const createRental = async (req, res, next) => {
     const endDate = new Date(startDate);
     endDate.setMonth(endDate.getMonth() + durationMonths);
 
-    // Secure server-side tenure discount calculation (protecting against client price tampering)
-    const baseMonthlyPrice = product.rental_price_monthly || 1350;
+    // 100% Server-Side Calculations (Tamper-Proof)
+    const baseMonthlyPrice = product.rental_price_monthly;
     const discountRate = tenure === '12_months' ? 0.15 : tenure === '6_months' ? 0.05 : 0;
     const verifiedMonthlyRate = Math.round(baseMonthlyPrice * (1 - discountRate));
+
+    const monthly_subtotal = verifiedMonthlyRate * reqQty;
+    const monthly_gst = Math.round(monthly_subtotal * 0.18); // 18% GST statutory rate for hardware leasing
+    const total_monthly_recurring = monthly_subtotal + monthly_gst;
 
     const rental = await Rental.create({
       user: req.user._id,
@@ -45,15 +84,39 @@ export const createRental = async (req, res, next) => {
       quantity: reqQty,
       tenure: tenure || '6_months',
       monthly_rate: verifiedMonthlyRate,
+      monthly_subtotal,
+      monthly_gst,
+      total_monthly_recurring,
+      company_name: company_name || req.user.company_name || '',
+      gstin: gstin || req.user.gstin || '',
+      deployment_address: deployment_address || {},
       start_date: startDate,
       end_date: endDate,
       status: 'active',
       payment_status: 'pending'
     });
 
-    // Decrement rental_stock
+    // Decrement rental_stock atomically
     await Product.findByIdAndUpdate(product._id, {
       $inc: { rental_stock: -reqQty }
+    });
+
+    // Record in Audit Log
+    await PaymentAuditLog.create({
+      rental: rental._id,
+      user: req.user._id,
+      event_type: 'rental_initiated',
+      amount: total_monthly_recurring,
+      gateway: 'po_invoice',
+      status: 'pending',
+      tampering_detected: false,
+      ip_address: req.ip,
+      user_agent: req.headers['user-agent'],
+      metadata: {
+        agreement_number: rental.agreement_number,
+        tenure: rental.tenure,
+        monthly_rate: verifiedMonthlyRate
+      }
     });
 
     res.status(201).json({ success: true, message: 'Rental fleet booking confirmed', rental });
@@ -62,6 +125,9 @@ export const createRental = async (req, res, next) => {
   }
 };
 
+// @desc    Get customer's rentals
+// @route   GET /api/rentals/my-rentals
+// @access  Private
 export const getMyRentals = async (req, res, next) => {
   try {
     const rentals = await Rental.find({ user: req.user._id })
@@ -74,6 +140,9 @@ export const getMyRentals = async (req, res, next) => {
   }
 };
 
+// @desc    Get all rentals (Admin only)
+// @route   GET /api/rentals
+// @access  Admin only
 export const getAllRentalsAdmin = async (req, res, next) => {
   try {
     const { status, page = 1, limit = 20 } = req.query;
@@ -105,6 +174,9 @@ export const getAllRentalsAdmin = async (req, res, next) => {
   }
 };
 
+// @desc    Update rental status & manage fleet lifecycle reconciliation
+// @route   PUT /api/rentals/:id/status
+// @access  Admin only
 export const updateRentalStatus = async (req, res, next) => {
   try {
     const status = req.body.status || req.body.rental_status;
@@ -134,8 +206,25 @@ export const updateRentalStatus = async (req, res, next) => {
       rental.status = status;
     }
 
+    if (payment_status && payment_status !== rental.payment_status) {
+      await PaymentAuditLog.create({
+        rental: rental._id,
+        user: req.user._id,
+        event_type: 'status_changed',
+        amount: rental.total_monthly_recurring || rental.monthly_rate,
+        status: 'success',
+        ip_address: req.ip,
+        user_agent: req.headers['user-agent'],
+        metadata: {
+          previous_payment_status: rental.payment_status,
+          new_payment_status: payment_status,
+          updated_by: req.user.email
+        }
+      });
+      rental.payment_status = payment_status;
+    }
+
     if (admin_notes !== undefined) rental.admin_notes = admin_notes;
-    if (payment_status) rental.payment_status = payment_status;
 
     await rental.save();
     res.status(200).json({ success: true, message: 'Rental status updated', rental });

@@ -61,14 +61,28 @@ const orderSchema = new mongoose.Schema(
       pincode: String,
       gst_number: String
     },
+    payment_method: {
+      type: String,
+      default: 'razorpay'
+    },
     payment_status: {
       type: String,
       enum: ['pending', 'paid', 'failed', 'refunded'],
       default: 'pending'
     },
+    stock_deducted: {
+      type: Boolean,
+      default: false,
+      index: true
+    },
+    delivery_zone: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'DeliveryZone'
+    },
     razorpay_order_id: {
       type: String,
-      default: ''
+      default: '',
+      index: true
     },
     razorpay_payment_id: {
       type: String,

@@ -200,6 +200,11 @@ export const createProduct = async (req, res, next) => {
     const parsedSaleStock = req.body.sale_stock !== undefined ? Number(req.body.sale_stock) : (available_for === 'rent' ? 0 : Number(stock_quantity) || 1);
     const parsedRentalStock = req.body.rental_stock !== undefined ? Number(req.body.rental_stock) : (available_for === 'sale' ? 0 : Number(stock_quantity) || 0);
 
+    const resolvedSalePrice = Number(sale_price !== undefined ? sale_price : req.body.price) || 0;
+    const resolvedRentalPrice = Number(rental_price_monthly !== undefined ? rental_price_monthly : req.body.monthly_rental_price) || 0;
+
+    const is_active = req.body.is_active !== undefined ? Boolean(req.body.is_active) : true;
+
     const product = await Product.create({
       title,
       slug,
@@ -209,8 +214,9 @@ export const createProduct = async (req, res, next) => {
       category,
       condition: condition || 'grade_a_plus',
       available_for: available_for || 'both',
-      sale_price: Number(sale_price) || 0,
-      rental_price_monthly: Number(rental_price_monthly) || 0,
+      is_active,
+      sale_price: resolvedSalePrice,
+      rental_price_monthly: resolvedRentalPrice,
       stock_quantity: Number(stock_quantity) || (parsedSaleStock + parsedRentalStock) || 1,
       sale_stock: parsedSaleStock,
       rental_stock: parsedRentalStock,
