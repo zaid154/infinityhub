@@ -11,7 +11,6 @@ import {
   CreditCard,
   FileText,
   Repeat,
-  CheckCircle2,
   Clock,
   Building
 } from 'lucide-react';
@@ -653,7 +652,7 @@ export default function Cart() {
                       <input
                         type="text"
                         maxLength={15}
-                        placeholder="07AAAAA0000A1Z5"
+                        placeholder={company?.gst_number || '07AAAAA0000A1Z5'}
                         value={shippingAddress.gst_number}
                         onChange={(e) => setShippingAddress({ ...shippingAddress, gst_number: e.target.value.toUpperCase() })}
                         className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] uppercase font-mono"
@@ -781,13 +780,63 @@ export default function Cart() {
                     </div>
                   </div>
 
-                  <div className="p-3 bg-[#FAF7F2] rounded-xl border border-[#D4A24C]/20 text-[11px] text-[#5A6B63] space-y-1">
-                    <p className="flex items-center gap-1.5 font-bold text-[#0D3B2A]">
-                      <ShieldCheck className="w-4 h-4 text-[#D4A24C]" />
-                      Enterprise Assurance & Warranty
-                    </p>
-                    <p>Includes 30-point lab certification, 6–12 month warranty, and verified GST invoice.</p>
-                  </div>
+                  {/* Dynamic Cart-Aware Assurance & Invoicing Strip */}
+                  {(() => {
+                    const hasBrandNew = buyCart.some((i) => i.product?.condition === 'brand_new');
+                    const hasRefurbished = buyCart.some((i) => i.product?.condition && i.product?.condition !== 'brand_new');
+                    const hasSystems = buyCart.some((i) => ['laptop', 'desktop', 'server'].includes(i.product?.category));
+                    const hasComponents = buyCart.some((i) =>
+                      ['ram', 'gpu', 'cpu', 'storage', 'peripheral', 'other'].includes(i.product?.category)
+                    );
+                    const hasDisplays = buyCart.some((i) => i.product?.category === 'monitor');
+
+                    let badgeLabel = 'Certified';
+                    let warrantyText = '';
+
+                    if (hasBrandNew && !hasRefurbished) {
+                      badgeLabel = 'OEM Sealed';
+                      warrantyText = '100% Brand New Sealed with Official OEM Manufacturer Warranty.';
+                    } else if (hasSystems && hasComponents) {
+                      badgeLabel = 'Lab Tested';
+                      warrantyText = 'Grade A+ 30-Point Tested Systems & Certified Component Hardware.';
+                    } else if (hasSystems) {
+                      badgeLabel = '30-Pt Tested';
+                      warrantyText = 'Grade A+ 30-Point Rigorously Tested with 6–12 Month Warranty.';
+                    } else if (hasDisplays) {
+                      badgeLabel = 'Pixel Checked';
+                      warrantyText = 'Zero-Dead-Pixel Screen Checked Displays with Hardware Warranty.';
+                    } else if (hasComponents) {
+                      badgeLabel = 'OEM Verified';
+                      warrantyText = 'OEM Verified Grade A+ Component Hardware with Replacement Warranty.';
+                    } else {
+                      badgeLabel = 'Verified OEM';
+                      warrantyText = 'Enterprise Certified Hardware with Warranty Assurance.';
+                    }
+
+                    const gstNumber = company?.gst_number || '07AAAAA0000A1Z5';
+
+                    return (
+                      <div className="p-3 bg-[#FAF7F2] rounded-xl border border-[#D4A24C]/25 text-[11px] text-[#5A6B63] space-y-1.5">
+                        <div className="flex items-center justify-between">
+                          <p className="flex items-center gap-1.5 font-bold text-[#0D3B2A]">
+                            <ShieldCheck className="w-3.5 h-3.5 text-[#8A5E12]" />
+                            <span>Order Assurance & Invoicing</span>
+                          </p>
+                          <span className="text-[9.5px] font-mono text-[#8A5E12] font-semibold bg-white px-2 py-0.5 rounded-full border border-[#D4A24C]/30">
+                            {badgeLabel}
+                          </span>
+                        </div>
+                        <p className="flex items-start gap-1.5 text-[10.5px]">
+                          <span className="text-[#D4A24C] font-bold shrink-0">•</span>
+                          <span>{warrantyText}</span>
+                        </p>
+                        <p className="flex items-start gap-1.5 text-[10.5px]">
+                          <span className="text-[#D4A24C] font-bold shrink-0">•</span>
+                          <span>Original Tax Invoice under GSTIN: <strong className="font-mono text-[#0D3B2A]">{gstNumber}</strong> (18% ITC).</span>
+                        </p>
+                      </div>
+                    );
+                  })()}
 
                   {/* Dual Checkout Action Buttons */}
                   <div className="space-y-2.5 pt-2">
@@ -1046,7 +1095,7 @@ export default function Cart() {
                       <input
                         type="text"
                         maxLength={15}
-                        placeholder="07AAAAA0000A1Z5"
+                        placeholder={company?.gst_number || '07AAAAA0000A1Z5'}
                         value={shippingAddress.gst_number}
                         onChange={(e) => setShippingAddress({ ...shippingAddress, gst_number: e.target.value.toUpperCase() })}
                         className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] uppercase font-mono"
@@ -1161,18 +1210,28 @@ export default function Cart() {
                     </div>
                   </div>
 
-                  <div className="p-3 bg-[#FAF7F2] rounded-xl border border-[#D4A24C]/20 text-[11px] text-[#5A6B63] space-y-1.5">
-                    <p className="flex items-center gap-1.5 font-bold text-[#0D3B2A]">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                      Zero Capital Outlay (100% OPEX Deductible)
+                  {/* Dynamic Corporate Rental SLA & Assurance */}
+                  <div className="p-3 bg-[#FAF7F2] rounded-xl border border-[#D4A24C]/25 text-[11px] text-[#5A6B63] space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <p className="flex items-center gap-1.5 font-bold text-[#0D3B2A]">
+                        <ShieldCheck className="w-3.5 h-3.5 text-[#8A5E12]" />
+                        <span>Corporate Lease SLA & Invoicing</span>
+                      </p>
+                      <span className="text-[9.5px] font-mono text-[#8A5E12] font-semibold bg-white px-2 py-0.5 rounded-full border border-[#D4A24C]/30">
+                        Zero Capex Fleet
+                      </span>
+                    </div>
+                    <p className="flex items-start gap-1.5 text-[10.5px]">
+                      <span className="text-[#D4A24C] font-bold shrink-0">•</span>
+                      <span>Zero Capital Outlay & 100% Tax Deductible OPEX Invoicing.</span>
                     </p>
-                    <p className="flex items-center gap-1.5 font-bold text-[#0D3B2A]">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                      24–48h SLA Standby Swap Agreement Included
+                    <p className="flex items-start gap-1.5 text-[10.5px]">
+                      <span className="text-[#D4A24C] font-bold shrink-0">•</span>
+                      <span>{company?.support_sla || '24–48h Hardware Standby Replacement SLA Included'}.</span>
                     </p>
-                    <p className="flex items-center gap-1.5 font-bold text-[#0D3B2A]">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                      Zero Security Deposit for GSTIN-verified entities
+                    <p className="flex items-start gap-1.5 text-[10.5px]">
+                      <span className="text-[#D4A24C] font-bold shrink-0">•</span>
+                      <span>Zero Security Deposit for GSTIN-verified entities (Billed under GSTIN: <strong className="font-mono text-[#0D3B2A]">{company?.gst_number || '07AAAAA0000A1Z5'}</strong>).</span>
                     </p>
                   </div>
 
