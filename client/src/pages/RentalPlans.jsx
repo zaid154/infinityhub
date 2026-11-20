@@ -732,7 +732,7 @@ export default function RentalPlans() {
           </p>
         </div>
 
-        <RentalCalculator rentalProducts={rentalProducts} onOpenRFQ={openRFQ} />
+        <RentalCalculator rentalProducts={rentalProducts} onOpenRFQ={openRFQ} hideHeader={true} />
       </section>
 
       {/* ======================================================== */}
