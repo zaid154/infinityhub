@@ -4,6 +4,7 @@ import Inquiry from '../models/Inquiry.js';
 import Rental from '../models/Rental.js';
 import User from '../models/User.js';
 import BuybackRequest from '../models/BuybackRequest.js';
+import CustomerDemand from '../models/CustomerDemand.js';
 
 export const getDashboardAnalytics = async (req, res, next) => {
   try {
@@ -17,7 +18,8 @@ export const getDashboardAnalytics = async (req, res, next) => {
       pendingBuybacks,
       inventoryAgg,
       recentInquiries,
-      recentOrders
+      recentOrders,
+      topDemands
     ] = await Promise.all([
       Product.countDocuments({ is_active: true }),
       Order.countDocuments(),
@@ -41,7 +43,10 @@ export const getDashboardAnalytics = async (req, res, next) => {
         }
       ]),
       Inquiry.find().sort({ createdAt: -1 }).limit(5),
-      Order.find().populate('user', 'name email phone company_name').sort({ createdAt: -1 }).limit(5)
+      Order.find().populate('user', 'name email phone company_name').sort({ createdAt: -1 }).limit(5),
+      CustomerDemand.find({ is_unstocked: true, procurement_status: { $ne: 'dismissed' } })
+        .sort({ frequency: -1, last_queried_at: -1 })
+        .limit(5)
     ]);
 
     const totalRevenue = ordersAgg.length > 0 ? ordersAgg[0].totalRevenue : 0;
@@ -62,7 +67,8 @@ export const getDashboardAnalytics = async (req, res, next) => {
         totalOperationalUnits: (stockStats.totalSaleStock || 0) + (stockStats.totalRentalStock || 0)
       },
       recentInquiries,
-      recentOrders
+      recentOrders,
+      topDemands
     });
   } catch (error) {
     next(error);

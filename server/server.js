@@ -20,6 +20,7 @@ import adminRoutes from './routes/admin.routes.js';
 import aiRoutes from './routes/ai.routes.js';
 import grievanceRoutes from './routes/grievance.routes.js';
 import newsletterRoutes from './routes/newsletter.routes.js';
+import demandRoutes from './routes/demand.routes.js';
 
 // Load environment variables
 dotenv.config();
@@ -82,6 +83,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/grievance', grievanceRoutes);
 app.use('/api/newsletter', newsletterRoutes);
+app.use('/api/demand', demandRoutes);
 
 // 404 Route Handler
 app.use('*', (req, res) => {

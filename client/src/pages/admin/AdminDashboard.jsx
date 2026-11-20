@@ -29,6 +29,7 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
   const [recentInquiries, setRecentInquiries] = useState([]);
   const [recentOrders, setRecentOrders] = useState([]);
+  const [topDemands, setTopDemands] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [lastRefreshed, setLastRefreshed] = useState(new Date());
@@ -41,6 +42,7 @@ export default function AdminDashboard() {
         setStats(res.data.stats);
         setRecentInquiries(res.data.recentInquiries || []);
         setRecentOrders(res.data.recentOrders || []);
+        setTopDemands(res.data.topDemands || []);
         setLastRefreshed(new Date());
       }
     } catch (err) {
@@ -304,6 +306,71 @@ export default function AdminDashboard() {
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
+      </div>
+
+      {/* AI Demand Radar: Top Unstocked Customer Inquiries */}
+      <div className="bg-gradient-to-r from-[#0D3B2A] to-[#174836] text-white p-5 sm:p-6 rounded-2xl border border-[#D4A24C]/40 shadow-sm space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/15 pb-3">
+          <div>
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-[#D4A24C]" />
+              <h2 className="text-sm sm:text-base font-bold font-serif text-[#FAF7F2] tracking-wide">
+                AI Customer Demand Radar (Unstocked Hardware Inquiries)
+              </h2>
+            </div>
+            <p className="text-[11.5px] text-[#C2D6CC] mt-0.5">
+              Live intelligence from customer chat queries & catalog searches. Shows unstocked models in high demand.
+            </p>
+          </div>
+          <Link
+            to="/admin/demand"
+            className="text-xs font-bold text-[#D4A24C] hover:text-white transition flex items-center gap-1 shrink-0 self-start sm:self-auto"
+          >
+            <span>Full Demand Intelligence</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        {topDemands.length === 0 ? (
+          <div className="text-center py-6 text-xs text-[#A8C7B8] bg-white/5 rounded-xl border border-white/10">
+            No unstocked demand logged yet. When visitors ask the bot for hardware not in inventory (e.g. Dell Latitude 7090), it will appear here.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {topDemands.map((td) => (
+              <div
+                key={td._id}
+                className="bg-white/10 backdrop-blur-xs p-3.5 rounded-xl border border-white/15 flex items-center justify-between gap-3 hover:bg-white/15 transition"
+              >
+                <div className="min-w-0">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="px-2 py-0.2 rounded text-[9px] font-bold bg-[#D4A24C] text-[#072117] uppercase">
+                      {td.detected_brand || 'Hardware'}
+                    </span>
+                    <span className="text-[10px] text-emerald-300 font-mono font-bold">
+                      {td.frequency} {td.frequency === 1 ? 'Request' : 'Requests'}
+                    </span>
+                  </div>
+                  <h4 className="font-bold text-xs text-[#FAF7F2] mt-1 font-serif truncate" title={td.detected_model || td.query_text}>
+                    {td.detected_model || td.query_text}
+                  </h4>
+                  <p className="text-[10px] text-[#A8C7B8] italic truncate mt-0.5">
+                    "{td.sample_user_message || td.query_text}"
+                  </p>
+                </div>
+
+                <Link
+                  to={`/admin/products/new?title=${encodeURIComponent(td.detected_model || td.query_text)}&brand=${encodeURIComponent(td.detected_brand || '')}&category=${encodeURIComponent(td.category || 'laptop')}`}
+                  className="px-2.5 py-1.5 rounded-lg bg-[#FAF7F2] hover:bg-[#F3E8D2] text-[#0D3B2A] font-bold text-[10.5px] uppercase tracking-wider shrink-0 transition flex items-center gap-1 shadow-xs"
+                  title="List this model in inventory"
+                >
+                  <Plus className="w-3 h-3 text-[#8A5E12]" />
+                  <span>List</span>
+                </Link>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Split Workspaces: Corporate RFQ Inquiries & Recent Invoiced Orders */}

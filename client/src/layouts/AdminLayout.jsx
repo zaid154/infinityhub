@@ -13,7 +13,8 @@ import {
   Settings,
   LogOut,
   ExternalLink,
-  Server
+  Server,
+  Sparkles
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCompany } from '../context/SettingsContext';
@@ -31,6 +32,7 @@ export default function AdminLayout() {
     { label: 'Products', path: '/admin/products', icon: Package },
     { label: 'Categories', path: '/admin/categories', icon: Layers },
     { label: 'Inquiries & RFQs', path: '/admin/inquiries', icon: FileText },
+    { label: 'Demand Radar', path: '/admin/demand', icon: Sparkles },
     { label: 'Orders & Invoices', path: '/admin/orders', icon: ShoppingBag },
     { label: 'Rental Fleets', path: '/admin/rentals', icon: Repeat },
     { label: 'Customer Directory', path: '/admin/customers', icon: Users },

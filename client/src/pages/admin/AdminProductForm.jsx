@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom';
 import {
   ArrowLeft,
   Upload,
@@ -149,12 +149,18 @@ export default function AdminProductForm() {
   const { id } = useParams();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const paramTitle = searchParams.get('title') || '';
+  const paramBrand = searchParams.get('brand') || '';
+  const paramModel = searchParams.get('model') || '';
+  const paramCategory = searchParams.get('category') || 'laptop';
 
   const [formData, setFormData] = useState({
-    title: '',
-    brand: '',
-    model: '',
-    category: 'laptop',
+    title: paramTitle,
+    brand: paramBrand,
+    model: paramModel || paramTitle,
+    category: paramCategory,
     condition: 'grade_a_plus',
     available_for: 'both',
     sale_price: '',

@@ -2,6 +2,115 @@ import { generateWithFallback } from '../config/gemini.js';
 import Product from '../models/Product.js';
 import SiteSettings from '../models/SiteSettings.js';
 import DeliveryZone from '../models/DeliveryZone.js';
+import CustomerDemand from '../models/CustomerDemand.js';
+
+/**
+ * Capture Customer Hardware Demand & Unstocked Queries
+ * Analyzes the user message, bot response, and live products to log unstocked hardware interest for Admin.
+ */
+const recordCustomerDemand = async (message, replyText, liveProducts = [], user = null) => {
+  try {
+    if (!message || message.trim().length < 2) return;
+    const lowerMsg = message.toLowerCase().trim();
+    const lowerReply = (replyText || '').toLowerCase();
+
+    // 1. Detect Brand
+    let brand = '';
+    if (/\bdell\b/i.test(lowerMsg)) brand = 'Dell';
+    else if (/\blenovo\b|\bthinkpad\b|\bideapad\b/i.test(lowerMsg)) brand = 'Lenovo';
+    else if (/\bhp\b|\belitebook\b|\bprobook\b|\bzbook\b/i.test(lowerMsg)) brand = 'HP';
+    else if (/\bapple\b|\bmacbook\b|\bimac\b|\bmac\b/i.test(lowerMsg)) brand = 'Apple';
+    else if (/\bnvidia\b|\brtx\b|\bgtx\b/i.test(lowerMsg)) brand = 'NVIDIA';
+    else if (/\basus\b|\brog\b/i.test(lowerMsg)) brand = 'Asus';
+    else if (/\bacer\b/i.test(lowerMsg)) brand = 'Acer';
+    else if (/\bsamsung\b/i.test(lowerMsg)) brand = 'Samsung';
+
+    // 2. Detect Category
+    let category = 'laptop';
+    if (/\bgpu\b|\bgraphics\b|\brtx\b/i.test(lowerMsg)) category = 'gpu';
+    else if (/\bram\b|\bmemory\b/i.test(lowerMsg)) category = 'ram';
+    else if (/\bmonitor\b|\bdisplay\b|\bscreen\b/i.test(lowerMsg)) category = 'monitor';
+    else if (/\bdesktop\b|\bmini pc\b|\btower\b|\bcpu\b/i.test(lowerMsg)) category = 'desktop';
+
+    // 3. Detect Model / Number keyword (e.g. 7090, 7490, 840, T490, M1, M2, 3060, 4090)
+    let detectedModel = '';
+    const modelMatch =
+      message.match(/(?:latitude|thinkpad|elitebook|macbook|rtx|precision|probook|vostro|optiplex|legion|ideapad)\s*([a-z0-9\-]+)/i) ||
+      message.match(/\b([A-Z]{1,3}\d{3,4}[A-Z]?|\d{4}[A-Z]?)\b/);
+
+    if (modelMatch) {
+      detectedModel = modelMatch[0].trim();
+    } else if (brand) {
+      detectedModel = `${brand} Hardware Request`;
+    } else {
+      detectedModel = message.slice(0, 45).trim();
+    }
+
+    // 4. Determine if it is unstocked demand
+    const isUnstockedSignal =
+      lowerReply.includes('out of stock') ||
+      lowerReply.includes('unavailable') ||
+      lowerReply.includes('not in stock') ||
+      lowerReply.includes('unstocked') ||
+      lowerReply.includes('custom enterprise procurement') ||
+      lowerReply.includes('currently no inventory');
+
+    const modelInStock = (liveProducts || []).some(
+      (p) => detectedModel && p.title.toLowerCase().includes(detectedModel.toLowerCase())
+    );
+
+    const isUnstocked = isUnstockedSignal || (!modelInStock && Boolean(brand || modelMatch));
+
+    // Determine intent
+    let intent = 'unstocked_request';
+    if (/rent|lease|monthly/i.test(lowerMsg)) intent = 'rental_inquiry';
+    else if (/buy|purchase|price|rate/i.test(lowerMsg)) intent = 'buy_inquiry';
+
+    // Check if duplicate demand exists
+    const queryRegex = new RegExp(`^${detectedModel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i');
+    const existing = await CustomerDemand.findOne({
+      $or: [{ detected_model: queryRegex }, { query_text: message.trim() }],
+      source: 'ai_chat'
+    });
+
+    if (existing) {
+      existing.frequency += 1;
+      existing.last_queried_at = new Date();
+      existing.sample_user_message = message;
+      existing.bot_reply_summary = (replyText || '').slice(0, 300);
+      if (user) {
+        existing.user = user._id;
+        existing.user_name = user.name || existing.user_name;
+        existing.user_email = user.email || existing.user_email;
+        existing.user_company = user.company_name || existing.user_company;
+        existing.user_phone = user.phone || existing.user_phone;
+      }
+      await existing.save();
+    } else {
+      await CustomerDemand.create({
+        query_text: message,
+        detected_brand: brand || 'Generic IT',
+        detected_model: detectedModel,
+        category,
+        source: 'ai_chat',
+        intent,
+        is_unstocked: isUnstocked,
+        frequency: 1,
+        last_queried_at: new Date(),
+        sample_user_message: message,
+        bot_reply_summary: (replyText || '').slice(0, 300),
+        user: user ? user._id : null,
+        user_name: user?.name || '',
+        user_email: user?.email || '',
+        user_company: user?.company_name || '',
+        user_phone: user?.phone || '',
+        procurement_status: 'demand_logged'
+      });
+    }
+  } catch (err) {
+    console.warn('[RecordCustomerDemand Background Notice]', err.message);
+  }
+};
 
 /**
  * Intelligent Local Hardware Fallback (100% Database-Driven)
@@ -305,23 +414,26 @@ STRICT BEHAVIORAL RULES & SAFETY GUARDRAILS:
 
     const prompt = `${systemPrompt}\n\nCustomer Inquiry: ${message}`;
 
+    let finalReply = '';
     try {
       const responseText = await generateWithFallback(prompt);
       if (responseText) {
-        return res.status(200).json({
-          success: true,
-          reply: responseText
-        });
+        finalReply = responseText;
       }
     } catch (aiErr) {
       console.warn('[Gemini AI Fallback Triggered]', aiErr.message);
     }
 
-    // If Gemini fails or times out, seamlessly return local intelligent inventory reply
-    const intelligentReply = await getLocalIntelligentReply(message, settings, products, deliveryZones);
+    if (!finalReply) {
+      finalReply = await getLocalIntelligentReply(message, settings, products, deliveryZones);
+    }
+
+    // Background asynchronous demand tracking for Admin visibility (never delays client response)
+    recordCustomerDemand(message, finalReply, products, req.user);
+
     return res.status(200).json({
       success: true,
-      reply: intelligentReply
+      reply: finalReply
     });
   } catch (error) {
     console.error('[AI Chat General Error]', error);

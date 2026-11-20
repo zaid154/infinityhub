@@ -113,6 +113,11 @@ export default function Products() {
           setProducts(res.data.products);
           setTotal(res.data.total);
           setTotalPages(res.data.totalPages);
+
+          // If user searched for a hardware model and got 0 results, log to Customer Demand Intelligence
+          if (search.trim().length >= 3 && res.data.products.length === 0) {
+            api.post('/demand/log-search', { query: search.trim(), results_count: 0 }).catch(() => {});
+          }
         }
       } catch (err) {
         console.error('[Error fetching products]', err);
