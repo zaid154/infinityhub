@@ -260,38 +260,6 @@ export default function ProductDetail() {
             <h1 className="text-xl sm:text-2xl lg:text-[26px] font-serif text-[#0D3B2A] font-bold tracking-tight leading-snug">
               {product.title}
             </h1>
-
-            {/* In-Cart Status Notification Pill (Dedicated Row) */}
-            {(inRentalItem || inBuyItem) && (
-              <div className="flex items-center gap-2 pt-1 flex-wrap">
-                {inRentalItem && (
-                  <Link
-                    to="/cart"
-                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#FAF7F2] text-[#0D3B2A] border border-[#D4A24C]/60 hover:bg-[#F4ECE1] hover:border-[#D4A24C] transition-all shadow-xs group"
-                  >
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#8A5E12] shrink-0" />
-                    <span>{inRentalItem.quantity} in Rental Cart</span>
-                    <span className="text-[#D4A24C] font-normal">•</span>
-                    <span className="text-[11px] font-semibold text-[#8A5E12] group-hover:text-[#0D3B2A] group-hover:underline">
-                      View Cart &rarr;
-                    </span>
-                  </Link>
-                )}
-                {inBuyItem && (
-                  <Link
-                    to="/cart"
-                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#FAF7F2] text-[#0D3B2A] border border-[#D4A24C]/60 hover:bg-[#F4ECE1] hover:border-[#D4A24C] transition-all shadow-xs group"
-                  >
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#8A5E12] shrink-0" />
-                    <span>{inBuyItem.quantity} in Cart</span>
-                    <span className="text-[#D4A24C] font-normal">•</span>
-                    <span className="text-[11px] font-semibold text-[#8A5E12] group-hover:text-[#0D3B2A] group-hover:underline">
-                      View Cart &rarr;
-                    </span>
-                  </Link>
-                )}
-              </div>
-            )}
           </div>
 
           {/* Price Row: Context-Aware for Rent vs Buy vs Both */}
@@ -424,25 +392,51 @@ export default function ProductDetail() {
           {/* Action Buttons: Context-Aware for Rent vs Buy vs Both */}
           {product.available_for === 'rent' ? (
             <div className="space-y-3 pt-1">
-              <button
-                type="button"
-                onClick={(e) => handleAddRental(e)}
-                className="w-full py-3 sm:py-3.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-sans font-bold text-xs sm:text-sm uppercase tracking-[0.2em] shadow-lg flex items-center justify-center gap-2 cursor-pointer transition-all hover:brightness-105 active:scale-95 group"
-              >
-                <Repeat className="w-4 h-4 text-[#D4A24C]" />
-                <span>RENT THIS MODEL (ADD TO RENTAL CART)</span>
-                <ArrowRight className="w-4 h-4 text-[#D4A24C] group-hover:translate-x-1 transition-transform" />
-              </button>
+              {inRentalItem ? (
+                <div className="flex flex-col sm:flex-row items-center gap-2.5">
+                  <button
+                    type="button"
+                    onClick={(e) => handleAddRental(e)}
+                    className="flex-1 w-full py-3 sm:py-3.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-sans font-bold text-xs uppercase tracking-[0.15em] shadow-lg flex items-center justify-center gap-2 cursor-pointer transition-all hover:brightness-105 active:scale-95 group"
+                  >
+                    <Repeat className="w-4 h-4 text-[#D4A24C]" />
+                    <span>RENT THIS MODEL (+ ADD)</span>
+                    <ArrowRight className="w-4 h-4 text-[#D4A24C] group-hover:translate-x-1 transition-transform" />
+                  </button>
+
+                  <Link
+                    to="/cart"
+                    className="w-full sm:w-auto px-4 sm:px-5 py-3 sm:py-3.5 rounded-full bg-[#FAF7F2] hover:bg-[#F4ECE1] text-[#0D3B2A] border border-[#D4A24C] font-sans font-bold text-xs uppercase tracking-wider shadow-sm flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95 whitespace-nowrap group shrink-0"
+                  >
+                    <CheckCircle2 className="w-4 h-4 text-[#8A5E12] shrink-0" />
+                    <span>{inRentalItem.quantity} in Rental Cart</span>
+                    <span className="text-[#D4A24C]">•</span>
+                    <span className="text-[11px] font-semibold text-[#8A5E12] group-hover:underline">
+                      View Cart &rarr;
+                    </span>
+                  </Link>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={(e) => handleAddRental(e)}
+                  className="w-full py-3 sm:py-3.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-sans font-bold text-xs sm:text-sm uppercase tracking-[0.2em] shadow-lg flex items-center justify-center gap-2 cursor-pointer transition-all hover:brightness-105 active:scale-95 group"
+                >
+                  <Repeat className="w-4 h-4 text-[#D4A24C]" />
+                  <span>RENT THIS MODEL (ADD TO RENTAL CART)</span>
+                  <ArrowRight className="w-4 h-4 text-[#D4A24C] group-hover:translate-x-1 transition-transform" />
+                </button>
+              )}
             </div>
           ) : (
             <div className="space-y-2.5 pt-1">
-              <div className="flex items-center gap-2.5 sm:gap-3">
+              <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap sm:flex-nowrap">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#0D3B2A] shrink-0 font-sans">
                   QUANTITY:
                 </span>
                 
                 {/* Stepper Pill [ -  1  + ] clamped to maxSale */}
-                <div className="inline-flex items-center justify-between rounded-full border border-gray-300 bg-white px-2.5 py-1 text-xs font-mono font-bold text-[#0D3B2A] w-24 shadow-sm">
+                <div className="inline-flex items-center justify-between rounded-full border border-gray-300 bg-white px-2.5 py-1 text-xs font-mono font-bold text-[#0D3B2A] w-24 shadow-sm shrink-0">
                   <button
                     type="button"
                     onClick={() => setQty(Math.max(1, qty - 1))}
@@ -472,7 +466,7 @@ export default function ProductDetail() {
                   type="button"
                   disabled={maxSale <= 0}
                   onClick={(e) => handleAddToCart(e)}
-                  className="flex-1 py-2 sm:py-2.5 px-4 sm:px-5 rounded-full border-2 border-[#0D3B2A] bg-transparent text-[#0D3B2A] hover:bg-[#0D3B2A] hover:text-[#FAF7F2] disabled:opacity-40 disabled:cursor-not-allowed font-sans font-bold text-[11px] sm:text-xs uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
+                  className="flex-1 py-2 sm:py-2.5 px-4 sm:px-5 rounded-full border-2 border-[#0D3B2A] bg-transparent text-[#0D3B2A] hover:bg-[#0D3B2A] hover:text-[#FAF7F2] disabled:opacity-40 disabled:cursor-not-allowed font-sans font-bold text-[11px] sm:text-xs uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer shadow-sm active:scale-95 whitespace-nowrap"
                 >
                   <span>
                     {maxSale > 0
@@ -483,25 +477,44 @@ export default function ProductDetail() {
                   </span>
                   <ShoppingBag className="w-3.5 h-3.5" />
                 </button>
+
+                {inBuyItem && (
+                  <Link
+                    to="/cart"
+                    className="px-3.5 py-2 sm:py-2.5 rounded-full bg-[#FAF7F2] hover:bg-[#F4ECE1] text-[#0D3B2A] border border-[#D4A24C] font-sans font-bold text-xs uppercase tracking-wider shadow-sm flex items-center justify-center gap-1.5 cursor-pointer transition-all active:scale-95 whitespace-nowrap shrink-0 group"
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#8A5E12]" />
+                    <span>View Cart &rarr;</span>
+                  </Link>
+                )}
               </div>
 
-              {/* If product has rental option (both), show RENT FLEET button */}
+              {/* If product has rental option (both), show RENT THIS MODEL button */}
               {product.available_for === 'both' && product.rental_price_monthly > 0 && (
-                <button
-                  type="button"
-                  disabled={maxRental <= 0}
-                  onClick={(e) => handleAddRental(e)}
-                  className="w-full py-2.5 sm:py-3 rounded-full bg-[#FAF7F2] hover:bg-[#F3E8D2] text-[#0D3B2A] border border-[#D4A24C]/40 disabled:opacity-50 disabled:cursor-not-allowed font-sans font-bold text-xs uppercase tracking-[0.15em] shadow-sm flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95"
-                >
-                  <Repeat className="w-4 h-4 text-[#D4A24C]" />
-                  <span>
-                    {maxRental > 0
-                      ? inRentalItem
-                        ? `ADD MORE TO RENTAL (HAVE ${inRentalItem.quantity} IN CART)`
-                        : `RENT THIS MODEL (₹${product.rental_price_monthly.toLocaleString('en-IN')}/mo)`
-                      : 'RENTAL POOL CURRENTLY OUT OF STOCK'}
-                  </span>
-                </button>
+                <div className="flex flex-col sm:flex-row items-center gap-2">
+                  <button
+                    type="button"
+                    disabled={maxRental <= 0}
+                    onClick={(e) => handleAddRental(e)}
+                    className="flex-1 w-full py-2.5 sm:py-3 rounded-full bg-[#FAF7F2] hover:bg-[#F3E8D2] text-[#0D3B2A] border border-[#D4A24C]/40 disabled:opacity-50 disabled:cursor-not-allowed font-sans font-bold text-xs uppercase tracking-[0.15em] shadow-sm flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95"
+                  >
+                    <Repeat className="w-4 h-4 text-[#D4A24C]" />
+                    <span>
+                      {maxRental > 0
+                        ? `RENT THIS MODEL (₹${product.rental_price_monthly.toLocaleString('en-IN')}/mo)`
+                        : 'RENTAL POOL CURRENTLY OUT OF STOCK'}
+                    </span>
+                  </button>
+                  {inRentalItem && (
+                    <Link
+                      to="/cart"
+                      className="w-full sm:w-auto px-4 py-2.5 sm:py-3 rounded-full bg-[#FAF7F2] hover:bg-[#F4ECE1] text-[#0D3B2A] border border-[#D4A24C] font-sans font-bold text-xs uppercase tracking-wider shadow-sm flex items-center justify-center gap-1.5 cursor-pointer transition-all active:scale-95 whitespace-nowrap shrink-0 group"
+                    >
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#8A5E12]" />
+                      <span>{inRentalItem.quantity} in Cart • View &rarr;</span>
+                    </Link>
+                  )}
+                </div>
               )}
 
               {/* Main Full-Width Instant 1-Click Buy Now Pill Button */}
