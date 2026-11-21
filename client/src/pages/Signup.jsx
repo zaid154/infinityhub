@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import {
@@ -15,11 +15,79 @@ import {
   MailCheck,
   RefreshCw,
   Edit3,
-  Check
+  Check,
+  Briefcase,
+  Users
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCompany } from '../context/SettingsContext';
 import BrandLogo from '../components/BrandLogo';
+
+// Custom Luxury Dropdown Component matching brand theme
+function LuxurySelect({ value, onChange, options, icon: Icon, placeholder = 'Select option' }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const selectRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (selectRef.current && !selectRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const selectedOption = options.find((opt) => opt.value === value);
+
+  return (
+    <div className="relative" ref={selectRef}>
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-full pl-10 pr-9 py-2.5 bg-[#FAF7F2] border text-[#0D3B2A] rounded-xl text-xs font-sans text-left transition flex items-center justify-between cursor-pointer focus:outline-none ${
+          isOpen ? 'border-[#0D3B2A] ring-1 ring-[#0D3B2A] bg-white' : 'border-[#D4A24C]/30 hover:border-[#D4A24C]/60'
+        }`}
+      >
+        {Icon && (
+          <Icon className="w-4 h-4 text-[#D4A24C] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+        )}
+        <span className="truncate font-medium">{selectedOption?.label || placeholder}</span>
+        <ChevronDown
+          className={`w-4 h-4 text-[#8A5E12] absolute right-3 top-1/2 -translate-y-1/2 transition-transform duration-200 pointer-events-none ${
+            isOpen ? 'rotate-180' : ''
+          }`}
+        />
+      </button>
+
+      {isOpen && (
+        <div className="absolute left-0 right-0 mt-1 bg-white border border-[#D4A24C]/35 rounded-xl shadow-2xl py-1 z-50 max-h-56 overflow-y-auto">
+          {options.map((opt) => {
+            const isSelected = opt.value === value;
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => {
+                  onChange(opt.value);
+                  setIsOpen(false);
+                }}
+                className={`w-full text-left px-3.5 py-2 text-xs flex items-center justify-between transition cursor-pointer ${
+                  isSelected
+                    ? 'bg-[#0D3B2A]/8 text-[#0D3B2A] font-bold'
+                    : 'text-[#4A5568] hover:bg-[#FAF7F2] hover:text-[#0D3B2A]'
+                }`}
+              >
+                <span className="truncate">{opt.label}</span>
+                {isSelected && <Check className="w-3.5 h-3.5 text-[#D4A24C] shrink-0 ml-2" />}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Signup() {
   const { register, resendVerification } = useAuth();
@@ -57,6 +125,13 @@ export default function Signup() {
     { value: 'Finance / Accounts', label: 'Finance / Accounts Controller' },
     { value: 'Team Lead / Engineer', label: 'Engineering Lead / Developer' },
     { value: 'Other / Professional', label: 'Other Business Professional' }
+  ];
+
+  const companySizeOptions = [
+    { value: '1-10', label: '1 – 10 Employees' },
+    { value: '11-50', label: '11 – 50 Employees' },
+    { value: '51-200', label: '51 – 200 Employees' },
+    { value: '200+', label: '200+ Employees' }
   ];
 
   // Cooldown countdown effect for Resend Email
@@ -301,22 +376,13 @@ export default function Signup() {
                     <label className="block font-semibold text-[#0D3B2A] mb-1">
                       Role / Designation <span className="text-red-500">*</span>
                     </label>
-                    <div className="relative">
-                      <select
-                        name="designation"
-                        id="signup-designation"
-                        value={formData.designation}
-                        onChange={(e) => setFormData({ ...formData, designation: e.target.value })}
-                        className="w-full pl-3.5 pr-8 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition text-xs font-sans appearance-none cursor-pointer"
-                      >
-                        {designationOptions.map((opt) => (
-                          <option key={opt.value} value={opt.value}>
-                            {opt.label}
-                          </option>
-                        ))}
-                      </select>
-                      <ChevronDown className="w-4 h-4 text-[#8A5E12] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                    </div>
+                    <LuxurySelect
+                      value={formData.designation}
+                      onChange={(val) => setFormData({ ...formData, designation: val })}
+                      options={designationOptions}
+                      icon={Briefcase}
+                      placeholder="Select Designation"
+                    />
                   </div>
                 </div>
 
@@ -346,21 +412,13 @@ export default function Signup() {
                     <label className="block font-semibold text-[#0D3B2A] mb-1">
                       Company Size
                     </label>
-                    <div className="relative">
-                      <select
-                        name="company_size"
-                        id="signup-company-size"
-                        value={formData.company_size}
-                        onChange={(e) => setFormData({ ...formData, company_size: e.target.value })}
-                        className="w-full pl-3.5 pr-8 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition text-xs font-sans appearance-none cursor-pointer"
-                      >
-                        <option value="1-10">1 – 10 Employees</option>
-                        <option value="11-50">11 – 50 Employees</option>
-                        <option value="51-200">51 – 200 Employees</option>
-                        <option value="200+">200+ Employees</option>
-                      </select>
-                      <ChevronDown className="w-4 h-4 text-[#8A5E12] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                    </div>
+                    <LuxurySelect
+                      value={formData.company_size}
+                      onChange={(val) => setFormData({ ...formData, company_size: val })}
+                      options={companySizeOptions}
+                      icon={Users}
+                      placeholder="Select Company Size"
+                    />
                   </div>
                 </div>
 
