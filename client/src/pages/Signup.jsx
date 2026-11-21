@@ -9,16 +9,13 @@ import {
   Building,
   ArrowRight,
   ShieldCheck,
-  Repeat,
-  ShoppingCart,
-  Sparkles,
   Eye,
   EyeOff,
   ChevronDown,
-  FileText,
   MailCheck,
   RefreshCw,
-  Edit3
+  Edit3,
+  Check
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCompany } from '../context/SettingsContext';
@@ -104,7 +101,7 @@ export default function Signup() {
   return (
     <div className="min-h-[85vh] py-8 sm:py-14 px-4 sm:px-6 flex items-center justify-center relative overflow-hidden bg-[#FAF7F2]">
       <Helmet>
-        <title>{registeredSuccess ? `Verify Email | ${brandName}` : `Create Enterprise Account | ${brandName}`}</title>
+        <title>{registeredSuccess ? `Verify Email | ${brandName}` : `Register | ${brandName}`}</title>
       </Helmet>
 
       {/* Atmospheric Luxury Ambient Glows */}
@@ -114,86 +111,53 @@ export default function Signup() {
       {/* Executive Split-Screen Master Container */}
       <div className="max-w-5xl w-full mx-auto grid grid-cols-1 lg:grid-cols-12 rounded-3xl overflow-hidden border border-[#D4A24C]/35 shadow-2xl bg-white relative z-10">
 
-        {/* Left Panel: Enterprise Perks & Institutional Value */}
+        {/* Left Panel: Dignified Brand Showcase */}
         <div className="lg:col-span-5 bg-gradient-to-br from-[#0D3B2A] via-[#0D3B2A] to-[#07241A] text-[#FAF7F2] p-8 sm:p-10 flex flex-col justify-between relative overflow-hidden">
           {/* Internal ambient radial glow */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-[#D4A24C]/15 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10 space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-[#D4A24C]/40 text-[#D4A24C] text-[10.5px] font-bold uppercase tracking-wider backdrop-blur-xs w-fit">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-[#D4A24C]/40 text-[#D4A24C] text-[10.5px] font-semibold uppercase tracking-wider backdrop-blur-xs w-fit">
               <ShieldCheck className="w-3.5 h-3.5 text-[#D4A24C]" />
-              <span>B2B Client Security</span>
+              <span>Enterprise Account</span>
             </div>
 
             <div>
-              <h2 className="text-2xl sm:text-3xl font-bold font-serif text-[#FAF7F2] tracking-tight leading-tight">
-                Institutional Fleet & Procurement Desk.
+              <h2 className="text-2xl sm:text-3xl font-bold font-serif text-[#FAF7F2] tracking-tight leading-snug">
+                Scale Your Corporate IT Infrastructure.
               </h2>
-              <p className="text-xs text-[#FAF7F2]/80 leading-relaxed mt-2.5 font-sans">
-                Join 500+ Indian enterprises streamlining hardware procurement, Net-30 purchase orders, and zero-capex fleet leasing.
+              <p className="text-xs sm:text-sm text-[#FAF7F2]/80 leading-relaxed mt-3 font-sans">
+                Unified procurement and leasing for business workstations, laptops, and enterprise hardware across India.
               </p>
             </div>
 
-            {/* Value Highlights */}
-            <div className="space-y-3 pt-2">
-              <div className="p-3 bg-white/5 rounded-2xl border border-[#D4A24C]/25 backdrop-blur-xs flex items-start gap-3">
-                <div className="w-8 h-8 rounded-xl bg-white/10 border border-[#D4A24C]/30 flex items-center justify-center text-[#D4A24C] shrink-0 mt-0.5">
-                  <ShieldCheck className="w-4 h-4" />
+            {/* Clean 3-point list - No bulky boxed cards */}
+            <div className="space-y-3 pt-2 text-xs text-[#FAF7F2]/90">
+              <div className="flex items-center gap-2.5">
+                <div className="w-4 h-4 rounded-full bg-[#D4A24C]/20 border border-[#D4A24C]/50 flex items-center justify-center text-[#D4A24C] shrink-0">
+                  <Check className="w-2.5 h-2.5" />
                 </div>
-                <div>
-                  <h4 className="text-xs font-bold text-[#FAF7F2] font-serif">Strict Anti-Bot Protection</h4>
-                  <p className="text-[11px] text-[#FAF7F2]/70 leading-snug mt-0.5">
-                    Mandatory corporate email verification protects company inventory and Net-30 credit allocations.
-                  </p>
-                </div>
+                <span>Certified Commercial Hardware Fleet</span>
               </div>
-
-              <div className="p-3 bg-white/5 rounded-2xl border border-[#D4A24C]/25 backdrop-blur-xs flex items-start gap-3">
-                <div className="w-8 h-8 rounded-xl bg-white/10 border border-[#D4A24C]/30 flex items-center justify-center text-[#D4A24C] shrink-0 mt-0.5">
-                  <FileText className="w-4 h-4" />
+              <div className="flex items-center gap-2.5">
+                <div className="w-4 h-4 rounded-full bg-[#D4A24C]/20 border border-[#D4A24C]/50 flex items-center justify-center text-[#D4A24C] shrink-0">
+                  <Check className="w-2.5 h-2.5" />
                 </div>
-                <div>
-                  <h4 className="text-xs font-bold text-[#FAF7F2] font-serif">Net-30 Corporate Proforma POs</h4>
-                  <p className="text-[11px] text-[#FAF7F2]/70 leading-snug mt-0.5">
-                    Generate accounts-ready commercial proforma quotes without upfront personal cards.
-                  </p>
-                </div>
+                <span>Monthly & Annual Corporate Leases</span>
               </div>
-
-              <div className="p-3 bg-white/5 rounded-2xl border border-[#D4A24C]/25 backdrop-blur-xs flex items-start gap-3">
-                <div className="w-8 h-8 rounded-xl bg-white/10 border border-[#D4A24C]/30 flex items-center justify-center text-[#D4A24C] shrink-0 mt-0.5">
-                  <Repeat className="w-4 h-4" />
+              <div className="flex items-center gap-2.5">
+                <div className="w-4 h-4 rounded-full bg-[#D4A24C]/20 border border-[#D4A24C]/50 flex items-center justify-center text-[#D4A24C] shrink-0">
+                  <Check className="w-2.5 h-2.5" />
                 </div>
-                <div>
-                  <h4 className="text-xs font-bold text-[#FAF7F2] font-serif">24–48h Standby Replacement SLA</h4>
-                  <p className="text-[11px] text-[#FAF7F2]/70 leading-snug mt-0.5">
-                    Operating lease hardware backed by on-site diagnostics and rapid hardware swap SLA.
-                  </p>
-                </div>
+                <span>Direct 18% GST Input Tax Credit</span>
               </div>
             </div>
           </div>
 
-          {/* Bottom Trust Stat Bar */}
-          <div className="relative z-10 pt-6 mt-6 border-t border-white/15">
-            <div className="grid grid-cols-3 gap-2 text-center pb-3">
-              <div>
-                <div className="text-base sm:text-lg font-bold font-serif text-[#D4A24C]">500+</div>
-                <div className="text-[9.5px] text-[#FAF7F2]/70 uppercase tracking-wider">Clients</div>
-              </div>
-              <div>
-                <div className="text-base sm:text-lg font-bold font-serif text-[#D4A24C]">18% ITC</div>
-                <div className="text-[9.5px] text-[#FAF7F2]/70 uppercase tracking-wider">GST Ready</div>
-              </div>
-              <div>
-                <div className="text-base sm:text-lg font-bold font-serif text-[#D4A24C]">₹0</div>
-                <div className="text-[9.5px] text-[#FAF7F2]/70 uppercase tracking-wider">Deposit PO</div>
-              </div>
-            </div>
-            <div className="flex items-center justify-center gap-1.5 text-[10px] text-[#FAF7F2]/60 pt-2 border-t border-white/10 font-mono">
-              <Lock className="w-3 h-3 text-[#D4A24C]" />
-              <span>Verified Corporate Onboarding Desk</span>
-            </div>
+          {/* Bottom Trust Line */}
+          <div className="relative z-10 pt-6 mt-8 border-t border-white/15 flex items-center justify-between text-xs text-[#FAF7F2]/75">
+            <span>500+ Indian Enterprises</span>
+            <span className="font-mono text-[11px] text-[#D4A24C] font-semibold">Verified GSTIN</span>
           </div>
         </div>
 
@@ -207,26 +171,26 @@ export default function Signup() {
                 <div className="mb-4">
                   <BrandLogo theme="light" size="md" showSubtitle={false} />
                 </div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-[#8A5E12] text-[11px] font-bold uppercase tracking-wider mb-2.5">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-[#8A5E12] text-[11px] font-semibold uppercase tracking-wider mb-2.5">
                   <MailCheck className="w-3.5 h-3.5 text-[#8A5E12]" />
-                  <span>Action Required · Verification Pending</span>
+                  <span>Email Verification Required</span>
                 </div>
                 <h1 className="text-2xl sm:text-[26px] font-bold font-serif text-[#0D3B2A] tracking-tight">
-                  Verify Corporate Email Address
+                  Verify Your Email
                 </h1>
                 <p className="text-xs text-[#5A6B63] mt-1.5 leading-relaxed">
-                  To safeguard your company profile and prevent automated attacks, corporate accounts require one-time email activation before signing in.
+                  We have dispatched a verification link to your corporate email address:
                 </p>
               </div>
 
               {/* Recipient Corporate Address Badge */}
               <div className="p-4 rounded-2xl bg-[#FAF7F2] border border-[#D4A24C]/35 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-10 h-10 rounded-xl bg-white border border-[#D4A24C]/30 flex items-center justify-center text-[#8A5E12] shadow-2xs shrink-0">
-                    <Mail className="w-5 h-5 text-[#D4A24C]" />
+                  <div className="w-9 h-9 rounded-xl bg-white border border-[#D4A24C]/30 flex items-center justify-center text-[#8A5E12] shadow-2xs shrink-0">
+                    <Mail className="w-4 h-4 text-[#D4A24C]" />
                   </div>
                   <div className="min-w-0">
-                    <div className="text-[10px] text-[#5A6B63] uppercase tracking-wider font-semibold">Activation Link Sent To</div>
+                    <div className="text-[10px] text-[#5A6B63] uppercase tracking-wider font-semibold">Activation Email Sent To</div>
                     <div className="text-xs sm:text-sm font-bold text-[#0D3B2A] font-mono truncate">{registeredEmail || formData.email}</div>
                   </div>
                 </div>
@@ -241,13 +205,13 @@ export default function Signup() {
                 </button>
               </div>
 
-              {/* Delivery Advisory Box (Spam/Updates Guidance) */}
-              <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80 text-[11px] text-[#8A5E12] space-y-1.5">
+              {/* Delivery Advisory Box */}
+              <div className="p-3.5 rounded-2xl bg-amber-50/70 border border-amber-200/80 text-[11px] text-[#8A5E12] space-y-1">
                 <div className="font-bold flex items-center gap-1.5 text-[#0D3B2A]">
-                  <span>📬 Email Delivery Guidance</span>
+                  <span>📬 Delivery Note</span>
                 </div>
                 <p className="text-[11px] text-[#5A6B63] leading-relaxed">
-                  Please check your <strong>Primary Inbox</strong>. If you do not see the activation email within 60 seconds, check your <strong>Spam</strong> or <strong>Updates</strong> tab and click <em>"Report Not Spam"</em> so all future proforma POs and tracking notices arrive directly in your inbox.
+                  Please check your <strong>Primary Inbox</strong>. If not received within 60 seconds, check your <strong>Spam</strong> or <strong>Updates</strong> tab.
                 </p>
               </div>
 
@@ -257,7 +221,7 @@ export default function Signup() {
                   to="/login"
                   className="w-full py-3.5 rounded-xl bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs uppercase tracking-wider transition shadow-lg flex items-center justify-center gap-2 border border-[#D4A24C]/40 group"
                 >
-                  <span>Proceed to Corporate Sign In</span>
+                  <span>Proceed to Sign In</span>
                   <ArrowRight className="w-4 h-4 text-[#D4A24C] group-hover:translate-x-1 transition-transform" />
                 </Link>
 
@@ -270,18 +234,13 @@ export default function Signup() {
                   <RefreshCw className={`w-3.5 h-3.5 text-[#8A5E12] ${resending ? 'animate-spin' : ''}`} />
                   <span>
                     {resending
-                      ? 'Dispatching Activation Email...'
+                      ? 'Sending...'
                       : resendCooldown > 0
-                      ? `Resend Activation Link in ${resendCooldown}s`
-                      : 'Resend Activation Link'}
+                      ? `Resend in ${resendCooldown}s`
+                      : 'Resend Verification Link'}
                   </span>
                 </button>
               </div>
-
-              {/* Footnote */}
-              <p className="text-[10px] text-center text-slate-400 font-mono pt-2">
-                Statutory Compliance: DPDP Act 2023 · IT Act 2000 · Verified GSTIN System
-              </p>
             </div>
           ) : (
             /* Clean Registration Form */
@@ -292,21 +251,10 @@ export default function Signup() {
                   <BrandLogo theme="light" size="md" showSubtitle={false} />
                 </div>
                 <h1 className="text-2xl sm:text-[26px] font-bold font-serif text-[#0D3B2A] tracking-tight">
-                  Create Enterprise Account
+                  Register Your Company
                 </h1>
                 <p className="text-xs text-[#5A6B63] mt-1">
-                  Access corporate pricing, Net-30 PO approvals, and 100% OPEX deductible rental fleet contracts.
-                </p>
-              </div>
-
-              {/* Anti-Dropoff Reassurance Pill */}
-              <div className="flex items-center gap-2.5 p-2.5 sm:p-3 rounded-2xl bg-[#FAF7F2] border border-[#D4A24C]/25 text-[11px] text-[#5A6B63]">
-                <div className="w-6 h-6 rounded-lg bg-white border border-[#D4A24C]/30 flex items-center justify-center text-[#8A5E12] shadow-2xs shrink-0">
-                  <ShieldCheck className="w-3.5 h-3.5 text-[#D4A24C]" />
-                </div>
-                <p className="leading-snug text-[10.5px]">
-                  <strong className="text-[#0D3B2A] font-semibold">Zero Paperwork at Registration:</strong>{' '}
-                  GSTIN and delivery address are only required during order checkout.
+                  Create an account to access corporate pricing, rentals, and tax invoicing.
                 </p>
               </div>
 
@@ -376,7 +324,7 @@ export default function Signup() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block font-semibold text-[#0D3B2A] mb-1">
-                      Company / Organization <span className="text-red-500">*</span>
+                      Company Name <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
                       <Building className="w-4 h-4 text-[#D4A24C] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -386,7 +334,7 @@ export default function Signup() {
                         id="signup-company-name"
                         autoComplete="organization"
                         required
-                        placeholder="e.g. Nexus Tech Labs Pvt Ltd"
+                        placeholder="e.g. Acme Technologies Pvt Ltd"
                         value={formData.company_name}
                         onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
                         className="w-full pl-10 pr-3.5 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition text-xs font-sans placeholder:text-slate-400"
@@ -396,7 +344,7 @@ export default function Signup() {
 
                   <div>
                     <label className="block font-semibold text-[#0D3B2A] mb-1">
-                      Company Workforce
+                      Company Size
                     </label>
                     <div className="relative">
                       <select
@@ -406,10 +354,10 @@ export default function Signup() {
                         onChange={(e) => setFormData({ ...formData, company_size: e.target.value })}
                         className="w-full pl-3.5 pr-8 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition text-xs font-sans appearance-none cursor-pointer"
                       >
-                        <option value="1-10">1 – 10 Employees (Startup)</option>
-                        <option value="11-50">11 – 50 Employees (Growth)</option>
-                        <option value="51-200">51 – 200 Employees (Mid-Market)</option>
-                        <option value="200+">200+ Employees (Enterprise)</option>
+                        <option value="1-10">1 – 10 Employees</option>
+                        <option value="11-50">11 – 50 Employees</option>
+                        <option value="51-200">51 – 200 Employees</option>
+                        <option value="200+">200+ Employees</option>
                       </select>
                       <ChevronDown className="w-4 h-4 text-[#8A5E12] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                     </div>
@@ -439,15 +387,13 @@ export default function Signup() {
                         className="w-full pl-10 pr-3.5 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition text-xs font-sans placeholder:text-slate-400"
                       />
                     </div>
-                    {emailExistsError ? (
+                    {emailExistsError && (
                       <div className="p-2 bg-amber-50 rounded-lg border border-amber-300 text-[10.5px] text-[#8A5E12] flex items-center justify-between gap-1 mt-1">
                         <span>{emailExistsError}</span>
                         <Link to="/login" className="font-bold underline text-[#0D3B2A] whitespace-nowrap hover:text-[#8A5E12]">
                           Sign In →
                         </Link>
                       </div>
-                    ) : (
-                      <span className="text-[10px] text-[#5A6B63] block mt-0.5 font-mono">Use official domain for instant Net-30 PO</span>
                     )}
                   </div>
 
@@ -473,36 +419,33 @@ export default function Signup() {
                         className="w-full pl-10 pr-3.5 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition text-xs font-sans placeholder:text-slate-400"
                       />
                     </div>
-                    <span className="text-[10px] text-[#5A6B63] block mt-0.5 font-mono">For rapid dispatch SLA alerts</span>
                   </div>
                 </div>
 
                 {/* Row 4: Primary Hardware Requirement Selector */}
                 <div>
                   <label className="block font-semibold text-[#0D3B2A] mb-1.5">
-                    Primary Hardware Requirement
+                    Primary Requirement
                   </label>
                   <div className="grid grid-cols-3 gap-2">
                     {[
-                      { id: 'rent', label: 'Corporate Rental', icon: Repeat },
-                      { id: 'buy', label: 'Direct Purchase', icon: ShoppingCart },
-                      { id: 'both', label: 'Both (Rent & Buy)', icon: Sparkles }
+                      { id: 'rent', label: 'Rental' },
+                      { id: 'buy', label: 'Purchase' },
+                      { id: 'both', label: 'Both' }
                     ].map((pill) => {
-                      const Icon = pill.icon;
                       const isSelected = formData.primary_interest === pill.id;
                       return (
                         <button
                           key={pill.id}
                           type="button"
                           onClick={() => setFormData({ ...formData, primary_interest: pill.id })}
-                          className={`py-2 px-2 rounded-xl text-[11px] font-semibold transition border flex flex-col items-center justify-center gap-1 cursor-pointer ${
+                          className={`py-2 px-2 rounded-xl text-xs font-semibold transition border flex items-center justify-center cursor-pointer ${
                             isSelected
-                              ? 'bg-[#0D3B2A] text-white border-[#0D3B2A] shadow-sm ring-1 ring-[#D4A24C]/40'
+                              ? 'bg-[#0D3B2A] text-white border-[#0D3B2A] shadow-xs'
                               : 'bg-[#FAF7F2] text-[#5A6B63] hover:text-[#0D3B2A] border-[#D4A24C]/25'
                           }`}
                         >
-                          <Icon className={`w-3.5 h-3.5 ${isSelected ? 'text-[#D4A24C]' : 'text-slate-400'}`} />
-                          <span className="truncate">{pill.label}</span>
+                          <span>{pill.label}</span>
                         </button>
                       );
                     })}
@@ -512,7 +455,7 @@ export default function Signup() {
                 {/* Row 5: Create Password */}
                 <div>
                   <label className="block font-semibold text-[#0D3B2A] mb-1">
-                    Create Password (Min 6 Characters) <span className="text-red-500">*</span>
+                    Password (Min 6 Characters) <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
                     <Lock className="w-4 h-4 text-[#D4A24C] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -523,7 +466,7 @@ export default function Signup() {
                       autoComplete="new-password"
                       required
                       minLength={6}
-                      placeholder="Min 6 characters (e.g. Corp@2026)"
+                      placeholder="••••••••"
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                       className="w-full pl-10 pr-10 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition text-xs font-sans placeholder:text-slate-400"
@@ -545,23 +488,18 @@ export default function Signup() {
                   disabled={submitting}
                   className="w-full py-3.5 rounded-xl bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs uppercase tracking-wider transition shadow-lg flex items-center justify-center gap-2 border border-[#D4A24C]/40 cursor-pointer disabled:opacity-50 mt-3 group"
                 >
-                  <span>{submitting ? 'Creating Corporate Account...' : 'Complete Enterprise Registration'}</span>
+                  <span>{submitting ? 'Registering...' : 'Create Account'}</span>
                   <ArrowRight className="w-4 h-4 text-[#D4A24C] group-hover:translate-x-1 transition-transform" />
                 </button>
               </form>
 
               {/* Link back to Sign In */}
               <div className="text-center pt-2 border-t border-slate-100 text-xs text-[#5A6B63]">
-                Already have an enterprise account?{' '}
+                Already have an account?{' '}
                 <Link to="/login" className="text-[#8A5E12] font-bold hover:text-[#0D3B2A] hover:underline transition">
-                  Sign In Here →
+                  Sign In →
                 </Link>
               </div>
-
-              {/* Regulatory Footnote */}
-              <p className="text-[10px] text-center text-slate-400 font-mono">
-                Statutory Compliance: DPDP Act 2023 · IT Act 2000 · Verified GSTIN System
-              </p>
             </div>
           )}
         </div>
