@@ -186,51 +186,94 @@ export default function Signup() {
       {/* Executive Split-Screen Master Container */}
       <div className="max-w-5xl w-full mx-auto grid grid-cols-1 lg:grid-cols-12 rounded-3xl overflow-hidden border border-[#D4A24C]/35 shadow-2xl bg-white relative z-10">
 
-        {/* Left Panel: Dignified Brand Showcase */}
-        <div className="lg:col-span-5 bg-gradient-to-br from-[#0D3B2A] via-[#0D3B2A] to-[#07241A] text-[#FAF7F2] p-8 sm:p-10 flex flex-col justify-between relative overflow-hidden">
+        {/* Left Panel: Dignified Brand Showcase & Fleet Highlights */}
+        <div className="lg:col-span-5 bg-gradient-to-br from-[#0D3B2A] via-[#0D3B2A] to-[#07241A] text-[#FAF7F2] p-7 sm:p-9 flex flex-col justify-between relative overflow-hidden">
           {/* Internal ambient radial glow */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-[#D4A24C]/15 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="relative z-10 space-y-6">
+          <div className="relative z-10 space-y-5">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-[#D4A24C]/40 text-[#D4A24C] text-[10.5px] font-semibold uppercase tracking-wider backdrop-blur-xs w-fit">
               <ShieldCheck className="w-3.5 h-3.5 text-[#D4A24C]" />
               <span>Enterprise Account</span>
             </div>
 
             <div>
-              <h2 className="text-2xl sm:text-3xl font-bold font-serif text-[#FAF7F2] tracking-tight leading-snug">
+              <h2 className="text-2xl sm:text-[26px] font-bold font-serif text-[#FAF7F2] tracking-tight leading-snug">
                 Scale Your Corporate IT Infrastructure.
               </h2>
-              <p className="text-xs sm:text-sm text-[#FAF7F2]/80 leading-relaxed mt-3 font-sans">
-                Unified procurement and leasing for business workstations, laptops, and enterprise hardware across India.
+              <p className="text-xs text-[#FAF7F2]/80 leading-relaxed mt-2 font-sans">
+                Commercial workstations, laptops, and server fleet leasing with dedicated SLA support across India.
               </p>
             </div>
 
-            {/* Clean 3-point list - No bulky boxed cards */}
-            <div className="space-y-3 pt-2 text-xs text-[#FAF7F2]/90">
+            {/* Core Value Pillars */}
+            <div className="space-y-2 text-xs text-[#FAF7F2]/90 pt-1">
               <div className="flex items-center gap-2.5">
                 <div className="w-4 h-4 rounded-full bg-[#D4A24C]/20 border border-[#D4A24C]/50 flex items-center justify-center text-[#D4A24C] shrink-0">
                   <Check className="w-2.5 h-2.5" />
                 </div>
-                <span>Certified Commercial Hardware Fleet</span>
+                <span>Certified Tier-1 Commercial Hardware</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <div className="w-4 h-4 rounded-full bg-[#D4A24C]/20 border border-[#D4A24C]/50 flex items-center justify-center text-[#D4A24C] shrink-0">
                   <Check className="w-2.5 h-2.5" />
                 </div>
-                <span>Monthly & Annual Corporate Leases</span>
+                <span>Flexible Monthly & Annual Leases (100% OPEX)</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <div className="w-4 h-4 rounded-full bg-[#D4A24C]/20 border border-[#D4A24C]/50 flex items-center justify-center text-[#D4A24C] shrink-0">
                   <Check className="w-2.5 h-2.5" />
                 </div>
-                <span>Direct 18% GST Input Tax Credit</span>
+                <span>Direct 18% GST Input Tax Credit with GSTR-2B</span>
+              </div>
+            </div>
+
+            {/* Fleet Hardware Capabilities (Fills space with real tangible specs) */}
+            <div className="pt-2">
+              <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs space-y-2.5">
+                <div className="text-[10px] font-bold text-[#D4A24C] uppercase tracking-wider font-mono">
+                  Supported Enterprise Hardware
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className="p-2 rounded-xl bg-white/5 border border-white/5">
+                    <div className="font-semibold text-[#FAF7F2] text-[11.5px]">Business Laptops</div>
+                    <div className="text-[10px] text-[#FAF7F2]/65 mt-0.5">ThinkPad · Latitude · EliteBook</div>
+                  </div>
+                  <div className="p-2 rounded-xl bg-white/5 border border-white/5">
+                    <div className="font-semibold text-[#FAF7F2] text-[11.5px]">Workstations</div>
+                    <div className="text-[10px] text-[#FAF7F2]/65 mt-0.5">Precision · ZBook · Apple Silicon</div>
+                  </div>
+                  <div className="p-2 rounded-xl bg-white/5 border border-white/5">
+                    <div className="font-semibold text-[#FAF7F2] text-[11.5px]">Servers & Storage</div>
+                    <div className="text-[10px] text-[#FAF7F2]/65 mt-0.5">PowerEdge · ProLiant · NAS</div>
+                  </div>
+                  <div className="p-2 rounded-xl bg-white/5 border border-white/5">
+                    <div className="font-semibold text-[#FAF7F2] text-[11.5px]">Displays & Hubs</div>
+                    <div className="text-[10px] text-[#FAF7F2]/65 mt-0.5">IPS Panels · Thunderbolt Docks</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 3 Key Commercial Terms */}
+            <div className="grid grid-cols-3 gap-2 pt-1 text-center">
+              <div className="p-2 rounded-xl bg-white/5 border border-white/5">
+                <div className="text-xs sm:text-sm font-bold font-serif text-[#D4A24C]">₹0</div>
+                <div className="text-[9.5px] text-[#FAF7F2]/65 uppercase tracking-tight">Deposit PO</div>
+              </div>
+              <div className="p-2 rounded-xl bg-white/5 border border-white/5">
+                <div className="text-xs sm:text-sm font-bold font-serif text-[#D4A24C]">Net-30</div>
+                <div className="text-[9.5px] text-[#FAF7F2]/65 uppercase tracking-tight">Billing Terms</div>
+              </div>
+              <div className="p-2 rounded-xl bg-white/5 border border-white/5">
+                <div className="text-xs sm:text-sm font-bold font-serif text-[#D4A24C]">24–48h</div>
+                <div className="text-[9.5px] text-[#FAF7F2]/65 uppercase tracking-tight">Standby Swap</div>
               </div>
             </div>
           </div>
 
           {/* Bottom Trust Line */}
-          <div className="relative z-10 pt-6 mt-8 border-t border-white/15 flex items-center justify-between text-xs text-[#FAF7F2]/75">
+          <div className="relative z-10 pt-4 mt-6 border-t border-white/15 flex items-center justify-between text-xs text-[#FAF7F2]/75">
             <span>500+ Indian Enterprises</span>
             <span className="font-mono text-[11px] text-[#D4A24C] font-semibold">Verified GSTIN</span>
           </div>
