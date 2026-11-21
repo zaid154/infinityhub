@@ -274,7 +274,7 @@ export default function Signup() {
 
           {/* Bottom Trust Line */}
           <div className="relative z-10 pt-4 mt-6 border-t border-white/15 flex items-center justify-between text-xs text-[#FAF7F2]/75">
-            <span>500+ Indian Enterprises</span>
+            <span>150+ Corporate Clients</span>
             <span className="font-mono text-[11px] text-[#D4A24C] font-semibold">Verified GSTIN</span>
           </div>
         </div>

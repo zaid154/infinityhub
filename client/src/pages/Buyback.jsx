@@ -23,8 +23,8 @@ export default function Buyback() {
     phone: '',
     email: '',
     asset_type: 'Used Laptops (i3/i5/i7 Mix)',
-    approx_quantity: 25,
-    city: 'Delhi NCR',
+    approx_quantity: '',
+    city: '',
     description: ''
   });
   const [submitting, setSubmitting] = useState(false);
@@ -42,8 +42,8 @@ export default function Buyback() {
           phone: '',
           email: '',
           asset_type: 'Used Laptops (i3/i5/i7 Mix)',
-          approx_quantity: 25,
-          city: 'Delhi NCR',
+          approx_quantity: '',
+          city: '',
           description: ''
         });
       }
@@ -73,7 +73,7 @@ export default function Buyback() {
           Turn Depreciated Office Hardware Into Liquid Capital
         </h1>
         <p className="text-sm sm:text-base text-[#5A6B63] leading-relaxed">
-          Upgrading your office IT fleet? {brandName} buys back used, outdated, or surplus laptops, desktops, servers, and monitors from companies across India with immediate wire payout and certified data destruction.
+          Upgrading your office IT fleet? {brandName} buys back used, outdated, or surplus laptops, desktops, servers, and monitors from companies across India with fast wire settlement post-inspection and certified data destruction.
         </p>
       </div>
 
@@ -191,8 +191,9 @@ export default function Buyback() {
                 <input
                   type="number"
                   min="5"
+                  placeholder="e.g. 25"
                   value={formData.approx_quantity}
-                  onChange={(e) => setFormData({ ...formData, approx_quantity: Number(e.target.value) })}
+                  onChange={(e) => setFormData({ ...formData, approx_quantity: e.target.value })}
                   className="w-full px-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition"
                 />
               </div>
@@ -203,7 +204,7 @@ export default function Buyback() {
                 <label className="block font-semibold text-[#0D3B2A] mb-1">Office City / Hub</label>
                 <input
                   type="text"
-                  placeholder="e.g. Delhi NCR / Bangalore"
+                  placeholder="e.g. Bengaluru, Mumbai, Delhi NCR"
                   value={formData.city}
                   onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                   className="w-full px-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition"

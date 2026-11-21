@@ -322,7 +322,7 @@ export default function Home() {
                 E-Waste Buyback & Asset Liquidation
               </h4>
               <p className="text-xs text-[#5A6B63] leading-relaxed">
-                Upgrading office machines? We buy outdated laptops and servers with NIST 800-88 certified data wipe and immediate wire payout.
+                Upgrading office machines? We buy outdated laptops and servers with NIST 800-88 certified data wipe and fast wire settlement post-inspection.
               </p>
               <Link
                 to="/buyback"

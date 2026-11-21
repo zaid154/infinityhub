@@ -45,13 +45,13 @@ export default function AboutUs() {
       <AppleReveal className="grid grid-cols-2 sm:grid-cols-4 gap-6 p-8 bg-white rounded-3xl border border-[#D4A24C]/25 shadow-sm text-center">
         <div>
           <div className="text-3xl sm:text-4xl font-serif font-bold text-[#0D3B2A]">
-            1,450+
+            1,500+
           </div>
-          <div className="text-xs text-[#5A6B63] font-semibold mt-1 uppercase tracking-wider">Ready Fleets</div>
+          <div className="text-xs text-[#5A6B63] font-semibold mt-1 uppercase tracking-wider">Hardware Units Tested</div>
         </div>
         <div>
           <div className="text-3xl sm:text-4xl font-serif font-bold text-[#8A5E12]">
-            120+
+            150+
           </div>
           <div className="text-xs text-[#5A6B63] font-semibold mt-1 uppercase tracking-wider">Corporate Clients</div>
         </div>

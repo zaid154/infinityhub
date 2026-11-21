@@ -131,7 +131,7 @@ export default function Login() {
 
           {/* Bottom Trust Line */}
           <div className="relative z-10 pt-6 mt-8 border-t border-white/15 flex items-center justify-between text-xs text-[#FAF7F2]/75">
-            <span>500+ Indian Businesses</span>
+            <span>150+ Corporate Clients</span>
             <span className="font-mono text-[11px] text-[#D4A24C] font-semibold">18% GST Ready</span>
           </div>
         </div>

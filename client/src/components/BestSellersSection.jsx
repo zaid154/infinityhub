@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Star, ShoppingBag, Repeat, Check } from 'lucide-react';
+import { ShieldCheck, ShoppingBag, Repeat, Check } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { AppleSpotlightCard } from '../animations';
 import api from '../services/api';
@@ -126,11 +126,11 @@ export default function BestSellersSection({ onOpenRFQ }) {
                       {item.brand || 'Enterprise'}
                     </span>
 
-                    <div className="flex items-center gap-1 text-[11px] font-semibold text-[#0D3B2A] shrink-0">
-                      <Star className="w-3.5 h-3.5 fill-[#8A5E12] text-[#8A5E12]" />
-                      <span>5.0</span>
-                      <span className="text-gray-400">|</span>
-                      <span className="text-gray-500">Grade A+</span>
+                    <div className="flex items-center gap-1 text-[10.5px] font-semibold text-[#0D3B2A] shrink-0">
+                      <ShieldCheck className="w-3.5 h-3.5 text-[#8A5E12]" />
+                      <span>30-Pt Tested</span>
+                      <span className="text-gray-300">|</span>
+                      <span className="text-gray-500 font-mono">Grade A+</span>
                     </div>
                   </div>
 
