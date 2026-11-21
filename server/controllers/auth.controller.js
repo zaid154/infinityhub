@@ -8,7 +8,16 @@ import { sendVerificationEmail, sendPasswordResetEmail, sendWelcomeEmail } from 
 // @access  Public
 export const register = async (req, res, next) => {
   try {
-    const { name, email, password, phone, company_name, designation, primary_interest, company_size, city } = req.body;
+    const { name, email, password, phone, company_name, designation, primary_interest, company_size, city, honeypot } = req.body;
+
+    // Anti-bot honeypot trap: if filled by a robot, silently pretend success
+    if (honeypot) {
+      return res.status(200).json({
+        success: true,
+        requiresVerification: true,
+        message: 'Registration initiated. Please check your corporate inbox to verify your email.'
+      });
+    }
 
     if (!name || !email || !password) {
       return res.status(400).json({
@@ -54,35 +63,28 @@ export const register = async (req, res, next) => {
       company_size: normalizedSize,
       city: city || '',
       role: 'customer',
-      email_verified: true,
+      email_verified: false,
       verification_token: verificationToken
     });
 
-    // Send luxury welcome email via Gmail SMTP asynchronously
+    // Send corporate verification link via SMTP
     try {
-      sendWelcomeEmail(
+      sendVerificationEmail(
         user.email,
         user.name,
+        verificationToken,
         process.env.CLIENT_URL
-      ).catch((e) => console.error('[Welcome Email Async Notice]', e.message));
+      ).catch((e) => console.error('[Verification Email Async Error]', e.message));
     } catch (emailErr) {
-      console.error('[Welcome Email Failed]', emailErr);
+      console.error('[Verification Email Dispatch Error]', emailErr);
     }
 
-    const token = generateToken(user._id, user.role);
-
+    // Explicitly do NOT return auth JWT token - require email activation first
     res.status(201).json({
       success: true,
-      message: `Welcome to Demo Infotech, ${user.name}! Your corporate account is active.`,
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        company_name: user.company_name,
-        phone: user.phone
-      }
+      requiresVerification: true,
+      message: `Enterprise registration successful! An activation link has been dispatched to ${user.email}.`,
+      email: user.email
     });
   } catch (error) {
     next(error);
@@ -130,10 +132,14 @@ export const login = async (req, res, next) => {
       });
     }
 
-    // If customer has not yet been marked verified, auto-verify upon successful credential authentication
-    if (!user.email_verified) {
-      user.email_verified = true;
-      await user.save().catch(() => {});
+    // Require email verification for customer accounts to prevent bot/spam abuse
+    if (user.role === 'customer' && !user.email_verified) {
+      return res.status(403).json({
+        success: false,
+        isUnverified: true,
+        email: user.email,
+        message: 'Your corporate email is not verified yet. Please check your inbox or spam folder to activate your account.'
+      });
     }
 
     const token = generateToken(user._id, user.role);
@@ -179,9 +185,74 @@ export const verifyEmail = async (req, res, next) => {
     user.verification_token = null;
     await user.save();
 
+    // Send corporate welcome email asynchronously upon successful verification
+    try {
+      sendWelcomeEmail(
+        user.email,
+        user.name,
+        process.env.CLIENT_URL
+      ).catch((e) => console.error('[Welcome Email Async Notice]', e.message));
+    } catch (emailErr) {
+      console.error('[Welcome Email Failed]', emailErr);
+    }
+
     res.status(200).json({
       success: true,
-      message: 'Email address verified successfully! You can now log in.'
+      message: 'Email address verified successfully! You can now log in to your corporate desk.'
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Resend corporate verification link
+// @route   POST /api/auth/resend-verification
+// @access  Public
+export const resendVerification = async (req, res, next) => {
+  try {
+    const { email, honeypot } = req.body;
+
+    // Honeypot bot protection
+    if (honeypot) {
+      return res.status(200).json({
+        success: true,
+        message: 'If an account matches this corporate address, an activation link has been resent.'
+      });
+    }
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide your corporate email address.'
+      });
+    }
+
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) {
+      // Don't leak registered addresses to prevent user harvesting
+      return res.status(200).json({
+        success: true,
+        message: 'If an account matches this corporate address, an activation link has been resent.'
+      });
+    }
+
+    if (user.email_verified) {
+      return res.status(400).json({
+        success: false,
+        isAlreadyVerified: true,
+        message: 'This corporate account is already verified. Please sign in directly.'
+      });
+    }
+
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    user.verification_token = verificationToken;
+    await user.save();
+
+    await sendVerificationEmail(user.email, user.name, verificationToken, process.env.CLIENT_URL);
+
+    res.status(200).json({
+      success: true,
+      message: `A fresh activation link has been dispatched to ${user.email}. Please check your inbox and spam folder.`
     });
   } catch (error) {
     next(error);

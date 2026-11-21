@@ -43,9 +43,17 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (err) {
       const message = err.response?.data?.message || 'Login failed. Please check credentials.';
+      const isUnverified = !!err.response?.data?.isUnverified;
       toast.dismiss();
-      toast.error(message, { id: 'auth-login-error' });
-      return { success: false, message, isUnverified: err.response?.data?.isUnverified };
+      if (!isUnverified) {
+        toast.error(message, { id: 'auth-login-error' });
+      }
+      return {
+        success: false,
+        message,
+        isUnverified,
+        email: err.response?.data?.email || email
+      };
     }
   };
 
@@ -54,6 +62,15 @@ export const AuthProvider = ({ children }) => {
       const res = await api.post('/auth/register', userData);
       if (res.data.success) {
         toast.dismiss();
+        if (res.data.requiresVerification) {
+          toast.success('Registration successful! Verification email sent.', { id: 'auth-reg-success' });
+          return {
+            success: true,
+            requiresVerification: true,
+            email: res.data.email || userData.email,
+            message: res.data.message
+          };
+        }
         if (res.data.token && res.data.user) {
           localStorage.setItem('technova_token', res.data.token);
           setToken(res.data.token);
@@ -67,6 +84,26 @@ export const AuthProvider = ({ children }) => {
       toast.dismiss();
       toast.error(message, { id: 'auth-reg-error' });
       return { success: false, message };
+    }
+  };
+
+  const resendVerification = async (email) => {
+    try {
+      const res = await api.post('/auth/resend-verification', { email });
+      if (res.data.success) {
+        toast.dismiss();
+        toast.success(res.data.message || 'Activation email resent successfully!', { id: 'resend-ver-success' });
+        return { success: true, message: res.data.message };
+      }
+    } catch (err) {
+      const message = err.response?.data?.message || 'Failed to resend activation email.';
+      toast.dismiss();
+      toast.error(message, { id: 'resend-ver-error' });
+      return {
+        success: false,
+        message,
+        isAlreadyVerified: err.response?.data?.isAlreadyVerified
+      };
     }
   };
 
@@ -102,6 +139,7 @@ export const AuthProvider = ({ children }) => {
         isAdmin: user?.role === 'admin',
         login,
         register,
+        resendVerification,
         logout,
         updateProfile
       }}

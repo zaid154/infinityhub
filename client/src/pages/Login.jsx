@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import {
@@ -9,14 +9,17 @@ import {
   Zap,
   Repeat,
   Eye,
-  EyeOff
+  EyeOff,
+  AlertCircle,
+  RefreshCw,
+  MailCheck
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCompany } from '../context/SettingsContext';
 import BrandLogo from '../components/BrandLogo';
 
 export default function Login() {
-  const { login } = useAuth();
+  const { login, resendVerification } = useAuth();
   const { company } = useCompany();
   const brandName = company?.brand_name || 'Demo Infotech';
   const navigate = useNavigate();
@@ -28,9 +31,24 @@ export default function Login() {
   const [rememberMe, setRememberMe] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
+  // Unverified account warning state
+  const [unverifiedNotice, setUnverifiedNotice] = useState(false);
+  const [unverifiedEmail, setUnverifiedEmail] = useState('');
+  const [resending, setResending] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
+
+  // Cooldown timer
+  useEffect(() => {
+    if (resendCooldown > 0) {
+      const timer = setTimeout(() => setResendCooldown((prev) => prev - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [resendCooldown]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
+    setUnverifiedNotice(false);
 
     const result = await login(email, password);
     setSubmitting(false);
@@ -43,7 +61,18 @@ export default function Login() {
         const redirect = queryParams.get('redirect') || '/dashboard';
         navigate(redirect);
       }
+    } else if (result.isUnverified) {
+      setUnverifiedNotice(true);
+      setUnverifiedEmail(result.email || email);
     }
+  };
+
+  const handleResend = async () => {
+    if (resendCooldown > 0 || resending) return;
+    setResending(true);
+    await resendVerification(unverifiedEmail || email);
+    setResending(false);
+    setResendCooldown(60);
   };
 
   return (
@@ -158,6 +187,45 @@ export default function Login() {
                 Enter your registered corporate credentials to manage orders, active leases & tax invoices.
               </p>
             </div>
+
+            {/* Unverified Account Alert Banner */}
+            {unverifiedNotice && (
+              <div className="p-4 rounded-2xl bg-amber-50 border border-amber-300 text-xs text-[#8A5E12] space-y-2 animate-fadeIn">
+                <div className="flex items-start gap-2.5">
+                  <AlertCircle className="w-4 h-4 text-[#8A5E12] shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="font-bold text-[#0D3B2A] text-xs">Email Verification Required</h4>
+                    <p className="text-[11px] text-[#5A6B63] leading-relaxed mt-0.5">
+                      Your account (<strong className="text-[#0D3B2A]">{unverifiedEmail}</strong>) is awaiting email activation. Please click the link sent to your inbox (check <strong>Spam</strong> or <strong>Updates</strong> folder if delayed).
+                    </p>
+                  </div>
+                </div>
+                <div className="pt-1 flex items-center justify-between border-t border-amber-200/60">
+                  <button
+                    type="button"
+                    onClick={handleResend}
+                    disabled={resendCooldown > 0 || resending}
+                    className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#0D3B2A] hover:text-[#8A5E12] underline cursor-pointer disabled:opacity-50"
+                  >
+                    <RefreshCw className={`w-3 h-3 ${resending ? 'animate-spin' : ''}`} />
+                    <span>
+                      {resending
+                        ? 'Resending...'
+                        : resendCooldown > 0
+                        ? `Resend Link in ${resendCooldown}s`
+                        : 'Resend Activation Link'}
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setUnverifiedNotice(false)}
+                    className="text-[10.5px] text-[#5A6B63] hover:text-slate-800 cursor-pointer"
+                  >
+                    Dismiss
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* Login Form */}
             <form onSubmit={handleSubmit} className="space-y-4 text-xs">
