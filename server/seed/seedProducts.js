@@ -18,7 +18,7 @@ const sampleProducts = [
     rental_price_monthly: 1450,
     stock_quantity: 45,
     images: [
-      { url: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=800&auto=format&fit=crop&q=80', public_id: 'sample_t490_1' }
+      { url: '/products/real-thinkpad-t14-transparent.png', public_id: 'sample_t490_1' }
     ],
     specs: {
       processor: 'Intel Core i5-8365U Quad-Core (Up to 4.1GHz)',
@@ -70,7 +70,7 @@ const sampleProducts = [
     rental_price_monthly: 1500,
     stock_quantity: 28,
     images: [
-      { url: 'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=800&auto=format&fit=crop&q=80', public_id: 'sample_elite840_1' }
+      { url: '/products/commercial-elite.png', public_id: 'sample_elite840_1' }
     ],
     specs: {
       processor: 'Intel Core i5-8265U Quad-Core Processor',
@@ -96,7 +96,7 @@ const sampleProducts = [
     rental_price_monthly: 450,
     stock_quantity: 80,
     images: [
-      { url: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=800&auto=format&fit=crop&q=80', public_id: 'sample_p2419h_1' }
+      { url: '/products/real-dell-display-transparent.png', public_id: 'sample_p2419h_1' }
     ],
     specs: {
       screen_size: '23.8" Full HD (1920 x 1080 at 60Hz) IPS',
@@ -120,7 +120,7 @@ const sampleProducts = [
     rental_price_monthly: 0,
     stock_quantity: 250,
     images: [
-      { url: 'https://images.unsplash.com/photo-1562976540-1502c2145186?w=800&auto=format&fit=crop&q=80', public_id: 'sample_ram_1' }
+      { url: '/products/real-enterprise-ram-transparent.png', public_id: 'sample_ram_1' }
     ],
     specs: {
       ram: '16GB DDR4 Single Stick',
@@ -145,7 +145,7 @@ const sampleProducts = [
     rental_price_monthly: 1200,
     stock_quantity: 18,
     images: [
-      { url: 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=800&auto=format&fit=crop&q=80', public_id: 'sample_gpu_1' }
+      { url: '/products/real-rtx-3060-gpu-transparent.png', public_id: 'sample_gpu_1' }
     ],
     specs: {
       vram: '12GB GDDR6 (192-bit)',

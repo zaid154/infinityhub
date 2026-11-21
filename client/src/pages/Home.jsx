@@ -20,7 +20,7 @@ import BestSellersSection from '../components/BestSellersSection';
 import CompleteCollectionSection from '../components/CompleteCollectionSection';
 import RentalCalculator from '../components/RentalCalculator';
 import { useCompany } from '../context/SettingsContext';
-import { AnimatedAccordion, AppleReveal, useReducedMotionSafe, APPLE_EASE } from '../animations';
+import { AnimatedAccordion, useReducedMotionSafe, APPLE_EASE } from '../animations';
 
 export default function Home() {
   const { company } = useCompany();
@@ -51,8 +51,8 @@ export default function Home() {
     contact_person: '',
     phone: '',
     asset_type: 'Used Laptops (ThinkPad, Dell, HP)',
-    approx_quantity: 20,
-    city: 'Delhi NCR'
+    approx_quantity: '',
+    city: ''
   });
 
   const handleBuybackSubmit = async (e) => {
@@ -71,8 +71,8 @@ export default function Home() {
           contact_person: '',
           phone: '',
           asset_type: 'Used Laptops (ThinkPad, Dell, HP)',
-          approx_quantity: 20,
-          city: 'Delhi NCR'
+          approx_quantity: '',
+          city: ''
         });
       }
     } catch {
@@ -339,16 +339,21 @@ export default function Home() {
       {/* 6. AL-TOOBA 1:1 OUR COMPLETE COLLECTION - RENTING & SELLING FLEETS */}
       <CompleteCollectionSection onOpenRFQ={openRFQ} />
 
-      {/* 7. SPIRITUAL / CORE VALUE BANNER (AL-TOOBA SIGNATURE QUOTE) */}
+      {/* 7. ENTERPRISE SLA & QUALITY COMMITMENT BANNER */}
       <section className="max-w-5xl mx-auto px-4 sm:px-8">
         <div className="bg-[#FAF7F2] border-2 border-[#D4A24C]/40 rounded-3xl p-8 sm:p-12 text-center shadow-sm relative overflow-hidden">
           <div className="w-12 h-0.5 bg-[#D4A24C] mx-auto mb-4 opacity-60"></div>
-          <blockquote className="font-serif italic text-2xl sm:text-3xl text-[#0D3B2A] leading-relaxed max-w-3xl mx-auto">
-            "Indeed, trade is blessed with growth and longevity when conducted with truthfulness, transparent terms, and zero compromise on quality."
+          <blockquote className="font-serif italic text-xl sm:text-2xl text-[#0D3B2A] leading-relaxed max-w-3xl mx-auto">
+            "Our enterprise commitment is straightforward: zero capital risk for growing teams. Every workstation and laptop is certified through rigorous diagnostics and backed by our 24–48h standby replacement guarantee."
           </blockquote>
           <p className="text-[11px] uppercase tracking-[0.25em] text-[#D4A24C] font-bold mt-4 font-sans">
-            — THE COMMITMENT TO UNCOMPROMISED HARDWARE INTEGRITY
+            — DIRECTOR OF ENTERPRISE FLEET OPERATIONS, DEMO INFOTECH
           </p>
+          <div className="flex flex-wrap items-center justify-center gap-6 mt-6 pt-6 border-t border-[#D4A24C]/20 text-[11px] font-semibold text-[#5A6B63]">
+            <span className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-[#D4A24C]" /> 30-Point Lab Certified</span>
+            <span className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-[#D4A24C]" /> NIST 800-88 Data Sanitized</span>
+            <span className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-[#D4A24C]" /> 100% Tax-Deductible OPEX</span>
+          </div>
         </div>
       </section>
 
@@ -484,8 +489,9 @@ export default function Home() {
                     <label className="block font-semibold text-[#0D3B2A] mb-1">Approx Quantity</label>
                     <input
                       type="number"
+                      placeholder="e.g. 25"
                       value={buybackForm.approx_quantity}
-                      onChange={(e) => setBuybackForm({ ...buybackForm, approx_quantity: Number(e.target.value) })}
+                      onChange={(e) => setBuybackForm({ ...buybackForm, approx_quantity: e.target.value })}
                       className="w-full px-3 py-2 bg-white border border-[#D4A24C]/30 rounded-xl focus:outline-none focus:border-[#0D3B2A]"
                     />
                   </div>
@@ -493,6 +499,7 @@ export default function Home() {
                     <label className="block font-semibold text-[#0D3B2A] mb-1">Office City</label>
                     <input
                       type="text"
+                      placeholder="e.g. Bengaluru, Mumbai, Delhi NCR"
                       value={buybackForm.city}
                       onChange={(e) => setBuybackForm({ ...buybackForm, city: e.target.value })}
                       className="w-full px-3 py-2 bg-white border border-[#D4A24C]/30 rounded-xl focus:outline-none focus:border-[#0D3B2A]"
@@ -513,7 +520,7 @@ export default function Home() {
       </section>
 
       {/* 10. PROCUREMENT FAQ ACCORDION */}
-      <AppleReveal className="max-w-4xl mx-auto px-4 sm:px-8 space-y-8">
+      <section className="max-w-4xl mx-auto px-4 sm:px-8 space-y-8">
         <div className="text-center space-y-2">
           <span className="text-[11px] uppercase tracking-[0.25em] text-[#D4A24C] font-semibold block">
             — TRANSPARENCY & CLARITY
@@ -549,7 +556,7 @@ export default function Home() {
             );
           })}
         </div>
-      </AppleReveal>
+      </section>
       </div>
     </div>
   );
