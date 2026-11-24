@@ -69,8 +69,8 @@ BREVO_SENDER_NAME="Demo Infotech"
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_SECURE=false
-SMTP_USER=trendykart.app@gmail.com
-SMTP_PASS=ziqyiszqfggqgrjm
+SMTP_USER=your_email@gmail.com
+SMTP_PASS=your_gmail_app_password
 SMTP_FROM="Demo Infotech <zaidm1323@gmail.com>"
 ```
 
