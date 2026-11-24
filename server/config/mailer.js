@@ -16,36 +16,41 @@ const transporter = nodemailer.createTransport({
 });
 
 export const sendTransactionalEmail = async ({ to, subject, html, text, fromName }) => {
-  const senderEmail = process.env.SMTP_USER || 'trendykart.app@gmail.com';
+  const brevoApiKey = process.env.BREVO_API_KEY;
+  const senderEmail = process.env.BREVO_SENDER_EMAIL || 'zaidm1323@gmail.com';
   const senderName = fromName || 'Demo Infotech';
 
   // 1. Try Brevo HTTPS API if key is set (Works 100% on cloud platforms like Render/Vercel)
-  if (process.env.BREVO_API_KEY) {
+  if (brevoApiKey) {
     try {
+      const emailPayload = {
+        sender: { name: senderName, email: senderEmail },
+        to: [{ email: to }],
+        subject,
+        htmlContent: html
+      };
+      if (text && text.trim().length > 0) {
+        emailPayload.textContent = text.trim();
+      }
+
       const res = await fetch('https://api.brevo.com/v3/smtp/email', {
         method: 'POST',
         headers: {
-          'api-key': process.env.BREVO_API_KEY,
+          'api-key': brevoApiKey,
           'content-type': 'application/json',
           'accept': 'application/json'
         },
-        body: JSON.stringify({
-          sender: { name: senderName, email: senderEmail },
-          to: [{ email: to }],
-          subject,
-          htmlContent: html,
-          textContent: text || ''
-        })
+        body: JSON.stringify(emailPayload)
       });
       const data = await res.json();
       if (res.ok) {
-        console.log(`[Brevo API Email Sent] Message ID: ${data.messageId} to ${to}`);
+        console.log(`[Brevo API Email Sent Successfully] Message ID: ${data.messageId} to ${to}`);
         return { success: true, messageId: data.messageId };
       } else {
-        console.error(`[Brevo API Response Error]:`, data);
+        console.error(`[Brevo API Error Response]:`, data);
       }
     } catch (err) {
-      console.error(`[Brevo API Fetch Error]:`, err.message);
+      console.error(`[Brevo API Network Error]:`, err.message);
     }
   }
 
