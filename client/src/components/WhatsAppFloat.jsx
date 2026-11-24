@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { MessageCircle } from 'lucide-react';
 import { useCompany } from '../context/SettingsContext';
@@ -12,6 +12,25 @@ export default function WhatsAppFloat() {
   const digitsOnly = rawNumber.replace(/\D/g, '');
   const brandName = company?.brand_name || 'Demo Infotech';
 
+  const [cookieBannerActive, setCookieBannerActive] = useState(false);
+
+  useEffect(() => {
+    // Check if cookie consent is already stored
+    const hasConsent = localStorage.getItem('demo_cookie_consent');
+    if (!hasConsent) {
+      const timer = setTimeout(() => setCookieBannerActive(true), 1200);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleBannerChange = (e) => {
+      setCookieBannerActive(Boolean(e.detail?.visible));
+    };
+    window.addEventListener('cookieBannerChange', handleBannerChange);
+    return () => window.removeEventListener('cookieBannerChange', handleBannerChange);
+  }, []);
+
   const whatsappText = encodeURIComponent(
     `Hello ${brandName}, we require corporate bulk hardware / laptops for our office.`
   );
@@ -21,7 +40,11 @@ export default function WhatsAppFloat() {
       initial={shouldReduce ? { opacity: 0 } : { opacity: 0, scale: 0.8, y: 12 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
-      className="fixed bottom-5 right-5 z-40 pointer-events-auto"
+      className={`fixed right-4 sm:right-5 z-40 pointer-events-auto transition-all duration-300 ${
+        cookieBannerActive
+          ? 'bottom-[max(15.5rem,calc(14.5rem+env(safe-area-inset-bottom)))] sm:bottom-5'
+          : 'bottom-[max(1rem,env(safe-area-inset-bottom))] sm:bottom-5'
+      }`}
     >
       {/* Sleek Floating WhatsApp Icon */}
       <a

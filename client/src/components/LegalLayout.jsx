@@ -7,6 +7,7 @@ import {
   Printer,
   Calendar,
   ChevronRight,
+  ChevronDown,
   Scale
 } from 'lucide-react';
 import { useCompany } from '../context/SettingsContext';
@@ -22,6 +23,7 @@ export default function LegalLayout({
   const brandName = company?.brand_name || 'Demo Infotech';
   const legalVersion = company?.legal_version || '1.0';
   const [activeSection, setActiveSection] = useState(toc[0]?.id || '');
+  const [mobileTocOpen, setMobileTocOpen] = useState(false);
 
   useEffect(() => {
     if (!toc || toc.length === 0) return;
@@ -46,6 +48,7 @@ export default function LegalLayout({
 
   const scrollToSection = (e, id) => {
     e.preventDefault();
+    setMobileTocOpen(false);
     const target = document.getElementById(id);
     if (target) {
       target.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -129,60 +132,80 @@ export default function LegalLayout({
         <div className="flex items-center gap-2 shrink-0 print:hidden">
           <button
             onClick={handlePrint}
-            className="px-4 py-2 rounded-full bg-white border border-[#D4A24C]/40 hover:bg-[#FAF7F2] text-[#0D3B2A] font-bold text-xs flex items-center gap-2 transition cursor-pointer shadow-2xs active:scale-95"
+            className="min-h-10 px-3.5 sm:px-4 py-2 rounded-full bg-white border border-[#D4A24C]/40 hover:bg-[#FAF7F2] text-[#0D3B2A] font-bold text-xs flex items-center gap-2 transition cursor-pointer shadow-2xs active:scale-95"
           >
             <Printer className="w-3.5 h-3.5 text-[#8A5E12]" />
-            <span>Print Policy Document</span>
+            <span className="hidden sm:inline">Print Policy Document</span>
+            <span className="sm:hidden">Print</span>
           </button>
         </div>
       </div>
 
       {/* Main Grid: TOC + Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Sticky Table of Contents (TOC) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+        {/* Table of Contents: Collapsible Accordion on Mobile (<lg), Sticky Sidebar on Desktop (lg+) */}
         {toc && toc.length > 0 && (
-          <aside className="lg:col-span-4 sticky top-28 bg-white rounded-3xl border border-[#D4A24C]/25 p-6 shadow-sm space-y-4 print:hidden">
-            <div className="flex items-center gap-2 border-b border-[#D4A24C]/20 pb-3">
-              <FileText className="w-4 h-4 text-[#8A5E12]" />
-              <h2 className="text-xs font-mono uppercase tracking-wider font-bold text-[#0D3B2A]">
-                Document Sections
-              </h2>
-            </div>
-            <nav className="space-y-1 text-xs">
-              {toc.map((item, idx) => {
-                const isActive = activeSection === item.id;
-                return (
-                  <a
-                    key={idx}
-                    href={`#${item.id}`}
-                    onClick={(e) => scrollToSection(e, item.id)}
-                    className={`block py-1.5 px-2.5 rounded-lg transition line-clamp-1 border-l-2 ${
-                      isActive
-                        ? 'bg-[#FAF7F2] text-[#0D3B2A] font-bold border-[#D4A24C]'
-                        : 'border-transparent text-slate-600 hover:text-[#0D3B2A] hover:bg-[#FAF7F2]'
-                    }`}
-                  >
-                    <span className="font-mono text-[#8A5E12] mr-1.5">{idx + 1}.</span>
-                    {item.title}
-                  </a>
-                );
-              })}
-            </nav>
+          <div className="lg:col-span-4 lg:sticky lg:top-28 print:hidden">
+            {/* Mobile Collapsible TOC Toggle Button (<lg) */}
+            <button
+              type="button"
+              onClick={() => setMobileTocOpen(!mobileTocOpen)}
+              className="lg:hidden w-full min-h-11 px-4 py-2.5 rounded-2xl bg-white border border-[#D4A24C]/35 text-[#0D3B2A] font-bold text-xs flex items-center justify-between shadow-xs cursor-pointer mb-2"
+              aria-expanded={mobileTocOpen}
+            >
+              <span className="flex items-center gap-2">
+                <FileText className="w-4 h-4 text-[#8A5E12]" />
+                <span>Document Sections ({toc.length})</span>
+              </span>
+              <ChevronDown className={`w-4 h-4 text-[#8A5E12] transition-transform duration-200 ${mobileTocOpen ? 'rotate-180' : ''}`} />
+            </button>
 
-            <div className="pt-3 border-t border-[#D4A24C]/15 text-[11px] text-slate-500 space-y-1">
-              <span className="block font-semibold text-[#0D3B2A]">Need compliance assistance?</span>
-              <p>
-                Reach our statutory legal desk at{' '}
-                <a href={`mailto:${company?.grievance_officer?.email || 'grievance@example.com'}`} className="text-[#8A5E12] underline font-mono">
-                  {company?.grievance_officer?.email || 'grievance@example.com'}
-                </a>
-              </p>
-            </div>
-          </aside>
+            {/* TOC Body */}
+            <aside className={`bg-white rounded-3xl border border-[#D4A24C]/25 p-5 sm:p-6 shadow-sm space-y-4 ${
+              mobileTocOpen ? 'block mb-4' : 'hidden lg:block'
+            }`}>
+              <div className="hidden lg:flex items-center gap-2 border-b border-[#D4A24C]/20 pb-3">
+                <FileText className="w-4 h-4 text-[#8A5E12]" />
+                <h2 className="text-xs font-mono uppercase tracking-wider font-bold text-[#0D3B2A]">
+                  Document Sections
+                </h2>
+              </div>
+              <nav className="space-y-1 text-xs">
+                {toc.map((item, idx) => {
+                  const isActive = activeSection === item.id;
+                  return (
+                    <a
+                      key={idx}
+                      href={`#${item.id}`}
+                      onClick={(e) => scrollToSection(e, item.id)}
+                      className={`block min-h-10 sm:min-h-0 py-2 sm:py-1.5 px-2.5 rounded-lg transition line-clamp-1 border-l-2 flex items-center ${
+                        isActive
+                          ? 'bg-[#FAF7F2] text-[#0D3B2A] font-bold border-[#D4A24C]'
+                          : 'border-transparent text-slate-600 hover:text-[#0D3B2A] hover:bg-[#FAF7F2]'
+                      }`}
+                    >
+                      <span className="font-mono text-[#8A5E12] mr-1.5 shrink-0">{idx + 1}.</span>
+                      <span className="truncate">{item.title}</span>
+                    </a>
+                  );
+                })}
+              </nav>
+
+              <div className="pt-3 border-t border-[#D4A24C]/15 text-[11px] text-slate-500 space-y-1">
+                <span className="block font-semibold text-[#0D3B2A]">Need compliance assistance?</span>
+                <p>
+                  Reach our statutory legal desk at{' '}
+                  <a href={`mailto:${company?.grievance_officer?.email || 'grievance@example.com'}`} className="text-[#8A5E12] underline font-mono">
+                    {company?.grievance_officer?.email || 'grievance@example.com'}
+                  </a>
+                </p>
+              </div>
+            </aside>
+          </div>
         )}
 
         {/* Policy Body */}
-        <div className={`${toc && toc.length > 0 ? 'lg:col-span-8' : 'lg:col-span-12'} bg-white rounded-3xl border border-[#D4A24C]/25 p-7 sm:p-10 shadow-sm space-y-8 text-xs sm:text-sm text-slate-700 leading-relaxed`}>
+        <div className={`${toc && toc.length > 0 ? 'lg:col-span-8' : 'lg:col-span-12'} bg-white rounded-3xl border border-[#D4A24C]/25 p-5 sm:p-10 shadow-sm space-y-8 text-xs sm:text-sm text-slate-700 leading-relaxed [&_section]:scroll-mt-24`}>
           {children}
         </div>
       </div>

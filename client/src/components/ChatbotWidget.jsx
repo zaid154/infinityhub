@@ -120,6 +120,12 @@ export default function ChatbotWidget() {
     if (isOpen) scrollToBottom();
   }, [messages, isOpen]);
 
+  useEffect(() => {
+    const handleOpenChatbot = () => setIsOpen(true);
+    window.addEventListener('openChatbot', handleOpenChatbot);
+    return () => window.removeEventListener('openChatbot', handleOpenChatbot);
+  }, []);
+
   const handleSend = async (textToSend) => {
     const text = textToSend || input;
     if (!text.trim() || loading) return;
@@ -162,8 +168,8 @@ export default function ChatbotWidget() {
   const shouldReduce = useReducedMotionSafe();
 
   return (
-    <div className="fixed bottom-5 left-5 z-40">
-      {/* Minimized Toggle Round Button */}
+    <div className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] left-4 sm:bottom-5 sm:left-5 z-40">
+      {/* Minimized Toggle Round Button (Hidden on mobile <640px; accessible via mobile drawer) */}
       <AnimatePresence>
         {!isOpen && (
           <motion.button
@@ -172,7 +178,7 @@ export default function ChatbotWidget() {
             exit={{ opacity: 0, scale: 0.8 }}
             transition={{ duration: 0.4, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
             onClick={() => setIsOpen(true)}
-            className="relative w-12 h-12 rounded-full bg-[#072117]/90 border border-[#D4A24C]/60 text-[#D4A24C] shadow-[0_8px_25px_rgba(0,0,0,0.5)] hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center group cursor-pointer backdrop-blur-md"
+            className="hidden sm:flex relative w-12 h-12 rounded-full bg-[#072117]/90 border border-[#D4A24C]/60 text-[#D4A24C] shadow-[0_8px_25px_rgba(0,0,0,0.5)] hover:scale-105 active:scale-95 transition-all duration-300 items-center justify-center group cursor-pointer backdrop-blur-md"
             title={`${brandName} AI Consultant`}
           >
             <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-[#10B981]" />
@@ -189,7 +195,7 @@ export default function ChatbotWidget() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={shouldReduce ? { opacity: 0 } : { opacity: 0, scale: 0.95, y: 16 }}
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="bg-[#FAF7F2] border border-[#D4A24C]/40 rounded-3xl shadow-2xl w-[330px] sm:w-[370px] max-w-[calc(100vw-2.5rem)] h-[470px] max-h-[80vh] flex flex-col overflow-hidden"
+            className="bg-[#FAF7F2] border border-[#D4A24C]/40 rounded-3xl shadow-2xl w-[calc(100vw-2rem)] sm:w-[370px] max-w-[calc(100vw-2rem)] sm:max-w-md h-[min(480px,80dvh)] flex flex-col overflow-hidden"
           >
           {/* Header */}
           <div className="bg-[#072117] p-3.5 sm:p-4 text-white flex items-center justify-between border-b border-[#D4A24C]/30 shrink-0">

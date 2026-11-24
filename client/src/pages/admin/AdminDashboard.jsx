@@ -122,13 +122,13 @@ export default function AdminDashboard() {
         </div>
 
         {/* Action Button Suite */}
-        <div className="flex items-center gap-2.5 shrink-0 self-start md:self-center">
+        <div className="flex items-center flex-wrap gap-2.5 shrink-0 self-start md:self-center">
           <button
             type="button"
             onClick={() => fetchAnalytics(true)}
             disabled={refreshing}
             title="Refresh telemetry"
-            className="p-2.5 rounded-xl bg-white border border-slate-200 hover:border-slate-300 text-slate-600 hover:text-slate-900 transition shadow-sm cursor-pointer disabled:opacity-50"
+            className="min-h-11 min-w-11 flex items-center justify-center p-2.5 rounded-xl bg-white border border-slate-200 hover:border-slate-300 text-slate-600 hover:text-slate-900 transition shadow-sm cursor-pointer disabled:opacity-50"
           >
             <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin text-[#0D3B2A]' : ''}`} />
           </button>
@@ -136,7 +136,7 @@ export default function AdminDashboard() {
           <Link
             to="/products"
             target="_blank"
-            className="px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 hover:border-slate-300 text-slate-700 hover:text-slate-900 text-xs font-semibold transition shadow-sm flex items-center gap-1.5"
+            className="min-h-11 px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 hover:border-slate-300 text-slate-700 hover:text-slate-900 text-xs font-semibold transition shadow-sm flex items-center gap-1.5"
           >
             <span>Live Catalog</span>
             <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
@@ -144,7 +144,7 @@ export default function AdminDashboard() {
 
           <Link
             to="/admin/products/new"
-            className="px-4 py-2.5 rounded-xl bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold transition shadow-sm hover:shadow flex items-center gap-2 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
+            className="min-h-11 px-4 py-2.5 rounded-xl bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold transition shadow-sm hover:shadow flex items-center gap-2 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
           >
             <Plus className="w-4 h-4 text-[#D4A24C]" />
             <span>Add Hardware Item</span>

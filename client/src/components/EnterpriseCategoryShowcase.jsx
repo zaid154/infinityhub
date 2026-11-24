@@ -90,14 +90,14 @@ export default function EnterpriseCategoryShowcase() {
           <button
             onClick={() => scroll('left')}
             aria-label="Previous categories"
-            className="w-9 h-9 rounded-full bg-white border border-[#D4A24C]/40 text-[#0D3B2A] hover:bg-[#0D3B2A] hover:text-[#FAF7F2] hover:border-[#0D3B2A] transition-all shadow-xs flex items-center justify-center cursor-pointer active:scale-95"
+            className="w-10 h-10 sm:w-9 sm:h-9 rounded-full bg-white border border-[#D4A24C]/40 text-[#0D3B2A] hover:bg-[#0D3B2A] hover:text-[#FAF7F2] hover:border-[#0D3B2A] transition-all shadow-xs flex items-center justify-center cursor-pointer active:scale-95"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
           <button
             onClick={() => scroll('right')}
             aria-label="Next categories"
-            className="w-9 h-9 rounded-full bg-white border border-[#D4A24C]/40 text-[#0D3B2A] hover:bg-[#0D3B2A] hover:text-[#FAF7F2] hover:border-[#0D3B2A] transition-all shadow-xs flex items-center justify-center cursor-pointer active:scale-95"
+            className="w-10 h-10 sm:w-9 sm:h-9 rounded-full bg-white border border-[#D4A24C]/40 text-[#0D3B2A] hover:bg-[#0D3B2A] hover:text-[#FAF7F2] hover:border-[#0D3B2A] transition-all shadow-xs flex items-center justify-center cursor-pointer active:scale-95"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
@@ -111,14 +111,14 @@ export default function EnterpriseCategoryShowcase() {
       >
         {loading ? (
           [1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="min-w-[175px] h-64 sm:h-72 bg-white arch-card border-2 border-[#D4A24C]/30 animate-pulse" />
+            <div key={i} className="min-w-[min(175px,70vw)] h-64 sm:h-72 bg-white arch-card border-2 border-[#D4A24C]/30 animate-pulse" />
           ))
         ) : (
           categories.map((cat) => (
             <Link
               key={cat.id}
               to={cat.link}
-              className="group min-w-[175px] sm:min-w-[190px] lg:min-w-0 snap-center arch-card bg-gradient-to-b from-[#FAF7F2] to-[#F5EFE6] hover:bg-white border-2 border-[#D4A24C]/60 hover:border-[#D4A24C] shadow-xs hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 flex flex-col items-center justify-between p-4 pt-6 cursor-pointer overflow-hidden h-64 sm:h-72"
+              className="group min-w-[min(175px,70vw)] sm:min-w-[190px] lg:min-w-0 snap-center arch-card bg-gradient-to-b from-[#FAF7F2] to-[#F5EFE6] hover:bg-white border-2 border-[#D4A24C]/60 hover:border-[#D4A24C] shadow-xs hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 flex flex-col items-center justify-between p-4 pt-6 cursor-pointer overflow-hidden h-64 sm:h-72"
             >
               {/* Hardware Device on 3D Pedestal Stage inside Moorish Arch */}
               <div className="relative flex-1 w-full flex items-center justify-center my-auto">

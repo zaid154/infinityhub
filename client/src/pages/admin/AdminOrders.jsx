@@ -422,7 +422,7 @@ export default function AdminOrders() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full min-w-[800px] text-left border-collapse">
               <thead>
                 <tr className="bg-[#FAF7F2] border-b border-[#D4A24C]/20 text-[#8A5E12] font-mono uppercase tracking-wider text-[10px]">
                   <th className="py-3 px-4 font-bold">Invoice & Date</th>
@@ -683,7 +683,7 @@ export default function AdminOrders() {
           <div className="flex-1" onClick={() => setDrawerOrder(null)} />
 
           {/* Drawer Body Container */}
-          <div className="w-full max-w-xl sm:max-w-2xl bg-white h-full shadow-2xl flex flex-col border-l border-[#D4A24C]/30 animate-in slide-in-from-right duration-300">
+          <div className="w-full max-w-full sm:max-w-xl md:max-w-2xl bg-white h-full shadow-2xl flex flex-col border-l border-[#D4A24C]/30 animate-in slide-in-from-right duration-300">
             {/* Drawer Header */}
             <div className="p-4 sm:p-5 border-b border-slate-200 bg-[#FAF7F2] flex items-center justify-between shrink-0">
               <div className="flex items-center gap-3">

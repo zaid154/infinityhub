@@ -270,10 +270,10 @@ export default function Products() {
 
           <button
             onClick={() => setMobileFilterOpen(!mobileFilterOpen)}
-            className="md:hidden p-1.5 bg-white border border-[#D4A24C]/30 rounded-lg text-[#0D3B2A] hover:bg-[#FAF7F2]"
+            className="md:hidden min-h-11 min-w-11 flex items-center justify-center p-2.5 bg-white border border-[#D4A24C]/30 rounded-xl text-[#0D3B2A] hover:bg-[#FAF7F2] cursor-pointer shadow-xs"
             aria-label="Toggle Filters"
           >
-            <SlidersHorizontal className="w-4 h-4" />
+            <SlidersHorizontal className="w-5 h-5" />
           </button>
         </div>
       </div>
@@ -291,7 +291,7 @@ export default function Products() {
         <aside
           className={`${
             mobileFilterOpen
-              ? 'fixed inset-y-0 left-0 z-50 w-72 bg-white shadow-2xl p-5 overflow-y-auto'
+              ? 'fixed inset-y-0 left-0 z-50 w-[min(18rem,85vw)] h-[100dvh] bg-white shadow-2xl p-5 pb-[max(2rem,env(safe-area-inset-bottom))] overflow-y-auto'
               : 'hidden'
           } md:relative md:inset-auto md:z-auto md:w-auto md:block md:col-span-3 bg-white p-4 sm:p-5 rounded-2xl border border-[#D4A24C]/25 shadow-xs space-y-5 text-xs md:sticky md:top-20 self-start`}
         >
@@ -315,7 +315,7 @@ export default function Products() {
               </button>
               <button
                 onClick={() => setMobileFilterOpen(false)}
-                className="md:hidden p-1 text-[#5A6B63] hover:text-[#0D3B2A] transition"
+                className="md:hidden min-h-11 min-w-11 flex items-center justify-center p-1 text-[#5A6B63] hover:text-[#0D3B2A] transition"
                 aria-label="Close Filter Drawer"
               >
                 <X className="w-4 h-4" />
@@ -564,7 +564,7 @@ export default function Products() {
 
                       {/* Product Title (Compact 2-line clamp) */}
                       <Link to={`/products/${p.slug}`} className="hover:text-[#B8860B] transition block">
-                        <h3 className="text-[13px] sm:text-[14px] font-serif font-bold text-[#0D3B2A] group-hover:text-[#B8860B] transition-colors leading-snug line-clamp-2 min-h-[36px]">
+                        <h3 className="text-[13px] sm:text-[14px] font-serif font-bold text-[#0D3B2A] group-hover:text-[#B8860B] transition-colors leading-snug line-clamp-2 min-h-[2.25rem]">
                           {p.title}
                         </h3>
                       </Link>
@@ -598,29 +598,29 @@ export default function Products() {
                           {inStock ? (
                             rentalQty > 0 ? (
                               <div className="flex items-center gap-1.5 sm:gap-2">
-                                <div className="inline-flex items-center justify-between rounded-full border border-[#D4A24C]/60 bg-white px-2 py-1 text-xs font-mono font-bold text-[#0D3B2A] w-24 h-9 shadow-xs shrink-0">
+                                <div className="inline-flex items-center justify-between rounded-full border border-[#D4A24C]/60 bg-white px-2 py-1 text-xs font-mono font-bold text-[#0D3B2A] w-28 sm:w-24 min-h-11 sm:min-h-9 shadow-xs shrink-0">
                                   <button
                                     type="button"
                                     onClick={() => updateRentalQuantity(p._id, rentalQty - 1)}
-                                    className="p-1 text-slate-500 hover:text-[#0D3B2A] hover:bg-slate-100 rounded-full transition cursor-pointer"
+                                    className="min-h-9 min-w-9 sm:min-h-7 sm:min-w-7 flex items-center justify-center text-slate-500 hover:text-[#0D3B2A] hover:bg-slate-100 rounded-full transition cursor-pointer"
                                     title="Decrease rental quantity"
                                   >
-                                    <Minus className="w-3 h-3" />
+                                    <Minus className="w-3.5 h-3.5 sm:w-3 sm:h-3" />
                                   </button>
                                   <span className="text-[#0D3B2A] font-bold">{rentalQty}</span>
                                   <button
                                     type="button"
                                     disabled={rentalQty >= stockQty}
                                     onClick={() => updateRentalQuantity(p._id, rentalQty + 1)}
-                                    className="p-1 text-slate-500 hover:text-[#0D3B2A] hover:bg-slate-100 disabled:opacity-30 rounded-full transition cursor-pointer"
+                                    className="min-h-9 min-w-9 sm:min-h-7 sm:min-w-7 flex items-center justify-center text-slate-500 hover:text-[#0D3B2A] hover:bg-slate-100 disabled:opacity-30 rounded-full transition cursor-pointer"
                                     title="Increase rental quantity"
                                   >
-                                    <Plus className="w-3 h-3" />
+                                    <Plus className="w-3.5 h-3.5 sm:w-3 sm:h-3" />
                                   </button>
                                 </div>
                                 <Link
                                   to="/cart"
-                                  className="flex-1 h-9 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-[11px] font-bold uppercase tracking-wider transition shadow-xs flex items-center justify-center gap-1.5 border border-[#D4A24C]/50 cursor-pointer"
+                                  className="flex-1 min-h-11 sm:min-h-9 py-2 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-[11px] font-bold uppercase tracking-wider transition shadow-xs flex items-center justify-center gap-1.5 border border-[#D4A24C]/50 cursor-pointer"
                                 >
                                   <Check className="w-3.5 h-3.5 text-[#D4A24C]" />
                                   <span>In Cart • View</span>
@@ -632,7 +632,7 @@ export default function Products() {
                                 onClick={() => {
                                   addToRentalCart(p, 1, '6_months');
                                 }}
-                                className="h-9 w-full rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-xs flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
+                                className="min-h-11 sm:min-h-9 py-2.5 sm:py-2 w-full rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-xs flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
                               >
                                 <Repeat className="w-3.5 h-3.5 text-[#D4A24C]" />
                                 <span>Add to Rental Cart</span>
@@ -641,7 +641,7 @@ export default function Products() {
                           ) : (
                             <button
                               disabled
-                              className="h-9 w-full rounded-full bg-stone-100 text-[#8A5E12] text-xs font-bold uppercase tracking-wider cursor-not-allowed border border-[#D4A24C]/30 flex items-center justify-center gap-1.5"
+                              className="min-h-11 sm:min-h-9 py-2.5 sm:py-2 w-full rounded-full bg-stone-100 text-[#8A5E12] text-xs font-bold uppercase tracking-wider cursor-not-allowed border border-[#D4A24C]/30 flex items-center justify-center gap-1.5"
                             >
                               <span>Rental Out of Stock</span>
                             </button>
@@ -667,29 +667,29 @@ export default function Products() {
                           {inStock ? (
                             buyQty > 0 ? (
                               <div className="flex items-center gap-1.5 sm:gap-2">
-                                <div className="inline-flex items-center justify-between rounded-full border border-[#D4A24C]/60 bg-white px-2 py-1 text-xs font-mono font-bold text-[#0D3B2A] w-24 h-9 shadow-xs shrink-0">
+                                <div className="inline-flex items-center justify-between rounded-full border border-[#D4A24C]/60 bg-white px-2 py-1 text-xs font-mono font-bold text-[#0D3B2A] w-28 sm:w-24 min-h-11 sm:min-h-9 shadow-xs shrink-0">
                                   <button
                                     type="button"
                                     onClick={() => updateBuyQuantity(p._id, buyQty - 1)}
-                                    className="p-1 text-slate-500 hover:text-[#0D3B2A] hover:bg-slate-100 rounded-full transition cursor-pointer"
+                                    className="min-h-9 min-w-9 sm:min-h-7 sm:min-w-7 flex items-center justify-center text-slate-500 hover:text-[#0D3B2A] hover:bg-slate-100 rounded-full transition cursor-pointer"
                                     title="Decrease purchase quantity"
                                   >
-                                    <Minus className="w-3 h-3" />
+                                    <Minus className="w-3.5 h-3.5 sm:w-3 sm:h-3" />
                                   </button>
                                   <span className="text-[#0D3B2A] font-bold">{buyQty}</span>
                                   <button
                                     type="button"
                                     disabled={buyQty >= stockQty}
                                     onClick={() => updateBuyQuantity(p._id, buyQty + 1)}
-                                    className="p-1 text-slate-500 hover:text-[#0D3B2A] hover:bg-slate-100 disabled:opacity-30 rounded-full transition cursor-pointer"
+                                    className="min-h-9 min-w-9 sm:min-h-7 sm:min-w-7 flex items-center justify-center text-slate-500 hover:text-[#0D3B2A] hover:bg-slate-100 disabled:opacity-30 rounded-full transition cursor-pointer"
                                     title="Increase purchase quantity"
                                   >
-                                    <Plus className="w-3 h-3" />
+                                    <Plus className="w-3.5 h-3.5 sm:w-3 sm:h-3" />
                                   </button>
                                 </div>
                                 <Link
                                   to="/cart"
-                                  className="flex-1 h-9 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-[11px] font-bold uppercase tracking-wider transition shadow-xs flex items-center justify-center gap-1.5 border border-[#D4A24C]/50 cursor-pointer"
+                                  className="flex-1 min-h-11 sm:min-h-9 py-2 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-[11px] font-bold uppercase tracking-wider transition shadow-xs flex items-center justify-center gap-1.5 border border-[#D4A24C]/50 cursor-pointer"
                                 >
                                   <Check className="w-3.5 h-3.5 text-[#D4A24C]" />
                                   <span>In Cart • View</span>
@@ -701,7 +701,7 @@ export default function Products() {
                                 onClick={() => {
                                   addToBuyCart(p, 1);
                                 }}
-                                className="h-9 w-full rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-xs flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
+                                className="min-h-11 sm:min-h-9 py-2.5 sm:py-2 w-full rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-xs flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
                               >
                                 <ShoppingCart className="w-3.5 h-3.5 text-[#D4A24C]" />
                                 <span>Add to Cart (Buy)</span>
@@ -710,7 +710,7 @@ export default function Products() {
                           ) : (
                             <button
                               disabled
-                              className="h-9 w-full rounded-full bg-stone-100 text-stone-400 text-xs font-bold uppercase tracking-wider cursor-not-allowed border border-stone-200 flex items-center justify-center gap-1.5"
+                              className="min-h-11 sm:min-h-9 py-2.5 sm:py-2 w-full rounded-full bg-stone-100 text-stone-400 text-xs font-bold uppercase tracking-wider cursor-not-allowed border border-stone-200 flex items-center justify-center gap-1.5"
                             >
                               <span>Out of Stock</span>
                             </button>
@@ -736,29 +736,29 @@ export default function Products() {
                           {inStock ? (
                             buyQty > 0 ? (
                               <div className="flex items-center gap-1.5 sm:gap-2">
-                                <div className="inline-flex items-center justify-between rounded-full border border-[#D4A24C]/60 bg-white px-2 py-1 text-xs font-mono font-bold text-[#0D3B2A] w-24 h-9 shadow-xs shrink-0">
+                                <div className="inline-flex items-center justify-between rounded-full border border-[#D4A24C]/60 bg-white px-2 py-1 text-xs font-mono font-bold text-[#0D3B2A] w-28 sm:w-24 min-h-11 sm:min-h-9 shadow-xs shrink-0">
                                   <button
                                     type="button"
                                     onClick={() => updateBuyQuantity(p._id, buyQty - 1)}
-                                    className="p-1 text-slate-500 hover:text-[#0D3B2A] hover:bg-slate-100 rounded-full transition cursor-pointer"
+                                    className="min-h-9 min-w-9 sm:min-h-7 sm:min-w-7 flex items-center justify-center text-slate-500 hover:text-[#0D3B2A] hover:bg-slate-100 rounded-full transition cursor-pointer"
                                     title="Decrease purchase quantity"
                                   >
-                                    <Minus className="w-3 h-3" />
+                                    <Minus className="w-3.5 h-3.5 sm:w-3 sm:h-3" />
                                   </button>
                                   <span className="text-[#0D3B2A] font-bold">{buyQty}</span>
                                   <button
                                     type="button"
                                     disabled={buyQty >= stockQty}
                                     onClick={() => updateBuyQuantity(p._id, buyQty + 1)}
-                                    className="p-1 text-slate-500 hover:text-[#0D3B2A] hover:bg-slate-100 disabled:opacity-30 rounded-full transition cursor-pointer"
+                                    className="min-h-9 min-w-9 sm:min-h-7 sm:min-w-7 flex items-center justify-center text-slate-500 hover:text-[#0D3B2A] hover:bg-slate-100 disabled:opacity-30 rounded-full transition cursor-pointer"
                                     title="Increase purchase quantity"
                                   >
-                                    <Plus className="w-3 h-3" />
+                                    <Plus className="w-3.5 h-3.5 sm:w-3 sm:h-3" />
                                   </button>
                                 </div>
                                 <Link
                                   to="/cart"
-                                  className="flex-1 h-9 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-[11px] font-bold uppercase tracking-wider transition shadow-xs flex items-center justify-center gap-1.5 border border-[#D4A24C]/50 cursor-pointer"
+                                  className="flex-1 min-h-11 sm:min-h-9 py-2 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-[11px] font-bold uppercase tracking-wider transition shadow-xs flex items-center justify-center gap-1.5 border border-[#D4A24C]/50 cursor-pointer"
                                 >
                                   <Check className="w-3.5 h-3.5 text-[#D4A24C]" />
                                   <span>In Cart • View</span>
@@ -770,7 +770,7 @@ export default function Products() {
                                 onClick={() => {
                                   addToBuyCart(p, 1);
                                 }}
-                                className="h-9 w-full rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-xs flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
+                                className="min-h-11 sm:min-h-9 py-2.5 sm:py-2 w-full rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white text-xs font-bold uppercase tracking-wider transition shadow-xs flex items-center justify-center gap-1.5 border border-[#D4A24C]/40 cursor-pointer active:scale-95"
                               >
                                 <ShoppingCart className="w-3.5 h-3.5 text-[#D4A24C]" />
                                 <span>Add to Cart (Buy)</span>
@@ -779,7 +779,7 @@ export default function Products() {
                           ) : (
                             <button
                               disabled
-                              className="h-9 w-full rounded-full bg-stone-100 text-stone-400 text-xs font-bold uppercase tracking-wider cursor-not-allowed border border-stone-200 flex items-center justify-center gap-1.5"
+                              className="min-h-11 sm:min-h-9 py-2.5 sm:py-2 w-full rounded-full bg-stone-100 text-stone-400 text-xs font-bold uppercase tracking-wider cursor-not-allowed border border-stone-200 flex items-center justify-center gap-1.5"
                             >
                               <span>Out of Stock</span>
                             </button>

@@ -318,7 +318,7 @@ export default function AdminDemand() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+            <table className="w-full min-w-[700px] text-left text-xs">
               <thead className="bg-[#FAF7F2] border-b border-[#D4A24C]/20 text-[#0D3B2A] font-serif font-bold uppercase text-[10.5px] tracking-wider">
                 <tr>
                   <th className="py-3 px-4">Hardware Model & Brand</th>

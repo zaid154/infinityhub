@@ -80,8 +80,8 @@ export default function App() {
               position="top-right"
               gutter={8}
               containerStyle={{
-                top: 76,
-                right: 18
+                top: 72,
+                right: 12
               }}
               toastOptions={{
                 duration: 2800,
@@ -95,7 +95,7 @@ export default function App() {
                   fontSize: '12px',
                   fontWeight: '500',
                   lineHeight: '1.35',
-                  maxWidth: '310px',
+                  maxWidth: 'calc(100vw - 24px)',
                   fontFamily: 'Inter, system-ui, -apple-system, sans-serif'
                 },
                 success: {

@@ -21,7 +21,7 @@ export default function MainLayout() {
     <div className="min-h-screen flex flex-col bg-[#FAF7F2] text-slate-900">
       <Navbar onOpenRFQ={openRFQ} />
       
-      <main className={`flex-1 ${!isHome ? 'pt-20' : ''}`}>
+      <main className={`flex-1 ${!isHome ? 'pt-16 sm:pt-[72px] lg:pt-20' : ''}`}>
         <Outlet context={{ openRFQ }} />
       </main>
 

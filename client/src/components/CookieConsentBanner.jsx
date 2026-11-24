@@ -23,7 +23,10 @@ export default function CookieConsentBanner() {
     const saved = localStorage.getItem(COOKIE_STORAGE_KEY);
     if (!saved) {
       // Delay slightly for smooth page entrance
-      const timer = setTimeout(() => setVisible(true), 1200);
+      const timer = setTimeout(() => {
+        setVisible(true);
+        window.dispatchEvent(new CustomEvent('cookieBannerChange', { detail: { visible: true } }));
+      }, 1200);
       return () => clearTimeout(timer);
     }
   }, []);
@@ -38,6 +41,7 @@ export default function CookieConsentBanner() {
     };
     localStorage.setItem(COOKIE_STORAGE_KEY, JSON.stringify(payload));
     setVisible(false);
+    window.dispatchEvent(new CustomEvent('cookieBannerChange', { detail: { visible: false } }));
   };
 
   const shouldReduce = useReducedMotionSafe();
@@ -50,9 +54,9 @@ export default function CookieConsentBanner() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={shouldReduce ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.95 }}
           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed bottom-4 left-4 right-4 sm:left-6 sm:right-auto sm:max-w-md z-40"
+          className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-3 right-3 sm:left-6 sm:right-auto sm:max-w-md z-[45]"
         >
-          <div className="bg-[#072117]/95 backdrop-blur-xl border border-[#D4A24C]/40 rounded-3xl p-5 sm:p-6 text-white shadow-[0_20px_50px_rgba(0,0,0,0.45)] space-y-4">
+          <div className="bg-[#072117]/95 backdrop-blur-md border border-[#D4A24C]/40 rounded-3xl p-4 sm:p-6 text-white shadow-[0_20px_50px_rgba(0,0,0,0.45)] space-y-3 sm:space-y-4">
         {/* Header */}
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-2.5">
@@ -128,7 +132,7 @@ export default function CookieConsentBanner() {
           {showManage ? (
             <button
               onClick={() => saveConsent('custom', preferences)}
-              className="flex-1 py-2 px-3 rounded-full bg-[#D4A24C] hover:bg-[#c5943b] text-[#072117] text-[11px] font-bold uppercase tracking-wider transition cursor-pointer text-center"
+              className="flex-1 min-h-11 sm:min-h-9 py-2.5 sm:py-2 px-3.5 rounded-full bg-[#D4A24C] hover:bg-[#c5943b] text-[#072117] text-xs sm:text-[11px] font-bold uppercase tracking-wider transition cursor-pointer text-center flex items-center justify-center active:scale-98"
             >
               Save Preferences
             </button>
@@ -136,19 +140,19 @@ export default function CookieConsentBanner() {
             <>
               <button
                 onClick={() => saveConsent('accepted')}
-                className="flex-1 py-2 px-3 rounded-full bg-[#D4A24C] hover:bg-[#c5943b] text-[#072117] text-[11px] font-bold uppercase tracking-wider transition cursor-pointer text-center shadow-xs"
+                className="flex-1 min-h-11 sm:min-h-9 py-2.5 sm:py-2 px-3.5 rounded-full bg-[#D4A24C] hover:bg-[#c5943b] text-[#072117] text-xs sm:text-[11px] font-bold uppercase tracking-wider transition cursor-pointer text-center shadow-xs flex items-center justify-center active:scale-98"
               >
                 Accept All
               </button>
               <button
                 onClick={() => saveConsent('rejected')}
-                className="flex-1 py-2 px-3 rounded-full bg-white/10 hover:bg-white/20 text-white text-[11px] font-bold uppercase tracking-wider transition cursor-pointer text-center border border-white/15"
+                className="flex-1 min-h-11 sm:min-h-9 py-2.5 sm:py-2 px-3.5 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs sm:text-[11px] font-bold uppercase tracking-wider transition cursor-pointer text-center border border-white/15 flex items-center justify-center active:scale-98"
               >
                 Reject Non-Essential
               </button>
               <button
                 onClick={() => setShowManage(true)}
-                className="w-full py-1 text-center text-[10px] text-[#90b09a] hover:text-[#D4A24C] underline transition cursor-pointer"
+                className="w-full min-h-9 py-1.5 text-center text-[11px] sm:text-[10px] text-[#90b09a] hover:text-[#D4A24C] underline transition cursor-pointer flex items-center justify-center"
               >
                 Customize Preferences
               </button>

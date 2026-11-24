@@ -82,7 +82,7 @@ export default function BestSellersSection({ onOpenRFQ }) {
       <div className="flex overflow-x-auto pb-6 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0 lg:grid lg:grid-cols-5 gap-4 sm:gap-6 snap-x snap-mandatory scroll-smooth hide-scrollbar">
         {loading ? (
           [1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="min-w-[240px] h-80 bg-[#FAF7F2] rounded-2xl border border-[#D4A24C]/15 animate-pulse" />
+            <div key={i} className="min-w-[min(240px,75vw)] sm:min-w-[260px] h-80 bg-[#FAF7F2] rounded-2xl border border-[#D4A24C]/15 animate-pulse" />
           ))
         ) : (
           bestSellers.map((item) => {
@@ -98,7 +98,7 @@ export default function BestSellersSection({ onOpenRFQ }) {
             return (
               <AppleSpotlightCard
                 key={item._id}
-                className="bg-[#FAF7F2] rounded-[16px] sm:rounded-[20px] p-2.5 sm:p-3 flex flex-col justify-between h-full border border-[#D4A24C]/15 hover:border-[#D4A24C]/40 shadow-[0_8px_30px_rgba(13,59,42,0.03)] hover:shadow-[0_20px_40px_rgba(13,59,42,0.1)] relative min-w-[240px] sm:min-w-[260px] lg:min-w-0 snap-center"
+                className="bg-[#FAF7F2] rounded-[16px] sm:rounded-[20px] p-2.5 sm:p-3 flex flex-col justify-between h-full border border-[#D4A24C]/15 hover:border-[#D4A24C]/40 shadow-[0_8px_30px_rgba(13,59,42,0.03)] hover:shadow-[0_20px_40px_rgba(13,59,42,0.1)] relative min-w-[min(240px,75vw)] sm:min-w-[260px] lg:min-w-0 snap-center"
               >
                 <div>
                   {/* White Product Image Stage Box */}
@@ -136,7 +136,7 @@ export default function BestSellersSection({ onOpenRFQ }) {
 
                   {/* Product Title */}
                   <Link to={`/products/${item.slug}`} className="block px-0.5">
-                    <h3 className="text-[13px] sm:text-[15px] font-sans font-bold text-[#0D3B2A] mb-1 leading-snug group-hover:text-[#8A5E12] transition-colors duration-300 line-clamp-2 min-h-[36px] sm:min-h-[40px]">
+                    <h3 className="text-[13px] sm:text-[15px] font-sans font-bold text-[#0D3B2A] mb-1 leading-snug group-hover:text-[#8A5E12] transition-colors duration-300 line-clamp-2 min-h-[2.25rem] sm:min-h-[2.5rem]">
                       {item.title}
                     </h3>
                   </Link>

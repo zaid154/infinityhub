@@ -32,7 +32,7 @@ export default function BrandLogo({
 
   const titleSizes = {
     sm: 'text-base sm:text-lg',
-    md: 'text-lg sm:text-xl lg:text-[22px]',
+    md: 'text-[15px] sm:text-xl lg:text-[22px]',
     lg: 'text-2xl sm:text-3xl'
   };
 
@@ -46,7 +46,7 @@ export default function BrandLogo({
   const tmChar = company?.tm_symbol === 'R' ? '®' : company?.tm_symbol === 'TM' ? '™' : '';
 
   const content = (
-    <div className={`flex items-center gap-2.5 sm:gap-3 group shrink-0 ${className}`}>
+    <div className={`flex items-center gap-1.5 sm:gap-2.5 group shrink-0 ${className}`}>
       {/* If custom logo URL exists, show image; otherwise show official Star Emblem */}
       {company?.logo_url ? (
         <img

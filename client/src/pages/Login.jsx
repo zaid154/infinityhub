@@ -74,20 +74,20 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-[85vh] py-8 sm:py-14 px-4 sm:px-6 flex items-center justify-center relative overflow-hidden bg-[#FAF7F2]">
+    <div className="min-h-[85dvh] py-6 sm:py-14 px-4 sm:px-6 flex items-start sm:items-center justify-center relative overflow-hidden bg-[#FAF7F2]">
       <Helmet>
         <title>Sign In | {brandName}</title>
       </Helmet>
 
       {/* Atmospheric Luxury Ambient Glows */}
-      <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-[#D4A24C]/8 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-[#0D3B2A]/8 rounded-full blur-3xl pointer-events-none" />
+      <div className="hidden md:block absolute top-0 right-1/4 w-[500px] h-[500px] bg-[#D4A24C]/8 rounded-full blur-3xl pointer-events-none" />
+      <div className="hidden md:block absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-[#0D3B2A]/8 rounded-full blur-3xl pointer-events-none" />
 
       {/* Executive Split-Screen Master Card */}
       <div className="max-w-4xl w-full mx-auto grid grid-cols-1 lg:grid-cols-12 rounded-3xl overflow-hidden border border-[#D4A24C]/35 shadow-2xl bg-white relative z-10">
         
         {/* Left Showcase: Dignified, Clean Brand Showcase */}
-        <div className="lg:col-span-5 bg-gradient-to-br from-[#0D3B2A] via-[#0D3B2A] to-[#07241A] text-[#FAF7F2] p-8 sm:p-10 flex flex-col justify-between relative overflow-hidden">
+        <div className="order-2 lg:order-1 lg:col-span-5 bg-gradient-to-br from-[#0D3B2A] via-[#0D3B2A] to-[#07241A] text-[#FAF7F2] p-6 sm:p-10 flex flex-col justify-between relative overflow-hidden">
           {/* Internal ambient radial glow */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-[#D4A24C]/15 rounded-full blur-3xl pointer-events-none" />
           
@@ -98,16 +98,16 @@ export default function Login() {
             </div>
 
             <div>
-              <h2 className="text-2xl sm:text-3xl font-bold font-serif text-[#FAF7F2] tracking-tight leading-snug">
+              <h2 className="text-xl sm:text-3xl font-bold font-serif text-[#FAF7F2] tracking-tight leading-snug">
                 Enterprise IT Hardware & Rental Fleet.
               </h2>
-              <p className="text-xs sm:text-sm text-[#FAF7F2]/80 leading-relaxed mt-3 font-sans">
+              <p className="text-xs sm:text-sm text-[#FAF7F2]/80 leading-relaxed mt-2 sm:mt-3 font-sans">
                 Commercial workstations, laptops, and server infrastructure with pan-India delivery and dedicated SLA support.
               </p>
             </div>
 
             {/* Clean 3-point list - No bulky boxed cards */}
-            <div className="space-y-3 pt-2 text-xs text-[#FAF7F2]/90">
+            <div className="space-y-2.5 sm:space-y-3 pt-1 sm:pt-2 text-xs text-[#FAF7F2]/90">
               <div className="flex items-center gap-2.5">
                 <div className="w-4 h-4 rounded-full bg-[#D4A24C]/20 border border-[#D4A24C]/50 flex items-center justify-center text-[#D4A24C] shrink-0">
                   <Check className="w-2.5 h-2.5" />
@@ -130,14 +130,14 @@ export default function Login() {
           </div>
 
           {/* Bottom Trust Line */}
-          <div className="relative z-10 pt-6 mt-8 border-t border-white/15 flex items-center justify-between text-xs text-[#FAF7F2]/75">
+          <div className="relative z-10 pt-4 sm:pt-6 mt-6 sm:mt-8 border-t border-white/15 flex items-center justify-between text-xs text-[#FAF7F2]/75">
             <span>150+ Corporate Clients</span>
             <span className="font-mono text-[11px] text-[#D4A24C] font-semibold">18% GST Ready</span>
           </div>
         </div>
 
         {/* Right Authentication Panel */}
-        <div className="lg:col-span-7 bg-white p-7 sm:p-10 lg:p-12 flex flex-col justify-center">
+        <div className="order-1 lg:order-2 lg:col-span-7 bg-white p-6 sm:p-10 lg:p-12 flex flex-col justify-center">
           <div className="max-w-md w-full mx-auto space-y-6">
             
             {/* Header with clean Brand Logo */}
@@ -206,7 +206,7 @@ export default function Login() {
                     placeholder="name@company.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition text-xs font-sans placeholder:text-slate-400"
+                    className="w-full pl-10 pr-4 min-h-11 py-3 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition text-base sm:text-xs font-sans placeholder:text-slate-400"
                   />
                 </div>
               </div>
@@ -231,7 +231,7 @@ export default function Login() {
                     placeholder="••••••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-10 pr-10 py-3 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition text-xs font-sans placeholder:text-slate-400"
+                    className="w-full pl-10 pr-10 min-h-11 py-3 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition text-base sm:text-xs font-sans placeholder:text-slate-400"
                   />
                   <button
                     type="button"
@@ -261,7 +261,7 @@ export default function Login() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full py-3.5 rounded-xl bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg transition active:scale-[0.99] disabled:opacity-50 cursor-pointer border border-[#D4A24C]/40 group"
+                className="w-full min-h-11 py-3.5 rounded-xl bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg transition active:scale-[0.99] disabled:opacity-50 cursor-pointer border border-[#D4A24C]/40 group"
               >
                 <span>{submitting ? 'Signing in...' : 'Sign In'}</span>
                 <ArrowRight className="w-4 h-4 text-[#D4A24C] group-hover:translate-x-1 transition-transform" />

@@ -586,21 +586,23 @@ export default function Cart() {
 
                         <div className="flex items-center justify-between sm:justify-end gap-4 border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-100">
                           {/* Quantity Counter clamped to sale_stock */}
-                          <div className="flex items-center border border-[#D4A24C]/30 rounded-full overflow-hidden bg-[#FAF7F2] text-xs shadow-inner">
+                          <div className="flex items-center border border-[#D4A24C]/30 rounded-full overflow-hidden bg-[#FAF7F2] text-xs shadow-inner min-w-[6.5rem] sm:min-w-0">
                             <button
                               onClick={() => updateBuyQuantity(p._id, item.quantity - 1)}
-                              className="p-1.5 px-2.5 hover:bg-[#F3E8D2] transition text-[#0D3B2A] cursor-pointer"
+                              className="min-h-10 min-w-10 sm:min-h-8 sm:min-w-8 flex items-center justify-center hover:bg-[#F3E8D2] transition text-[#0D3B2A] cursor-pointer"
+                              aria-label="Decrease quantity"
                             >
-                              <Minus className="w-3 h-3" />
+                              <Minus className="w-3.5 h-3.5" />
                             </button>
-                            <span className="px-2 font-bold font-mono text-[#0D3B2A]">{item.quantity}</span>
+                            <span className="px-2 font-bold font-mono text-[#0D3B2A] flex-1 text-center">{item.quantity}</span>
                             <button
                               disabled={isMax}
                               onClick={() => updateBuyQuantity(p._id, item.quantity + 1)}
-                              className="p-1.5 px-2.5 hover:bg-[#F3E8D2] disabled:opacity-30 transition text-[#0D3B2A] cursor-pointer"
+                              className="min-h-10 min-w-10 sm:min-h-8 sm:min-w-8 flex items-center justify-center hover:bg-[#F3E8D2] disabled:opacity-30 transition text-[#0D3B2A] cursor-pointer"
                               title={isMax ? `Max available direct stock is ${maxSale}` : 'Add 1 more'}
+                              aria-label="Increase quantity"
                             >
-                              <Plus className="w-3 h-3" />
+                              <Plus className="w-3.5 h-3.5" />
                             </button>
                           </div>
 
@@ -612,8 +614,9 @@ export default function Cart() {
 
                           <button
                             onClick={() => removeFromBuyCart(p._id)}
-                            className="text-slate-400 hover:text-red-500 transition p-1 cursor-pointer"
+                            className="text-slate-400 hover:text-red-500 transition min-h-10 min-w-10 flex items-center justify-center p-1.5 cursor-pointer rounded-lg hover:bg-red-50"
                             title="Remove from cart"
+                            aria-label="Remove item"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -630,7 +633,7 @@ export default function Cart() {
                     Corporate Delivery Address & Invoicing Info
                   </h3>
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="block font-semibold text-slate-700 mb-1">Company / Entity Name</label>
                       <input
@@ -638,7 +641,7 @@ export default function Cart() {
                         placeholder="e.g. Acme Tech Solutions"
                         value={shippingAddress.company_name}
                         onChange={(e) => setShippingAddress({ ...shippingAddress, company_name: e.target.value })}
-                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
+                        className="w-full min-h-11 px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base sm:text-xs focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
                       />
                     </div>
                     <div>
@@ -656,12 +659,12 @@ export default function Cart() {
                         placeholder={company?.gst_number || '07AAAAA0000A1Z5'}
                         value={shippingAddress.gst_number}
                         onChange={(e) => setShippingAddress({ ...shippingAddress, gst_number: e.target.value.toUpperCase() })}
-                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] uppercase font-mono"
+                        className="w-full min-h-11 px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base sm:text-xs focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] uppercase font-mono"
                       />
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="block font-semibold text-slate-700 mb-1">Contact Person *</label>
                       <input
@@ -669,7 +672,7 @@ export default function Cart() {
                         placeholder="Full name"
                         value={shippingAddress.contact_person}
                         onChange={(e) => setShippingAddress({ ...shippingAddress, contact_person: e.target.value })}
-                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
+                        className="w-full min-h-11 px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base sm:text-xs focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
                       />
                     </div>
                     <div>
@@ -679,7 +682,7 @@ export default function Cart() {
                         placeholder="WhatsApp or Mobile"
                         value={shippingAddress.phone}
                         onChange={(e) => setShippingAddress({ ...shippingAddress, phone: e.target.value })}
-                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
+                        className="w-full min-h-11 px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base sm:text-xs focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
                       />
                     </div>
                   </div>
@@ -691,18 +694,18 @@ export default function Cart() {
                       placeholder="Office suite, floor, tech park, road..."
                       value={shippingAddress.street}
                       onChange={(e) => setShippingAddress({ ...shippingAddress, street: e.target.value })}
-                      className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
+                      className="w-full min-h-11 px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base sm:text-xs focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
                     />
                   </div>
 
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
                       <label className="block font-semibold text-slate-700 mb-1">City</label>
                       <input
                         type="text"
                         value={shippingAddress.city}
                         onChange={(e) => setShippingAddress({ ...shippingAddress, city: e.target.value })}
-                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
+                        className="w-full min-h-11 px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base sm:text-xs focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
                       />
                     </div>
                     <div>
@@ -711,7 +714,7 @@ export default function Cart() {
                         type="text"
                         value={shippingAddress.state}
                         onChange={(e) => setShippingAddress({ ...shippingAddress, state: e.target.value })}
-                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
+                        className="w-full min-h-11 px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base sm:text-xs focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
                       />
                     </div>
                     <div>
@@ -722,7 +725,7 @@ export default function Cart() {
                         placeholder="e.g. 110094"
                         value={shippingAddress.pincode}
                         onChange={(e) => setShippingAddress({ ...shippingAddress, pincode: e.target.value.replace(/[^0-9]/g, '').slice(0, 6) })}
-                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
+                        className="w-full min-h-11 px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base sm:text-xs focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
                       />
                     </div>
                   </div>
@@ -975,21 +978,23 @@ export default function Cart() {
 
                           <div className="flex items-center justify-between sm:justify-end gap-4 shrink-0 border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-100">
                             {/* Quantity Counter clamped to rental_stock */}
-                            <div className="flex items-center border border-[#D4A24C]/30 rounded-full overflow-hidden bg-[#FAF7F2] text-xs shadow-inner">
+                            <div className="flex items-center border border-[#D4A24C]/30 rounded-full overflow-hidden bg-[#FAF7F2] text-xs shadow-inner min-w-[6.5rem] sm:min-w-0">
                               <button
                                 onClick={() => updateRentalQuantity(p._id, item.quantity - 1)}
-                                className="p-1.5 px-2.5 hover:bg-[#F3E8D2] transition text-[#0D3B2A] cursor-pointer"
+                                className="min-h-10 min-w-10 sm:min-h-8 sm:min-w-8 flex items-center justify-center hover:bg-[#F3E8D2] transition text-[#0D3B2A] cursor-pointer"
+                                aria-label="Decrease quantity"
                               >
-                                <Minus className="w-3 h-3" />
+                                <Minus className="w-3.5 h-3.5" />
                               </button>
-                              <span className="px-2 font-bold font-mono text-[#0D3B2A]">{item.quantity}</span>
+                              <span className="px-2 font-bold font-mono text-[#0D3B2A] flex-1 text-center">{item.quantity}</span>
                               <button
                                 disabled={isMax}
                                 onClick={() => updateRentalQuantity(p._id, item.quantity + 1)}
-                                className="p-1.5 px-2.5 hover:bg-[#F3E8D2] disabled:opacity-30 transition text-[#0D3B2A] cursor-pointer"
+                                className="min-h-10 min-w-10 sm:min-h-8 sm:min-w-8 flex items-center justify-center hover:bg-[#F3E8D2] disabled:opacity-30 transition text-[#0D3B2A] cursor-pointer"
                                 title={isMax ? `Max available rental fleet is ${maxRental}` : 'Add 1 more'}
+                                aria-label="Increase quantity"
                               >
-                                <Plus className="w-3 h-3" />
+                                <Plus className="w-3.5 h-3.5" />
                               </button>
                             </div>
 
@@ -1002,8 +1007,9 @@ export default function Cart() {
 
                             <button
                               onClick={() => removeFromRentalCart(p._id)}
-                              className="text-slate-400 hover:text-red-500 transition p-1.5 cursor-pointer rounded-lg hover:bg-red-50"
+                              className="text-slate-400 hover:text-red-500 transition min-h-10 min-w-10 flex items-center justify-center p-1.5 cursor-pointer rounded-lg hover:bg-red-50"
                               title="Remove from rental cart"
+                              aria-label="Remove item"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -1073,7 +1079,7 @@ export default function Cart() {
                     Corporate Master Lease Agreement Details
                   </h3>
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="block font-semibold text-slate-700 mb-1">Company / Entity Name *</label>
                       <input
@@ -1082,7 +1088,7 @@ export default function Cart() {
                         placeholder="Registered business name"
                         value={shippingAddress.company_name}
                         onChange={(e) => setShippingAddress({ ...shippingAddress, company_name: e.target.value })}
-                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
+                        className="w-full min-h-11 px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base sm:text-xs focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
                       />
                     </div>
                     <div>
@@ -1100,12 +1106,12 @@ export default function Cart() {
                         placeholder={company?.gst_number || '07AAAAA0000A1Z5'}
                         value={shippingAddress.gst_number}
                         onChange={(e) => setShippingAddress({ ...shippingAddress, gst_number: e.target.value.toUpperCase() })}
-                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] uppercase font-mono"
+                        className="w-full min-h-11 px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base sm:text-xs focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] uppercase font-mono"
                       />
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="block font-semibold text-slate-700 mb-1">Procurement Officer / Contact *</label>
                       <input
@@ -1114,7 +1120,7 @@ export default function Cart() {
                         placeholder="Authorized signatory"
                         value={shippingAddress.contact_person}
                         onChange={(e) => setShippingAddress({ ...shippingAddress, contact_person: e.target.value })}
-                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
+                        className="w-full min-h-11 px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base sm:text-xs focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
                       />
                     </div>
                     <div>
@@ -1125,7 +1131,7 @@ export default function Cart() {
                         placeholder="+91 98765 43210"
                         value={shippingAddress.phone}
                         onChange={(e) => setShippingAddress({ ...shippingAddress, phone: e.target.value })}
-                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
+                        className="w-full min-h-11 px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base sm:text-xs focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
                       />
                     </div>
                   </div>
@@ -1137,7 +1143,7 @@ export default function Cart() {
                       placeholder="Tech park, building, city (e.g. Bangalore, Gurugram, Mumbai)..."
                       value={shippingAddress.street}
                       onChange={(e) => setShippingAddress({ ...shippingAddress, street: e.target.value })}
-                      className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
+                      className="w-full min-h-11 px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base sm:text-xs focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
                     />
                   </div>
                 </div>

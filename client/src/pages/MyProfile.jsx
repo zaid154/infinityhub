@@ -50,7 +50,7 @@ export default function MyProfile() {
 
       <div className="bg-white p-7 sm:p-9 rounded-3xl border border-[#D4A24C]/25 shadow-sm">
         <form onSubmit={handleSubmit} className="space-y-5 text-xs">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block font-semibold text-slate-700 mb-1">Full Name</label>
               <input
@@ -58,7 +58,7 @@ export default function MyProfile() {
                 required
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
+                className="w-full min-h-11 px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base sm:text-xs focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
               />
             </div>
 
@@ -68,19 +68,19 @@ export default function MyProfile() {
                 type="text"
                 value={formData.company_name}
                 onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
+                className="w-full min-h-11 px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base sm:text-xs focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block font-semibold text-slate-700 mb-1">Phone Number</label>
               <input
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
+                className="w-full min-h-11 px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base sm:text-xs focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
               />
             </div>
 
@@ -90,7 +90,7 @@ export default function MyProfile() {
                 type="email"
                 disabled
                 value={user?.email || ''}
-                className="w-full px-3 py-2.5 bg-slate-100 border border-slate-200 text-slate-500 rounded-xl cursor-not-allowed"
+                className="w-full min-h-11 px-3 py-2.5 bg-slate-100 border border-slate-200 text-slate-500 rounded-xl text-base sm:text-xs cursor-not-allowed"
               />
             </div>
           </div>
@@ -110,11 +110,11 @@ export default function MyProfile() {
                     address: { ...formData.address, street: e.target.value }
                   })
                 }
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
+                className="w-full min-h-11 px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base sm:text-xs focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
               />
             </div>
 
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
                 <label className="block font-semibold text-slate-700 mb-1">City</label>
                 <input
@@ -126,7 +126,7 @@ export default function MyProfile() {
                       address: { ...formData.address, city: e.target.value }
                     })
                   }
-                  className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
+                  className="w-full min-h-11 px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base sm:text-xs focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
                 />
               </div>
 
@@ -141,7 +141,7 @@ export default function MyProfile() {
                       address: { ...formData.address, state: e.target.value }
                     })
                   }
-                  className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
+                  className="w-full min-h-11 px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base sm:text-xs focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
                 />
               </div>
 
@@ -156,7 +156,7 @@ export default function MyProfile() {
                       address: { ...formData.address, pincode: e.target.value }
                     })
                   }
-                  className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
+                  className="w-full min-h-11 px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base sm:text-xs focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A]"
                 />
               </div>
             </div>
@@ -166,7 +166,7 @@ export default function MyProfile() {
             <button
               type="submit"
               disabled={submitting}
-              className="px-8 py-3 rounded-full bg-[#0D3B2A] hover:bg-[#124e38] text-white font-bold text-xs uppercase tracking-wider transition shadow-lg shadow-[#0D3B2A]/20 flex items-center gap-2"
+              className="min-h-11 px-8 py-3 rounded-full bg-[#0D3B2A] hover:bg-[#124e38] text-white font-bold text-xs uppercase tracking-wider transition shadow-lg shadow-[#0D3B2A]/20 flex items-center gap-2 cursor-pointer"
             >
               <Save className="w-4 h-4 text-[#D4A24C]" />
               <span>{submitting ? 'Saving...' : 'Save Changes'}</span>

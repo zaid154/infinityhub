@@ -125,7 +125,7 @@ export default function CompleteCollectionSection({ onOpenRFQ }) {
         <div className="flex overflow-x-auto pb-6 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0 lg:grid lg:grid-cols-4 gap-4 sm:gap-6 snap-x snap-mandatory scroll-smooth hide-scrollbar">
           {loading ? (
             [1, 2, 3, 4].map((i) => (
-              <div key={i} className="min-w-[260px] h-84 bg-white rounded-2xl border border-[#D4A24C]/20 animate-pulse" />
+              <div key={i} className="min-w-[min(250px,75vw)] sm:min-w-[270px] h-84 bg-white rounded-2xl border border-[#D4A24C]/20 animate-pulse" />
             ))
           ) : (
             filteredItems.map((item) => {
@@ -141,7 +141,7 @@ export default function CompleteCollectionSection({ onOpenRFQ }) {
               return (
                 <AppleSpotlightCard
                   key={item._id}
-                  className="bg-white rounded-[16px] sm:rounded-[20px] p-3 sm:p-3.5 flex flex-col justify-between h-full border border-[#D4A24C]/20 hover:border-[#D4A24C]/60 shadow-[0_8px_30px_rgba(13,59,42,0.03)] hover:shadow-[0_20px_40px_rgba(13,59,42,0.1)] relative min-w-[250px] sm:min-w-[270px] lg:min-w-0 snap-center"
+                  className="bg-white rounded-[16px] sm:rounded-[20px] p-3 sm:p-3.5 flex flex-col justify-between h-full border border-[#D4A24C]/20 hover:border-[#D4A24C]/60 shadow-[0_8px_30px_rgba(13,59,42,0.03)] hover:shadow-[0_20px_40px_rgba(13,59,42,0.1)] relative min-w-[min(250px,75vw)] sm:min-w-[270px] lg:min-w-0 snap-center"
                 >
                   <div>
                     {/* Badge Overlay */}
@@ -180,7 +180,7 @@ export default function CompleteCollectionSection({ onOpenRFQ }) {
 
                     {/* Product Title */}
                     <Link to={`/products/${item.slug}`} className="block">
-                      <h3 className="text-[13px] sm:text-[14px] font-serif font-bold text-[#0D3B2A] mb-1 leading-snug group-hover:text-[#8A5E12] transition-colors duration-300 line-clamp-2 min-h-[36px]">
+                      <h3 className="text-[13px] sm:text-[14px] font-serif font-bold text-[#0D3B2A] mb-1 leading-snug group-hover:text-[#8A5E12] transition-colors duration-300 line-clamp-2 min-h-[2.25rem]">
                         {item.title}
                       </h3>
                     </Link>

@@ -169,12 +169,12 @@ export default function Contact() {
                   placeholder="e.g. Acme Tech Solutions"
                   value={formData.company_name}
                   onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
-                  className="w-full pl-9 pr-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition"
+                  className="w-full pl-9 pr-3 min-h-11 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl text-base sm:text-xs focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition"
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block font-semibold text-[#0D3B2A] mb-1">Contact Person *</label>
                 <div className="relative">
@@ -185,7 +185,7 @@ export default function Contact() {
                     placeholder="e.g. Aman Sharma"
                     value={formData.contact_person}
                     onChange={(e) => setFormData({ ...formData, contact_person: e.target.value })}
-                    className="w-full pl-9 pr-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition"
+                    className="w-full pl-9 pr-3 min-h-11 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl text-base sm:text-xs focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition"
                   />
                 </div>
               </div>
@@ -200,7 +200,7 @@ export default function Contact() {
                     placeholder="e.g. +91 98100 00000"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full pl-9 pr-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition"
+                    className="w-full pl-9 pr-3 min-h-11 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl text-base sm:text-xs focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition"
                   />
                 </div>
               </div>
@@ -216,7 +216,7 @@ export default function Contact() {
                   placeholder="e.g. procurement@acmetech.com"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full pl-9 pr-3 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition"
+                  className="w-full pl-9 pr-3 min-h-11 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl text-base sm:text-xs focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition"
                 />
               </div>
             </div>
@@ -245,14 +245,14 @@ export default function Contact() {
                 placeholder="Mention desired models, configurations (RAM/SSD), total quantities, lease duration, or target deployment date..."
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                className="w-full p-3 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition resize-none"
+                className="w-full p-3 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl text-base sm:text-xs min-h-[5.5rem] focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition resize-none"
               />
             </div>
 
             <button
               type="submit"
               disabled={submitting}
-              className="w-full py-3.5 rounded-xl bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg transition active:scale-98 disabled:opacity-50 cursor-pointer border border-[#D4A24C]/40"
+              className="w-full min-h-11 py-3.5 rounded-xl bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg transition active:scale-98 disabled:opacity-50 cursor-pointer border border-[#D4A24C]/40"
             >
               <Send className="w-3.5 h-3.5 text-[#D4A24C]" />
               <span>{submitting ? 'Submitting Inquiry...' : 'Submit Official Procurement Inquiry'}</span>

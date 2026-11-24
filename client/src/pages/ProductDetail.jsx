@@ -183,7 +183,7 @@ export default function ProductDetail() {
           </div>
 
           {/* Main Large Image / Video Stage Container */}
-          <div className="flex-1 w-full h-[320px] sm:h-[380px] lg:h-[410px] bg-[#F4EFE6] rounded-[24px] sm:rounded-[28px] p-4 sm:p-6 flex items-center justify-center relative overflow-hidden border border-[#D4A24C]/25 shadow-inner">
+          <div className="flex-1 w-full h-[260px] sm:h-[380px] lg:h-[410px] bg-[#F4EFE6] rounded-[24px] sm:rounded-[28px] p-4 sm:p-6 flex items-center justify-center relative overflow-hidden border border-[#D4A24C]/25 shadow-inner">
             {/* Top-Right Media Count Pill: Video/Photo 1/3 */}
             <div className="absolute top-3.5 right-3.5 bg-black/75 backdrop-blur text-white text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full z-10 shadow-sm flex items-center gap-1.5">
               {currentMedia?.type === 'video' ? (
@@ -438,15 +438,16 @@ export default function ProductDetail() {
                 </span>
                 
                 {/* Stepper Pill [ -  1  + ] clamped to maxSale */}
-                <div className="inline-flex items-center justify-between rounded-full border border-gray-300 bg-white px-2.5 py-1 text-xs font-mono font-bold text-[#0D3B2A] w-24 shadow-sm shrink-0">
+                <div className="inline-flex items-center justify-between rounded-full border border-gray-300 bg-white px-2.5 py-1 text-xs font-mono font-bold text-[#0D3B2A] w-28 sm:w-24 min-h-11 sm:h-9 shadow-sm shrink-0">
                   <button
                     type="button"
                     onClick={() => setQty(Math.max(1, qty - 1))}
-                    className="p-1 text-gray-500 hover:text-[#0D3B2A] hover:bg-gray-100 rounded-full transition cursor-pointer"
+                    className="min-h-9 min-w-9 sm:min-h-7 sm:min-w-7 flex items-center justify-center text-gray-500 hover:text-[#0D3B2A] hover:bg-gray-100 rounded-full transition cursor-pointer"
+                    aria-label="Decrease quantity"
                   >
-                    <Minus className="w-3 h-3" />
+                    <Minus className="w-3.5 h-3.5 sm:w-3 sm:h-3" />
                   </button>
-                  <span>{qty}</span>
+                  <span className="text-center font-bold flex-1">{qty}</span>
                   <button
                     type="button"
                     disabled={qty >= maxSale}
@@ -457,9 +458,10 @@ export default function ProductDetail() {
                         toast.error(`Maximum available direct stock is ${maxSale} units.`);
                       }
                     }}
-                    className="p-1 text-gray-500 hover:text-[#0D3B2A] hover:bg-gray-100 disabled:opacity-30 rounded-full transition cursor-pointer"
+                    className="min-h-9 min-w-9 sm:min-h-7 sm:min-w-7 flex items-center justify-center text-gray-500 hover:text-[#0D3B2A] hover:bg-gray-100 disabled:opacity-30 rounded-full transition cursor-pointer"
+                    aria-label="Increase quantity"
                   >
-                    <Plus className="w-3 h-3" />
+                    <Plus className="w-3.5 h-3.5 sm:w-3 sm:h-3" />
                   </button>
                 </div>
 
@@ -468,12 +470,12 @@ export default function ProductDetail() {
                   type="button"
                   disabled={maxSale <= 0}
                   onClick={(e) => handleAddToCart(e)}
-                  className="flex-1 py-2 sm:py-2.5 px-4 sm:px-5 rounded-full border-2 border-[#0D3B2A] bg-transparent text-[#0D3B2A] hover:bg-[#0D3B2A] hover:text-[#FAF7F2] disabled:opacity-40 disabled:cursor-not-allowed font-sans font-bold text-[11px] sm:text-xs uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer shadow-sm active:scale-95 whitespace-nowrap"
+                  className="flex-1 min-h-11 py-2 sm:py-2.5 px-4 sm:px-5 rounded-full border-2 border-[#0D3B2A] bg-transparent text-[#0D3B2A] hover:bg-[#0D3B2A] hover:text-[#FAF7F2] disabled:opacity-40 disabled:cursor-not-allowed font-sans font-bold text-[11px] sm:text-xs uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer shadow-sm active:scale-95 whitespace-nowrap"
                 >
                   <span>
                     {maxSale > 0
                       ? inBuyItem
-                        ? `ADD MORE (HAVE ${inBuyItem.quantity} IN CART)`
+                        ? `ADD MORE (${inBuyItem.quantity} IN CART)`
                         : 'ADD TO CART (BUY)'
                       : 'SALE STOCK OUT'}
                   </span>
@@ -483,7 +485,7 @@ export default function ProductDetail() {
                 {inBuyItem && (
                   <Link
                     to="/cart"
-                    className="px-3.5 py-2 sm:py-2.5 rounded-full bg-[#FAF7F2] hover:bg-[#F4ECE1] text-[#0D3B2A] border border-[#D4A24C] font-sans font-bold text-xs uppercase tracking-wider shadow-sm flex items-center justify-center gap-1.5 cursor-pointer transition-all active:scale-95 whitespace-nowrap shrink-0 group"
+                    className="min-h-11 px-3.5 py-2 sm:py-2.5 rounded-full bg-[#FAF7F2] hover:bg-[#F4ECE1] text-[#0D3B2A] border border-[#D4A24C] font-sans font-bold text-xs uppercase tracking-wider shadow-sm flex items-center justify-center gap-1.5 cursor-pointer transition-all active:scale-95 whitespace-nowrap shrink-0 group"
                   >
                     <CheckCircle2 className="w-3.5 h-3.5 text-[#8A5E12]" />
                     <span>View Cart &rarr;</span>
@@ -498,7 +500,7 @@ export default function ProductDetail() {
                     type="button"
                     disabled={maxRental <= 0}
                     onClick={(e) => handleAddRental(e)}
-                    className="flex-1 w-full py-2.5 sm:py-3 rounded-full bg-[#FAF7F2] hover:bg-[#F3E8D2] text-[#0D3B2A] border border-[#D4A24C]/40 disabled:opacity-50 disabled:cursor-not-allowed font-sans font-bold text-xs uppercase tracking-[0.15em] shadow-sm flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95"
+                    className="flex-1 w-full min-h-11 py-2.5 sm:py-3 rounded-full bg-[#FAF7F2] hover:bg-[#F3E8D2] text-[#0D3B2A] border border-[#D4A24C]/40 disabled:opacity-50 disabled:cursor-not-allowed font-sans font-bold text-xs uppercase tracking-[0.15em] shadow-sm flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95"
                   >
                     <Repeat className="w-4 h-4 text-[#D4A24C]" />
                     <span>
@@ -510,7 +512,7 @@ export default function ProductDetail() {
                   {inRentalItem && (
                     <Link
                       to="/cart"
-                      className="w-full sm:w-auto px-4 py-2.5 sm:py-3 rounded-full bg-[#FAF7F2] hover:bg-[#F4ECE1] text-[#0D3B2A] border border-[#D4A24C] font-sans font-bold text-xs uppercase tracking-wider shadow-sm flex items-center justify-center gap-1.5 cursor-pointer transition-all active:scale-95 whitespace-nowrap shrink-0 group"
+                      className="w-full sm:w-auto min-h-11 px-4 py-2.5 sm:py-3 rounded-full bg-[#FAF7F2] hover:bg-[#F4ECE1] text-[#0D3B2A] border border-[#D4A24C] font-sans font-bold text-xs uppercase tracking-wider shadow-sm flex items-center justify-center gap-1.5 cursor-pointer transition-all active:scale-95 whitespace-nowrap shrink-0 group"
                     >
                       <CheckCircle2 className="w-3.5 h-3.5 text-[#8A5E12]" />
                       <span>{inRentalItem.quantity} in Cart • View &rarr;</span>

@@ -8,7 +8,8 @@ import {
   X,
   LogOut,
   LayoutDashboard,
-  ChevronRight
+  ChevronRight,
+  Bot
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -47,12 +48,12 @@ export default function Navbar({ onOpenRFQ }) {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isSolidNav
-          ? 'bg-[#FAF7F2]/95 backdrop-blur-md border-b border-[#D4A24C]/30 shadow-[0_8px_30px_rgba(0,0,0,0.06)]'
+          ? 'bg-[#FAF7F2]/95 backdrop-blur-sm md:backdrop-blur-md border-b border-[#D4A24C]/30 shadow-[0_8px_30px_rgba(0,0,0,0.06)]'
           : 'bg-gradient-to-b from-black/75 via-black/35 to-transparent border-b border-transparent'
       }`}
     >
       {/* Main Transparent / Frosted Navbar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-3 lg:gap-4 xl:gap-8">
+      <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 h-16 sm:h-[72px] lg:h-20 flex items-center justify-between gap-1.5 sm:gap-3 lg:gap-4 xl:gap-8">
         {/* Brand Logo - Unified Single Source Asset */}
         <BrandLogo isSolidNav={isSolidNav} className="shrink-0" showSubtitle={false} />
 
@@ -88,7 +89,7 @@ export default function Navbar({ onOpenRFQ }) {
         </nav>
 
         {/* Right CTA Actions - User, Cart, RFQ Button */}
-        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+        <div className="flex items-center gap-1 sm:gap-2.5 shrink-0">
           {/* User / Auth State */}
           {isAuthenticated ? (
             <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
@@ -148,7 +149,7 @@ export default function Navbar({ onOpenRFQ }) {
           ) : (
             <Link
               to="/login"
-              className={`p-2 transition rounded-full shrink-0 ${
+              className={`p-1.5 sm:p-2 transition rounded-full shrink-0 ${
                 isSolidNav
                   ? 'text-[#072117] hover:text-[#D4A24C] hover:bg-black/5'
                   : 'text-white hover:text-[#F59E0B] hover:bg-white/10'
@@ -164,7 +165,7 @@ export default function Navbar({ onOpenRFQ }) {
             to="/cart"
             id="navbar-cart-icon"
             data-cart-icon="true"
-            className={`relative p-2 transition rounded-full shrink-0 ${
+            className={`relative p-1.5 sm:p-2 transition rounded-full shrink-0 ${
               isSolidNav
                 ? 'text-[#072117] hover:text-[#D4A24C] hover:bg-black/5'
                 : 'text-white hover:text-[#F59E0B] hover:bg-white/10'
@@ -198,7 +199,8 @@ export default function Navbar({ onOpenRFQ }) {
           {/* Mobile Menu Toggle Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className={`lg:hidden p-2 rounded-full transition ${
+            aria-label="Toggle Navigation Menu"
+            className={`lg:hidden p-1.5 sm:p-2.5 min-h-10 min-w-10 sm:min-h-11 sm:min-w-11 rounded-full flex items-center justify-center transition cursor-pointer ${
               isSolidNav
                 ? 'text-[#072117] hover:text-[#D4A24C] hover:bg-black/5'
                 : 'text-white hover:text-[#F59E0B] hover:bg-white/10'
@@ -217,7 +219,7 @@ export default function Navbar({ onOpenRFQ }) {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-            className="lg:hidden overflow-hidden bg-[#072117]/95 backdrop-blur-2xl text-white border-b border-[#D4A24C]/30 px-6 pt-6 pb-8 space-y-4"
+            className="lg:hidden overflow-hidden bg-[#072117]/95 backdrop-blur-md text-white border-b border-[#D4A24C]/30 px-6 pt-6 pb-[max(2rem,env(safe-area-inset-bottom))] space-y-4 max-h-[calc(100dvh-4.5rem)] overflow-y-auto"
           >
             <Link
               to="/"
@@ -268,9 +270,24 @@ export default function Navbar({ onOpenRFQ }) {
                 setMobileMenuOpen(false);
                 onOpenRFQ?.('Mobile General RFQ');
               }}
-              className="w-full py-3 rounded-full bg-gradient-to-r from-[#eec373] via-[#D4A24C] to-[#eec373] text-[#072117] font-extrabold text-xs uppercase tracking-widest text-center shadow-lg cursor-pointer"
+              className="w-full min-h-11 py-3 rounded-full bg-gradient-to-r from-[#eec373] via-[#D4A24C] to-[#eec373] text-[#072117] font-extrabold text-xs uppercase tracking-widest text-center shadow-lg cursor-pointer flex items-center justify-center"
             >
               Request Quick RFQ
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                window.dispatchEvent(new CustomEvent('openChatbot'));
+              }}
+              className="w-full min-h-11 py-3 px-4 rounded-full bg-white/10 hover:bg-white/20 active:scale-98 text-[#FAF7F2] font-semibold text-xs border border-white/15 flex items-center justify-between transition cursor-pointer shadow-sm"
+            >
+              <span className="flex items-center gap-2.5">
+                <Bot className="w-4 h-4 text-[#D4A24C]" />
+                <span>Chat with AI Specialist</span>
+              </span>
+              <ChevronRight className="w-3.5 h-3.5 text-[#D4A24C]" />
             </button>
 
             {user ? (

@@ -128,10 +128,10 @@ export default function Footer() {
         {/* ======================================================== */}
         {/* ROW 1: 4-COLUMN AL-TOOBA STYLE ARCHITECTURE              */}
         {/* ======================================================== */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 pb-12 border-b border-white/10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-8 pb-12 border-b border-white/10">
           
           {/* Column 1 (lg:col-span-4): Brand Logo, Bio & Pill Newsletter */}
-          <div className="lg:col-span-4 space-y-5 pr-0 lg:pr-6">
+          <div className="sm:col-span-2 lg:col-span-4 space-y-5 pr-0 lg:pr-6">
             <BrandLogo theme="dark" showSubtitle={false} size="lg" />
 
             <p className="text-xs sm:text-sm leading-relaxed text-[#90b09a]/90 font-sans max-w-sm">
@@ -140,19 +140,19 @@ export default function Footer() {
 
             {/* Al-Tooba Style Inline Pill Newsletter Form */}
             <form onSubmit={handleSubscribe} className="space-y-2.5 pt-1 max-w-sm">
-              <div className="flex items-center bg-[#0D3B2A]/70 border border-[#FAF7F2]/25 rounded-full p-1 hover:border-[#D4A24C]/60 transition-colors focus-within:border-[#D4A24C] shadow-sm">
+              <div className="flex items-center bg-[#0D3B2A]/70 border border-[#FAF7F2]/25 rounded-full p-1 hover:border-[#D4A24C]/60 transition-colors focus-within:border-[#D4A24C] shadow-sm min-h-11">
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter Work Email Address"
-                  className="w-full pl-4 pr-2 py-2 bg-transparent text-[#FAF7F2] placeholder-[#90b09a]/70 outline-none text-xs border-none focus:ring-0"
+                  className="w-full pl-4 pr-2 py-2 bg-transparent text-[#FAF7F2] placeholder-[#90b09a]/70 outline-none text-base sm:text-xs border-none focus:ring-0"
                 />
                 <button
                   type="submit"
                   disabled={subscribing || subscribed}
-                  className="rounded-full px-5 py-2 bg-[#D4A24C] hover:bg-[#c5943b] text-[#072117] text-[10px] font-sans font-bold uppercase tracking-wider transition-all shrink-0 cursor-pointer active:scale-95 disabled:opacity-70 flex items-center gap-1.5 shadow-sm"
+                  className="rounded-full px-5 py-2 min-h-10 sm:min-h-8 bg-[#D4A24C] hover:bg-[#c5943b] text-[#072117] text-[10px] font-sans font-bold uppercase tracking-wider transition-all shrink-0 cursor-pointer active:scale-95 disabled:opacity-70 flex items-center gap-1.5 shadow-sm"
                 >
                   {subscribed ? (
                     <>
@@ -359,49 +359,49 @@ export default function Footer() {
         {/* ======================================================== */}
         <div className="pt-2">
           <nav aria-label="Statutory policies and agreements">
-            <ul className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 text-[10.5px] sm:text-[11px] font-sans font-bold uppercase tracking-[0.18em] text-white/90">
+            <ul className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1 sm:gap-y-3 text-[10.5px] sm:text-[11px] font-sans font-bold uppercase tracking-[0.18em] text-white/90">
               <li>
-                <Link to="/privacy" className="hover:text-[#D4A24C] transition-colors">
+                <Link to="/privacy" className="py-1.5 inline-block hover:text-[#D4A24C] transition-colors">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link to="/terms" className="hover:text-[#D4A24C] transition-colors">
+                <Link to="/terms" className="py-1.5 inline-block hover:text-[#D4A24C] transition-colors">
                   Terms & Conditions
                 </Link>
               </li>
               <li>
-                <Link to="/shipping-policy" className="hover:text-[#D4A24C] transition-colors">
+                <Link to="/shipping-policy" className="py-1.5 inline-block hover:text-[#D4A24C] transition-colors">
                   Shipping Policy
                 </Link>
               </li>
               <li>
-                <Link to="/refund-policy" className="hover:text-[#D4A24C] transition-colors">
+                <Link to="/refund-policy" className="py-1.5 inline-block hover:text-[#D4A24C] transition-colors">
                   Return & Refund
                 </Link>
               </li>
               <li>
-                <Link to="/refund-policy" className="hover:text-[#D4A24C] transition-colors">
+                <Link to="/refund-policy" className="py-1.5 inline-block hover:text-[#D4A24C] transition-colors">
                   Cancellation Policy
                 </Link>
               </li>
               <li>
-                <Link to="/rental-sla" className="hover:text-[#D4A24C] transition-colors">
+                <Link to="/rental-sla" className="py-1.5 inline-block hover:text-[#D4A24C] transition-colors">
                   Rental SLA
                 </Link>
               </li>
               <li>
-                <Link to="/warranty-policy" className="hover:text-[#D4A24C] transition-colors">
+                <Link to="/warranty-policy" className="py-1.5 inline-block hover:text-[#D4A24C] transition-colors">
                   Warranty Policy
                 </Link>
               </li>
               <li>
-                <Link to="/cookie-policy" className="hover:text-[#D4A24C] transition-colors">
+                <Link to="/cookie-policy" className="py-1.5 inline-block hover:text-[#D4A24C] transition-colors">
                   Cookie Policy
                 </Link>
               </li>
               <li>
-                <Link to="/grievance" className="hover:text-[#D4A24C] text-[#D4A24C] transition-colors">
+                <Link to="/grievance" className="py-1.5 inline-block hover:text-[#D4A24C] text-[#D4A24C] transition-colors">
                   Grievance Redressal
                 </Link>
               </li>

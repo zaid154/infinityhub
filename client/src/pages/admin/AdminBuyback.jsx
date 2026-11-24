@@ -383,7 +383,7 @@ export default function AdminBuyback() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-xs">
+            <table className="w-full min-w-[800px] text-left border-collapse text-xs">
               <thead>
                 <tr className="bg-slate-50/90 border-b border-slate-200 text-[#0D3B2A] font-semibold text-[11px] uppercase tracking-wider">
                   <th className="py-3 px-4 font-bold min-w-[240px]">Company & Location</th>
@@ -614,8 +614,8 @@ export default function AdminBuyback() {
       {/* 6. FLEET VALUATION & DISPOSITION MODAL                   */}
       {/* ======================================================== */}
       {selectedItem && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl space-y-4 border border-slate-200 overflow-hidden">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-150">
+          <div className="bg-white rounded-3xl max-w-lg w-[calc(100vw-1.5rem)] sm:w-full p-5 sm:p-7 shadow-2xl space-y-4 border border-slate-200 max-h-[90dvh] overflow-y-auto">
             
             {/* Modal Header */}
             <div className="flex items-start justify-between">

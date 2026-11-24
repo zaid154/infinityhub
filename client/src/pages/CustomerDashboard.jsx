@@ -50,16 +50,16 @@ export default function CustomerDashboard() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Link
             to="/products"
-            className="px-5 py-2.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs uppercase tracking-wider shadow transition border border-[#D4A24C]/40"
+            className="px-5 py-2.5 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs uppercase tracking-wider shadow transition border border-[#D4A24C]/40 min-h-11 flex items-center justify-center"
           >
             Browse New Hardware
           </Link>
           <Link
             to="/dashboard/profile"
-            className="px-4 py-2.5 rounded-full border border-[#D4A24C]/30 text-[#0D3B2A] font-bold text-xs hover:bg-[#FAF7F2] transition"
+            className="px-4 py-2.5 rounded-full border border-[#D4A24C]/30 text-[#0D3B2A] font-bold text-xs hover:bg-[#FAF7F2] transition min-h-11 flex items-center justify-center"
           >
             Edit Profile
           </Link>

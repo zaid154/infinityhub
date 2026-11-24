@@ -108,7 +108,7 @@ export default function AdminInquiries() {
           <div className="text-center py-16 text-slate-400">No inquiries found.</div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full min-w-[750px] text-left border-collapse">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 font-mono uppercase tracking-wider text-[10px]">
                   <th className="py-3.5 px-4 font-bold">Company / Contact</th>
@@ -199,8 +199,8 @@ export default function AdminInquiries() {
 
       {/* Edit Inquiry Modal */}
       {selectedInquiry && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl space-y-4 text-xs border border-slate-200">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white rounded-3xl max-w-md w-[calc(100vw-1.5rem)] sm:w-full p-5 sm:p-7 shadow-2xl space-y-4 text-xs border border-slate-200 max-h-[90dvh] overflow-y-auto">
             <h3 className="text-base font-bold text-slate-900">
               Manage Inquiry: {selectedInquiry.company_name}
             </h3>

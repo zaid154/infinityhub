@@ -539,7 +539,7 @@ export default function RentalCalculator({ onOpenRFQ, rentalProducts, hideHeader
                 type="button"
                 disabled={maxStock <= 0 || quantity <= 0}
                 onClick={handleAddToCart}
-                className="w-full py-3 rounded-xl bg-[#D4A24C] hover:bg-[#c5943b] disabled:opacity-40 disabled:cursor-not-allowed text-[#0D3B2A] font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md active:scale-98"
+                className="w-full min-h-11 py-3 rounded-xl bg-[#D4A24C] hover:bg-[#c5943b] disabled:opacity-40 disabled:cursor-not-allowed text-[#0D3B2A] font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md active:scale-98"
               >
                 <ShoppingBag className="w-4 h-4" />
                 <span>{maxStock <= 0 ? 'Out of Stock' : 'Add to Rental Cart'}</span>
@@ -548,7 +548,7 @@ export default function RentalCalculator({ onOpenRFQ, rentalProducts, hideHeader
               <button
                 type="button"
                 onClick={handleRequestRFQ}
-                className="w-full py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-[#FAF7F2] font-semibold text-xs tracking-wide transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full min-h-11 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-[#FAF7F2] font-semibold text-xs tracking-wide transition-colors flex items-center justify-center gap-2 cursor-pointer"
               >
                 <FileText className="w-4 h-4 text-[#D4A24C]" />
                 <span>Request Custom Bulk Quotation (RFQ)</span>

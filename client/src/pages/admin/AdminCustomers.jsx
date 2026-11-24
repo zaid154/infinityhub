@@ -400,7 +400,7 @@ export default function AdminCustomers() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-xs">
+            <table className="w-full min-w-[800px] text-left border-collapse text-xs">
               <thead>
                 <tr className="bg-slate-50/90 border-b border-slate-200 text-[#0D3B2A] font-semibold text-[11px] uppercase tracking-wider">
                   <th className="py-3 px-4 font-bold min-w-[220px]">Client / Organization</th>
@@ -714,8 +714,8 @@ export default function AdminCustomers() {
       {/* 6. BLOCK / UNBLOCK SUSPENSION MODAL                      */}
       {/* ======================================================== */}
       {blockModalOpen && customerToBlock && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-md w-full overflow-hidden p-6 space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-md w-[calc(100vw-1.5rem)] sm:w-full max-h-[90dvh] overflow-y-auto p-5 sm:p-6 space-y-4">
             
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
@@ -855,8 +855,8 @@ export default function AdminCustomers() {
       {/* 7. CUSTOMER PROFILE DETAILS MODAL                        */}
       {/* ======================================================== */}
       {selectedCustomer && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-xl w-full overflow-hidden p-6 space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-xl w-[calc(100vw-1.5rem)] sm:w-full max-h-[90dvh] overflow-y-auto p-5 sm:p-6 space-y-4">
             
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">

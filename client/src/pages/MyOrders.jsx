@@ -97,7 +97,7 @@ export default function MyOrders() {
                   </p>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                   <span
                     className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
                       o.payment_status === 'paid'
@@ -114,7 +114,7 @@ export default function MyOrders() {
 
                   <button
                     onClick={() => setViewingInvoice(o)}
-                    className="px-3.5 py-1.5 rounded-full bg-[#FAF7F2] hover:bg-[#F3E8D2] text-[#0D3B2A] border border-[#D4A24C]/35 font-bold text-[11px] flex items-center gap-1.5 transition cursor-pointer"
+                    className="min-h-10 px-3.5 py-1.5 rounded-full bg-[#FAF7F2] hover:bg-[#F3E8D2] text-[#0D3B2A] border border-[#D4A24C]/35 font-bold text-[11px] flex items-center gap-1.5 transition cursor-pointer"
                   >
                     <Printer className="w-3.5 h-3.5 text-[#8A5E12]" />
                     <span>View / Print Invoice</span>

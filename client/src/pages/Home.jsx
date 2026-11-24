@@ -29,10 +29,21 @@ export default function Home() {
   const brandTagline = company?.tagline || 'Enterprise Hardware Solutions';
   const { openRFQ } = useOutletContext();
   const heroVideoRef = useRef(null);
+  const [isDesktop, setIsDesktop] = useState(
+    typeof window !== 'undefined' ? window.innerWidth >= 768 : false
+  );
 
-  // Guarantee hero video playback on load
   useEffect(() => {
-    if (heroVideoRef.current) {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Guarantee hero video playback on load when on desktop
+  useEffect(() => {
+    if (isDesktop && heroVideoRef.current) {
       const playPromise = heroVideoRef.current.play();
       if (playPromise !== undefined) {
         playPromise.catch((err) => {
@@ -40,7 +51,7 @@ export default function Home() {
         });
       }
     }
-  }, []);
+  }, [isDesktop]);
 
   // FAQ Accordion State
   const [expandedFaq, setExpandedFaq] = useState(null);
@@ -111,20 +122,28 @@ export default function Home() {
         />
       </Helmet>
       {/* 1. HERO SECTION - ULTRA-RESPONSIVE FULL VIEWPORT LAYOUT */}
-      <section className="relative w-full min-h-[100svh] sm:h-screen sm:min-h-[640px] flex flex-col justify-center overflow-hidden bg-[#072117] text-white pt-24 pb-16 sm:py-0 px-5 sm:px-8 border-b border-[#D4A24C]/30">
-        {/* Ambient Video Background - Dedicated Enterprise Corporate Suite */}
-        <video
-          ref={heroVideoRef}
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="auto"
-          poster="/videos/hero-ambient-poster.jpg"
-          className="absolute inset-0 w-full h-full object-cover object-center z-0 opacity-85 filter contrast-105 brightness-100 pointer-events-none"
-        >
-          <source src="/videos/hero-ambient.mp4" type="video/mp4" />
-        </video>
+      <section className="relative w-full min-h-[100svh] sm:h-[100dvh] sm:min-h-[640px] flex flex-col justify-center overflow-hidden bg-[#072117] text-white pt-24 pb-16 sm:py-0 px-5 sm:px-8 border-b border-[#D4A24C]/30">
+        {/* Ambient Video Background on Desktop / Lightweight Poster on Mobile (<768px) */}
+        {isDesktop ? (
+          <video
+            ref={heroVideoRef}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="metadata"
+            poster="/videos/hero-ambient-poster.jpg"
+            className="absolute inset-0 w-full h-full object-cover object-center z-0 opacity-85 filter contrast-105 brightness-100 pointer-events-none"
+          >
+            <source src="/videos/hero-ambient.mp4" type="video/mp4" />
+          </video>
+        ) : (
+          <img
+            src="/videos/hero-ambient-poster.jpg"
+            alt={`${brandName} Enterprise Suite`}
+            className="absolute inset-0 w-full h-full object-cover object-center z-0 opacity-85 filter contrast-105 brightness-100 pointer-events-none"
+          />
+        )}
 
         {/* Ambient Video Overlay Gradient - Crisp Visibility Across All Screens */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#072117]/40 via-transparent to-[#072117]/85 z-[1] pointer-events-none"></div>
@@ -189,7 +208,7 @@ export default function Home() {
 
       {/* 2. AL-TOOBA RUNNING GOLD TICKER MARQUEE STRIP */}
       <div className="w-full bg-[#183623] border-b border-[#D4A24C]/30 py-3.5 sm:py-4 overflow-hidden relative z-10 [contain:paint]">
-        <div className="animate-marquee">
+        <div className="animate-marquee motion-reduce:animate-none">
           <div className="flex shrink-0 items-center gap-10 sm:gap-14 text-white/90 font-serif italic text-sm sm:text-base pr-10 sm:pr-14">
             {[...Array(3)].map((_, i) => (
               <span key={i} className="flex items-center gap-4 sm:gap-6 shrink-0">
@@ -456,11 +475,11 @@ export default function Home() {
                     placeholder="e.g. Apex FinTech Solutions"
                     value={buybackForm.company_name}
                     onChange={(e) => setBuybackForm({ ...buybackForm, company_name: e.target.value })}
-                    className="w-full px-3 py-2 bg-white border border-[#D4A24C]/30 rounded-xl focus:outline-none focus:border-[#0D3B2A]"
+                    className="w-full min-h-11 px-3 py-2.5 bg-white border border-[#D4A24C]/30 rounded-xl text-base sm:text-xs focus:outline-none focus:border-[#0D3B2A]"
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block font-semibold text-[#0D3B2A] mb-1">Contact Person</label>
                     <input
@@ -468,7 +487,7 @@ export default function Home() {
                       placeholder="e.g. IT Manager"
                       value={buybackForm.contact_person}
                       onChange={(e) => setBuybackForm({ ...buybackForm, contact_person: e.target.value })}
-                      className="w-full px-3 py-2 bg-white border border-[#D4A24C]/30 rounded-xl focus:outline-none focus:border-[#0D3B2A]"
+                      className="w-full min-h-11 px-3 py-2.5 bg-white border border-[#D4A24C]/30 rounded-xl text-base sm:text-xs focus:outline-none focus:border-[#0D3B2A]"
                     />
                   </div>
                   <div>
@@ -479,12 +498,12 @@ export default function Home() {
                       placeholder="e.g. 9876543210"
                       value={buybackForm.phone}
                       onChange={(e) => setBuybackForm({ ...buybackForm, phone: e.target.value })}
-                      className="w-full px-3 py-2 bg-white border border-[#D4A24C]/30 rounded-xl focus:outline-none focus:border-[#0D3B2A]"
+                      className="w-full min-h-11 px-3 py-2.5 bg-white border border-[#D4A24C]/30 rounded-xl text-base sm:text-xs focus:outline-none focus:border-[#0D3B2A]"
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block font-semibold text-[#0D3B2A] mb-1">Approx Quantity</label>
                     <input
@@ -492,7 +511,7 @@ export default function Home() {
                       placeholder="e.g. 25"
                       value={buybackForm.approx_quantity}
                       onChange={(e) => setBuybackForm({ ...buybackForm, approx_quantity: e.target.value })}
-                      className="w-full px-3 py-2 bg-white border border-[#D4A24C]/30 rounded-xl focus:outline-none focus:border-[#0D3B2A]"
+                      className="w-full min-h-11 px-3 py-2.5 bg-white border border-[#D4A24C]/30 rounded-xl text-base sm:text-xs focus:outline-none focus:border-[#0D3B2A]"
                     />
                   </div>
                   <div>
@@ -502,14 +521,14 @@ export default function Home() {
                       placeholder="e.g. Bengaluru, Mumbai, Delhi NCR"
                       value={buybackForm.city}
                       onChange={(e) => setBuybackForm({ ...buybackForm, city: e.target.value })}
-                      className="w-full px-3 py-2 bg-white border border-[#D4A24C]/30 rounded-xl focus:outline-none focus:border-[#0D3B2A]"
+                      className="w-full min-h-11 px-3 py-2.5 bg-white border border-[#D4A24C]/30 rounded-xl text-base sm:text-xs focus:outline-none focus:border-[#0D3B2A]"
                     />
                   </div>
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full py-3 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold uppercase tracking-wider transition shadow border border-[#D4A24C]/40"
+                  className="w-full min-h-11 py-3 rounded-full bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold uppercase tracking-wider transition shadow border border-[#D4A24C]/40 cursor-pointer flex items-center justify-center"
                 >
                   Request Asset Valuation Quote
                 </button>

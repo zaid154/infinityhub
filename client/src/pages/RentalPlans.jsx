@@ -549,7 +549,7 @@ export default function RentalPlans() {
                 </div>
 
                 {/* Standardized Included Corporate Deliverables (Fixed height to eliminate blank voids) */}
-                <div className="space-y-1.5 my-2 text-[11px] text-[#0D3B2A] h-[66px]">
+                <div className="space-y-1.5 my-2 text-[11px] text-[#0D3B2A] min-h-[66px]">
                   {plan.included.map((inc, iIdx) => (
                     <div key={iIdx} className="flex items-start gap-1.5 leading-tight">
                       <Check className="w-3.5 h-3.5 text-[#D4A24C] shrink-0 mt-0.5" />
@@ -740,8 +740,10 @@ export default function RentalPlans() {
           </p>
         </div>
 
-        <div className="overflow-x-auto pt-2">
-          <table className="w-full text-left border-collapse text-xs">
+        <div className="pt-2">
+          <p className="text-[11px] text-[#8A5E12] font-mono sm:hidden mb-2 font-medium">Swipe horizontally to view full comparison →</p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse text-xs min-w-[560px]">
             <thead>
               <tr className="bg-[#072117] text-[#FAF7F2] font-mono uppercase tracking-wider text-[10px]">
                 <th className="py-4 px-4 sm:px-6 rounded-l-xl">Strategic Decision Metric</th>
@@ -782,6 +784,7 @@ export default function RentalPlans() {
               </tr>
             </tbody>
           </table>
+          </div>
         </div>
 
         <div className="flex flex-wrap items-center justify-center gap-4 pt-4 border-t border-[#D4A24C]/20">

@@ -45,7 +45,7 @@ function LuxurySelect({ value, onChange, options, icon: Icon, placeholder = 'Sel
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full pl-10 pr-9 py-2.5 bg-[#FAF7F2] border text-[#0D3B2A] rounded-xl text-xs font-sans text-left transition flex items-center justify-between cursor-pointer focus:outline-none ${
+        className={`w-full min-h-11 pl-10 pr-9 py-2.5 bg-[#FAF7F2] border text-[#0D3B2A] rounded-xl text-base sm:text-xs font-sans text-left transition flex items-center justify-between cursor-pointer focus:outline-none ${
           isOpen ? 'border-[#0D3B2A] ring-1 ring-[#0D3B2A] bg-white' : 'border-[#D4A24C]/30 hover:border-[#D4A24C]/60'
         }`}
       >
@@ -72,7 +72,7 @@ function LuxurySelect({ value, onChange, options, icon: Icon, placeholder = 'Sel
                   onChange(opt.value);
                   setIsOpen(false);
                 }}
-                className={`w-full text-left px-3.5 py-2 text-xs flex items-center justify-between transition cursor-pointer ${
+                className={`w-full text-left px-3.5 min-h-10 py-2.5 sm:py-2 text-sm sm:text-xs flex items-center justify-between transition cursor-pointer ${
                   isSelected
                     ? 'bg-[#0D3B2A]/8 text-[#0D3B2A] font-bold'
                     : 'text-[#4A5568] hover:bg-[#FAF7F2] hover:text-[#0D3B2A]'
@@ -174,20 +174,20 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-[85vh] py-8 sm:py-14 px-4 sm:px-6 flex items-center justify-center relative overflow-hidden bg-[#FAF7F2]">
+    <div className="min-h-[85dvh] py-6 sm:py-14 px-4 sm:px-6 flex items-start sm:items-center justify-center relative overflow-hidden bg-[#FAF7F2]">
       <Helmet>
         <title>{registeredSuccess ? `Verify Email | ${brandName}` : `Register | ${brandName}`}</title>
       </Helmet>
 
       {/* Atmospheric Luxury Ambient Glows */}
-      <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-[#D4A24C]/8 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-[#0D3B2A]/8 rounded-full blur-3xl pointer-events-none" />
+      <div className="hidden md:block absolute top-0 right-1/4 w-[500px] h-[500px] bg-[#D4A24C]/8 rounded-full blur-3xl pointer-events-none" />
+      <div className="hidden md:block absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-[#0D3B2A]/8 rounded-full blur-3xl pointer-events-none" />
 
       {/* Executive Split-Screen Master Container */}
       <div className="max-w-5xl w-full mx-auto grid grid-cols-1 lg:grid-cols-12 rounded-3xl overflow-hidden border border-[#D4A24C]/35 shadow-2xl bg-white relative z-10">
 
         {/* Left Panel: Dignified Brand Showcase & Fleet Highlights */}
-        <div className="lg:col-span-5 bg-gradient-to-br from-[#0D3B2A] via-[#0D3B2A] to-[#07241A] text-[#FAF7F2] p-7 sm:p-9 flex flex-col justify-between relative overflow-hidden">
+        <div className="order-2 lg:order-1 lg:col-span-5 bg-gradient-to-br from-[#0D3B2A] via-[#0D3B2A] to-[#07241A] text-[#FAF7F2] p-6 sm:p-9 flex flex-col justify-between relative overflow-hidden">
           {/* Internal ambient radial glow */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-[#D4A24C]/15 rounded-full blur-3xl pointer-events-none" />
 
@@ -198,7 +198,7 @@ export default function Signup() {
             </div>
 
             <div>
-              <h2 className="text-2xl sm:text-[26px] font-bold font-serif text-[#FAF7F2] tracking-tight leading-snug">
+              <h2 className="text-xl sm:text-[26px] font-bold font-serif text-[#FAF7F2] tracking-tight leading-snug">
                 Scale Your Corporate IT Infrastructure.
               </h2>
               <p className="text-xs text-[#FAF7F2]/80 leading-relaxed mt-2 font-sans">
@@ -229,7 +229,7 @@ export default function Signup() {
             </div>
 
             {/* Fleet Hardware Capabilities (Fills space with real tangible specs) */}
-            <div className="pt-2">
+            <div className="pt-2 hidden sm:block">
               <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs space-y-2.5">
                 <div className="text-[10px] font-bold text-[#D4A24C] uppercase tracking-wider font-mono">
                   Supported Enterprise Hardware
@@ -256,7 +256,7 @@ export default function Signup() {
             </div>
 
             {/* 3 Key Commercial Terms */}
-            <div className="grid grid-cols-3 gap-2 pt-1 text-center">
+            <div className="hidden sm:grid grid-cols-3 gap-2 pt-1 text-center">
               <div className="p-2 rounded-xl bg-white/5 border border-white/5">
                 <div className="text-xs sm:text-sm font-bold font-serif text-[#D4A24C]">₹0</div>
                 <div className="text-[9.5px] text-[#FAF7F2]/65 uppercase tracking-tight">Deposit PO</div>
@@ -280,7 +280,7 @@ export default function Signup() {
         </div>
 
         {/* Right Panel: Conditional Registration or Verification Desk */}
-        <div className="lg:col-span-7 bg-white p-7 sm:p-10 lg:p-12 flex flex-col justify-center">
+        <div className="order-1 lg:order-2 lg:col-span-7 bg-white p-6 sm:p-10 lg:p-12 flex flex-col justify-center">
           {registeredSuccess ? (
             /* Corporate Verification Pending Desk */
             <div className="w-full space-y-6">
@@ -410,7 +410,7 @@ export default function Signup() {
                         placeholder="e.g. Vikram Malhotra"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full pl-10 pr-3.5 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition text-xs font-sans placeholder:text-slate-400"
+                        className="w-full pl-10 pr-3.5 min-h-11 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition text-base sm:text-xs font-sans placeholder:text-slate-400"
                       />
                     </div>
                   </div>
@@ -446,7 +446,7 @@ export default function Signup() {
                         placeholder="e.g. Acme Technologies Pvt Ltd"
                         value={formData.company_name}
                         onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
-                        className="w-full pl-10 pr-3.5 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition text-xs font-sans placeholder:text-slate-400"
+                        className="w-full pl-10 pr-3.5 min-h-11 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition text-base sm:text-xs font-sans placeholder:text-slate-400"
                       />
                     </div>
                   </div>
@@ -485,7 +485,7 @@ export default function Signup() {
                           setFormData({ ...formData, email: e.target.value });
                           if (emailExistsError) setEmailExistsError('');
                         }}
-                        className="w-full pl-10 pr-3.5 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition text-xs font-sans placeholder:text-slate-400"
+                        className="w-full pl-10 pr-3.5 min-h-11 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition text-base sm:text-xs font-sans placeholder:text-slate-400"
                       />
                     </div>
                     {emailExistsError && (
@@ -517,7 +517,7 @@ export default function Signup() {
                           const clean = e.target.value.replace(/[^0-9+\s-]/g, '');
                           setFormData({ ...formData, phone: clean });
                         }}
-                        className="w-full pl-10 pr-3.5 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition text-xs font-sans placeholder:text-slate-400"
+                        className="w-full pl-10 pr-3.5 min-h-11 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition text-base sm:text-xs font-sans placeholder:text-slate-400"
                       />
                     </div>
                   </div>
@@ -540,7 +540,7 @@ export default function Signup() {
                           key={pill.id}
                           type="button"
                           onClick={() => setFormData({ ...formData, primary_interest: pill.id })}
-                          className={`py-2 px-2 rounded-xl text-xs font-semibold transition border flex items-center justify-center cursor-pointer ${
+                          className={`min-h-11 py-2 px-1 rounded-xl text-[11px] sm:text-xs font-semibold transition border flex items-center justify-center cursor-pointer ${
                             isSelected
                               ? 'bg-[#0D3B2A] text-white border-[#0D3B2A] shadow-xs'
                               : 'bg-[#FAF7F2] text-[#5A6B63] hover:text-[#0D3B2A] border-[#D4A24C]/25'
@@ -570,7 +570,7 @@ export default function Signup() {
                       placeholder="••••••••"
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      className="w-full pl-10 pr-10 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition text-xs font-sans placeholder:text-slate-400"
+                      className="w-full pl-10 pr-10 min-h-11 py-2.5 bg-[#FAF7F2] border border-[#D4A24C]/30 text-[#0D3B2A] rounded-xl focus:outline-none focus:border-[#0D3B2A] focus:ring-1 focus:ring-[#0D3B2A] transition text-base sm:text-xs font-sans placeholder:text-slate-400"
                     />
                     <button
                       type="button"
@@ -587,7 +587,7 @@ export default function Signup() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full py-3.5 rounded-xl bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs uppercase tracking-wider transition shadow-lg flex items-center justify-center gap-2 border border-[#D4A24C]/40 cursor-pointer disabled:opacity-50 mt-3 group"
+                  className="w-full min-h-11 py-3.5 rounded-xl bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs uppercase tracking-wider transition shadow-lg flex items-center justify-center gap-2 border border-[#D4A24C]/40 cursor-pointer disabled:opacity-50 mt-3 group"
                 >
                   <span>{submitting ? 'Registering...' : 'Create Account'}</span>
                   <ArrowRight className="w-4 h-4 text-[#D4A24C] group-hover:translate-x-1 transition-transform" />

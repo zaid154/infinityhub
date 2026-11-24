@@ -967,7 +967,7 @@ export default function AdminSettings() {
             </div>
 
             <div className="overflow-x-auto border border-[#D4A24C]/25 rounded-2xl">
-              <table className="w-full text-left text-xs">
+              <table className="w-full min-w-[640px] text-left text-xs">
                 <thead className="bg-[#072117] text-[#FAF7F2] font-mono uppercase text-[10px] tracking-wider">
                   <tr>
                     <th className="p-3">Category</th>
@@ -1137,7 +1137,7 @@ export default function AdminSettings() {
 
             {auditLogs && auditLogs.length > 0 ? (
               <div className="overflow-x-auto border border-[#D4A24C]/25 rounded-2xl">
-                <table className="w-full text-left text-xs">
+                <table className="w-full min-w-[640px] text-left text-xs">
                   <thead className="bg-[#072117] text-[#FAF7F2] font-mono uppercase text-[10px] tracking-wider">
                     <tr>
                       <th className="p-3">Timestamp</th>
