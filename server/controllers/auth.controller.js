@@ -283,7 +283,8 @@ export const forgotPassword = async (req, res, next) => {
     user.reset_token_expiry = Date.now() + 60 * 60 * 1000; // 1 hour
     await user.save();
 
-    await sendPasswordResetEmail(user.email, user.name, resetToken, process.env.CLIENT_URL);
+    sendPasswordResetEmail(user.email, user.name, resetToken, process.env.CLIENT_URL)
+      .catch((e) => console.error('[Password Reset Email Async Error]', e.message));
 
     res.status(200).json({
       success: true,
