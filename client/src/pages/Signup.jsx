@@ -17,7 +17,9 @@ import {
   Edit3,
   Check,
   Briefcase,
-  Users
+  Users,
+  KeyRound,
+  Sparkles
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCompany } from '../context/SettingsContext';
@@ -90,7 +92,7 @@ function LuxurySelect({ value, onChange, options, icon: Icon, placeholder = 'Sel
 }
 
 export default function Signup() {
-  const { register, resendVerification } = useAuth();
+  const { register, sendRegisterOtp, verifyRegisterOtp } = useAuth();
   const { company } = useCompany();
   const brandName = company?.brand_name || 'Demo Infotech';
   const navigate = useNavigate();
@@ -111,11 +113,15 @@ export default function Signup() {
   const [submitting, setSubmitting] = useState(false);
   const [emailExistsError, setEmailExistsError] = useState('');
 
-  // Email verification state
+  // 6-Digit OTP & Verification state
   const [registeredSuccess, setRegisteredSuccess] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState('');
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const [otpVerifying, setOtpVerifying] = useState(false);
+  const [otpError, setOtpError] = useState('');
   const [resending, setResending] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
+  const otpInputRefs = useRef([]);
 
   const designationOptions = [
     { value: 'IT Head / Sysadmin', label: 'IT Head / Systems Administrator' },
@@ -134,7 +140,7 @@ export default function Signup() {
     { value: '200+', label: '200+ Employees' }
   ];
 
-  // Cooldown countdown effect for Resend Email
+  // Cooldown countdown effect for Resend OTP
   useEffect(() => {
     if (resendCooldown > 0) {
       const timer = setTimeout(() => setResendCooldown((prev) => prev - 1), 1000);
@@ -145,32 +151,90 @@ export default function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setEmailExistsError('');
+    setOtpError('');
     setSubmitting(true);
 
     const result = await register({ ...formData, honeypot });
     setSubmitting(false);
 
     if (result.success) {
-      if (result.requiresVerification) {
-        setRegisteredSuccess(true);
-        setRegisteredEmail(result.email || formData.email);
-        setResendCooldown(60);
-      } else {
-        const queryParams = new URLSearchParams(location.search);
-        const redirect = queryParams.get('redirect') || '/dashboard';
-        navigate(redirect);
-      }
+      setRegisteredSuccess(true);
+      setRegisteredEmail(result.email || formData.email);
+      setResendCooldown(60);
+      setOtp(['', '', '', '', '', '']);
+      setTimeout(() => otpInputRefs.current[0]?.focus(), 100);
     } else if (result.message && result.message.toLowerCase().includes('already exists')) {
       setEmailExistsError(result.message);
+    }
+  };
+
+  const handleOtpChange = (index, value) => {
+    const cleanVal = value.replace(/\D/g, '');
+    if (!cleanVal && value !== '') return;
+
+    const newOtp = [...otp];
+    newOtp[index] = cleanVal.slice(-1);
+    setOtp(newOtp);
+    if (otpError) setOtpError('');
+
+    if (cleanVal && index < 5) {
+      otpInputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleOtpKeyDown = (index, e) => {
+    if (e.key === 'Backspace' && !otp[index] && index > 0) {
+      otpInputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handleOtpPaste = (e) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+    if (!pastedData) return;
+    const newOtp = [...otp];
+    for (let i = 0; i < 6; i++) {
+      newOtp[i] = pastedData[i] || '';
+    }
+    setOtp(newOtp);
+    if (otpError) setOtpError('');
+    const focusIndex = Math.min(pastedData.length, 5);
+    otpInputRefs.current[focusIndex]?.focus();
+  };
+
+  const handleVerifyOtp = async (e) => {
+    if (e) e.preventDefault();
+    const otpCode = otp.join('');
+    if (otpCode.length !== 6) {
+      setOtpError('Please enter the complete 6-digit verification code.');
+      return;
+    }
+
+    setOtpVerifying(true);
+    setOtpError('');
+    const res = await verifyRegisterOtp(registeredEmail || formData.email, otpCode);
+    setOtpVerifying(false);
+
+    if (res.success) {
+      const queryParams = new URLSearchParams(location.search);
+      const redirect = queryParams.get('redirect') || '/dashboard';
+      navigate(redirect);
+    } else {
+      setOtpError(res.message || 'Invalid or expired verification code.');
     }
   };
 
   const handleResend = async () => {
     if (resendCooldown > 0 || resending) return;
     setResending(true);
-    await resendVerification(registeredEmail || formData.email);
+    setOtpError('');
+    const res = await sendRegisterOtp({ ...formData, email: registeredEmail || formData.email });
     setResending(false);
-    setResendCooldown(60);
+    if (res.success) {
+      setResendCooldown(60);
+      setOtp(['', '', '', '', '', '']);
+      otpInputRefs.current[0]?.focus();
+    }
   };
 
   return (
@@ -282,82 +346,148 @@ export default function Signup() {
         {/* Right Panel: Conditional Registration or Verification Desk */}
         <div className="order-1 lg:order-2 lg:col-span-7 bg-white p-6 sm:p-10 lg:p-12 flex flex-col justify-center">
           {registeredSuccess ? (
-            /* Corporate Verification Pending Desk */
-            <div className="w-full space-y-6">
+            /* Corporate 6-Digit OTP Verification Desk */
+            <div className="w-full space-y-5">
               {/* Header */}
               <div>
-                <div className="mb-4">
+                <div className="mb-3">
                   <BrandLogo theme="light" size="md" showSubtitle={false} />
                 </div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-[#8A5E12] text-[11px] font-semibold uppercase tracking-wider mb-2.5">
-                  <MailCheck className="w-3.5 h-3.5 text-[#8A5E12]" />
-                  <span>Email Verification Required</span>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[10.5px] font-semibold uppercase tracking-wider mb-2">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Dual-Engine OTP & Magic Link</span>
                 </div>
                 <h1 className="text-2xl sm:text-[26px] font-bold font-serif text-[#0D3B2A] tracking-tight">
-                  Verify Your Email
+                  Verify Corporate Email
                 </h1>
-                <p className="text-xs text-[#5A6B63] mt-1.5 leading-relaxed">
-                  We have dispatched a verification link to your corporate email address:
+                <p className="text-xs text-[#5A6B63] mt-1 leading-relaxed">
+                  Enter the 6-digit code dispatched to your work email to activate your corporate account.
                 </p>
               </div>
 
               {/* Recipient Corporate Address Badge */}
-              <div className="p-4 rounded-2xl bg-[#FAF7F2] border border-[#D4A24C]/35 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-9 h-9 rounded-xl bg-white border border-[#D4A24C]/30 flex items-center justify-center text-[#8A5E12] shadow-2xs shrink-0">
+              <div className="p-3.5 rounded-2xl bg-[#FAF7F2] border border-[#D4A24C]/35 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-8 h-8 rounded-xl bg-white border border-[#D4A24C]/30 flex items-center justify-center text-[#8A5E12] shadow-2xs shrink-0">
                     <Mail className="w-4 h-4 text-[#D4A24C]" />
                   </div>
                   <div className="min-w-0">
-                    <div className="text-[10px] text-[#5A6B63] uppercase tracking-wider font-semibold">Activation Email Sent To</div>
+                    <div className="text-[10px] text-[#5A6B63] uppercase tracking-wider font-semibold">Code Dispatched To</div>
                     <div className="text-xs sm:text-sm font-bold text-[#0D3B2A] font-mono truncate">{registeredEmail || formData.email}</div>
                   </div>
                 </div>
                 <button
                   type="button"
-                  onClick={() => setRegisteredSuccess(false)}
+                  onClick={() => {
+                    setRegisteredSuccess(false);
+                    setOtpError('');
+                  }}
                   className="inline-flex items-center gap-1 text-[11px] text-[#8A5E12] hover:text-[#0D3B2A] font-semibold underline shrink-0 cursor-pointer"
-                  title="Correct email address"
+                  title="Edit details"
                 >
                   <Edit3 className="w-3 h-3" />
                   <span>Edit</span>
                 </button>
               </div>
 
-              {/* Delivery Advisory Box */}
-              <div className="p-3.5 rounded-2xl bg-amber-50/70 border border-amber-200/80 text-[11px] text-[#8A5E12] space-y-1">
+              {/* 6-Digit OTP Form */}
+              <form onSubmit={handleVerifyOtp} className="space-y-4">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-xs font-semibold text-[#0D3B2A] flex items-center gap-1.5">
+                      <KeyRound className="w-3.5 h-3.5 text-[#D4A24C]" />
+                      <span>Enter 6-Digit Code</span>
+                    </label>
+                    <span className="text-[10.5px] text-[#5A6B63] font-mono">Valid 10 mins</span>
+                  </div>
+
+                  {/* 6 OTP Input Boxes */}
+                  <div className="flex items-center justify-between gap-1.5 sm:gap-2.5" onPaste={handleOtpPaste}>
+                    {otp.map((digit, idx) => (
+                      <input
+                        key={idx}
+                        ref={(el) => (otpInputRefs.current[idx] = el)}
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        maxLength={1}
+                        value={digit}
+                        onChange={(e) => handleOtpChange(idx, e.target.value)}
+                        onKeyDown={(e) => handleOtpKeyDown(idx, e)}
+                        autoFocus={idx === 0}
+                        className={`w-10 sm:w-12 h-12 sm:h-14 text-center font-mono text-xl sm:text-2xl font-bold rounded-xl border transition bg-[#FAF7F2] text-[#0D3B2A] focus:outline-none ${
+                          digit
+                            ? 'border-[#0D3B2A] bg-white ring-1 ring-[#0D3B2A]'
+                            : 'border-[#D4A24C]/35 hover:border-[#D4A24C]'
+                        } ${otpError ? 'border-red-400 bg-red-50/30' : ''}`}
+                      />
+                    ))}
+                  </div>
+
+                  {otpError && (
+                    <div className="mt-2 p-2 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2">
+                      <span className="font-semibold">{otpError}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Submit Verification Button */}
+                <button
+                  type="submit"
+                  disabled={otp.join('').length !== 6 || otpVerifying}
+                  className="w-full py-3.5 rounded-xl bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs uppercase tracking-wider transition shadow-lg flex items-center justify-center gap-2 border border-[#D4A24C]/40 group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {otpVerifying ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 animate-spin text-[#D4A24C]" />
+                      <span>Verifying Code...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Verify & Complete Registration</span>
+                      <ArrowRight className="w-4 h-4 text-[#D4A24C] group-hover:translate-x-1 transition-transform" />
+                    </>
+                  )}
+                </button>
+              </form>
+
+              {/* 1-Click Magic Link Feature Card */}
+              <div className="p-3.5 rounded-2xl bg-[#0D3B2A]/5 border border-[#D4A24C]/30 text-xs space-y-1">
                 <div className="font-bold flex items-center gap-1.5 text-[#0D3B2A]">
-                  <span>📬 Delivery Note</span>
+                  <Sparkles className="w-3.5 h-3.5 text-[#D4A24C]" />
+                  <span>1-Click Magic Link Dispatched</span>
                 </div>
                 <p className="text-[11px] text-[#5A6B63] leading-relaxed">
-                  Please check your <strong>Primary Inbox</strong>. If not received within 60 seconds, check your <strong>Spam</strong> or <strong>Updates</strong> tab.
+                  Don't want to type the code? Simply tap the <strong>Verify Account in 1-Click</strong> button inside the email we just sent to activate instantly.
                 </p>
               </div>
 
-              {/* Action Buttons */}
-              <div className="space-y-2.5 pt-2">
-                <Link
-                  to="/login"
-                  className="w-full py-3.5 rounded-xl bg-[#0D3B2A] hover:bg-[#153423] text-white font-bold text-xs uppercase tracking-wider transition shadow-lg flex items-center justify-center gap-2 border border-[#D4A24C]/40 group"
-                >
-                  <span>Proceed to Sign In</span>
-                  <ArrowRight className="w-4 h-4 text-[#D4A24C] group-hover:translate-x-1 transition-transform" />
-                </Link>
-
+              {/* Resend Cooldown Actions */}
+              <div className="flex items-center justify-between pt-1 text-xs">
+                <span className="text-[#5A6B63]">Didn't receive the code?</span>
                 <button
                   type="button"
                   onClick={handleResend}
                   disabled={resendCooldown > 0 || resending}
-                  className="w-full py-2.5 rounded-xl bg-[#FAF7F2] hover:bg-slate-100 text-[#0D3B2A] border border-[#D4A24C]/35 font-semibold text-xs transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="inline-flex items-center gap-1.5 font-semibold text-[#8A5E12] hover:text-[#0D3B2A] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
-                  <RefreshCw className={`w-3.5 h-3.5 text-[#8A5E12] ${resending ? 'animate-spin' : ''}`} />
+                  <RefreshCw className={`w-3.5 h-3.5 ${resending ? 'animate-spin' : ''}`} />
                   <span>
                     {resending
                       ? 'Sending...'
                       : resendCooldown > 0
                       ? `Resend in ${resendCooldown}s`
-                      : 'Resend Verification Link'}
+                      : 'Resend 6-Digit Code'}
                   </span>
                 </button>
+              </div>
+
+              {/* Footer Return to Login */}
+              <div className="text-center pt-2 border-t border-slate-100 text-xs text-[#5A6B63]">
+                Already activated?{' '}
+                <Link to="/login" className="text-[#8A5E12] font-bold hover:text-[#0D3B2A] hover:underline transition">
+                  Sign In →
+                </Link>
               </div>
             </div>
           ) : (

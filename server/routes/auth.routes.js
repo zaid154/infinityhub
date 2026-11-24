@@ -7,42 +7,43 @@ import {
   forgotPassword,
   resetPassword,
   getMe,
-  updateProfile
+  updateProfile,
+  sendRegisterOtp,
+  verifyRegisterOtp,
+  magicVerify,
+  sendResetOtp,
+  verifyResetOtp
 } from '../controllers/auth.controller.js';
 import { protect } from '../middleware/auth.js';
-import { createRateLimiter } from '../middleware/rateLimiter.js';
+import {
+  createIpRateLimiter,
+  checkDisposableEmail
+} from '../middleware/securityMiddleware.js';
 
 const router = express.Router();
 
-// Anti-bot rate limiters:
-// Max 10 registrations per IP per 15 minutes
-const registerLimiter = createRateLimiter({
-  windowMs: 15 * 60 * 1000,
-  max: 10,
-  message: 'Too many registration requests from this network. Please wait a few minutes before trying again.'
+// Sliding-window IP Rate Limiter: max 10 OTP requests per hour per IP
+const otpRateLimiter = createIpRateLimiter({
+  windowMs: 60 * 60 * 1000,
+  maxRequests: 10
 });
 
-// Max 6 resend requests per IP per 15 minutes
-const resendLimiter = createRateLimiter({
-  windowMs: 15 * 60 * 1000,
-  max: 6,
-  message: 'Too many verification email requests. Please wait a few moments.'
-});
+// Modern 6-Digit OTP & 1-Click Magic Link Endpoints (SaveZonix-grade)
+router.post('/send-register-otp', otpRateLimiter, checkDisposableEmail, sendRegisterOtp);
+router.post('/verify-register-otp', verifyRegisterOtp);
+router.post('/send-reset-otp', otpRateLimiter, sendResetOtp);
+router.post('/verify-reset-otp', verifyResetOtp);
+router.post('/magic-verify', magicVerify);
 
-// Max 15 login attempts per IP per 15 minutes to deter brute force
-const loginLimiter = createRateLimiter({
-  windowMs: 15 * 60 * 1000,
-  max: 20,
-  message: 'Too many sign-in attempts. Please wait a few minutes before trying again.'
-});
-
-router.post('/register', registerLimiter, register);
-router.post('/login', loginLimiter, login);
+// Standard & Legacy Endpoints (Fully Backward-Compatible)
+router.post('/register', otpRateLimiter, checkDisposableEmail, register);
+router.post('/login', login);
 router.get('/verify-email/:token', verifyEmail);
-router.post('/resend-verification', resendLimiter, resendVerification);
-router.post('/forgot-password', forgotPassword);
+router.post('/resend-verification', otpRateLimiter, resendVerification);
+router.post('/forgot-password', otpRateLimiter, forgotPassword);
 router.post('/reset-password/:token', resetPassword);
 
+// Authenticated User Endpoints
 router.get('/me', protect, getMe);
 router.put('/profile', protect, updateProfile);
 

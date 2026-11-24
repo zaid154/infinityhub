@@ -57,54 +57,98 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const register = async (userData) => {
+  const sendRegisterOtp = async (userData) => {
     try {
-      const res = await api.post('/auth/register', userData);
+      const res = await api.post('/auth/send-register-otp', userData);
       if (res.data.success) {
         toast.dismiss();
-        if (res.data.requiresVerification) {
-          toast.success('Registration successful! Verification email sent.', { id: 'auth-reg-success' });
-          return {
-            success: true,
-            requiresVerification: true,
-            email: res.data.email || userData.email,
-            message: res.data.message
-          };
-        }
+        toast.success(res.data.message || 'Verification code sent to your email!', { id: 'send-otp-success' });
+        return { success: true, message: res.data.message, email: res.data.email || userData.email };
+      }
+    } catch (err) {
+      const message = err.response?.data?.message || err.response?.data?.error || 'Failed to send verification code.';
+      toast.dismiss();
+      toast.error(message, { id: 'send-otp-error' });
+      return { success: false, message };
+    }
+  };
+
+  const verifyRegisterOtp = async (email, otp) => {
+    try {
+      const res = await api.post('/auth/verify-register-otp', { email, otp });
+      if (res.data.success) {
         if (res.data.token && res.data.user) {
           localStorage.setItem('technova_token', res.data.token);
           setToken(res.data.token);
           setUser(res.data.user);
         }
-        toast.success(res.data.message || 'Corporate account created successfully!', { id: 'auth-reg-success' });
-        return { success: true, user: res.data.user };
+        toast.dismiss();
+        toast.success(res.data.message || 'Corporate account activated successfully!', { id: 'verify-otp-success' });
+        return { success: true, user: res.data.user, token: res.data.token };
       }
     } catch (err) {
-      const message = err.response?.data?.message || 'Registration failed.';
+      const message = err.response?.data?.message || err.response?.data?.error || 'Verification failed.';
       toast.dismiss();
-      toast.error(message, { id: 'auth-reg-error' });
+      toast.error(message, { id: 'verify-otp-error' });
       return { success: false, message };
     }
   };
 
-  const resendVerification = async (email) => {
+  const sendResetOtp = async (email) => {
     try {
-      const res = await api.post('/auth/resend-verification', { email });
+      const res = await api.post('/auth/send-reset-otp', { email });
       if (res.data.success) {
         toast.dismiss();
-        toast.success(res.data.message || 'Activation email resent successfully!', { id: 'resend-ver-success' });
+        toast.success(res.data.message || 'Password reset code dispatched.', { id: 'send-reset-success' });
         return { success: true, message: res.data.message };
       }
     } catch (err) {
-      const message = err.response?.data?.message || 'Failed to resend activation email.';
+      const message = err.response?.data?.message || err.response?.data?.error || 'Failed to send reset code.';
       toast.dismiss();
-      toast.error(message, { id: 'resend-ver-error' });
-      return {
-        success: false,
-        message,
-        isAlreadyVerified: err.response?.data?.isAlreadyVerified
-      };
+      toast.error(message, { id: 'send-reset-error' });
+      return { success: false, message };
     }
+  };
+
+  const verifyResetOtp = async ({ email, otp, magicToken, newPassword }) => {
+    try {
+      const res = await api.post('/auth/verify-reset-otp', { email, otp, magicToken, newPassword });
+      if (res.data.success) {
+        toast.dismiss();
+        toast.success(res.data.message || 'Password reset successfully! Please sign in.', { id: 'verify-reset-success' });
+        return { success: true, message: res.data.message };
+      }
+    } catch (err) {
+      const message = err.response?.data?.message || err.response?.data?.error || 'Failed to update password.';
+      toast.dismiss();
+      toast.error(message, { id: 'verify-reset-error' });
+      return { success: false, message };
+    }
+  };
+
+  const magicVerify = async (email, token) => {
+    try {
+      const res = await api.post('/auth/magic-verify', { email, token });
+      if (res.data.success) {
+        if (res.data.token && res.data.user) {
+          localStorage.setItem('technova_token', res.data.token);
+          setToken(res.data.token);
+          setUser(res.data.user);
+        }
+        return { success: true, ...res.data };
+      }
+    } catch (err) {
+      const message = err.response?.data?.message || err.response?.data?.error || 'Magic link verification failed.';
+      return { success: false, message };
+    }
+  };
+
+  const register = async (userData) => {
+    return sendRegisterOtp(userData);
+  };
+
+  const resendVerification = async (email) => {
+    return sendRegisterOtp({ email, name: 'Valued Customer', password: 'TemporaryPassword123!' });
   };
 
   const logout = () => {
@@ -139,6 +183,11 @@ export const AuthProvider = ({ children }) => {
         isAdmin: user?.role === 'admin',
         login,
         register,
+        sendRegisterOtp,
+        verifyRegisterOtp,
+        sendResetOtp,
+        verifyResetOtp,
+        magicVerify,
         resendVerification,
         logout,
         updateProfile

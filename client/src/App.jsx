@@ -166,8 +166,10 @@ export default function App() {
                   {/* Auth Routes */}
                   <Route path="login" element={<Login />} />
                   <Route path="signup" element={<Signup />} />
+                  <Route path="verify-email" element={<VerifyEmail />} />
                   <Route path="verify-email/:token" element={<VerifyEmail />} />
                   <Route path="forgot-password" element={<ForgotPassword />} />
+                  <Route path="reset-password" element={<ResetPassword />} />
                   <Route path="reset-password/:token" element={<ResetPassword />} />
 
                   {/* Customer Dashboard (Protected) */}

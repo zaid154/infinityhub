@@ -47,38 +47,93 @@ npm run dev
 
 ---
 
-## 📧 Email & Transactional Dispatch System (Brevo HTTPS API)
+## 📧 Production 6-Digit OTP & 1-Click Magic Link Verification System
 
-This platform implements a robust dual-layer email architecture designed specifically to work reliably on cloud hosting environments:
+InfinityHub implements an enterprise-grade dual-channel verification engine supporting both **6-digit numeric OTP codes** and **1-Click Magic Links** for account activation and password resets across local development and cloud production.
 
-### 1. Cloud SMTP Blocking vs. Brevo HTTPS API
-* **The Cloud Challenge:** Free and low-tier cloud platforms (such as Render and Vercel Serverless) block outbound TCP ports `25`, `465`, and `587`. Standard Nodemailer Gmail SMTP connections hang and time out on these platforms.
-* **The Solution:** The backend routes transactional emails through **Brevo v3 HTTPS API** (`https://api.brevo.com/v3/smtp/email`) on standard HTTPS port `443`.
-* **Verified Sender Requirement:** Brevo requires an authorized and active sender email. For this account, the verified sender is **`zaidm1323@gmail.com`**.
-* **Delivery Destination:** Emails sent via Brevo API relay directly to the recipient's **Inbox** or **Spam** folder. They do *not* appear in the personal Gmail "Sent" folder of the sender address, as they are routed through Brevo's certified mail relays (`mailin.fr`).
+### 1. Verification Architecture & User Flow
 
-### 2. Required Environment Variables for Email
+```mermaid
+flowchart TD
+    User([Corporate User]) -->|Register / Reset| Client["React 19 Frontend\n(Signup / ForgotPassword)"]
+    Client -->|1. Request OTP| API["Express.js Backend\nPOST /api/auth/send-*-otp"]
+    API --> RateLimit{"IP Limiter & 60s Cooldown\nDisposable Email Filter"}
+    RateLimit -->|Valid| HashToken["Generate 6-Digit OTP & Magic Token\nHMAC-SHA256 Pepper Hashing"]
+    HashToken --> DB[("MongoDB Atlas\nOtpToken (10-min TTL)")]
+    HashToken --> Mailer{"Smart Mailer Engine\n(Cloud Detected?)"}
+    Mailer -->|Render Cloud| Brevo["1. Brevo REST API v3\nHTTPS Port 443 (zaidm1323@gmail.com)"]
+    Mailer -->|Local Dev| SMTP["1. Gmail SMTP (smtp.gmail.com:587)"]
+    Brevo -->|Fails| SMTPFallback["2. SMTP Fallback"]
+    SMTP -->|Fails| BrevoFallback["2. Brevo API Fallback"]
+    Brevo --> Inbox([Corporate Email Inbox])
+    SMTP --> Inbox
+    Inbox -->|Option A: Enter 6 Digits| VerifyOTP["POST /api/auth/verify-*-otp"]
+    Inbox -->|Option B: Tap 1-Click Link| MagicVerify["POST /api/auth/magic-verify"]
+    VerifyOTP --> AuthSuccess["Activate Account / Reset Password\nIssue 30-Day JWT Session"]
+    MagicVerify --> AuthSuccess
+```
+
+### 2. Frontend Security & UX Components
+- **6-Digit Interactive OTP Card (`client/src/pages/Signup.jsx` & `ForgotPassword.jsx`)**:
+  - 6 individual numeric input boxes with auto-advance, backspace navigation, and full-clipboard paste support.
+  - **60-Second Live Cooldown Timer**: Prevents request spamming with real-time second-by-second countdown before re-enabling the resend button.
+  - **1-Click Magic Link Notice**: Displays prominent advice that users can simply tap the 1-Click verification button in their email without typing digits.
+- **Auto-Detecting Magic Link Verifier (`client/src/pages/VerifyEmail.jsx` & `ResetPassword.jsx`)**:
+  - Reads `verify_email`/`verify_token` or `reset_email`/`reset_token` from query parameters.
+  - Automatically triggers `POST /api/auth/magic-verify` on page load, authenticates the session, and redirects to the dashboard without manual intervention.
+
+### 3. Vercel API Proxy Rewrites (`client/vercel.json` & `vercel.json`)
+- In production (`https://infinityhub-pro.vercel.app`), requests to `/api/*` are reverse-proxied directly to the Render backend (`https://infinityhub-u9yq.onrender.com/api/*`), preventing CORS issues and preserving live headers.
+- All client-side SPA routes fall back seamlessly to `/index.html`.
+
+### 4. Cryptographic Storage & Brute-Force Defense (`server/middleware/securityMiddleware.js` & `server/models/OtpToken.js`)
+- **No Plaintext Storage**: All OTPs and Magic Link tokens are hashed using HMAC-SHA256 with `OTP_SECRET` (pepper) before being persisted in MongoDB.
+- **Sliding-Window IP Rate Limiting**: Restricts requests to 10 OTP dispatches per hour per IP address.
+- **Per-Email 60s Cooldown**: Returns HTTP `429 Too Many Requests` if an OTP is requested again within 60 seconds (`lastSentAt`).
+- **Disposable Email Filter**: Blocks 25+ temporary and throwaway email domains.
+- **Brute-Force Lockout**: Invalidates the OTP code after **5 failed attempts**.
+- **10-Minute Auto-Deletion**: MongoDB native TTL index (`expires: 600`) purges expired tokens automatically.
+- **Telemetry Logging (`server/models/EmailLog.js`)**: Tracks channel (`brevo_api` vs `gmail_smtp`), latency in ms, message ID, and delivery status with 30-day TTL retention.
+
+### 5. Dual-Channel Cloud Routing (`server/config/mailer.js`)
+- **Cloud Production (Render)**: Detects `process.env.RENDER` and routes through **Brevo v3 HTTPS API (port 443)** first, avoiding Render's blocked outbound SMTP ports (`25`, `465`, `587`) and eliminating the 10-second SMTP socket hang.
+- **Verified Sender Auto-Discovery**: Caches verified senders via Brevo `/v3/senders` API, ensuring all transactional dispatches originate from `zaidm1323@gmail.com`.
+- **Local Development**: Uses standard Gmail SMTP first with seamless fallback to Brevo HTTPS API.
+
+### 6. Authentication API Endpoints Reference
+
+| Method | Endpoint | Purpose | Security Controls |
+|---|---|---|---|
+| `POST` | `/api/auth/send-register-otp` | Dispatches 6-digit OTP & Magic Link for registration | IP Rate Limit, Cooldown, Anti-bot Honeypot |
+| `POST` | `/api/auth/verify-register-otp` | Validates 6-digit OTP and creates verified user | HMAC Pepper Check, Max 5 Attempts |
+| `POST` | `/api/auth/send-reset-otp` | Dispatches 6-digit OTP & Magic Link for password reset | Generic Response (No user enumeration) |
+| `POST` | `/api/auth/verify-reset-otp` | Validates OTP or Magic Token and updates password | Min 6 char password, HMAC check |
+| `POST` | `/api/auth/magic-verify` | 1-Click instant email activation from email link | Single-use token, Immediate auto-deletion |
+
+---
+
+## 🔑 Required Email & Security Environment Variables
 
 ```env
-# Brevo Transactional Email (HTTPS Port 443 - Works on Render & Cloud)
+# MongoDB & JWT Auth
+MONGO_URI=mongodb+srv://...
+JWT_SECRET=your_jwt_secret_key
+OTP_SECRET=your_hmac_sha256_pepper_secret
+
+# Brevo Transactional Email (HTTPS Port 443 - Primary on Render)
 BREVO_API_KEY=your_brevo_api_key
 BREVO_SENDER_EMAIL=zaidm1323@gmail.com
 BREVO_SENDER_NAME="Demo Infotech"
 
-# Gmail SMTP (Local Development Fallback)
+# Gmail SMTP (Primary for Local Dev, Fallback on Cloud)
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_SECURE=false
 SMTP_USER=your_email@gmail.com
 SMTP_PASS=your_gmail_app_password
 SMTP_FROM="Demo Infotech <zaidm1323@gmail.com>"
+CLIENT_URL=https://infinityhub-pro.vercel.app
 ```
-
-### 3. Automated Email Workflows
-- **Account Activation:** Sends account verification link upon customer registration (`/api/auth/verify-email/:token`).
-- **Password Reset:** Generates secure token and dispatches reset instructions (`/api/auth/forgot-password`).
-- **Admin RFQ Alerts:** Instant email notification dispatched to administrator whenever a corporate customer requests a Quote.
-- **Welcome Email:** Dispatched automatically once a user's corporate email is verified.
 
 ---
 
