@@ -49,7 +49,36 @@ export const sendTransactionalEmail = async ({ to, subject, html, text, fromName
     }
   }
 
-  // 2. Fallback to Nodemailer SMTP
+  // 2. Try Resend HTTPS API if key is set (Works 100% on Render/Vercel)
+  if (process.env.RESEND_API_KEY) {
+    try {
+      const res = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          from: `${senderName} <onboarding@resend.dev>`,
+          to: [to],
+          subject,
+          html,
+          text: text || ''
+        })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        console.log(`[Resend Email Sent] ID: ${data.id} to ${to}`);
+        return { success: true, messageId: data.id };
+      } else {
+        console.error(`[Resend API Error]:`, data);
+      }
+    } catch (err) {
+      console.error(`[Resend Fetch Error]:`, err.message);
+    }
+  }
+
+  // 3. Fallback to Nodemailer SMTP
   try {
     const sender = process.env.SMTP_FROM || `"${senderName}" <${senderEmail}>`;
     const info = await transporter.sendMail({
